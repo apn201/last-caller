@@ -5,22 +5,22 @@ caller-visible text is a draft until the author's final edit.
 
 ## Group 1 - Portable logic
 
-- [ ] 1. `src/core/scene_logic.h`: parser and check, `Typer`, `Player` (R1, R2, R3)
-- [ ] 2. Host-side tests, `tools/test/scene_logic_test.cpp`, run with `zig c++`
+- [x] 1. `src/core/scene_logic.h`: parser and check, `Typer`, `Player` (R1, R2, R3)
+- [x] 2. Host-side tests, `tools/test/scene_logic_test.cpp`, run with `zig c++`
 
 ## Group 2 - Board side
 
-- [ ] 3. `State SCENE_PLAY`, `Session.scene`, `HauntShow.scene`; `scene=` in
+- [x] 3. `State SCENE_PLAY`, `Session.scene`, `HauntShow.scene`; `scene=` in
   the trigger rules (R4.1)
-- [ ] 4. `src/core/scene.h`: start, tick, input, end; door-table entry (R2, R4)
-- [ ] 5. `pio run` passes. Server build not run: this PC is Windows and Q1
+- [x] 4. `src/core/scene.h`: start, tick, input, end; door-table entry (R2, R4)
+- [x] 5. `pio run` passes. Server build not run: this PC is Windows and Q1
   is blocked
 
 ## Group 3 - Demo scene
 
-- [ ] 6. Art `tools/ansi/screens/scenes.py`: ELIZA's ring waking, rendered to
+- [x] 6. Art `tools/ansi/screens/scenes.py`: ELIZA's ring waking, rendered to
   PNG and looked at (R5.2)
-- [ ] 7. `STORY/SCENES/ELIZA_WAKE.INI` and the trigger that starts it
+- [x] 7. `STORY/SCENES/ELIZA_WAKE.INI` and the trigger that starts it
   (draft text)
 - [ ] 8. Board test (on the stick or the server, after Q1): sign up, see
   the scene on the first calm prompt, try Enter during typing, each choice,
@@ -28,5 +28,5 @@ caller-visible text is a draft until the author's final edit.
 
 ## Group 4 - Close
 
-- [ ] 9. `docs/SLICES.md`, `docs/MENU_AUDIT.md` notes; tick Q3 in
+- [x] 9. `docs/SLICES.md`, `docs/MENU_AUDIT.md` notes; tick Q3 in
   `docs/briefs/QUEUE.md`

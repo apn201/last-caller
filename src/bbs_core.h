@@ -23,6 +23,7 @@
 #include "core/reader.h"
 #include "bbs/settings.h"
 #include "core/haunt.h"
+#include "core/scene.h"
 #include "bbs/menus.h"
 #include "bbs/files.h"
 #include "bbs/zip.h"

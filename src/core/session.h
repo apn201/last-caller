@@ -1,8 +1,9 @@
 #pragma once
 // Caller state machine, node pool and output helpers.
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
+#include "scene_logic.h"
 
-enum State : uint8_t { DEAD, LOGIN_CHOICE, LOGIN_HANDLE, LOGIN_PASSWORD, NEW_HANDLE, NEW_PASSWORD, NEW_REAL, NEW_LOCATION, BULLETIN, MAIN, USER_LIST, MSG_MENU, MSG_READ, POST_TO, POST_SUBJECT, POST_BODY, JOIN_CONF, CHAT, SYSOP_MENU, SYSOP_USERS, SYSOP_DOORS, SYSOP_ADD_PASSWORD, SYSOP_DELETE_CONFIRM, ANSI_GALLERY, FILE_MENU, FILE_LIST, DOOR_MENU, QUEST_MENU, QUEST_TAVERN, QUEST_FIGHT, QUEST_RESULT, QUEST_BANK, QUEST_SHOP, DICE_BET, QUEST_DUEL_OFFER, QUEST_DUEL_WAIT, QUEST_DUEL, QUEST_DUEL_RESULT, MUD_MENU, BULLETIN_LIST, MSG_VIEW, POST_PRIVATE, SYSOP_USER_EDIT, SYSOP_USER_FIELD, SYSOP_ADD_HANDLE, SYSOP_NODES, READER, MSG_KILL, FILE_IMAGE, FILE_MUSIC, FILE_UPLOAD_DESC, FILE_UPLOAD_WAIT, SYSOP_UPLOADS, GOODBYE, SHIP_CONSOLE, SHIP_CONFIRM, SHIP_DONE };
+enum State : uint8_t { DEAD, LOGIN_CHOICE, LOGIN_HANDLE, LOGIN_PASSWORD, NEW_HANDLE, NEW_PASSWORD, NEW_REAL, NEW_LOCATION, BULLETIN, MAIN, USER_LIST, MSG_MENU, MSG_READ, POST_TO, POST_SUBJECT, POST_BODY, JOIN_CONF, CHAT, SYSOP_MENU, SYSOP_USERS, SYSOP_DOORS, SYSOP_ADD_PASSWORD, SYSOP_DELETE_CONFIRM, ANSI_GALLERY, FILE_MENU, FILE_LIST, DOOR_MENU, QUEST_MENU, QUEST_TAVERN, QUEST_FIGHT, QUEST_RESULT, QUEST_BANK, QUEST_SHOP, DICE_BET, QUEST_DUEL_OFFER, QUEST_DUEL_WAIT, QUEST_DUEL, QUEST_DUEL_RESULT, MUD_MENU, BULLETIN_LIST, MSG_VIEW, POST_PRIVATE, SYSOP_USER_EDIT, SYSOP_USER_FIELD, SYSOP_ADD_HANDLE, SYSOP_NODES, READER, MSG_KILL, FILE_IMAGE, FILE_MUSIC, FILE_UPLOAD_DESC, FILE_UPLOAD_WAIT, SYSOP_UPLOADS, GOODBYE, SHIP_CONSOLE, SHIP_CONFIRM, SHIP_DONE, SCENE_PLAY };
 struct Quest {
   uint32_t id = 0, gold = 35, bank = 0, exp = 0;
   uint16_t hp = 30, maxHp = 30, monsterHp = 0;
@@ -42,7 +43,7 @@ struct StreamJob {
 // ANSI picture is drawn into an 80-column cell buffer, a message is ready rows.
 struct Session;
 // A trigger's page or art, waiting until the caller is at a menu prompt (core/haunt.h).
-struct HauntShow { String from, text, art; };
+struct HauntShow { String from, text, art, scene; };
 enum ReaderKind : uint8_t { READER_TEXT, READER_ANSI, READER_ROWS };
 struct Reader {
   ReaderKind kind = READER_ROWS;
@@ -112,6 +113,7 @@ struct Session {
   uint32_t ownUserId = 0;
   String carriedFlags;
   std::vector<HauntShow> hauntShows;
+  scene::Player sceneRun;  // core/scene.h: the scene being played (state SCENE_PLAY)
   uint32_t hauntIdleSec = 0, hauntMinute = 0;
 };
 static Session sessions[MAX_NODES];

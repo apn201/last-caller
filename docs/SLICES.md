@@ -173,6 +173,13 @@ mail to one caller, crew logins granting flags to the caller's own account.
 Host tests: `tools/test/haunt_logic_test.cpp`. Board test still to run: log in
 as TYVANCE, Goodbye, sign in as yourself, find ELIZA's mail.
 
+Scene engine (Q3): spec `.kiro/specs/scenes/`, `src/core/scene.h` on
+`src/core/scene_logic.h`; scenes are `sd/BBS/STORY/SCENES/*.INI` with art in
+`ANSI/STORY`, started by a trigger rule (`scene=NAME`). Demo:
+`ELIZA_WAKE` (ring portrait, typed dialogue, a three-way choice that sets
+flags and changes the closing lines). Host tests:
+`tools/test/scene_logic_test.cpp`. Board test still to run (spec task 8).
+
 ### S6 - Ghost presence (Nov 18 to 20)
 
 `STORY/GHOSTS.INI`: callers in WHO with nodes, activity lines and impossible

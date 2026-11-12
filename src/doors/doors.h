@@ -19,6 +19,8 @@ static const Door DOORS[] = {
   {"V", "VolaMUD", enterMud, playingMud, handleMud, true, nullptr},
   // The ship console: entered at login by the maintenance account, never from the menu.
   {"", "Ship systems", enterShip, ownsShip, handleShip, false, shipListed},
+  // Scenes (core/scene.h): started by a trigger rule (scene=NAME), never from the menu.
+  {"", "Scene", sceneEnter, ownsScene, handleScene, false, sceneListed},
 };
 
 // Is this door in the menu for this caller? Nothing is shown that would not work.

@@ -32,9 +32,10 @@ struct Rule {
   std::string mailFrom, mailConf, mailSubject, mailBody;
   std::string postFrom, postConf, postSubject, postBody;
   std::string art;              // card art name
+  std::string scene;            // a scene to play (STORY/SCENES/NAME.INI)
   std::string add;              // read: a line added while the message is shown
   // A rule that shows something to the caller fires once per caller.
-  bool visible() const { return !page.empty() || !mailBody.empty() || !postBody.empty() || !art.empty(); }
+  bool visible() const { return !page.empty() || !mailBody.empty() || !postBody.empty() || !art.empty() || !scene.empty(); }
 };
 
 struct Table {
@@ -189,6 +190,7 @@ inline bool buildRule(const std::string &id, const std::vector<Kv> &kv, Rule &r,
     else if (k == "post_subject") r.postSubject = capText(v, MAX_SUBJECT);
     else if (k == "post_body") r.postBody = capText(v, MAX_BODY);
     else if (k == "art") r.art = upper(trim(v));
+    else if (k == "scene") r.scene = upper(trim(v));
     else if (k == "add") r.add = capText(v, MAX_LINE);
     // other keys: ignored, so a newer card still loads on older firmware
   }
@@ -206,6 +208,7 @@ inline bool buildRule(const std::string &id, const std::vector<Kv> &kv, Rule &r,
   } else if (!after.empty()) { why = "after needs event=idle or minutes"; return false; }
   if (r.ev == EV_CREW_LOGIN && r.match.empty()) { why = "crew_login needs match= (the crew handle)"; return false; }
   if (!r.art.empty() && !nameOk(r.art)) { why = "bad art name"; return false; }
+  if (!r.scene.empty() && (!nameOk(r.scene) || r.scene.size() > MAX_ID)) { why = "bad scene name"; return false; }
   if (!r.mailBody.empty() && (r.mailFrom.empty() || r.mailSubject.empty())) { why = "mail needs mail_from, mail_subject and mail_body"; return false; }
   if (r.mailBody.empty() && (!r.mailFrom.empty() || !r.mailSubject.empty() || !r.mailConf.empty())) { why = "mail without a body"; return false; }
   if (!r.postBody.empty() && (r.postFrom.empty() || r.postConf.empty() || r.postSubject.empty())) { why = "post needs post_from, post_conf, post_subject and post_body"; return false; }

@@ -18,6 +18,8 @@ static constexpr const char *TRIGGERS_INI = "/BBS/STORY/TRIGGERS.INI";
 static haunt::Table hauntRules;
 static std::vector<uint32_t> hauntIdleAt, hauntMinutesAt;  // after= values of the timed rules
 
+static void sceneStart(Session &s, const String &name);  // core/scene.h
+
 static std::string hauntStd(const String &s) { return std::string(s.c_str(), s.length()); }
 static String hauntStr(const std::string &s) { return String(s.c_str()); }
 
@@ -114,10 +116,10 @@ static void hauntEvent(Session &s, haunt::Ev ev, const String &match, uint32_t a
       event("TRIGGER_FAIL", hauntStr(r->id) + ": mail not written");
     if (!r->postBody.empty() && !hauntMessage(r->postFrom, "", r->postConf, r->postSubject, r->postBody, false, s.conference))
       event("TRIGGER_FAIL", hauntStr(r->id) + ": post not written");
-    if (!r->page.empty() || !r->art.empty()) {
+    if (!r->page.empty() || !r->art.empty() || !r->scene.empty()) {
       HauntShow h;
       h.from = hauntStr(r->pageFrom.empty() ? std::string("ELIZA") : r->pageFrom);
-      h.text = hauntStr(r->page); h.art = hauntStr(r->art);
+      h.text = hauntStr(r->page); h.art = hauntStr(r->art); h.scene = hauntStr(r->scene);
       if (s.hauntShows.size() < 8) s.hauntShows.push_back(h);
     }
   }
@@ -147,7 +149,11 @@ static bool hauntCalm(const Session &s) {
   return !streaming(s) && !s.input.length() && !s.hideInput;
 }
 static void hauntShow(Session &s) {
-  for (const auto &h : s.hauntShows) {
+  // A scene takes the whole screen: whatever is queued behind it waits for the next calm prompt.
+  std::vector<HauntShow> shows;
+  shows.swap(s.hauntShows);
+  for (size_t i = 0; i < shows.size(); ++i) {
+    const HauntShow &h = shows[i];
     if (h.text.length()) {
       String text = h.text; text.replace("|", "\r\n  ");
       say(s, "\r\n\x1b[1;33m" + h.from + ":\x1b[0;33m " + text + "\x1b[0m");
@@ -156,8 +162,14 @@ static void hauntShow(Session &s) {
       if (s.ansi) art(s, ("/BBS/ANSI/STORY/" + h.art + ".ANS").c_str());
       else plainArt(s, ("/BBS/ASCII/STORY/" + h.art + ".ASC").c_str());
     }
+    if (h.scene.length()) {
+      sceneStart(s, h.scene);
+      if (s.state == SCENE_PLAY) {
+        for (size_t k = i + 1; k < shows.size(); ++k) s.hauntShows.push_back(shows[k]);
+        return;
+      }
+    }
   }
-  s.hauntShows.clear();
 }
 
 // Did the count go past one of the thresholds since the last look?

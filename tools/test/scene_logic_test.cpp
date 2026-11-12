@@ -353,7 +353,8 @@ int main(int argc, char **argv) {
       for (int pickN = 1; pickN <= 4; ++pickN) {
         Run r = play(s, mode == 0 ? "" : mode == 1 ? all : haunt::flagsAdd("", s->has), {std::string(1, (char)('0' + pickN))});
         // the answers list repeats the last answer for later choices
-        std::vector<std::string> many(8, std::string(1, (char)('0' + pickN)));
+        std::vector<std::string> many(8, "1");   // after the first pick (maybe out of range, so it re-asks) always 1
+        many[0] = std::string(1, (char)('0' + pickN));
         r = play(s, mode == 0 ? "" : mode == 1 ? all : haunt::flagsAdd("", s->has), many);
         if (!r.finished) { printf("FAIL %s: does not end (mode %d, pick %d)\n", argv[i], mode, pickN); failures++; }
         if (r.text.find("\x1b[2J") != std::string::npos) { printf("FAIL %s: text has a clear screen\n", argv[i]); failures++; }
