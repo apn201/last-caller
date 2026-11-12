@@ -8,6 +8,8 @@ static void loginPrompt(Session &s);   // bbs/board.h
 static void finishLogin(Session &s);   // bbs/board.h
 
 static bool isMaintenance(const User &u) { return powerEnabled && u.id && u.normalized == up(powerCfg.maintAccount); }
+// The SysOp is never locked out by brownout: same test as isSysop() in bbs/sysop.h, on a record.
+static bool isSysopRecord(const User &u) { return !u.locked && u.level == 255 && hasFlag(u, "SYSOP"); }
 
 // The ship's maintenance login exists from the first boot. It is made by the
 // board (not by hand in USERS.DAT), read-only, and is not the SysOp.
@@ -88,7 +90,7 @@ static void powerSessionsTick(uint32_t now) {
   for (auto &s : sessions) {
     if (!s.used || s.state == GOODBYE) continue;
     if (!s.dropArmed) { s.dropArmed = true; s.dropAt = now + powerWindowMs(powerCfg.timing, bbsRandom()); }
-    else if ((int32_t)(now - s.dropAt) >= 0) sunsideDrop(s);
+    else if ((int32_t)(now - s.dropAt) >= 0 && !(s.authenticated && isSysopRecord(s.user))) sunsideDrop(s);  // a SysOp who has logged in stays
   }
 }
 
@@ -112,8 +114,8 @@ static void announcePower(bool on, const Session *by) {
 }
 
 // SysOp: POWER shows the ship's power, POWER ON and POWER OFF force it (for
-// testing and demos). Forcing brownout drops every session, the SysOp's too,
-// within the window; the next login is the maintenance account's.
+// testing and demos). Forcing brownout drops every other session within the
+// window; the SysOp's session stays, and the SysOp can log in during brownout.
 static void sysopPowerCommand(Session &s, const String &cmd) {
   String what = tokenAt(cmd, 1);
   if (!powerEnabled) { say(s, "Ship power is not set up: the card has no STORY/POWER.INI. The board is always powered."); return; }
@@ -124,11 +126,11 @@ static void sysopPowerCommand(Session &s, const String &cmd) {
     if (!power.powered) say(s, "The ship is already in BROWNOUT.");
     else {
       powerSet(false, "forced by SysOp " + s.user.handle, &s);
-      say(s, "\x1b[1;31mBROWNOUT. Every session, yours too, ends within " + String(powerCfg.timing.windowMaxSec) + " s. To power up again, log in as " + powerCfg.maintAccount + ".\x1b[0m");
+      say(s, "\x1b[1;31mBROWNOUT. Every other session ends within " + String(powerCfg.timing.windowMaxSec) + " s. Yours stays. POWER ON restores the ship.\x1b[0m");
     }
   } else {
     say(s, String("Ship power: ") + (power.powered ? "POWERED" : "BROWNOUT") + ". " +
-           (powerCfg.timing.decayAfterIdleMin ? "Falls back to brownout " + String(powerCfg.timing.decayAfterIdleMin) + " min after the last caller leaves." : String("It never falls back by itself.")));
+           (powerCfg.timing.decayAfterIdleMin ? "Falls back to brownout " + String(powerCfg.timing.decayAfterIdleMin) + " min after the last caller leaves." : String("The power-up is one-off: it never falls back by itself.")));
     say(s, "POWER ON or POWER OFF forces it.");
   }
 }

@@ -41,7 +41,7 @@ static void loadPower() {
   if (powerEnabled) {
     c.timing.windowMinSec = (uint32_t)constrain(iniGet(ini, "POWER", "window_min", "60").toInt(), 1L, 3600L);
     c.timing.windowMaxSec = (uint32_t)constrain(iniGet(ini, "POWER", "window_max", "120").toInt(), 1L, 3600L);
-    c.timing.decayAfterIdleMin = (uint32_t)constrain(iniGet(ini, "POWER", "decay_after_idle_min", "15").toInt(), 0L, 1440L);
+    c.timing.decayAfterIdleMin = (uint32_t)constrain(iniGet(ini, "POWER", "decay_after_idle_min", "0").toInt(), 0L, 1440L);
     String account = clean(iniGet(ini, "POWER", "maint_account", "admin"), 16, true);
     if (account.length() >= 3) c.maintAccount = account;
     c.maintPassword = iniGet(ini, "POWER", "maint_password", "admin");
@@ -64,7 +64,8 @@ static void loadPower() {
   if (powerEnabled) event("POWER", String("boot ") + (on ? "POWERED" : "BROWNOUT"));
 }
 
-// Switch the whole board. `why` goes to the event log; `by` is the session that\n// did it (it is not told twice).
+// Switch the whole board. `why` goes to the event log; `by` is the session that
+// did it (it is not told twice).
 static void powerSet(bool on, const String &why, const Session *by = nullptr) {
   if (!powerEnabled || power.powered == on) return;
   power.set(on);

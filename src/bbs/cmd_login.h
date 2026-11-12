@@ -3,9 +3,12 @@
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
 
 static bool loginCommand(Session &s, String &line, const String &cmd) {
-  // Brownout: the board offers Login: and nothing else. If the power fell under a caller\n  // who was at the new-account prompts, the prompt starts again as the brownout login.\n  if (boardBrownout() && (s.state == LOGIN_CHOICE || s.state == NEW_HANDLE || s.state == NEW_PASSWORD || s.state == NEW_REAL || s.state == NEW_LOCATION)) { s.hideInput = false; say(s); loginPrompt(s); return true; }\n  if (s.state == LOGIN_CHOICE) { if (cmd == "N" || cmd == "NEW") { s.state = NEW_HANDLE; prompt(s, "Handle (3-16 chars, ENTER cancels): "); } else if (cmd == "L" || cmd == "LOGIN") { s.state = LOGIN_HANDLE; prompt(s, "Handle: "); } else if (cmd == "G") { closeSession(s); } else prompt(s, "N, L or G? "); return true; }
+  // Brownout: the board offers Login: and nothing else. If the power fell under a caller
+  // who was at the new-account prompts, the prompt starts again as the brownout login.
+  if (boardBrownout() && (s.state == LOGIN_CHOICE || s.state == NEW_HANDLE || s.state == NEW_PASSWORD || s.state == NEW_REAL || s.state == NEW_LOCATION)) { s.hideInput = false; say(s); loginPrompt(s); return true; }
+  if (s.state == LOGIN_CHOICE) { if (cmd == "N" || cmd == "NEW") { s.state = NEW_HANDLE; prompt(s, "Handle (3-16 chars, ENTER cancels): "); } else if (cmd == "L" || cmd == "LOGIN") { s.state = LOGIN_HANDLE; prompt(s, "Handle: "); } else if (cmd == "G") { closeSession(s); } else prompt(s, "N, L or G? "); return true; }
   if (s.state == LOGIN_HANDLE) { s.pendingHandle = clean(line, 16, true); User u;
-    if (boardBrownout() && up(s.pendingHandle) != up(powerCfg.maintAccount)) { say(s, "MAINTENANCE ONLY"); event("AUTH_BROWNOUT", s.pendingHandle); loginRetry(s); }
+    if (boardBrownout() && up(s.pendingHandle) != up(powerCfg.maintAccount) && !(findUser(up(s.pendingHandle), u) && isSysopRecord(u))) { say(s, "MAINTENANCE ONLY"); event("AUTH_BROWNOUT", s.pendingHandle); loginRetry(s); }
     else if (!s.pendingHandle.length() || !findUser(up(s.pendingHandle), u)) { say(s, "Unknown caller."); loginRetry(s); }
     else if (u.locked) { say(s, "This account is locked. Page the SysOp."); event("AUTH_LOCKED", u.handle); loginRetry(s); } else { s.user = u; s.state = LOGIN_PASSWORD; s.hideInput = true; prompt(s, "Password: "); } return true; }
   if (s.state == LOGIN_PASSWORD) { s.hideInput = false; if (sha256hex(s.user.salt + ":" + line) != s.user.hash) { say(s, "\r\nBad password."); event("AUTH_FAIL", s.pendingHandle); loginRetry(s); } else { claimAccount(s); finishLogin(s); } return true; }
