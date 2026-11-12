@@ -23,6 +23,8 @@ static const Door DOORS[] = {
   {"I", "Diagnostics", enterDiag, ownsDiag, handleDiag, false, diagListed},
   // The NOWHERE shell: in the menu only for callers who hold SHELL.INI's needs= flags.
   {"N", "NOWHERE shell", enterShell, ownsShell, handleShell, false, shellListed},
+  // The crew manifest: reached by R from the main menu (when it works for the caller), never from this menu.
+  {"", "Crew manifest", enterManifest, ownsManifest, handleManifest, false, manifestNever},
   // Scenes (core/scene.h): started by a trigger rule (scene=NAME), never from the menu.
   {"", "Scene", sceneEnter, ownsScene, handleScene, false, sceneListed},
 };

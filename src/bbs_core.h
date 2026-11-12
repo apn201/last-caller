@@ -36,6 +36,7 @@
 #include "doors/ship.h"
 #include "doors/diag.h"
 #include "doors/shell.h"
+#include "doors/manifest.h"
 #include "doors/doors.h"
 #include "bbs/sysop.h"
 #include "bbs/board.h"

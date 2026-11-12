@@ -62,6 +62,7 @@ static ghost::Ctx ghostCtx(Session &s) { return ghostCtx(s, ghostFlags(s)); }
 
 // ---------- WHO and chat ---------------------------------------------------------------------
 struct WhoRow { uint8_t node = 0; String handle, idle, activity; };
+static void manifestStickyRows(Session &viewer, std::vector<WhoRow> &rows);  // doors/manifest.h: callers who finished the game
 
 // Adds the ghosts this caller can see. A ghost never takes a node a real
 // session is on. The rows are left in node order.
@@ -76,6 +77,7 @@ static void ghostWhoRows(Session &viewer, std::vector<WhoRow> &rows) {
       rows.push_back({(uint8_t)g.node, hauntStr(g.handle), hauntStr(g.idle.empty() ? std::string("0:00") : g.idle), hauntStr(g.activity)});
     }
   }
+  manifestStickyRows(viewer, rows);   // finished callers stay (they take a free node from 60 up)
   std::stable_sort(rows.begin(), rows.end(), [](const WhoRow &a, const WhoRow &b) { return a.node < b.node; });
 }
 // Handles shown in node chat to this caller besides the real ones.

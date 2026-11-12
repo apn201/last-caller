@@ -19,6 +19,7 @@ static void mainMenu(Session &s) {
   if (files) items.push_back({"F", "File cabinets"});
   items.push_back({"A", "ANSI gallery"});
   if (anyDoorOpen(s)) items.push_back({"D", "Doors & games"});
+  if (manifestListed(s)) items.push_back({"R", "Crew manifest"});
   items.push_back({"C", "Node chat"});
   if (bulletins) items.push_back({"B", "Bulletins"});
   if (severalAreas(s.user)) items.push_back({"J", "Conferences"});
@@ -115,6 +116,7 @@ static void finishLogin(Session &s) {
   // (core/haunt.h), in the same save.
   if (!s.readOnly) {
     hauntOwnLogin(s);
+    endingRecord(s);   // a finished caller stays in WHO (doors/manifest.h)
     s.user.calls++;
     if (!touchUser(s.user)) say(s, "\r\nWarning: user statistics were not saved. See Serial console.");
   }

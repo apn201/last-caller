@@ -65,5 +65,10 @@ static void handleShell(Session &s, String &line, const String &) {
     event("SHELL", s.user.handle + " node " + s.node + " typed the final command");
   }
   if (r.out.length()) say(s, "\x1b[0;37m" + shellLines(r.out) + "\x1b[0m");
+  // The final command may hand the screen to a scene (an ending); it ends at the main menu.
+  if (r.final && r.scene.length()) {
+    sceneStart(s, hauntStr(r.scene));
+    if (s.state == SCENE_PLAY) return;
+  }
   shellPrompt(s);
 }

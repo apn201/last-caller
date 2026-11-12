@@ -24,6 +24,7 @@ are allowed: they never appear on screen.
 | B | a bulletin is visible to the caller | |
 | J | more than one message area can be joined | |
 | P | a SysOp is online | |
+| R | the caller can save (not a crew login, not `admin`) and holds evidence about at least one crew row (`STORY/MANIFEST.INI`) | Q6. G with an unfinished manifest shows ELIZA's thanks (partial ending). |
 | Z | SysOp only | Hidden for the SysOp: `USER`, `RELOAD`. |
 
 ## Messages
@@ -80,3 +81,13 @@ are allowed: they never appear on screen.
 | Node monitor | node #, M <node or ALL> text, ENTER | |
 | Door settings | F handle count, V handle, Q | |
 | Upload queue | A #, D #, Q | A and D only when something waits. |
+
+## Manifest (Q6)
+
+| Screen | Keys | Notes |
+| --- | --- | --- |
+| Rows | row number, S, N, Q | S files the manifest. The ELIZA row is listed only after the four crew rows are locked. |
+| A row | 1 2 3, Q | A locked row offers no blank. |
+| Pick list | option number, 0, Q | Only options the caller has evidence for. |
+| Notebook | Q | Notes the caller has earned. |
+| NOWHERE shell | final command | `release outbound` needs the full manifest; otherwise it is `command not found`. The `ENDING` scene follows. |

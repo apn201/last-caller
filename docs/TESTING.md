@@ -57,6 +57,20 @@ zig c++ -std=c++17 -Wall -Wextra -Wno-nullability-completeness -I src/core tools
 
 (`g++` or `clang++` work with the same flags.)
 
+## Manifest and endings (S8, Q6)
+
+Wording is draft. The real evidence flags come with the content (Q7 to Q9); until then the manifest can only be reached by giving the account the flags, so on a card:
+
+1. As SysOp, user editor: add `KHI,KAI,KTI,KVI,KHF,KAF,KTF,KVF,KHC,KAC,KTC,KVC,KZI,KZO,KZW` to a test account (the e2e rule does this when Diagnostics is entered). For the endings also open the shell (`NOWHERE_OPEN`).
+2. Main menu: `R Crew manifest` appears only now (not on a crew login, not for `admin`).
+3. `R`: four rows, no ELIZA row. `N` is the notebook. Open a row, a blank, pick; `0` clears. Leave and sign in again: picks are kept.
+4. Fill one row right and another wrong, `S`: `Rows confirmed: 0 of 4.` and no names. Fill a second row right, `S`: the two are named and locked. Wrong rows are never named.
+5. Confirm all four: the ELIZA row opens. A wrong ELIZA row says only the count. Goodbye now: ELIZA thanks you for your interest (partial ending).
+6. Fill the ELIZA row right: `MANFULL` plays. Doors, `N`, `release outbound`: the `ENDING` scene. Leave it queued: you are on the crew list; another caller sees your handle in `W`. Run it again and send: return traffic, and `W` says the downlink is open.
+7. Browser and Telnet alike; without ANSI the ASCII art shows.
+
+Host test: `zig c++ -std=c++17 -Wall -Wextra -I src/core tools/test/manifest_logic_test.cpp -o manifest_logic_test` then `./manifest_logic_test sd/BBS/STORY/MANIFEST.INI`.
+
 ## Server build and end-to-end check (second build, from Q1)
 
 The server cannot be built on this Windows PC. The staging host builds and
@@ -83,9 +97,10 @@ Commit first: only the pushed `main` is tested. The script pushes to the
 5. runs `tools/test/e2e_telnet.py` (standard library only): front page (no New), wrong name,
    `admin`/`admin` and the timer drop, reconnect, ship console (no `CREW`),
    `SOURCE RTG` (abort, then `K`), ELIZA's wake-up, the timer stopped, `CREW`,
-   (cancel, then an account made in the console), log in with it, the `ELIZA_WAKE` scene, the doors menu, Diagnostics (query codes), the NOWHERE shell (its gate is opened on the disposable card, `--shell-open`), a registered caller with no prologue and no timer, `admin` twice, Goodbye, and a crew login when
+   (cancel, then an account made in the console), log in with it, the `ELIZA_WAKE` scene, the doors menu, Diagnostics (query codes), the NOWHERE shell (its gate is opened on the disposable card, `--shell-open`), the crew manifest and the endings (`--evidence`: on the disposable card, entering Diagnostics grants the evidence flags; see below), a registered caller with no prologue and no timer, `admin` twice, Goodbye, and a crew login when
    `-Crew` is given (SKIP otherwise);
-6. stops the server and prints `STAGING CHECK: PASS` or `FAIL` (exit code 0 or 1).
+6. checks the event log for story failures (flags that did not fit, scenes or story files that failed);
+7. stops the server and prints `STAGING CHECK: PASS` or `FAIL` (exit code 0 or 1).
 
 The server log is `~/lastcaller-staging/server.log`; the last e2e output is
 `e2e.out`. Wording is draft, so the e2e script matches short markers; when

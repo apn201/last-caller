@@ -30,7 +30,7 @@ struct Table {
   std::string motd;
   std::string unknown = "{cmd}: command not found";
   std::string date = "Oct 31  1998", owner = "root";
-  std::string finalCmd, finalHas, finalSet, finalText;
+  std::string finalCmd, finalHas, finalSet, finalText, finalScene;   // finalScene: a scene (STORY/SCENES) the door starts after the final text
   std::vector<Node> nodes;
   unsigned skipped = 0;
   std::vector<std::string> problems;
@@ -172,6 +172,7 @@ inline void parse(const std::vector<Kv> &kv, Table &t) {
   t.finalHas = haunt::flagsClean(get(kv, "SHELL", "final_has"));
   t.finalSet = haunt::flagsClean(get(kv, "SHELL", "final_set"));
   t.finalText = haunt::capText(get(kv, "SHELL", "final_text"), MAX_TEXT);
+  t.finalScene = haunt::upper(haunt::trim(get(kv, "SHELL", "final_scene")));
   std::vector<std::string> seen;
   for (const auto &e : kv) {
     if (e.section.empty() || e.section[0] != '/') continue;
@@ -200,6 +201,7 @@ struct Result {
   bool exit = false;
   std::string grant;    // flags to add to the caller (the final command)
   bool final = false;
+  std::string scene;    // the final command: the scene to start after the text
 };
 
 inline std::string pad(const std::string &s, size_t w, bool right = false) {
@@ -213,7 +215,7 @@ inline Result exec(const Table &t, std::string &cwd, const std::string &flags, c
   if (w.empty()) return r;
   std::string cmd = haunt::lower(w[0]);
   if (!t.finalCmd.empty() && squash(line) == t.finalCmd && (t.finalHas.empty() || haunt::flagsHasAll(flags, t.finalHas))) {
-    r.out = t.finalText; r.grant = t.finalSet; r.final = true;
+    r.out = t.finalText; r.grant = t.finalSet; r.final = true; r.scene = t.finalScene;
     return r;
   }
   if (cmd == "exit" || cmd == "logout" || cmd == "quit" || cmd == "bye") { r.exit = true; return r; }

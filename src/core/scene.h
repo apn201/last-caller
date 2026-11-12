@@ -14,6 +14,7 @@ static constexpr const char *SCENE_DIR = "/BBS/STORY/SCENES/";
 static constexpr size_t SCENE_MAX_BYTES = 24 * 1024;
 
 static void mainMenu(Session &s);  // bbs/board.h
+static void endingRecord(Session &s);  // doors/manifest.h
 
 // "ELIZA_WAKE" -> a checked, upper-case name; "" if it is not a plain name.
 static String sceneName(const String &raw) {
@@ -56,6 +57,7 @@ static bool sceneGrant(Session &s, const std::string &add) {
 static void sceneEnd(Session &s) {
   s.sceneRun = scene::Player();
   s.hideInput = false;
+  endingRecord(s);   // a finished caller stays in WHO
   mainMenu(s);
 }
 
