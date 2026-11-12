@@ -110,7 +110,7 @@ Rules for every item:
     `MENU_AUDIT.md` and the e2e test (timer drop, power restored, account
     created in the console, log in with it, registered caller skips the
     prologue). Staging check must PASS.
-- [ ] **Q6 - Manifest and endings (S8).** Pairs confirmed, ELIZA's row
+- [x] **Q6 - Manifest and endings (S8).** (done, dee42ff..HEAD of the Q6 commits plus the tick; `pio run` passes, host tests pass with `zig c++`, staging check PASS: server build, smoke, e2e 31 passed, 0 failed, 1 skipped (crew login), event log clean; board test still to do, spec manifest task 9. The evidence flags `KHI` to `KZW` and the real final command come with Q7 to Q9; the e2e grants the flags on the disposable card.) Pairs confirmed, ELIZA's row
   last, three endings, sticky ghost handle, notebook view.
 - [ ] **Q7 - Content act 1.** Accounts and user list, bulletins, public
   and story conferences, crew posts 2 to 21 Nov, Ty's journal and Orbit

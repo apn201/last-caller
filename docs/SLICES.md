@@ -236,6 +236,8 @@ found evidence about, so the menu never shows a dead option.
   something it has not said before.
 - Sticky: a finished caller's handle stays in WHO for the next caller.
 
+Built (Q6): spec `.kiro/specs/manifest/`, `src/core/manifest_logic.h` + `src/doors/manifest.h`, card file `STORY/MANIFEST.INI`, scenes `MANFULL` and `ENDING`. Key `R` (`M` is the message bases). Host test: `tools/test/manifest_logic_test.cpp`. Board test still to run (spec task 9).
+
 The `story-lint` check for this: every row is provable from evidence on the
 card, and no row is provable from a single clue.
 
