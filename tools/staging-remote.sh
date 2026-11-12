@@ -30,7 +30,7 @@ cleanup() {
   fi
   if [ -n "$PLACEHOLDER_RESTORE" ]; then
     # Put back the placeholder that held the port before the run.
-    (cd "$STAGE" && nohup python3 -m http.server "$HTTP_PORT" --bind 127.0.0.1 >/dev/null 2>&1 &)
+    (cd "$STAGE" && setsid -f python3 -m http.server "$HTTP_PORT" --bind 127.0.0.1 >/dev/null 2>&1 </dev/null)
   fi
 }
 trap cleanup EXIT

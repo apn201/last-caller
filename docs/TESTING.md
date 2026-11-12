@@ -65,3 +65,40 @@ zig c++ -std=c++17 -Wall -Wextra -Wno-nullability-completeness -I src/core tools
 ```
 
 (`g++` or `clang++` work with the same flags.)
+
+## Server build and end-to-end check (second build, from Q1)
+
+The server cannot be built on this Windows PC. The staging host builds and
+tests the committed `main` (Rocky Linux 9, `lastcaller@helppox.com`, key auth,
+no sudo, home folder only, 127.0.0.1 only):
+
+```powershell
+powershell -File tools/staging-check.ps1            # push main, build, test
+powershell -File tools/staging-check.ps1 -Crew HANDLE:PASSWORD   # once a crew account exists
+```
+
+Commit first: only the pushed `main` is tested. The script pushes to the
+`staging` remote (`lastcaller@helppox.com:last-caller.git`), then runs
+`tools/staging-remote.sh` on the host, which:
+
+1. checks out into `~/lastcaller-staging/src` and builds with cmake;
+2. copies `sd/BBS` to a fresh card `~/lastcaller-staging/card` (window 4 to
+   8 s, `decay_after_idle_min=0`, no `DATA/STATE`) and runs the phase-1 smoke
+   check on a throwaway copy;
+3. starts `tinybbs-server` on `127.0.0.1:8086` with Telnet on
+   `127.0.0.1:2323` (the placeholder web server our own account keeps on 8086
+   is stopped for the run and put back afterwards; anything else on the port
+   aborts the run);
+4. `curl`s `/api/board` and the terminal page;
+5. runs `tools/test/e2e_telnet.py` (standard library only): brownout banner,
+   wrong name, drop after the window, reconnect, `admin`/`admin`, ship console,
+   `SOURCE RTG` (abort, then `K`), ELIZA's wake-up, power holds, new account,
+   the `ELIZA_WAKE` scene, a second login, Goodbye, and a crew login when
+   `-Crew` is given (SKIP otherwise);
+6. stops the server and prints `STAGING CHECK: PASS` or `FAIL` (exit code 0 or 1).
+
+The server log is `~/lastcaller-staging/server.log`; the last e2e output is
+`e2e.out`. Wording is draft, so the e2e script matches short markers; when
+text changes, change the marker in `tools/test/e2e_telnet.py`.
+
+The report for each item must say whether this ran. "Not run" is never "passed".
