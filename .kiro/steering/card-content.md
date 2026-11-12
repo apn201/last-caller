@@ -13,8 +13,10 @@ inclusion: always
 - Never expose SD paths to a caller. Do not format an SD card.
 - Do not hand-edit `/BBS/DATA`, `/BBS/LOGS` or `/BBS/TEMP`. The board writes
   them.
-- `sd/BBS/FILES` and `sd/BBS/MSGBASE` are git-ignored and stay out of the
-  repository.
+- `sd/BBS/FILES` and `sd/BBS/MSGBASE` hold the story's own files and posts
+  (since Q7) and are tracked. Story posts are `MSGBASE/<conference id>/*.TXT`;
+  a file area may carry `DATES.BBS` (`NAME YYYY-MM-DD`) so its listing shows
+  1998 dates, not the day the card was copied.
 - Source content is in `sd/BBS/`. `tools/prepare-sd.ps1` copies it to a card.
 - Story tables go in `sd/BBS/STORY/*.INI`. Clue and progress state are flags
   on the user record. Flags only grow.

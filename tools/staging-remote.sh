@@ -65,8 +65,9 @@ rm -rf "$CARD/BBS/DATA/STATE"
 sed -i "s/^timer_sec=.*/timer_sec=$TIMER/" "$CARD/BBS/STORY/POWER.INI"
 # Open the NOWHERE shell gate on the disposable card so the test can walk it.
 sed -i "s/^needs=.*/needs=/" "$CARD/BBS/STORY/SHELL.INI"
-# The manifest needs evidence flags the story content (Q7 to Q9) will grant. On the disposable card,
-# entering Diagnostics grants them all, so the test can walk the manifest and the endings.
+# Act 1 grants the identity flags by reading (the e2e plays it). The fates, causes and the
+# ELIZA row come with acts 2 and 3: until then, entering Diagnostics grants them all on this
+# disposable card, so the test can walk the manifest and the endings.
 cat >> "$CARD/BBS/STORY/TRIGGERS.INI" <<'EOF'
 
 [E2E_EVIDENCE]
@@ -121,7 +122,7 @@ python3 "$SRC/tools/test/e2e_telnet.py" --port "$TELNET_PORT" --timer "$TIMER" -
 if [ "${PIPESTATUS[0]}" -eq 0 ]; then note PASS "end-to-end Telnet test ($(tail -1 "$STAGE/e2e.out"))"; else note FAIL "end-to-end Telnet test ($(tail -1 "$STAGE/e2e.out"))"; fi
 
 # 7b. The event log must hold no failure: flags that did not fit or were not saved, broken story files.
-if grep -E "\|(TRIGGER_FULL|TRIGGER_FAIL|SCENE_FAIL|SCENE_SKIP|GHOST_FAIL|MANIFEST_FAIL|MANIFEST_SKIP|SHELL_FAIL|DIAG_FAIL|TRIGGER_SKIP|GHOST_SKIP)\|" "$CARD/BBS/LOGS/EVENTS.LOG"; then note FAIL "event log holds story failures (listed above)"; else note PASS "event log: no story failures"; fi
+if grep -E "\|(TRIGGER_FULL|TRIGGER_FAIL|SCENE_FAIL|SCENE_SKIP|GHOST_FAIL|MANIFEST_FAIL|MANIFEST_SKIP|SHELL_FAIL|DIAG_FAIL|TRIGGER_SKIP|GHOST_SKIP|ACCOUNT_SKIP|ACCOUNT_FAIL|STORY_FULL|STORY_FAIL)\|" "$CARD/BBS/LOGS/EVENTS.LOG"; then note FAIL "event log holds story failures (listed above)"; else note PASS "event log: no story failures"; fi
 
 # 8. Server still alive and quiet.
 if kill -0 "$SERVER_PID" 2>/dev/null; then note PASS "server survived the run"; else note FAIL "server died during the run"; tail -20 "$LOG"; fi

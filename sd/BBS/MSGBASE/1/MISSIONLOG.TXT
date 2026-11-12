@@ -1,0 +1,96 @@
+; Mission Log: the commander's entries, 2 to 21 Nov 1998. DRAFT.
+; Halvorsen: short, technical, dry. Times and numbers. Feeling only in what she
+; leaves out.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 2
+Date: 1998-11-02 06:30
+
+Launch plus 51 h. Orbit 412 x 418 km, 51.6 deg. Board up 0600. Crew awake 0545,
+Vance 0620. Systems nominal. Rota in the Lounge.
+
+Cmdr. M. Halvorsen
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 4
+Date: 1998-11-04 20:15
+
+Cabin 21.0 per plan. Three complaints, one from a professor with a spreadsheet.
+Set to 22. Exercise 90 min, bay 2. Vance asked if the gym could have a window.
+It has one. He had not looked up.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 7
+Date: 1998-11-07 19:40
+
+EVA drill. Suit 1 checked. Suit 2 wrist ring leaked at 0.3 kPa/min, replaced.
+Suits 3 and 4 stowed. Two airlock cycles, dry. Vance in the loop for the first
+time. He asked whether the airlock was heated. It is a vacuum.
+
+He did the second cycle without being told. Good hands.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 11
+Date: 1998-11-11 21:05
+
+Module 3 (garden) power: 4.3 kW. Lamps and pumps account for 1.2. Rack 2 is
+the rest. ELIZA: the insurers' instrument, telemetry archive. Asked for the
+instrument manifest. Will review when it comes.
+
+Slept 6.5 h.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 14
+Date: 1998-11-14 22:10
+
+Two weeks. Crew in good order. Vance's music stops at 0100 by agreement and at
+0200 in practice. Anders's mock mark is in: 74. Eased.
+
+Lamp 3 in the garden flickers. ELIZA to replace.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 18
+Date: 1998-11-18 15:30
+
+Insurers' manifest arrived 0900. 14 pp. Rack 2 not listed. Query to MCC at 1100
+through the relay. Reply 1400: "noted".
+
+Spare O2 candle count checked with Achterberg. He counted twice. It was right
+the first time.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 20
+Date: 1998-11-20 04:20
+
+0300: woke Tanabe. Cupola, 0310 to 0322, aurora. Green, with red at the top
+edge. Back to bunk 0340.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 21
+Date: 1998-11-21 18:00
+
+Saturday. Rest day. Lamp 3 replaced, still flickers. No other items.
+
+Cupola party tonight. I have not agreed to the music.
+
+M.H.

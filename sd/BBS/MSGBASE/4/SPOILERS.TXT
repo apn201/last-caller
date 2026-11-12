@@ -1,0 +1,11 @@
+; Spoilers and No Spoilers: public conferences, the board as a normal 1998 board.
+#MSG
+From: ELIZA
+To: ALL
+Subject: Spoilers
+Date: 1998-11-02 09:30
+
+This area is for hints, solutions and arguments about what happened to the
+crew. If you have not looked for yourself yet, you may prefer the other one.
+
+ELIZA

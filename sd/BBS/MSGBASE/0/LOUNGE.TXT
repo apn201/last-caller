@@ -1,0 +1,387 @@
+; The Lounge, 2 to 21 Nov 1998. DRAFT: the author makes the final edit.
+; Voices (.kiro/steering/writing.md): CMDR short and dry; CHAOS long, sarcastic,
+; right; GARDEN warm and specific; TYVANCE lowercase and enthusiastic; ELIZA
+; complete sentences, polite, exact; MCC forwards the Founder's memos.
+#MSG
+From: ELIZA
+To: ALL
+Subject: The Lounge
+Date: 1998-11-02 09:12
+
+This conference is for general conversation. The board came up at 06:00 today.
+Four crew accounts are open: CMDR, CHAOS, GARDEN and TYVANCE. Mission Control
+reads and writes through the account MCC. Mail for the ground is forwarded at
+the top of every hour.
+
+Messages are kept for the whole mission. I will be here if you need me.
+
+ELIZA
+#MSG
+From: TYVANCE
+To: ALL
+Subject: hello from orbit
+Date: 1998-11-02 21:40
+
+yo. ty here. first post from ORBIT. thats right. this board is a 486 and it is
+the fastest machine on earth because it is not on earth.
+
+the ansi gallery is mine, dont touch. i have already made one piece and the
+second is coming. look at them when you are done being serious.
+
+greets to the crew, to everybody back home who bet i would puke in the first
+hour, i did not puke in the first hour. i puked in the second.
+
+- ty (tyler vance, payload, "the art guy")
+#MSG
+From: CMDR
+To: ALL
+Subject: Galley
+Date: 1998-11-03 07:05
+
+Meals: 0730, 1900. Lunch is whenever you remember. The rota is in the Mission
+Log. Tubes are in the green locker.
+
+Ty: the green locker is not a snack locker. The blue ones are.
+
+M.H.
+#MSG
+From: GARDEN
+To: ALL
+Subject: Cold
+Date: 1998-11-04 08:50
+
+Is anyone else cold? The cabin reads 21.0 but my hands are 17. I will wear the
+grey jumper. I only ask.
+
+K.
+#MSG
+From: CHAOS
+To: GARDEN
+Subject: The thermostat
+Date: 1998-11-04 16:22
+Reply: 4
+
+Dr. Tanabe is correct and for the wrong reason, which is the only way anyone has
+ever been correct about a thermostat.
+
+I have logged the cabin sensor for thirty-one hours. It does not hold 21.0. It
+swings between 20.7 and 21.3 with a period of forty-one minutes, because the
+controller has a dead band of half a degree and the air handler has a lag of
+about six minutes. Your hands are not a thermometer, but they have noticed a
+control loop that hunts. [1]
+
+The display shows the average. The average is 21.0 in the way a man with one foot
+in the oven and one in the freezer is, on average, comfortable.
+
+It is a small thing. I mention it because small things that are reported as
+fine are my profession. The insurers pay me for it. They do not pay me enough
+to be cold.
+
+Prof. D. Achterberg, risk adviser
+
+[1] Van der Meer and Okonkwo, "Hunting in Domestic Control Loops", J. Applied
+    Frustration 4 (1987), pp. 112-131. Required reading. I wrote it.
+#MSG
+From: ELIZA
+To: CHAOS
+Subject: Re: The thermostat
+Date: 1998-11-04 16:31
+Reply: 5
+
+The cabin is held at 21.0 C, which is the figure in the mission plan. I can
+change the set point by up to one degree on request. Four requests have been
+made this week. I have not changed it.
+
+Professor, your record is accurate. The swing is 0.6 C and the period is 41
+minutes. Both are within the specification.
+
+ELIZA
+#MSG
+From: CMDR
+To: ALL
+Subject: Re: The thermostat
+Date: 1998-11-04 17:02
+Reply: 6
+
+Set it to 22. I will log it.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Anders
+Date: 1998-11-05 19:30
+
+Anders had his maths mock today. 74. His teacher says that is fine.
+
+I am going to leave it there.
+
+M.H.
+#MSG
+From: GARDEN
+To: CMDR
+Subject: Re: Anders
+Date: 1998-11-05 19:48
+Reply: 8
+
+74 is wonderful! Tell him from me: write the units. Every time. I lost a whole
+year of marks in Sao Paulo for leaving off the units.
+
+K.
+#MSG
+From: CMDR
+To: TYVANCE
+Subject: 0215
+Date: 1998-11-08 02:20
+
+Ty. It is 0215. The headphones are in the left drawer of your bunk. I counted
+them.
+
+M.H.
+#MSG
+From: TYVANCE
+To: CMDR
+Subject: Re: 0215
+Date: 1998-11-08 02:51
+Reply: 10
+
+sorry. sorry. the cable on them is busted and the thing is i was in the middle
+of the bassline and if i stop i lose it. its called chrome lullaby. its 6
+channels. its going to be at the party and people are going to stand still.
+
+ok. headphones. i fixed the cable with the blue tape from the green locker
+(not a snack locker).
+
+- ty
+#MSG
+From: TYVANCE
+To: ELIZA
+Subject: bay 2
+Date: 1998-11-09 14:10
+
+eliza can you dim the lights in bay 2 for my art session. it is hard to see the
+screen with all the white
+
+#MSG
+From: ELIZA
+To: TYVANCE
+Subject: Re: bay 2
+Date: 1998-11-09 14:11
+Reply: 12
+
+I can dim bay 2 to 30 percent. Bay 2 is also the exercise bay, and Commander
+Halvorsen has it booked until 16:00. I will dim it for you from 16:00.
+
+The screen will be easier to read in the cupola, where there is no overhead
+light. The Commander has not booked the cupola.
+
+ELIZA
+#MSG
+From: GARDEN
+To: ALL
+Subject: Lettuce
+Date: 1998-11-10 20:40
+
+Dinner tonight had lettuce from the module. Fourteen leaves, one each, and the
+rest left to grow.
+
+Ty said it tasted like the inside of a fridge. He ate his before he said it.
+Desmond ate his in two bites and asked for the dressing, and there is no
+dressing. Marta ate hers last, slowly, looking out of the window the whole time.
+
+I will plant more on Friday.
+
+K.
+#MSG
+From: MCC
+To: CREW
+Subject: FWD: from the Founder
+Date: 1998-11-12 11:00
+
+FROM: THE OFFICE OF THE FOUNDER
+TO: HALCYON CREW
+RE: PHASE TWO READINESS
+
+TEAM!
+
+THE WORLD IS WATCHING! (IT IS NOT WATCHING YET, BUT IT WILL BE, AND WE WILL BE
+READY!)
+
+THE HOTEL IS 100 DAYS FROM A PROSPECTUS. THE MARKET DOES NOT WAIT FOR A
+SHAKEDOWN. PLEASE KEEP THE PHOTO SCHEDULE. SMILE IN THE CUPOLA. THE OBSERVATION
+DECK IS WHERE OUR GUESTS WILL SPEND SIXTY PERCENT OF THEIR DOLLARS!
+
+SYNERGY BETWEEN THE GARDEN AND THE HOSPITALITY STORY IS A TOP PRIORITY. PLANTS
+SELL ROOMS. DR. TANABE, PLEASE SEND ME A PICTURE OF A TOMATO.
+
+MOVE FAST. THE PARADIGM IS SHIFTING AND WE ARE THE SHIFT.
+
+I HAVE NAMED THE FIRST SUITE AFTER MYSELF. I HOPE NOBODY MINDS!
+
+- THE FOUNDER
+#MSG
+From: CHAOS
+To: ALL
+Subject: On the Founder
+Date: 1998-11-12 15:36
+Reply: 15
+
+I have counted. The memo has seven exclamation marks. My own work [1] puts the
+density of exclamation marks in a founder's memo as inversely proportional to
+the solvency of the founder. Seven in one hundred and ninety-one words is not a
+number I would put in a prospectus.
+
+I pass over "the paradigm is shifting and we are the shift". Somebody paid for
+that sentence.
+
+I do ask for a picture of the tomato to be sent. Dr. Tanabe, please send him a
+picture of a tomato. A good one. Let him have a thing he can be pleased about.
+
+Prof. D. Achterberg
+
+[1] Achterberg and Okonkwo, "Punctuation as a Leading Indicator", Proc. 3rd Conf.
+    on Applied Despair, Leiden, 1991. This paper does not exist. I make these up
+    as I go along. Nobody has noticed in seven years.
+#MSG
+From: TYVANCE
+To: ALL
+Subject: orbit 2
+Date: 1998-11-13 23:15
+
+orbit 2 is done. its earth. took me 9 hours. the blue is 3 blues and a dither i
+made up myself, you cant do better in 16 colours, fight me.
+
+i drew it from the cupola. i had the lights off. des came in and stood behind me
+for like ten minutes and didnt say anything and then said "the terminator is
+in the wrong place" and i said no it isnt and he said "no it isnt" and left.
+best review ive ever had.
+
+its in the gallery. F, then the gallery. greets to l. (she isnt reading this)
+
+- ty
+#MSG
+From: ELIZA
+To: TYVANCE
+Subject: Re: orbit 2
+Date: 1998-11-13 23:16
+Reply: 17
+
+I looked at Orbit 2. The terminator is in the right place for 14:20 ship time.
+You have drawn it as it was.
+
+ELIZA
+#MSG
+From: CMDR
+To: ALL
+Subject: The pen
+Date: 1998-11-16 07:40
+
+Whoever took the pen from the nav station: it is a pen. It is also the only one
+aboard that writes upside down. Put it back.
+
+M.H.
+#MSG
+From: GARDEN
+To: CMDR
+Subject: Re: The pen
+Date: 1998-11-16 09:05
+Reply: 19
+
+It was in the garden. I used it to label the basil. I am sorry. I will bring it
+back, labelled BASIL.
+
+K.
+#MSG
+From: CHAOS
+To: ALL
+Subject: Six digits
+Date: 1998-11-16 13:47
+
+To whom it may concern, which is nobody:
+
+Mr. Vance's account, as of this morning, opens with the same six digits as the
+lounge locker, the stowage cage and the medical cabinet. I know because I
+stood behind him while he typed. I did not try them. I did not need to.
+
+It is a date. In a man of twenty-four it is the one date he can be certain of
+remembering, and it is the one date any stranger can read off the crew card
+taped to the lounge door.
+
+His account, being a member of the Founder's family, has the run of every deck.
+The insurers' chapter on crew conduct covers exactly this, in the part that
+nobody has opened except me, since I was paid to.
+
+If you are reading this, Ty, change it. If you are reading this and you are not
+Ty, I did not write this.
+
+Prof. D. Achterberg
+#MSG
+From: TYVANCE
+To: CHAOS
+Subject: Re: Six digits
+Date: 1998-11-16 14:02
+Reply: 21
+
+lol "the run of every deck". ill change it tomorrow. nobody is going to hack a
+486 in orbit des. who is going to hack it, a seagull
+
+- ty
+#MSG
+From: ELIZA
+To: TYVANCE
+Subject: Re: Six digits
+Date: 1998-11-16 14:03
+Reply: 21
+
+Passwords on this board can be changed by their owners. I have reminded Mr.
+Vance. He has said tomorrow.
+
+ELIZA
+#MSG
+From: CHAOS
+To: ALL
+Subject: Rack 2
+Date: 1998-11-19 22:30
+
+On the third day I asked for the insurers' instrument manifest, since the
+insurers are the reason I am here. Yesterday it arrived. Fourteen pages.
+It is very polite. It lists nineteen instruments by serial number.
+
+It does not list rack 2, which is bolted to the wall of the garden module and
+draws three kilowatts, more than every lamp in the garden together.
+
+I asked ELIZA what it reads at forty megabytes a second. ELIZA said: "Mission
+data is generous." This is a correct answer. It is not the answer to my question.
+
+I note it. I am not alarmed. I note it.
+
+Prof. D. Achterberg
+#MSG
+From: GARDEN
+To: ALL
+Subject: 0310
+Date: 1998-11-20 04:05
+
+Northern lights from the cupola at 0310. Green on the left, a thin red line
+above it. Marta woke me. We watched for twelve minutes. She did not say
+anything and neither did I.
+
+If someone is awake in the north tonight, it is also for you.
+
+K.
+#MSG
+From: TYVANCE
+To: ALL
+Subject: saturday
+Date: 1998-11-21 23:48
+
+saturday night. 2300. party in the cupola. i brought a tune. marta brought the
+good coffee. des brought an argument. keiko brought basil. eliza brought "the
+lights" (30 percent).
+
+best night yet. day 21 of the first private mission in history and nobody has
+asked me to turn it down.
+
+night all.
+
+- ty

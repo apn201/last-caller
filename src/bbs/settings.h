@@ -178,8 +178,13 @@ static String loadSettings() {
 
 static void hauntScreen(Session &s, const String &what);  // core/haunt.h: a screen was shown (event=screen)
 static void showBulletin(Session &s, const Bulletin &b) {
-  if (b.path.length()) art(s, b.path.c_str(), b.title);
-  else {
+  if (b.path.length() && s.ansi) art(s, b.path.c_str(), b.title);
+  else if (b.path.length()) {   // no ANSI: the plain twin under /BBS/ASCII, same name with .ASC
+    String plain = b.path;
+    plain.replace("/BBS/", "/BBS/ASCII/");
+    if (up(plain).endsWith(".ANS")) plain = plain.substring(0, plain.length() - 4) + ".ASC";
+    plainArt(s, plain.c_str(), b.title);
+  } else {
     say(s, "\r\n\x1b[1;36m" + b.title + "\x1b[0m");
     String text = b.text;
     text.replace("|", "\r\n");

@@ -31,7 +31,7 @@ def build():
     c.put(0, 4, "├", GREY); c.hline(1, 4, 78, "─", GREY); c.put(79, 4, "┤", GREY)
 
     # form fields
-    fields = [("DOC NO.", "001/97", 3), ("CLASS", "CREW", 22), ("ISSUED", "14 MAR 1997", 36), ("PAGE", "1 OF 1", 64)]
+    fields = [("DOC NO.", "001/98", 3), ("CLASS", "CREW", 22), ("ISSUED", "2 NOV 1998", 36), ("PAGE", "1 OF 1", 64)]
     for k, v, x in fields:
         c.text(x, 5, k, DGREY)
         c.text(x + len(k) + 1, 5, v, GREY)
@@ -55,7 +55,7 @@ def build():
     ring.flush(c, 5, 18)
     c.text(14, 18, "Signed,", DGREY)
     c.text(14, 19, "ELIZA", YELLOW)
-    c.text(14, 20, "SysOp  ·  Mission AI  ·  14 Mar 1997", DGREY)
+    c.text(14, 20, "SysOp  ·  Mission AI  ·  2 Nov 1998", DGREY)
     # stamp
     c.box(58, 18, 18, 3, "double", AMBER)
     c.text(60, 19, "READ AND FILED", YELLOW)

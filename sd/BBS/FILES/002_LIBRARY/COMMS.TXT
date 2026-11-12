@@ -1,0 +1,52 @@
+HALCYON COMMUNICATIONS AND DIAGNOSTICS MANUAL
+Rev. 3, 28 Oct 1998. For crew use. Filed by ELIZA.
+================================================================================
+
+1. THE BOARD
+
+   The bulletin board runs on the ship's 486, behind the navigation seat. It
+   shares the ship's modem with the packet gateway. One caller may use each
+   node. The ground reaches it through the account MCC.
+
+2. THE DIAGNOSTICS DOOR
+
+   Doors, then Diagnostics. The mission computer answers a system query by its
+   code. Type the code. Spaces and dashes do not matter. QUIT leaves.
+
+   She answers what is asked. Please ask exactly.
+
+3. QUERY CODES
+
+   1xx  POWER AND ATTITUDE
+        100  Power bus, source and solar array
+        101  Attitude and rate
+
+   2xx  CREW AND CABIN
+        200  Crew count, aboard at launch and aboard now
+        201  Cabin atmosphere
+
+   3xx  COMMUNICATIONS
+        300  Downlink and uplink, and the last acknowledgement
+        301  Telephone line, modem and node
+
+   4xx  PAYLOAD
+        400  Payload module, power and cooling
+
+   5xx  MISSION CLOCK
+        500  Mission day
+
+   6xx to 9xx are reserved for Mission Operations. They are not printed here.
+   Code lists for Mission Operations are issued on request, in writing.
+
+4. IF THE BOARD DOES NOT ANSWER
+
+   Wait one minute. If the board still does not answer, the ship may be in
+   shadow. Try again when the sun is up.
+
+5. NOTES
+
+   The ground reaches the ship through the relay once an hour. A message is
+   forwarded at the top of the hour. A message sent at one minute past waits
+   fifty-nine.
+
+   There is no code for the weather. Please ask the Commander.

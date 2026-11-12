@@ -6,13 +6,13 @@ sd/BBS/DATA/
 sd/BBS/LOGS/
 sd/BBS/TEMP/
 sd/BBS/UPLOADS/
-# Curated/downloadable BBS file areas are kept off the source repository.
-sd/BBS/FILES/
+# sd/BBS/FILES (file areas) and sd/BBS/MSGBASE (message history) hold the story
+# itself since Q7 (HALCYON's own posts and files), so they are tracked. The old
+# board's curated content is gone; anything copied there from outside is not.
 
 # TinyIRC, the first iteration, lives in its own repository.
 reference/
 tools/.cache/
-sd/BBS/MSGBASE/
 __pycache__/
 
 # Rendered previews of the ANSI art (tools/ansi/render.py).

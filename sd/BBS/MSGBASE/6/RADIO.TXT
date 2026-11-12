@@ -1,0 +1,124 @@
+; Radio Room: the packet gateway, Nov 1998. DRAFT. Side story A (Keiko and the
+; amateur in Finland). His last message of 22 Nov and the club of 2026 come later.
+; The callsign is invented.
+#MSG
+From: ELIZA
+To: ALL
+Subject: The Radio Room
+Date: 1998-11-02 09:20
+
+This conference is for radio amateurs who reach the ship's packet gateway, and
+for anyone who wants to talk to them. Messages come in on the passes and go out
+on the next one. I do not control the weather.
+
+ELIZA
+#MSG
+From: OH9ZQW
+To: ALL
+Subject: CQ HALCYON
+Date: 1998-11-05 03:12
+
+Good morning. This is Eero, a radio amateur in northern Finland. My packet
+station heard your gateway at 0258 UTC during a pass, strong for six minutes,
+and I have been trying to work out whether anyone reads this.
+
+If you do, please tell me the colour of the light in your cupola at night.
+Then I will know it is a person.
+
+OH9ZQW
+#MSG
+From: GARDEN
+To: OH9ZQW
+Subject: Re: CQ HALCYON
+Date: 1998-11-06 05:41
+Reply: 2
+
+Hello Eero. This is Keiko, on HALCYON. We read you. The cupola light is amber
+and white at night, and today it is also a little green, because I put a tray
+of lettuce in the window.
+
+Please tell us your weather. Nobody up here has been outside for six days.
+
+Keiko
+#MSG
+From: OH9ZQW
+To: GARDEN
+Subject: Weather
+Date: 1998-11-08 04:55
+Reply: 3
+
+Minus fourteen. Clear. The snow squeaks when you walk on it, which means it is
+cold enough that I should not be walking on it. The sauna is hot and my dog is
+unconvinced by both.
+
+I heard you on the 0410 pass. I am glad it was lettuce.
+
+Eero
+#MSG
+From: GARDEN
+To: OH9ZQW
+Subject: Re: Weather
+Date: 1998-11-11 06:12
+Reply: 4
+
+What does one do with a dog and a sauna? Do you grow anything?
+
+Up here I am growing wheat, which is very serious, and strawberries, which are
+not.
+
+Keiko
+#MSG
+From: OH9ZQW
+To: GARDEN
+Subject: Re: Weather
+Date: 1998-11-14 04:30
+Reply: 5
+
+I grow nothing. The cloudberries grow and I walk out in August and take them.
+This is not farming. It is trespass with a bucket.
+
+Please tell me about the wheat.
+
+Eero
+#MSG
+From: GARDEN
+To: OH9ZQW
+Subject: Wheat
+Date: 1998-11-17 05:02
+Reply: 6
+
+It is a dwarf variety bred to stay small, and it does not know it. It reaches my
+knee. It smells of bread before it is bread.
+
+Last night I stood in the module for an hour with the lamps off and the
+fan running and thought: there is a man in Finland with a dog who asked about
+wheat.
+
+Keiko
+#MSG
+From: GARDEN
+To: OH9ZQW
+Subject: Northern lights
+Date: 1998-11-20 04:20
+
+Eero, if you are awake: we have just watched the aurora from the cupola, 0310
+to 0322 ship time. Green on the left, a thin red line on top. Did you see it
+from your side?
+
+Keiko
+#MSG
+From: OH9ZQW
+To: GARDEN
+Subject: Re: Northern lights
+Date: 1998-11-20 19:40
+Reply: 8
+
+I saw it. I was in the yard in my socks at five past five, because the dog
+woke me. Green on the left, a red line on top. I said "Keiko" out loud to the
+yard. The dog looked at me.
+
+I think we watched the same twelve minutes from two sides of one sky.
+
+Next pass is at 0400 UTC tomorrow. I will listen.
+
+Eero

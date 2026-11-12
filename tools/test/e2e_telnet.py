@@ -122,6 +122,11 @@ def step(name):
         return run
     return wrap
 
+def key(c, text):
+    """One raw key, no Enter: the reader takes single keys."""
+    c.sock.sendall(text.encode("utf-8"))
+
+
 def advance(c, marker, timeout=120.0):
     """Press Enter now and then (it skips a scene's typing and pauses) until `marker` appears."""
     end = time.time() + timeout
@@ -314,6 +319,219 @@ def main():
         c.expect("[Enter]", timeout=60)   # the scene waits for a key once the text has typed out
         c.send("")
         c.expect("Main Board Command?", timeout=30)
+
+    # ---- act 1 (Q7): a fresh caller reads the open evidence, posts, and visits Ty's account ----
+    @step("act 1: bulletins; the crew list names the crew and the manifest appears for the first time")
+    def act1_bulletins():
+        c = state["c"]
+        c.send("B")
+        c.expect("Bulletin #", timeout=15)
+        seg = c.all[-900:]
+        for t in ("Welcome from the SysOp", "The Crew", "Status"):
+            if t not in seg:
+                raise AssertionError("bulletin %r is not listed: %r" % (t, seg[-300:]))
+        c.send("3")
+        c.expect("Cmdr. Marta Halvorsen", timeout=15)
+        c.expect("14 Mar 1974", timeout=15)
+        c.expect("Bulletin #")
+        c.send("4")
+        c.expect("All crew are well", timeout=15)
+        c.expect("Bulletin #")
+        c.send("")
+        c.expect("Crew manifest", timeout=15)
+        c.expect("Main Board Command?", timeout=15)
+
+    @step("act 1: the manifest shows the four rows (identity evidence only)")
+    def act1_manifest():
+        c = state["c"]
+        start = len(c.all)
+        c.send("R")
+        c.expect("MANIFEST>", timeout=15)
+        seg = c.all[start:]
+        for h in ("CMDR", "CHAOS", "GARDEN", "TYVANCE"):
+            if h not in seg:
+                raise AssertionError("row %s missing" % h)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=15)
+
+    @step("act 1: the user list shows the crew accounts, last calls on the 1998 clock, Ty last")
+    def act1_users():
+        c = state["c"]
+        c.send("U")
+        c.expect("to board", "Q board", timeout=15)
+        seg = c.all[-1800:]
+        for t in ("CMDR", "27 Nov 11:52", "CHAOS", "03 Dec 02:09", "GARDEN", "01 Dec 18:20", "TYVANCE", "08 Dec 03:47",
+                  "ELIZA", "MCC", "22 Nov 14:08"):
+            if t not in seg:
+                raise AssertionError("user list lacks %r: %r" % (t, seg[-500:]))
+        if "all decks" not in seg.lower():
+            raise AssertionError("TYVANCE is not listed with access to all decks")
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=15)
+
+    @step("act 1: the Lounge takes a post; Mission Log offers no post or reply key")
+    def act1_conferences():
+        c = state["c"]
+        start = len(c.all)
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        if "post a message" not in c.all[start:].lower():
+            raise AssertionError("no Post option in the Lounge")
+        c.send("P")
+        c.expect("To (ENTER", timeout=10)
+        c.send("")
+        c.expect("Subject:")
+        c.send("e2e hello")
+        c.expect(" 1:", timeout=10)
+        c.send("Hello from a new caller.")
+        c.expect(" 2:", timeout=10)
+        c.send("/S")
+        c.expect("posted", timeout=10)
+        c.expect("Message command?", timeout=10)
+        # Mission Log is a story conference: read-only for everyone.
+        c.send("A")
+        c.expect("Area #", timeout=10)
+        if "Mail: TYVANCE" in c.all[-1500:]:
+            raise AssertionError("Ty's mailbox is listed before any visit to his account")
+        start = len(c.all)
+        c.send("1")
+        c.expect("Message command?", timeout=10)
+        seg = c.all[start:]
+        if "Mission Log" not in seg:
+            raise AssertionError("did not enter Mission Log")
+        if "post a message" in seg.lower():
+            raise AssertionError("Post is offered in a read-only conference")
+        c.send("P")
+        c.expect("read-only", timeout=10)
+        c.expect("Message command?", timeout=10)
+        c.send("R")
+        c.expect("Read #", timeout=10)
+        start = len(c.all)
+        c.send("")
+        c.expect("Cmdr. M. Halvorsen", timeout=15)
+        c.expect("ENTER = next", timeout=10)
+        if "eply" in c.all[start:]:
+            raise AssertionError("a reply key is offered in a read-only conference")
+        c.send("Q")
+        c.expect("Message command?", timeout=10)
+        c.send("A")
+        c.expect("Area #", timeout=10)
+        c.send("0")
+        c.expect("Message command?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+
+    @step("act 1: file areas list Ty's Gallery and the Library with 1998 dates; the journal opens")
+    def act1_files():
+        c = state["c"]
+        start = len(c.all)
+        c.send("F")
+        c.expect("File area?", timeout=15)
+        seg = c.all[start:]
+        if "Ty's Gallery" not in seg or "Library" not in seg:
+            raise AssertionError("file areas missing: %r" % seg[-400:])
+        c.send("1")
+        c.expect("File command?", timeout=15)
+        seg = c.all[start:]
+        for t in ("JOURNAL.TXT", "ORBIT_1.ANS", "ORBIT_2.ANS", "11-04-98", "11-13-98", "11-21-98"):
+            if t not in seg:
+                raise AssertionError("gallery listing lacks %r" % t)
+        c.send("1")
+        c.expect("SPACE JOURNAL", timeout=15)
+        c.expect("quit", timeout=10)
+        time.sleep(0.4)
+        key(c, "q")
+        c.expect("File command?", timeout=15)
+        c.send("2")
+        c.expect("quit", timeout=15)
+        time.sleep(0.4)
+        key(c, "q")
+        c.expect("File command?", timeout=15)
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        c.send("2")
+        c.expect("File command?", timeout=15)
+        seg = c.all[-1500:]
+        for t in ("COMMS.TXT", "README.1ST", "10-28-98"):
+            if t not in seg:
+                raise AssertionError("library listing lacks %r" % t)
+        c.send("1")
+        c.expect("QUERY CODES", timeout=15)
+        c.expect("quit", timeout=10)
+        time.sleep(0.4)
+        key(c, "q")
+        c.expect("File command?", timeout=15)
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+
+    @step("act 1: Ty's crew account (the birthday opens it): his desk scene, his mailbox, read-only")
+    def act1_crew_visit():
+        c = state["c"]
+        c.send("G")
+        if not c.wait_closed(20):
+            raise AssertionError("connection stayed open after Goodbye")
+        c.close()
+        c = Conn(port)
+        state["c"] = c
+        c.expect("Login:", timeout=10)
+        c.send("TYVANCE")
+        c.expect("Password:")
+        c.send("000000")                   # a wrong guess first: the birthday is not 000000
+        c.expect("Bad password")
+        c.expect("Login:")
+        c.send("TYVANCE")
+        c.expect("Password:")
+        c.send("140374")
+        advance(c, "Main Board Command?", timeout=150)
+        if "you are not ty" not in c.all.lower():
+            raise AssertionError("Ty's desk scene did not play")
+        start = len(c.all)
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        if "post a message" in c.all[start:].lower():
+            raise AssertionError("a read-only crew account is offered Post")
+        c.send("A")
+        c.expect("Area #", timeout=10)
+        if "Mail: TYVANCE" not in c.all[-1500:]:
+            raise AssertionError("Ty's mailbox is not listed on his own account")
+        c.send("3")
+        c.expect("Message command?", timeout=10)
+        c.send("R")
+        c.expect("Read #", timeout=10)
+        c.send("")
+        c.expect("you are in SPACE", timeout=15)
+        c.expect("ENTER = next", timeout=10)
+        c.send("Q")
+        c.expect("Message command?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+
+    @step("act 1: Goodbye from the crew account, sign in as yourself: the visit is carried, the mailbox is open")
+    def act1_back():
+        c = state["c"]
+        c.send("G")
+        c.expect("Login:", timeout=20)
+        c.send(handle)
+        c.expect("Password:")
+        c.send(password)
+        for _ in range(8):
+            hit = c.expect("Press ENTER", "Main Board Command?", timeout=40)
+            if hit == "Main Board Command?":
+                break
+            c.send("")
+        start = len(c.all)
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        c.send("A")
+        c.expect("Area #", timeout=10)
+        if "Mail: TYVANCE" not in c.all[start:]:
+            raise AssertionError("the visit was not carried to the own account: Ty's mailbox is closed")
+        c.send("")
+        c.expect("Message command?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
 
     @step("doors menu lists Diagnostics; the shell only when its gate is open")
     def doors_menu():
@@ -698,9 +916,9 @@ def main():
         c.expect("Press ENTER", "Main Board Command?", timeout=20)
         c.close()
 
-    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, doors_menu, diag, shell, doors_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, registered, second, bye, crew):
+    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, doors_menu, diag, shell, doors_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, registered, second, bye, crew):
         ok = fn()
-        if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, doors_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full):
+        if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, act1_crew_visit, act1_back, doors_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full):
             results.append(("SKIP", "remaining steps", "stopped after a step they depend on failed"))
             break
 

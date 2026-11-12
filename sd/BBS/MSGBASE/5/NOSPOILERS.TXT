@@ -1,0 +1,11 @@
+; No Spoilers: public. Nothing about the plot here.
+#MSG
+From: ELIZA
+To: ALL
+Subject: No Spoilers
+Date: 1998-11-02 09:31
+
+This area is for everything else: music, hardware, the weather, the modem you
+had in 1994. Please leave the crew out of it.
+
+ELIZA

@@ -72,8 +72,8 @@ history), `fetch-modules.py` and `fetch-sids.py` (music areas). They share
 - Do not format an SD card or expose SD paths to callers.
 - Do not edit `/BBS/DATA`, `/BBS/LOGS` or `/BBS/TEMP` by hand.
 - Preserve original archive names and FILE_ID.DIZ, DESC.SDI and DESCRIPT.ION
-  data. `sd/BBS/FILES` and `sd/BBS/MSGBASE` are git-ignored and stay out of
-  the repository.
+  data. `sd/BBS/FILES` and `sd/BBS/MSGBASE` hold the story's own files and
+  posts (HALCYON, since Q7) and are tracked; nothing from outside goes there.
 - Content provenance is listed in `docs/CONTENT_POLICY.md`, not in a
   caller-visible folder.
 
