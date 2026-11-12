@@ -99,7 +99,7 @@ static const char *mudItemName(uint16_t item) {
     case MUD_MOON_RING: return "moon ring";
     case MUD_PACKET_AMULET: return "packet amulet";
     case MUD_COPPER_SHIELD: return "copper shield";
-    case MUD_BLACK_CROWN: return "Black Crown of Kouvosto";
+    case MUD_BLACK_CROWN: return "Black Crown";
     default: return "unknown item";
   }
 }
@@ -335,7 +335,7 @@ static void mudFight(Session &s, bool targetNpc = false) {
     if (!saveMud(s.mud) || !saveSharedWallet(s.wallet)) { s.mud = before; s.wallet = walletBefore; s.mudEnemyDefeated = false; s.mudEnemyHp = 0; say(s, "The fight result could not be saved."); }
     else if (s.mudEnemyKind == 3) say(s, "\x1b[1;33m" + enemy + " calmly disarms you and lets you live. No reward.\x1b[0m");
     else say(s, "\x1b[1;33mThe " + enemy + " falls. XP +" + String(xp) + ", gold +" + String(gold) +
-               (s.mud.worldX == 13 && s.mud.worldY == -8 ? ". You claim the Black Crown of Kouvosto!" : "") + "\x1b[0m");
+               (s.mud.worldX == 13 && s.mud.worldY == -8 ? ". You claim the Black Crown!" : "") + "\x1b[0m");
     mudPrompt(s);
     return;
   }
@@ -426,7 +426,7 @@ static void mudTask(Session &s) {
   if (s.mud.worldX == 1 && s.mud.worldY == -2) {
     s.mud.taskType = 3; s.mud.taskX = 13; s.mud.taskY = -8;
     if (!saveMud(s.mud)) { s.mud.taskType = 0; say(s, "The archive ledger could not be saved."); }
-    else say(s, "\x1b[1;35mArchive task accepted: bring the Black Crown of Kouvosto from Lord Korja at 13,-8.\x1b[0m");
+    else say(s, "\x1b[1;35mArchive task accepted: bring the Black Crown from Lord Korja at 13,-8.\x1b[0m");
     mudPrompt(s); return;
   }
   const uint32_t h = mudHash(s.mud.worldX, s.mud.worldY, 0x7461736bU);
@@ -495,7 +495,7 @@ static void mudSell(Session &s, const String &args) {
 }
 static void mudBank(Session &s, const String &args) {
   if (s.mud.worldX != -1 || s.mud.worldY != -2) {
-    say(s, "The Bank of Kouvosto is at -1,-2. Its ledger is not carried into the wild.");
+    say(s, "The Bank is at -1,-2. Its ledger is not carried into the wild.");
     mudPrompt(s);
     return;
   }

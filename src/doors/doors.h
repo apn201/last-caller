@@ -14,9 +14,7 @@ struct Door {
 };
 
 static const Door DOORS[] = {
-  {"LK", "Legend of Kouvola", enterQuest, ownsLegend, handleLegend},
   {"V", "VolaMUD", enterMud, playingMud, handleMud},
-  {"D", "Dice cabinet", enterDice, ownsDice, handleDice},
 };
 
 static const Door *doorFor(const Session &s) {

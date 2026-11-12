@@ -99,7 +99,7 @@ static void sysopLogs(Session &s, String filter) {
 static void sysopDoors(Session &s) {
   s.state = SYSOP_DOORS;
   activity(s, "SYSOP DOOR SETTINGS");
-  say(s, "\x1b[1;35mLEGEND OF KOUVOLA // DOOR SETTINGS\x1b[0m");
+  say(s, "\x1b[1;35mDOOR SETTINGS\x1b[0m");
   say(s, "[F handle count] Add forest fights (1-255)   [V handle] View fights");
   prompt(s, "[Q] Return. Door settings command? ");
 }

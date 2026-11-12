@@ -91,7 +91,7 @@ static void showRecord(Session &s, const User &u) {
   fieldLine(s, 5, "Credits", sizeText(u.credits));
   fieldLine(s, 6, "Ratio", u.ratioEnforced ? "1:" + String(u.ratio) + ", may download " + u.ratio + "x what they upload" : String("off"));
   fieldLine(s, 7, "Password", "set a new one");
-  fieldLine(s, 8, "Forest fights", String(q.fights) + " left today (Legend of Kouvola)");
+  fieldLine(s, 8, "Forest fights", String(q.fights) + " left today (Legend)");
   fieldLine(s, 9, "Real name", u.realName.length() ? u.realName : String("-"));
   fieldLine(s, 10, "Location", u.location.length() ? u.location : String("-"));
   fieldLine(s, 11, "Gold", String(q.gold) + " in the purse, " + q.bank + " banked (all doors)");
@@ -200,7 +200,7 @@ static void fieldValue(Session &s, const String &line) {
       else say(s, "Door storage could not be written.");
       break;
     }
-    case 11: {  // the purse shared by Legend of Kouvola, the dice cabinet and VolaMUD
+    case 11: {  // the purse shared by Legend, the dice cabinet and VolaMUD
       if (!readNumber(v, n) || n > 1000000) { say(s, "Gold is a number from 0 to 1000000."); break; }
       Session *live = nullptr;
       for (auto &o : sessions) if (o.used && o.user.id == u.id && (playingQuest(o) || playingMud(o))) { live = &o; break; }

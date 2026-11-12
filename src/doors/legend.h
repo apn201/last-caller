@@ -1,8 +1,8 @@
 #pragma once
-// Legend of Kouvola door, shared wallet and dice cabinet.
+// Legend door, shared wallet and dice cabinet.
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
 
-// Kouvola's native fantasy door: original data and prose, but the durable
+// A native fantasy door: original data and prose, but the durable
 // town/forest rhythm callers expect from a 1990s BBS game.
 static constexpr uint8_t MAX_GEAR = 3;
 static bool parseQuest(const String &line, Quest &q) {
@@ -57,7 +57,7 @@ static bool loadSharedWallet(uint32_t id, Wallet &wallet) {
     }
     file.close();
   } else if (SD_MMC.exists(WALLET_DATA)) return false;
-  // One-time migration: existing Legend of Kouvola purses become the shared
+  // One-time migration: existing Legend purses become the shared
   // purse when a caller first reaches any of the three doors.
   File questFile = SD_MMC.open(QUEST_DATA, FILE_READ);
   if (questFile) {
@@ -133,7 +133,7 @@ static void questLeaderboard(Session &s) {
     rows[pos] = row;
   }
   if (f) f.close();
-  say(s, "\x1b[1;35m\r\n+================ KOUVOLA HALL OF FAME =================+\x1b[0m");
+  say(s, "\x1b[1;35m\r\n+================ HALL OF FAME ====================+\x1b[0m");
   say(s, "Rank  Adventurer       Lv  Score       Slays  PvP W/L");
   if (!count) say(s, "The stone is blank. Be the first name carved into it.");
   for (uint8_t i = 0; i < count; ++i) {
@@ -157,7 +157,7 @@ static bool loadQuest(Session &s) {
   if (loadQuest(s.user.id, s.quest)) {
     // A new day on the board clock brings a fresh set of forest fights.
     if (s.quest.day != boardDay()) {
-      if (s.quest.day && s.quest.fights < Quest().fights) say(s, "\x1b[1;32mA new day dawns over Kouvola. Your forest fights are restored.\x1b[0m");
+      if (s.quest.day && s.quest.fights < Quest().fights) say(s, "\x1b[1;32mA new day dawns. Your forest fights are restored.\x1b[0m");
       s.quest.fights = max(s.quest.fights, Quest().fights);
       s.quest.day = boardDay();
       saveQuest(s);
@@ -176,9 +176,8 @@ static String duelRivals(const Session &s) {
   return out;
 }
 static void questMenu(Session &s, bool entering = false) {
-  if (entering) art(s, "/BBS/ANSI/DOORS/KOUVOLA_LEGEND.ANS", "LEGEND OF KOUVOLA");
   s.state = QUEST_MENU;
-  activity(s, "LEGEND OF KOUVOLA");
+  activity(s, "THE LEGEND");
   say(s, String("\x1b[1;36m") + s.user.handle + "\x1b[0m  LV " + s.quest.level +
          "  HP " + s.quest.hp + "/" + s.quest.maxHp + "  GOLD " + s.quest.gold +
          "  BANK " + s.quest.bank);
@@ -451,7 +450,7 @@ static bool legendCommand(Session &s, String &line, const String &cmd) {
       questMenu(s);
       return true;
     }
-    if (cmd == "B") { s.state=QUEST_BANK; activity(s,"KOUVOLA BANK"); say(s,"Bank holds "+String(s.quest.bank)+" gold. Use D <amount>, W <amount>, or Q."); prompt(s,"Bank command? "); return true; }
+    if (cmd == "B") { s.state=QUEST_BANK; activity(s,"THE BANK"); say(s,"Bank holds "+String(s.quest.bank)+" gold. Use D <amount>, W <amount>, or Q."); prompt(s,"Bank command? "); return true; }
     say(s, duelRivals(s).length() ? "Use F, H, B, T, M, S, L, C <name>, or Q." : "Use F, H, B, T, M, S, L, or Q."); prompt(s,"Town command? "); return true;
   }
   if (s.state == QUEST_TAVERN) {

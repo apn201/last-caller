@@ -7,7 +7,7 @@ ROOM|1|-1|Tinker's Yard|A yard of copper coils, battered terminals and half-awak
 ROOM|-2|-1|Training Academy|Wooden targets lean beside a chalkboard listing ORCS, BUGS and BAD PASSWORDS.|Master Olli|Master Olli judges stances, bruises and overly confident new callers.
 ROOM|2|-1|Armory of the Copper Byte|Shields, boot disks and polished swords crowd a room that smells of oil and ozone.|Quartermaster Leena|Leena sells a plain iron byteblade and a copper shield.
 ROOM|0|-2|Copper Wire Tavern|The tavern keeper pours dark ale under a ceiling tangled with old network cable.|Rami Behind the Bar|Rami trades rumours for stories and warns against fighting city folk.
-ROOM|-1|-2|Bank of Kouvosto|A sober vault of stone and relay switches guards purses from all three doors of the board.|Banker Anja|Your gold and bank balance are shared here, in Legend of Kouvola and at the dice cabinet.
+ROOM|-1|-2|The Bank|A sober vault of stone and relay switches guards purses from all three doors of the board.|Banker Anja|Your gold and bank balance are shared here, in Legend and at the dice cabinet.
 ROOM|1|-2|BBS Archive|Dusty binders and floppy disks hold maps nobody has fully explored.|Archivist Tero|Tero maintains the Crown-Bearer file and pays well for the Black Crown.
 ROOM|0|-3|North Road|The paving ends here. Beyond it the same seed grows a wilderness for every caller.|Road Scout Ilmi|Take a task before leaving if you want your expedition remembered.
 ROOM|-1|-3|Old Ferry Lane|A dry canal cuts through the city wall, lined with faded handles painted on stone.|Ferrywoman Kaisa|Kaisa gives directions to the quiet crossings and asks no questions.

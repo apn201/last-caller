@@ -5,7 +5,7 @@ The file is raw RGB565, little-endian, 160 pixels wide, up to 53 rows (the
 status lines go below). SYSTEM.INI lcd_logo= names it; without the file the
 board draws the logo built into the firmware.
 
-  python tools/make-lcd-logo.py                 the built-in Kouvosto logo
+  python tools/make-lcd-logo.py                 the built-in neutral logo
   python tools/make-lcd-logo.py --png my.png    your own picture (needs Pillow)
 
 The server build has no LCD and ignores it.
