@@ -94,6 +94,13 @@ content removed. Everything after it should be visibly Kiro work.
 - Acceptance: `grep -ri kouvo` finds nothing outside `THIRD_PARTY_NOTICES.md`,
   both builds pass, a caller sees the new name only.
 
+### S1b - ANSI art pass (Nov 13 to 14)
+
+Brief: `docs/briefs/S1b-ansi-art.md`. Every caller-visible screen gets real
+original ANSI art, built from scripts in `tools/ansi/` and reviewed as PNG
+renders. Standing rule for every later slice: a new screen ships with its
+art, never with placeholder text.
+
 ### S2 - Public test instance (Nov 13 to 14, parallel)
 
 Second server instance, own data root, own port, own vhost, Telnet closed,
