@@ -49,6 +49,9 @@ Rules for every item:
 - [ ] **Q4 - Ghosts and ELIZA's voice (S6, S9).** Ghost callers in WHO,
   pages and chat with typing delays, ELIZA's scripted lines keyed by
   trigger and chat keyword (`STORY/GHOSTS.INI`, `STORY/SYSOP.INI`).
+  Also fix from the Q3 review: keys typed while a scene types out are
+  echoed into the middle of the text; suppress the echo while a scene
+  types (Enter still flushes).
 - [ ] **Q5 - Diagnostics and shell doors (S4b, S6b).**
 - [ ] **Q6 - Manifest and endings (S8).** Pairs confirmed, ELIZA's row
   last, three endings, sticky ghost handle, notebook view.
