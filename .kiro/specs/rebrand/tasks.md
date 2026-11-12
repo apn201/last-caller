@@ -1,0 +1,23 @@
+# Tasks: Rebrand (S1)
+
+- [ ] 1. Card identity and doors
+  - [ ] 1.1 Set name, short_name, location, sysop in `SYSTEM.INI`; keep epoch (R1)
+  - [ ] 1.2 Set ssid in `NETWORK.INI` (R1)
+  - [ ] 1.3 Reduce `[DOORS]` to VolaMUD (R2)
+  - [ ] 1.4 Write two placeholder bulletins in `BULLETINS.INI` (R3)
+- [ ] 2. Art first pass
+  - [ ] 2.1 Rename and grey-drain login, menu, goodbye and rules art (R4)
+  - [ ] 2.2 Delete `KOUVOLA_LEGEND.ANS` and `LEGEND.ANS` if unused (R2.5)
+- [ ] 3. Code
+  - [ ] 3.1 Remove Legend and Dice rows from `doors.h` (R2)
+  - [ ] 3.2 Neutral wording in `volamud.h`, `legend.h`, `sysop.h`, `user_editor.h`, `WORLD.TXT` (R5)
+  - [ ] 3.3 Neutral LCD splash in `scene_logo.h` (R5)
+  - [ ] 3.4 Fix `make-lcd-logo.py` help text (R5)
+  - [ ] 3.5 Run `pio run` (R5, R7)
+- [ ] 4. Docs
+  - [ ] 4.1 Rewrite `README.md` (R6)
+  - [ ] 4.2 Write `docs/CONTENT_POLICY.md` (R6)
+  - [ ] 4.3 Scrub `ROADMAP`, `MENU_AUDIT`, `VOLA_MUD`, `APACHE_PORT`, `AGENTS.md` (R6)
+  - [ ] 4.4 Add `DIALUP.MP3` line to `THIRD_PARTY_NOTICES.md` (R6)
+- [ ] 5. Acceptance
+  - [ ] 5.1 Run `git grep -i kouvo` and `pio run`; record the output (R7)

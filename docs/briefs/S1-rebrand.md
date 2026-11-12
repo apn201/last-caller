@@ -9,11 +9,14 @@ each group. Follow `.kiro/steering/`.
 
 | Key | Value |
 | --- | --- |
-| Board name (`name`) | TBD |
-| Short name (`short_name`) | TBD |
-| SSID | TBD |
-| Location line | TBD |
-| SysOp handle (the AI) | TBD |
+| Board name (`name`) | HALCYON BBS |
+| Short name (`short_name`) | HALCYON |
+| SSID | HALCYON |
+| Location line | LOW EARTH ORBIT |
+| SysOp handle (the AI) | ELIZA |
+
+The ship is HALCYON. The funder is never named anywhere ("the Sponsor" at
+most).
 
 If any value is still TBD, stop and say so. Do not invent names.
 
