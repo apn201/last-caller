@@ -18,7 +18,7 @@ are allowed: they never appear on screen.
 
 | Key | Shown when | Notes |
 | --- | --- | --- |
-| M, N, A, D, C, W, U, S, ?, G | always | W opens the node monitor (kick, M) for the SysOp. |
+| M, N, A, D, C, W, U, S, ?, G | always | W opens the node monitor (kick, M) for the SysOp. G on a read-only crew account logs off to the login prompt and keeps the line (Q2: what the visit found goes to the caller's own login). |
 | F | an area is open to the caller (an empty upload area counts in the browser) | |
 | B | a bulletin is visible to the caller | |
 | J | more than one message area can be joined | |

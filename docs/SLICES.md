@@ -167,6 +167,12 @@ idle N seconds, minutes online. Conditions: has flag, lacks flag, level.
 Effects: set flag, page caller, post message as a named user, show art, add
 a line to a message on re-read. Idempotent, flags only grow.
 
+Built (Q2): spec `.kiro/specs/triggers/`, `src/core/haunt.h` on
+`src/core/haunt_logic.h`, rules in `sd/BBS/STORY/TRIGGERS.INI`. Also: private
+mail to one caller, crew logins granting flags to the caller's own account.
+Host tests: `tools/test/haunt_logic_test.cpp`. Board test still to run: log in
+as TYVANCE, Goodbye, sign in as yourself, find ELIZA's mail.
+
 ### S6 - Ghost presence (Nov 18 to 20)
 
 `STORY/GHOSTS.INI`: callers in WHO with nodes, activity lines and impossible

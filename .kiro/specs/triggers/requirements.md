@@ -53,7 +53,8 @@ until the author's final edit.
 
 1. THE `set=` effect SHALL add flags to the caller's own account.
 2. THE `page=` effect SHALL show the caller one line from a named sender
-   (`page_from=`, default ELIZA) on the caller's own session only.
+   (`page_from=`, default ELIZA) on the caller's own session only, WHEN the
+   caller is next at a menu prompt with nothing streaming and nothing typed.
 3. THE `mail=` effect SHALL post a private message to the caller from a named
    sender (`mail_from=`, `mail_subject=`, `mail_body=`) in a named conference
    (`mail_conf=`). No other caller SHALL be able to read it.
@@ -61,12 +62,16 @@ until the author's final edit.
    (`post_from=`, `post_conf=`, `post_subject=`, `post_body=`), once per
    caller's trigger. IT SHALL be visible to every caller who can read that
    conference.
-5. THE `art=` effect SHALL show a card art screen to the caller.
+5. THE `art=` effect SHALL show a card art screen to the caller, at the same
+   moment as a page.
 6. THE `add=` effect, on `read` rules, SHALL add one line to the message
    while it is shown to this caller, every time it is shown, and SHALL NOT
-   change the stored message.
-7. A rule SHALL run its effects in this order: set, page, mail, post, art,
-   add.
+   change the stored message. AN `add=` rule SHALL have no other effect.
+7. A rule SHALL run its effects in this order: set, mail, post, then page
+   and art when the caller is at a prompt; add is part of the message.
+8. WHEN a caller ends a read-only crew login with Goodbye, THE board SHALL
+   return to the login prompt and keep the connection, so the caller can
+   sign in as themselves in the same connection.
 
 ### R4 - Idempotent, flags only grow
 
@@ -107,7 +112,8 @@ until the author's final edit.
    stop the board starting or the other rules loading.
 2. THE rule table SHALL hold at most 300 rules and cap every text field.
 3. A missing `TRIGGERS.INI` SHALL mean no triggers.
-4. Timed rules SHALL be tested at most once a second.
+4. Timed rules SHALL be tested at most once a second, and only when the
+   caller's idle or online time passes a rule's `after=` value.
 
 ### R7 - Transports and platform
 

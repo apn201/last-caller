@@ -12,12 +12,11 @@ top.
 | `src/core/haunt.h` | Board side: loads `STORY/TRIGGERS.INI`, builds the context for a session, saves flags, runs the effects |
 | `sd/BBS/STORY/TRIGGERS.INI` | The rules. Starts with the two prologue-adjacent examples and the format comment |
 
-`haunt.h` needs `Session`, users, the message store, `art()` and
-`findConference`, and is called from `board.h`, `messages.h`, `viewers.h` and
-`cmd_doors.h`. It is included in `bbs_core.h` after `bbs/power_ui.h` (so
-after the settings, users and messages), with forward declarations of its
-few entry points in `core/session.h`'s neighbours where earlier headers call
-in.
+`haunt.h` needs `Session`, users, the message store, the power settings,
+`art()` and the conferences, and is called from `board.h`, `messages.h`,
+`viewers.h`, `cmd_doors.h`, `cmd_main.h` and `runtime.h`. It is included in
+`bbs_core.h` right after `bbs/settings.h`; `loadSettings()` calls it through
+one forward declaration.
 
 ## Rule format
 
@@ -66,10 +65,18 @@ cannot chain. `ctx.flags` is a snapshot.
    caller's own account (`flagsAdd` in the pure header, capped at 255).
 2. Save (`touchUser`). If the save fails: stop, run nothing visible.
 3. Sync other online sessions of the same user id.
-4. Run page, mail, post, art; `add=` lines are returned to the message
-   viewer instead of being written.
+4. Write mail and posts at once. Queue page and art in
+   `Session.hauntShows`; `hauntTick` shows them when the caller is at a menu
+   prompt (`hauntCalm`: a menu state, nothing streaming, nothing typed, no
+   hidden input), so a page never breaks the reader, a picture or a
+   half-typed line. A caller who hangs up first never sees them; the marker
+   stays set (fails safe: at most once, never twice).
+5. `add=` rules change nothing: their lines go back to `showMessage`, which
+   adds them below the body.
 
-`flagsAdd` reports flags that did not fit; `haunt.h` logs them.
+`flagsAdd` reports flags that did not fit; `haunt.h` logs them
+(`TRIGGER_FULL`). Skipped rules are logged as `TRIGGER_SKIP`, fired rules as
+`TRIGGER`, failed saves as `TRIGGER_FAIL`.
 
 ## The caller
 
@@ -104,8 +111,16 @@ past its own branch). SysOps are ordinary callers.
 - Marker flags use the rule id, so keep ids short.
 - A crew visit that wants mail is two rules: the visit sets a flag, a later
   `login` rule has it.
-- `idle` is the time since the caller's last key; it fires once, because a
-  marker or a flag spends it.
+- Goodbye on a crew (read-only) account logs off to the login prompt and
+  keeps the line, like the ship console's EXIT. Without it a caller who
+  visits a crew account first would lose the carried flags when the
+  connection closed. From the login prompt, G still hangs up.
+- `idle` is the time since the caller's last key. Timed rules are looked at
+  only when the idle or online time passes an `after=` value, so a crew
+  session does not read `USERS.DAT` every second.
+- Inside one section, the first value of a key wins (as `iniGet` does). Two
+  sections with the same name next to each other read as one section; a
+  repeat later in the file is skipped.
 
 ## Not in this item
 
