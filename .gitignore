@@ -14,3 +14,6 @@ reference/
 tools/.cache/
 sd/BBS/MSGBASE/
 __pycache__/
+
+# Rendered previews of the ANSI art (tools/ansi/render.py).
+docs/art-preview/
