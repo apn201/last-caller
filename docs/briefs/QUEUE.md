@@ -112,7 +112,7 @@ Rules for every item:
     prologue). Staging check must PASS.
 - [x] **Q6 - Manifest and endings (S8).** (done, dee42ff..HEAD of the Q6 commits plus the tick; `pio run` passes, host tests pass with `zig c++`, staging check PASS: server build, smoke, e2e 31 passed, 0 failed, 1 skipped (crew login), event log clean; board test still to do, spec manifest task 9. The evidence flags `KHI` to `KZW` and the real final command come with Q7 to Q9; the e2e grants the flags on the disposable card.) Pairs confirmed, ELIZA's row
   last, three endings, sticky ghost handle, notebook view.
-- [ ] **Q7 - Content act 1.** First, from the Q6 review: the 255-char
+- [x] **Q7 - Content act 1.** (done, db7a836..HEAD of the Q7 commits plus the tick; `pio run` passes, host tests pass with `zig c++`, staging check PASS: server build, smoke, e2e 39 passed, 0 failed, 0 skipped (act 1 played as a fresh caller, crew login `TYVANCE`/`140374` included), event log clean; board test still to do, `docs/TESTING.md` "Act 1". Story record in `DATA/STATE/STORY.DAT`; accounts in `STORY/ACCOUNTS.INI`; `sd/BBS/FILES` and `sd/BBS/MSGBASE` are now tracked (they hold the story). Not in act 1, left for Q8: the passwords of `CMDR` and `GARDEN` are placeholders, fates and causes, Orbit 3 to 9, logs, the other crew mailboxes, the 22 Nov radio message.) First, from the Q6 review: the 255-char
   user flag field will overflow once 40 evidence items, trigger and scene
   markers exist. Move story progress (T_, SC_, evidence and manifest
   flags) to a per-caller story record under `DATA/` (via `putRecord`),
