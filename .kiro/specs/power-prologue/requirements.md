@@ -93,12 +93,15 @@ until the author's final edit.
    board for everyone online and for everyone who connects while it
    holds.
 2. THE power state SHALL survive a restart of the board (stick or server).
-3. WHILE the board is powered, WHEN the last caller leaves, THE board SHALL
-   fall back to brownout after 15 minutes (draft; recommended, Juha to
-   confirm).
+3. THE power-up SHALL be one-off: WHILE the board is powered, THE board
+   SHALL stay powered, because `decay_after_idle_min` defaults to 0 (decided
+   Nov 12). WHERE `decay_after_idle_min` is above 0, THE board SHALL fall
+   back to brownout that many minutes after the last caller leaves.
 4. THE SysOp SHALL have a command to force brownout or powered at any time.
-5. IF a caller connects while the board is in the 15 minutes of grace,
-   THEN THE grace timer SHALL stop and powered SHALL stay.
+5. IF a caller connects while the decay timer runs, THEN THE timer SHALL
+   stop and powered SHALL stay.
+6. WHILE the board is in brownout, THE SysOp SHALL be able to log in, and a
+   SysOp session SHALL NOT be dropped by the brownout window.
 
 ### R7 - Solo play
 

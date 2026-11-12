@@ -390,3 +390,51 @@ starts after ELIZA wakes. P1 has a third hint in E39 (sample names).
   clicks, a reboot chirp). Recorded in tasks, designed in S7.
 - Passwords and codes are placeholders until S3: `TYVANCE` = birthday as
   digits, `CHAOS` = `LADDER`.
+
+## Social board, side story, scenes (folded in from STORY_EXTRAS, Q0)
+
+Source draft: `docs/STORY_EXTRAS.md` (Nov 12 2026). Not part of the mystery
+matrix above; nothing here may add a required fact.
+
+### Conferences
+
+| Conference | Posting | Notes |
+| --- | --- | --- |
+| Lounge, Spoilers, No Spoilers, Radio Room | Callers post | Normal 1998 board. Spoilers: hints, manifests, arguments. No Spoilers: no plot talk. Radio Room: the club of 2026 and the packet gateway |
+| Story conferences, crew mail, logs, ELIZA's files | Read-only | Crew accounts are read-only already (power-prologue R8) |
+
+Engine need: `CONFERENCES.INI` has no read-only key. Add `read_only=1`
+(callers cannot post; the SysOp can) in the engine slice that needs it
+(Q7). Never show a post option where it cannot work.
+
+### Side story A (chosen) and B (texture)
+
+A: Keiko Tanabe and the radio amateur. Early Nov 1998 his packet relay
+reaches the ship; three weeks of weather, plants, the northern lights seen
+from both sides. His last message arrives 22 Nov and is never answered.
+In 2026 the club that found the signal includes his callsign; his post on
+the Radio Room is the last line. It ties "found by radio amateurs" to a
+person. Quiet. Dates fit the timeline above (22 Nov is a Sunday: check the
+weekday when writing).
+
+B: Ty's crush on his group's sysop, carried in .NFO greets, hidden messages
+in his art and his demo's end scroller. Funny and sad; he thinks nobody
+notices. Invented group, never named.
+
+C is dropped.
+
+### Scenes
+
+A scene file holds lines, pauses, a portrait name and choices; choices set
+flags. Engine is Q3, content is Q7 to Q9. Scenes: ELIZA conversations (her
+amber ring is the portrait; choices record how polite the caller was and
+whether they lied to her), memory scenes (Halvorsen's last EVA, Tanabe's
+garden at night, Achterberg recording his message, Ty in the capsule, Ty in
+the power bay), side story scenes, the endings.
+
+### Easter eggs (tasks X1 to X12 below)
+
+Modem commands, hidden commands, ship fortunes, the POST screen, the Y2K
+memo, the brochure, the NOWHERE price list, Ty's demo, Ty's snake door,
+nodelist fragment and .sig files, the excuse generator, the hex dump, the
+SysOp's `README.1ST`, and the 300 baud overpaint jokes.

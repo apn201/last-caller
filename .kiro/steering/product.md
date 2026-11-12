@@ -35,3 +35,29 @@ server build. It is built for a judge who has five minutes.
 
 Scope and order are in `docs/SLICES.md`. If time runs out, ship the last
 green layer.
+## The board's play (decided Nov 12)
+
+- One-off power-up: the first caller who switches the ship to the RTG powers
+  it for everyone, for good (`decay_after_idle_min=0`). The SysOp can force
+  brownout for a demo and can log in during it.
+- Solo game, social board: story areas are read-only; Lounge, Spoilers, No
+  Spoilers and Radio Room are normal public conferences. Progress and
+  ELIZA's talk are per caller.
+- The hosted board is the product; the stick is the collector's edition.
+
+## Marketing voice (1998)
+
+For the README, the Devpost page and the board's own bulletins: late 1990s
+games-company and WAP-portal copy, with a straight face. Words to use:
+real-time, multi-user, interactive, cutting-edge, next-generation,
+cyberspace, online community, digital, experience. Footnote energy: "Works
+on any VT100 compatible terminal or Netscape Navigator 4." Draft line:
+
+> HALCYON. A real-time multi-user science fiction horror experience. A
+> puzzle game like no other, powered by state-of-the-art bulletin board
+> technology. Dial in. Wake the ship. Find out what happened to the crew of
+> the first private spaceflight. Up to 32 simultaneous callers. ANSI
+> graphics. Digital sound. Requires a modem and nerves of steel.
+
+Draft until the author's final edit. Netscape and VT100 are period
+technology notes; the rest names nothing real.

@@ -154,9 +154,15 @@ are read from the card, so the stick and the server share them.
 ## Shared state: the RTG decay
 
 Power is board-wide. One caller's power-up opens the board for everyone
-online and after. Recommendation (Juha to confirm): the RTG is 28 years
-decayed and only holds under load, so power falls back to brownout 15
-minutes after the last caller leaves. A SysOp command forces either state.
+online and after. Decided Nov 12 (Q0): the power-up is one-off. The default
+is `decay_after_idle_min=0`: power never falls back by itself. The decay
+timer stays in the code for tests and special setups. A SysOp command forces
+either state for demos. The SysOp can log in during brownout and a SysOp
+session is not dropped by the window, so `POWER OFF` never locks the SysOp
+out.
+
+Earlier recommendation, superseded: fall back to brownout 15 minutes after
+the last caller leaves, so every new caller gets the prologue.
 
 Why: most new callers (including a judge who finds the board later) get the
 prologue, and nobody is locked out by someone else's progress. Without a

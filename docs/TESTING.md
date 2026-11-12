@@ -6,8 +6,9 @@ Wording on screen is draft. Do this on the stick and, later, on the server;
 once over the browser and once over Telnet.
 
 Set up: copy the card (`tools/prepare-sd.ps1`), so `STORY/POWER.INI`,
-`STORY/SHIP.INI`, `ANSI/POWER` and `ASCII/POWER` are on it. For the decay test
-set `decay_after_idle_min=1` in `STORY/POWER.INI` first. To make the drop
+`STORY/SHIP.INI`, `ANSI/POWER` and `ASCII/POWER` are on it. The default
+`decay_after_idle_min=0` makes the power-up one-off; for the decay test (step
+14) set `decay_after_idle_min=1` in `STORY/POWER.INI` first. To make the drop
 quick, `window_min=15` and `window_max=25`. Delete `DATA/STATE/POWER.DAT` on a
 disposable card to start from brownout.
 
@@ -39,11 +40,12 @@ disposable card to start from brownout.
     main menu, as a regular account, log in twice with the same handle: the
     first session is told `NO CARRIER` (takeover).
 13. As SysOp (`Z`): the menu shows `POWER ON / POWER OFF`. Type `POWER` for the
-    state. `POWER OFF`: every session ends within the window, yours too. A
-    new connection shows the banner again.
+    state. `POWER OFF`: every other session ends within the window; yours stays.
+    A new connection shows the banner again. Log in as SYSOP from it: the
+    SysOp gets in during brownout and `POWER ON` restores the ship.
 14. Decay: with `decay_after_idle_min=1`, power up (steps 5 to 8), log out
     and disconnect everyone. Wait 1 minute plus. Connect: the banner is back
-    and `Login:` only. With `decay_after_idle_min=0` it stays powered.
+    and `Login:` only. With the default `decay_after_idle_min=0` it stays powered for good.
 15. Reboot the stick while powered: it comes back powered. While in
     brownout: it comes back in brownout.
 16. Read-only check: log in as `admin`, then as SysOp open the user editor

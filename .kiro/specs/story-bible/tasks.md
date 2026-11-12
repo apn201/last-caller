@@ -95,3 +95,40 @@ Evidence ids (E01...) and fact ids are in `design.md`.
   Slice S4.
 - [ ] N14. Sound effects played from the card (browser; Telnet gets a BEL
   at most). Slice S7.
+
+## Group 3 - Social board, side story, scenes, easter eggs (folded in at Q0)
+
+Source: `docs/STORY_EXTRAS.md`. Queue items in `docs/briefs/QUEUE.md` do the
+work. All wording is draft for the author.
+
+- [ ] S1. Public conferences Lounge, Spoilers, No Spoilers, Radio Room with
+  posting; story conferences, crew mail and logs read-only. Needs a
+  `read_only` key in `CONFERENCES.INI` (R13). Q7.
+- [ ] S2. Side story A: Keiko and the radio amateur, Nov 1998 posts through
+  the packet gateway, his last message 22 Nov, the 2026 club on the Radio
+  Room, his last line (R14). Q7 to Q9.
+- [ ] S3. Side story B as Ty's texture: greets in .NFO files, hidden
+  messages in his art, the end scroller of the demo (R14.4). Q7, Q11.
+- [ ] S4. Scene engine (R15.1), then scenes: ELIZA conversations, five
+  memory scenes, side story scenes, the ending sequence. Q3, Q7 to Q9.
+- [ ] S5. Marketing voice in README, bulletins and the Devpost page, kept
+  in `.kiro/steering/product.md` (done in Q0 for the steering; copy in Q13).
+- [ ] X1. Modem commands: `ATH0`, `+++`, `ATDT` to a hidden node, `ATI`. Q11.
+- [ ] X2. Hidden commands: `xyzzy`, an arrow-key cheat code, `/fortune` with
+  ship fortunes, ROT13 posts in the Lounge. Q11.
+- [ ] X3. ELIZA's dry original reply to the famous request to a film
+  computer; the caller types it, ELIZA never quotes. Q4, Q11.
+- [ ] X4. The 486 POST screen: Turbo button, BIOS date, a memory test that
+  counts the wrong amount. Q11.
+- [ ] X5. The Y2K memo from the Sponsor's IT. Q11.
+- [ ] X6. The hotel brochure. Q11.
+- [ ] X7. NOWHERE price list per megabyte per orbit, with a loyalty
+  programme. Q9, Q11.
+- [ ] X8. Ty's demo: ANSI animation with his MOD, an end scroller with greets
+  to invented groups, crashes at the same frame every time. Q11.
+- [ ] X9. Ty's snake door with a high score table of the dead crew. Q11.
+- [ ] X10. Nodelist fragment, .sig files, an original excuse generator, a hex
+  dump with a message, a GIF of the crew patch. Q11.
+- [ ] X11. ELIZA's own `README.1ST`, perfectly polite. Q7.
+- [ ] X12. Hidden ANSI by Ty visible only at 300 baud, for jokes as well as
+  clues (the overpaint mechanic of E16). Q8, Q11.

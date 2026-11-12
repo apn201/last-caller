@@ -142,3 +142,45 @@ and who is responsible.
 1. THE board SHALL hold at most two MUSIC evidence items, both Ty's modules.
 2. IF the board's player cannot show sample names, THEN that SHALL be
    recorded as an engine need (task N12).
+
+### R13 - The social board (decided Nov 12)
+
+1. THE power-up SHALL be one-off (see `power-prologue` R6.3): after the first
+   caller powers the ship, new callers make an account and walk in.
+2. THE public conferences (Lounge, Spoilers, No Spoilers, Radio Room) SHALL
+   work like a normal 1998 board: callers read and post.
+3. THE story areas (story conferences, crew mail, logs, ELIZA's files) SHALL
+   be read-only for every caller.
+4. THE Spoilers and No Spoilers conferences SHALL make the choice explicit:
+   hints and manifests go in one, nothing about the plot in the other.
+5. A caller's progress (flags, clues, manifest) SHALL be the caller's own.
+   ELIZA SHALL talk to each caller privately.
+
+### R14 - The side story
+
+1. THE board SHALL carry one unrelated love story (draft A in
+   `docs/STORY_EXTRAS.md`): Keiko Tanabe and a radio amateur in a small
+   Finnish town, writing through the packet gateway from early Nov 1998.
+   His last message arrives on 22 Nov 1998 and is never answered.
+2. THE 2026 radio club's callsigns on the Radio Room conference SHALL
+   include his, and his 2026 post SHALL be the last line of the side story.
+3. THE side story SHALL NOT be needed to finish the mystery and SHALL NOT
+   change any crew fate.
+4. Ty's long-distance crush on the sysop of his art group's board (draft B)
+   SHALL be only texture: .NFO greets, hidden messages in his art, the
+   end scroller of his unfinished demo. The group and the board are never
+   named.
+5. Draft C (commander and flight surgeon) SHALL NOT be built.
+
+### R15 - Scenes and extras
+
+1. A scene SHALL be a card file (`STORY/SCENES/*.INI` plus art): a portrait
+   on top, a dialogue box below, lines that type out with pauses and
+   optional choices that set flags (flags only grow).
+2. Scenes SHALL cover ELIZA conversations, memory scenes unlocked by
+   evidence, the side story and the endings.
+3. Easter eggs SHALL be original and rewarding to 1998 users; none SHALL be
+   needed to finish the game, and none SHALL name a real product, film
+   character or person (allusion only).
+4. THE board's own copy SHALL use the 1998 marketing voice (see
+   `.kiro/steering/product.md`).
