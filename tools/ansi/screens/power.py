@@ -4,7 +4,6 @@ BOOT     brownout boot banner, a BIOS count with the ship's faults (first connec
 REBOOT   the same, short (every later connection)
 SUNSIDE  "SUNSIDE ENDS - CARRIER LOST", shown as a session is dropped
 CONSOLE  ship systems console, solar bus only
-CONSOLE_ON  the same once the RTG is on the bus
 WARNING  the RTG switch warning (the board prints the confirming key under it)
 WAKE     ELIZA wakes: the amber ring, her status
 
@@ -288,5 +287,4 @@ def build():
     for f in (boot, reboot, sunside, warning, wake):
         out.extend(f())
     out.extend(console(False))
-    out.extend(console(True))
     return out

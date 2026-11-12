@@ -1,58 +1,49 @@
 # Testing on the board
 
-## Power prologue (slice S4)
+## Power prologue (S4, per caller since Q5b)
 
-Wording on screen is draft. Do this on the stick and, later, on the server;
-once over the browser and once over Telnet.
+Wording on screen is draft. Do this on the stick and on the server; once over
+the browser and once over Telnet. Power is per caller: there is no board-wide
+state, no `POWER.DAT`, and no SysOp power command.
 
 Set up: copy the card (`tools/prepare-sd.ps1`), so `STORY/POWER.INI`,
-`STORY/SHIP.INI`, `ANSI/POWER` and `ASCII/POWER` are on it. The default
-`decay_after_idle_min=0` makes the power-up one-off; for the decay test (step
-14) set `decay_after_idle_min=1` in `STORY/POWER.INI` first. To make the drop
-quick, `window_min=15` and `window_max=25`. Delete `DATA/STATE/POWER.DAT` on a
-disposable card to start from brownout.
+`STORY/SHIP.INI`, `ANSI/POWER` and `ASCII/POWER` are on it. To make the drop
+quick set `timer_sec=20` in `STORY/POWER.INI`.
 
 1. Connect. You see the BIOS banner (SOLAR BUS ONLY, ELIZA NOT RESPONDING,
    the service label) and `Login:`. No new-account choice.
-2. Type a wrong name (`bob`): `MAINTENANCE ONLY`, `Login:` again.
-3. Wait without doing anything. Within the window (60 to 120 s, or what you
-   set) you see `SUNSIDE ENDS - CARRIER LOST` and the connection closes (the
-   browser says carrier lost, Telnet disconnects).
-4. Connect again. This time the short reboot banner. Another drop time.
-5. Log in as `admin` / `admin`. The ship console opens, no bulletins, no menu.
-   The prompt is `SHIP>`.
+2. Type a wrong name (`bob`): `Unknown caller.`, `Login:` again.
+3. Wait at `Login:`. Nothing drops you (only the idle limit of two minutes).
+4. Log in as `admin` / `admin`. The ship console opens, no bulletins, no
+   menu. The prompt is `SHIP>`. The timer runs. Wait for `timer_sec`: you
+   see `SUNSIDE ENDS - CARRIER LOST` and the connection closes.
+5. Connect again. This time the short reboot banner. Log in as `admin`.
 6. Try `HELP`, `STATUS`, `POWER`, `ATTITUDE`, `PAYLOAD`, `COMMS`. Try a
    refused one (`ATTITUDE HOLD`) and nonsense (`FOO`): terse answer, never a
-   dead end.
+   dead end. `HELP` does not list `CREW` and `CREW` is an unknown command.
 7. `SOURCE RTG`. The warning screen appears and asks for `[K]` + ENTER. Type
    `X`: `SWITCH ABORTED. NO CHANGE.` Do `SOURCE RTG` again, type `K`.
 8. `RTG ONLINE / BUS STABLE / ATTITUDE HOLD`, ELIZA's wake screen, her line
-   in amber, "Make your own account", `Press ENTER`.
-9. Press ENTER. Login prompt with `(N)ew user, (L)ogin, or (G)oodbye?`.
-   No more drops: wait three minutes to check.
-10. Open a second connection before step 9 (a second tab or Telnet) and leave
-    it at the `Login:`. When you switch the power in step 7 it prints
-    `RTG ONLINE. THE SHIP HAS POWER.` and shows the login with New.
-11. Make your own account. WELCOME bulletin, main menu. The Doors menu
-    shows VolaMUD, not SHIP.
-12. Log in as `admin` again from another connection while your own account is
-    online: both work (admin is read-only and may be on many times). In the
-    main menu, as a regular account, log in twice with the same handle: the
-    first session is told `NO CARRIER` (takeover).
-13. As SysOp (`Z`): the menu shows `POWER ON / POWER OFF`. Type `POWER` for the
-    state. `POWER OFF`: every other session ends within the window; yours stays.
-    A new connection shows the banner again. Log in as SYSOP from it: the
-    SysOp gets in during brownout and `POWER ON` restores the ship.
-14. Decay: with `decay_after_idle_min=1`, power up (steps 5 to 8), log out
-    and disconnect everyone. Wait 1 minute plus. Connect: the banner is back
-    and `Login:` only. With the default `decay_after_idle_min=0` it stays powered for good.
-15. Reboot the stick while powered: it comes back powered. While in
-    brownout: it comes back in brownout.
-16. Read-only check: log in as `admin`, then as SysOp open the user editor
+   in amber, "CREW REGISTRATION ENABLED". Wait past `timer_sec`: no drop.
+   `HELP` now lists `CREW`.
+9. `CREW`, then ENTER at the handle: back at `SHIP>`, `No account made.`
+   `CREW` again: handle, password, real name, location. `Account created. Log
+   in with it.` and `Login:`.
+10. Log in with the new account. The `ELIZA_WAKE` scene plays, then the main
+    menu. The Doors menu shows VolaMUD and Diagnostics, not SHIP.
+11. Open a second connection at any point (a second tab or Telnet) and play
+    the prologue in it: its timer is its own. Switching to the RTG in one
+    does nothing to the other.
+12. Log in as a registered account from a new connection: straight to the
+    board, no console, no drop after `timer_sec`. Log in twice with the same
+    handle: the first session is told `NO CARRIER` (takeover). `admin` can be
+    on many times at once.
+13. As SysOp: log in normally at `Login:`. `Z` shows no power commands.
+14. Read-only check: log in as `admin`, then as SysOp open the user editor
     (`U`) and look at the `admin` record before and after: calls and
     last-used values are unchanged by admin logins. `READONLY` is listed in
     the flags.
-17. Without ANSI (a Telnet client with ANSI off): the same steps show the
+15. Without ANSI (a Telnet client with ANSI off): the same steps show the
     plain ASCII versions.
 
 ## Host test of the power logic
@@ -82,17 +73,17 @@ Commit first: only the pushed `main` is tested. The script pushes to the
 `tools/staging-remote.sh` on the host, which:
 
 1. checks out into `~/lastcaller-staging/src` and builds with cmake;
-2. copies `sd/BBS` to a fresh card `~/lastcaller-staging/card` (window 4 to
-   8 s, `decay_after_idle_min=0`, no `DATA/STATE`) and runs the phase-1 smoke
+2. copies `sd/BBS` to a fresh card `~/lastcaller-staging/card` (`timer_sec=8`,
+   no `DATA/STATE`) and runs the phase-1 smoke
    check on a throwaway copy;
 3. starts `tinybbs-server` on `127.0.0.1:8086` with Telnet on
    `127.0.0.1:2323` (nothing is stopped:
    anything already on the HTTP or Telnet port aborts the run);
 4. `curl`s `/api/board` and the terminal page;
-5. runs `tools/test/e2e_telnet.py` (standard library only): brownout banner,
-   wrong name, drop after the window, reconnect, `admin`/`admin`, ship console,
-   `SOURCE RTG` (abort, then `K`), ELIZA's wake-up, power holds, new account,
-   the `ELIZA_WAKE` scene, the doors menu, Diagnostics (query codes), the NOWHERE shell (its gate is opened on the disposable card, `--shell-open`), a second login, Goodbye, and a crew login when
+5. runs `tools/test/e2e_telnet.py` (standard library only): front page (no New), wrong name,
+   `admin`/`admin` and the timer drop, reconnect, ship console (no `CREW`),
+   `SOURCE RTG` (abort, then `K`), ELIZA's wake-up, the timer stopped, `CREW`,
+   (cancel, then an account made in the console), log in with it, the `ELIZA_WAKE` scene, the doors menu, Diagnostics (query codes), the NOWHERE shell (its gate is opened on the disposable card, `--shell-open`), a registered caller with no prologue and no timer, `admin` twice, Goodbye, and a crew login when
    `-Crew` is given (SKIP otherwise);
 6. stops the server and prints `STAGING CHECK: PASS` or `FAIL` (exit code 0 or 1).
 

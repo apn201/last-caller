@@ -2,10 +2,10 @@
 """End-to-end check of a running TinyBBS server over localhost Telnet.
 
 Standard library only. Run it on the host that runs the server, against a
-DISPOSABLE card that starts in brownout (no DATA/STATE/POWER.DAT) and has a
-short brownout window (window_max in STORY/POWER.INI, passed as --window-max).
+DISPOSABLE card with a short power timer (timer_sec in STORY/POWER.INI, passed
+as --timer). Power is per caller: every connection starts in brownout.
 
-    python3 e2e_telnet.py --port 2323 --window-max 8 [--crew HANDLE:PASSWORD]
+    python3 e2e_telnet.py --port 2323 --timer 8 [--crew HANDLE:PASSWORD]
 
 Prints one PASS/FAIL/SKIP line per step and a summary; exits 0 only when no
 step failed. Caller-visible wording is draft, so the markers matched here are
@@ -126,7 +126,7 @@ def step(name):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, required=True)
-    ap.add_argument("--window-max", type=int, default=8, help="brownout window_max in seconds")
+    ap.add_argument("--timer", type=int, default=8, help="power timer_sec in seconds")
     ap.add_argument("--shell-open", action="store_true", help="the card's SHELL.INI has needs= empty")
     ap.add_argument("--crew", default="", help="HANDLE:PASSWORD of a crew account, if one exists")
     args = ap.parse_args()
@@ -135,25 +135,34 @@ def main():
     password = "e2e-pass-1"
     state = {}
 
-    @step("brownout banner and wrong-name refusal")
+    @step("front page: brownout banner, login only, unknown name refused")
     def banner():
         c = Conn(port)
         c.expect("SOLAR BUS ONLY")
         c.expect("Login:")
         c.send("bob")
-        c.expect("MAINTENANCE ONLY")
+        c.expect("Unknown caller")
         c.expect("Login:")
-        state["first"] = c
-        state["first_at"] = time.time()
+        if "(N)ew" in c.all:
+            raise AssertionError("the front page offers New")
+        c.close()
 
-    @step("brownout drop after the window")
+    @step("admin/admin starts the power timer; the session drops when it runs out")
     def drop():
-        c = state["first"]
-        c.expect("CARRIER LOST", timeout=args.window_max + 10)
+        c = Conn(port)
+        c.expect("Login:")
+        c.send("admin")
+        c.expect("Password:")
+        c.send("admin")
+        c.expect("SHIP>")
+        began = time.time()
+        c.expect("CARRIER LOST", timeout=args.timer + 10)
         if not c.wait_closed(10):
             raise AssertionError("connection stayed open after CARRIER LOST")
-        waited = time.time() - state["first_at"]
+        waited = time.time() - began
         c.close()
+        if waited < args.timer - 2:
+            raise AssertionError("dropped after %.1f s, before the %d s timer" % (waited, args.timer))
         return "dropped after %.0f s" % waited
 
     @step("reconnect shows the banner again")
@@ -178,6 +187,15 @@ def main():
             c.send(cmd)
             c.expect(marker)
             c.expect("SHIP>")
+        # No account creation before the RTG: not in HELP, not a command.
+        c.send("HELP")
+        c.expect("COMMANDS")
+        c.expect("SHIP>")
+        if "Register a crew account" in c.all:
+            raise AssertionError("HELP lists CREW before the RTG")
+        c.send("CREW")
+        c.expect("UNKNOWN COMMAND")
+        c.expect("SHIP>")
 
     @step("SOURCE RTG: abort, then confirm")
     def rtg():
@@ -193,26 +211,33 @@ def main():
         c.expect("RTG ONLINE")
         c.expect("BUS STABLE")
 
-    @step("ELIZA's wake-up, then the login with New")
+    @step("ELIZA's wake-up, and CREW appears in the console")
     def wake():
         c = state["c"]
         c.expect("Good evening", timeout=20)
-        c.expect("Press ENTER", timeout=20)
-        c.send("")
-        c.expect("(N)ew user", timeout=10)
+        c.expect("TYPE CREW", timeout=20)
+        c.expect("SHIP>")
+        c.send("HELP")
+        c.expect("Register a crew account")
+        c.expect("SHIP>")
 
-    @step("power holds past the old drop window")
+    @step("the timer is stopped: the session stays past it")
     def holds():
         c = state["c"]
-        time.sleep(args.window_max + 3)
+        time.sleep(args.timer + 3)
         c._pump()
         if c.eof:
-            raise AssertionError("dropped although the ship is on RTG")
+            raise AssertionError("dropped although the RTG is on")
 
-    @step("create a caller account and reach the main menu")
-    def signup():
+    @step("CREW: cancel, then create the account in the console")
+    def crew_account():
         c = state["c"]
-        c.send("N")
+        c.send("CREW")
+        c.expect("Handle (3-16")
+        c.send("")
+        c.expect("No account made")
+        c.expect("SHIP>")
+        c.send("CREW")
         c.expect("Handle (3-16")
         c.send(handle)
         c.expect("Password (6+")
@@ -221,6 +246,15 @@ def main():
         c.send("E2E Tester")
         c.expect("Location:")
         c.send("Localhost")
+        c.expect("Log in with it")
+        c.expect("Login:")
+
+    @step("log in with the new account and reach the main menu")
+    def signup():
+        c = state["c"]
+        c.send(handle)
+        c.expect("Password:")
+        c.send(password)
         # Bulletins, then the main menu; the first scene may take the screen.
         for _ in range(6):
             hit = c.expect("Press ENTER", "Main Board Command?", "not on the crew list", timeout=30)
@@ -308,19 +342,34 @@ def main():
         c = state["c"]
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
-    @step("a second signed-in session does not break the first")
+    @step("a registered caller skips the prologue and has no timer")
+    def registered():
+        c = Conn(port)
+        c.expect("Login:", timeout=10)
+        c.send(handle)
+        c.expect("Password:")
+        c.send(password)   # a second login of the account takes over the first session
+        hit = c.expect("Press ENTER", "Main Board Command?", "SHIP>", timeout=20)
+        if hit == "SHIP>":
+            raise AssertionError("a registered caller was sent to the ship console")
+        time.sleep(args.timer + 3)
+        c._pump()
+        if c.eof:
+            raise AssertionError("a registered caller was dropped by the power timer")
+        state["c"].close()
+        state["c"] = c
+        c.send("")
+        c.expect("Main Board Command?", timeout=10)
+
+    @step("admin/admin works for a second caller at the same time")
     def second():
         c = Conn(port)
-        c.expect("(N)ew user", timeout=10)
-        c.send("L")
-        c.expect("Handle:")
+        c.expect("Login:", timeout=10)
         c.send("admin")
         c.expect("Password:")
         c.send("admin")
-        c.expect("Press ENTER", "Main Board Command?", "SHIP>", timeout=20)
+        c.expect("SHIP>", timeout=20)
         c.close()
-        state["c"].send("")
-        state["c"].expect("Main Board Command?", timeout=10)
 
     @step("goodbye closes the session")
     def bye():
@@ -337,18 +386,16 @@ def main():
             return "SKIP no crew account on the card yet (pass --crew HANDLE:PASSWORD once one exists)"
         who, pw = args.crew.split(":", 1)
         c = Conn(port)
-        c.expect("(N)ew user", timeout=10)
-        c.send("L")
-        c.expect("Handle:")
+        c.expect("Login:", timeout=10)
         c.send(who)
         c.expect("Password:")
         c.send(pw)
         c.expect("Press ENTER", "Main Board Command?", timeout=20)
         c.close()
 
-    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, signup, scene, doors_menu, diag, shell, doors_leave, second, bye, crew):
+    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, doors_menu, diag, shell, doors_leave, registered, second, bye, crew):
         ok = fn()
-        if not ok and fn in (banner, reconnect, console, rtg, wake, signup, doors_menu):
+        if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, doors_menu):
             results.append(("SKIP", "remaining steps", "stopped after a step they depend on failed"))
             break
 

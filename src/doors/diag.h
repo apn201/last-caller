@@ -34,7 +34,7 @@ static void diagPrompt(Session &s) { prompt(s, "\x1b[1;36m" + iniGet(diagIni, "D
 static bool ownsDiag(const Session &s) { return s.state == DIAG_PROMPT; }
 // In the door menu only while the ship has power, never for the maintenance login.
 static bool diagListed(const Session &s) {
-  if (!boardPowered() || isMaintenance(s.user)) return false;
+  if (isMaintenance(s.user)) return false;
   return haunt::flagsHasAll(doorFlagsOf(s), haunt::flagsClean(hauntStd(config(DIAG_INI, "DIAG", "needs", ""))));
 }
 

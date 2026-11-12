@@ -3,7 +3,8 @@
 // it is entered at login, not from the door menu. Commands, answers and the
 // wake-up lines are in STORY/SHIP.INI; the screens are ANSI/POWER/*.ANS.
 // The one command that matters is the power source: SOURCE RTG, then the key
-// the warning names. That switches the whole board to POWERED (core/power.h).
+// the warning names. That switches this caller's session to the RTG, stops its
+// power timer and adds one option: CREW, to make a crew account.
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
 
 static constexpr const char *SHIP_INI = "/BBS/STORY/SHIP.INI";
@@ -43,10 +44,10 @@ static void enterShip(Session &s) {
   iniLoad(SHIP_INI, shipIni);
   s.state = SHIP_CONSOLE; s.hideInput = false; activity(s, "SHIP SYSTEMS");
   event("SHIP", s.user.handle + " node " + s.node + " opened the ship console");
-  powerScreen(s, boardPowered() ? "CONSOLE_ON" : "CONSOLE", iniGet(shipIni, "SHIP", "title", "SHIP SYSTEMS"));
+  powerScreen(s, "CONSOLE", iniGet(shipIni, "SHIP", "title", "SHIP SYSTEMS"));
   shipPrompt(s);
 }
-static bool ownsShip(const Session &s) { return s.state == SHIP_CONSOLE || s.state == SHIP_CONFIRM || s.state == SHIP_DONE; }
+static bool ownsShip(const Session &s) { return s.state == SHIP_CONSOLE || s.state == SHIP_CONFIRM; }
 static bool shipListed(const Session &) { return false; }  // not in the door menu
 
 static void shipLeave(Session &s) {
@@ -59,25 +60,26 @@ static void shipHelp(Session &s) {
   for (const String &sec : iniSections(shipIni)) {
     String help = iniGet(shipIni, sec, "help");
     if (sec == "SHIP" || !help.length()) continue;
+    if (up(iniGet(shipIni, sec, "effect")) == "ACCOUNT" && !s.powered) continue;  // only once the RTG is on
     char row[100];
     snprintf(row, sizeof(row), "  \x1b[1;36m%-14s\x1b[0;37m%s\x1b[0m", sec.c_str(), help.c_str());
     say(s, row);
   }
 }
 
-// The key is right: the RTG takes the bus. Everyone else is told by powerSet.
+// The key is right: this session takes the RTG. The timer stops, ELIZA wakes for
+// this caller, and the console gains CREW.
 static void shipPowerOn(Session &s) {
-  powerSet(true, "RTG connected from the ship console by " + s.user.handle, &s);
+  stopPowerTimer(s);
   shipSay(s, iniGet(shipIni, "SHIP", "rtg_online", "RTG ONLINE|BUS STABLE|ATTITUDE HOLD"));
   powerScreen(s, "WAKE");
   say(s, "\x1b[0;33m" + iniGet(shipIni, "SHIP", "wake_line", "Good evening. I have been asleep for some time.") + "\x1b[0m");
-  say(s, "\x1b[0;37m" + iniGet(shipIni, "SHIP", "make_account", "Make your own account to come aboard.") + "\x1b[0m");
-  s.state = SHIP_DONE;
-  prompt(s, "Press ENTER: ");
+  shipSay(s, iniGet(shipIni, "SHIP", "make_account", "CREW REGISTRATION ENABLED|TYPE CREW TO REGISTER"));
+  s.state = SHIP_CONSOLE;
+  shipPrompt(s);
 }
 
 static void handleShip(Session &s, String &line, const String &cmd) {
-  if (s.state == SHIP_DONE) { shipLeave(s); return; }
   if (s.state == SHIP_CONFIRM) {
     if (shipNorm(line) == powerCfg.confirmKey) { shipPowerOn(s); return; }
     shipSay(s, iniGet(shipIni, "SHIP", "aborted", "SWITCH ABORTED. NO CHANGE."));
@@ -91,7 +93,7 @@ static void handleShip(Session &s, String &line, const String &cmd) {
   if (effect == "EXIT") { shipLeave(s); return; }
   if (effect == "HELP") { shipHelp(s); shipPrompt(s); return; }
   if (effect == "RTG") {
-    if (boardPowered()) { shipSay(s, iniGet(shipIni, sec, "text_powered", "RTG ALREADY ON THE BUS")); shipPrompt(s); return; }
+    if (s.powered) { shipSay(s, iniGet(shipIni, sec, "text_powered", "RTG ALREADY ON THE BUS")); shipPrompt(s); return; }
     // The warning names the confirming key, so a caller who reads it can find it.
     powerScreen(s, "WARNING");
     String ask = iniGet(shipIni, sec, "confirm_text", "REARM REQUIRES OPERATOR ACK.|TYPE {KEY} AND PRESS ENTER TO ACKNOWLEDGE.|ANY OTHER ENTRY ABORTS.");
@@ -101,7 +103,12 @@ static void handleShip(Session &s, String &line, const String &cmd) {
     prompt(s, "\x1b[1;33mACK> \x1b[0m");
     return;
   }
-  String text = boardPowered() ? iniGet(shipIni, sec, "text_powered", iniGet(shipIni, sec, "text")) : iniGet(shipIni, sec, "text");
+  if (effect == "ACCOUNT") {
+    if (!s.powered) { shipSay(s, iniGet(shipIni, "SHIP", "unknown", "UNKNOWN COMMAND - TYPE HELP")); shipPrompt(s); return; }
+    crewAccountStart(s);
+    return;
+  }
+  String text = s.powered ? iniGet(shipIni, sec, "text_powered", iniGet(shipIni, sec, "text")) : iniGet(shipIni, sec, "text");
   shipSay(s, text);
   shipPrompt(s);
 }

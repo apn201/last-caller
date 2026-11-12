@@ -163,7 +163,7 @@ static String loadSettings() {
   clockSyncBrowser = clockSync == "BROWSER";
   clockSyncSystem = clockSync == "SYSTEM";
   String clock = startClock(epoch);
-  loadPower();  // STORY/POWER.INI; the power state itself is read once, at boot
+  loadPower();  // STORY/POWER.INI
   String triggers = loadTriggers();  // STORY/TRIGGERS.INI
   String ghosts = loadGhosts();      // STORY/GHOSTS.INI, STORY/SYSOP.INI
   String areas = loadFileAreas();

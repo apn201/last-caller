@@ -25,7 +25,6 @@ template <typename F> static void bbsTick(F transports) {
   transports();
   tickClock();
   now = millis();
-  powerTick(now);
   powerSessionsTick(now);
   hauntTick(now);
   sceneTick(now);
@@ -33,8 +32,7 @@ template <typename F> static void bbsTick(F transports) {
   for (auto &s : sessions) {
     if (!s.used) continue;
     uint32_t idleLimit = s.authenticated ? 30UL * 60UL * 1000UL : LOGIN_TIMEOUT_MS;
-    // In brownout only the window ends a session (power.h); idle time does not count.
-    bool idle = !boardBrownout() && now - s.lastAt >= idleLimit;
+    bool idle = now - s.lastAt >= idleLimit;
     if (idle || (s.web && now - s.lastPoll >= WEB_CARRIER_TIMEOUT_MS))
       closeSession(s);
   }

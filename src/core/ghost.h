@@ -55,7 +55,7 @@ static ghost::Ctx ghostCtx(Session &s, const std::string &flags) {
   c.flags = flags;
   c.onlineMin = (now - s.connectedAt) / 60000;
   c.signedSec = s.signedAt ? (now - s.signedAt) / 1000 : 0;
-  c.powered = boardPowered();
+  c.powered = true;  // ghosts only reach callers who have power (the maintenance login is skipped)
   return c;
 }
 static ghost::Ctx ghostCtx(Session &s) { return ghostCtx(s, ghostFlags(s)); }

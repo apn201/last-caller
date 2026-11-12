@@ -1,15 +1,12 @@
 #pragma once
-// The caller's side of ship power: the brownout login, the session drop, the
-// maintenance account and what the sessions are told when the power changes.
-// The state itself is in core/power.h. Same code for Telnet and the browser.
+// The caller's side of the prologue: the front page, the maintenance account,
+// each session's own power timer and the session drop. The settings are in core/power.h. Same code for Telnet and the browser.
 // Part of the shared core: included in order from src/bbs_core.h.
 
 static void loginPrompt(Session &s);   // bbs/board.h
 static void finishLogin(Session &s);   // bbs/board.h
 
 static bool isMaintenance(const User &u) { return powerEnabled && u.id && u.normalized == up(powerCfg.maintAccount); }
-// The SysOp is never locked out by brownout: same test as isSysop() in bbs/sysop.h, on a record.
-static bool isSysopRecord(const User &u) { return !u.locked && u.level == 255 && hasFlag(u, "SYSOP"); }
 
 // The ship's maintenance login exists from the first boot. It is made by the
 // board (not by hand in USERS.DAT), read-only, and is not the SysOp.
@@ -32,15 +29,10 @@ static void ensureMaintAccount() {
 // Back to the login prompt, signed out, without dropping the connection.
 static void logoutToLogin(Session &s) {
   s.authenticated = false; s.readOnly = false;
+  s.powered = false; s.powerTimerOn = false; s.makingCrew = false;
   s.user = User(); s.input = ""; s.hideInput = false; s.conference = 0;
   s.pendingHandle = ""; s.pendingPass = ""; s.reader = Reader();
   loginPrompt(s);
-}
-
-// The login prompt again after a failed try: brownout offers Login: only.
-static void loginRetry(Session &s) {
-  if (boardBrownout()) { s.state = LOGIN_HANDLE; prompt(s, "Login: "); }
-  else { s.state = LOGIN_CHOICE; prompt(s, "(N)ew user, (L)ogin, or (G)oodbye? "); }
 }
 
 // A card screen for ANSI callers, its ASCII twin for the others.
@@ -84,53 +76,42 @@ static void sunsideDrop(Session &s) {
   s.state = GOODBYE;
 }
 
-// Every tick: arm and enforce the brownout window of each session.
+// The maintenance login: the ship is dark for this caller until the RTG is
+// switched. Two minutes (POWER.INI) from now. Other logins have power.
+static void startPowerTimer(Session &s) {
+  s.powered = false;
+  s.powerTimerOn = true;
+  s.powerAt = millis() + powerTimerMs(powerCfg.timing);
+}
+// The caller switched this session to the RTG: the timer stops.
+static void stopPowerTimer(Session &s) {
+  s.powered = true;
+  s.powerTimerOn = false;
+  event("POWER", String("RTG connected, node ") + s.node);
+}
+
+// Every tick: a maintenance session whose time has run out ends in the power glitch.
 static void powerSessionsTick(uint32_t now) {
-  if (!boardBrownout()) return;
-  for (auto &s : sessions) {
-    if (!s.used || s.state == GOODBYE) continue;
-    if (!s.dropArmed) { s.dropArmed = true; s.dropAt = now + powerWindowMs(powerCfg.timing, bbsRandom()); }
-    else if ((int32_t)(now - s.dropAt) >= 0 && !(s.authenticated && isSysopRecord(s.user))) sunsideDrop(s);  // a SysOp who has logged in stays
-  }
+  if (!powerEnabled) return;
+  for (auto &s : sessions)
+    if (s.used && s.powerTimerOn && s.state != GOODBYE && powerTimerDue(now, s.powerAt)) sunsideDrop(s);
 }
 
-// The power changed under the sessions (a caller's switch, a SysOp command,
-// the decay). `by` is the session that did it.
-static void announcePower(bool on, const Session *by) {
-  for (auto &n : sessions) {
-    if (!n.used || &n == by || n.state == GOODBYE || n.state == DEAD) continue;
-    n.dropArmed = false;
-    if (on) {
-      // Callers waiting at the brownout prompt, or in another ship console, go
-      // back to the login prompt, which now offers a new account.
-      if (!n.authenticated || isMaintenance(n.user)) {
-        say(n, "\r\n\x1b[1;36mRTG ONLINE. THE SHIP HAS POWER.\x1b[0m");
-        logoutToLogin(n);
-      }
-    } else {
-      say(n, "\r\n\x1b[1;31mSOLAR BUS ONLY - POWER UNSTABLE\x1b[0m");
-    }
-  }
+// Crew account: the new-account prompts, opened from the ship console after the
+// RTG. This is the only place an account is made when the prologue is on.
+static void shipPrompt(Session &s);  // doors/ship.h
+static void crewAccountStart(Session &s) {
+  s.makingCrew = true;
+  s.state = NEW_HANDLE;
+  prompt(s, "Handle (3-16 chars, ENTER cancels): ");
 }
-
-// SysOp: POWER shows the ship's power, POWER ON and POWER OFF force it (for
-// testing and demos). Forcing brownout drops every other session within the
-// window; the SysOp's session stays, and the SysOp can log in during brownout.
-static void sysopPowerCommand(Session &s, const String &cmd) {
-  String what = tokenAt(cmd, 1);
-  if (!powerEnabled) { say(s, "Ship power is not set up: the card has no STORY/POWER.INI. The board is always powered."); return; }
-  if (what == "ON") {
-    if (power.powered) say(s, "The ship is already POWERED.");
-    else { powerSet(true, "forced by SysOp " + s.user.handle, &s); say(s, "\x1b[1;32mPOWERED. Callers waiting at the brownout prompt are sent back to the login.\x1b[0m"); }
-  } else if (what == "OFF") {
-    if (!power.powered) say(s, "The ship is already in BROWNOUT.");
-    else {
-      powerSet(false, "forced by SysOp " + s.user.handle, &s);
-      say(s, "\x1b[1;31mBROWNOUT. Every other session ends within " + String(powerCfg.timing.windowMaxSec) + " s. Yours stays. POWER ON restores the ship.\x1b[0m");
-    }
-  } else {
-    say(s, String("Ship power: ") + (power.powered ? "POWERED" : "BROWNOUT") + ". " +
-           (powerCfg.timing.decayAfterIdleMin ? "Falls back to brownout " + String(powerCfg.timing.decayAfterIdleMin) + " min after the last caller leaves." : String("The power-up is one-off: it never falls back by itself.")));
-    say(s, "POWER ON or POWER OFF forces it.");
-  }
+static void crewAccountCancel(Session &s) {
+  s.makingCrew = false; s.hideInput = false; s.pendingHandle = ""; s.pendingPass = "";
+  s.state = SHIP_CONSOLE;
+  say(s, "\r\nNo account made.");
+  shipPrompt(s);
+}
+static void crewAccountDone(Session &s) {
+  say(s, "\r\nAccount created. Log in with it.");
+  logoutToLogin(s);
 }

@@ -103,11 +103,13 @@ static void finishLogin(Session &s) {
   // The ship's maintenance account goes straight to the ship console: no
   // counters, no bulletins, no menu.
   if (isMaintenance(s.user)) {
+    startPowerTimer(s);
     event("LOGIN", s.user.handle + " node " + s.node);
     trace("LOGIN_OK", s.user.handle + " node " + s.node);
     enterShip(s);
     return;
   }
+  s.powered = true;  // every other login has power: the prologue is the maintenance account's alone
   // A read-only account never changes its record: no call count, no touch.
   // An own account becomes the caller here, and takes what crew visits earned
   // (core/haunt.h), in the same save.
@@ -130,7 +132,7 @@ static void finishLogin(Session &s) {
   s.state = BULLETIN; prompt(s, "Press ENTER for Main Board: ");
 }
 static void loginPrompt(Session &s) {
-  if (boardBrownout()) { activity(s, "AWAITING LOGIN"); brownoutLogin(s); return; }
+  if (powerEnabled) { activity(s, "AWAITING LOGIN"); brownoutLogin(s); return; }  // front page: the banner and Login:
   s.state = LOGIN_CHOICE;
   activity(s, "AWAITING LOGIN");
   if (s.ansi) art(s, board.welcome.c_str(), board.name);

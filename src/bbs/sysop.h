@@ -67,7 +67,6 @@ static void sysopMenu(Session &s) {
   say(s, "[I] Incoming uploads" + (waiting ? " \x1b[1;35m(" + String(waiting) + " waiting)\x1b[0m" : String(" (none waiting)")));
   say(s, "[L] Logs: logins and what callers do   L <text> shows only matching lines");
   if (s.web) say(s, "[F] File manager (opens a separate admin page)");
-  if (powerEnabled) say(s, String("POWER ON / POWER OFF  Ship power is ") + (power.powered ? "POWERED" : "BROWNOUT"));
   prompt(s, "SysOp command? ");
 }
 // The event log in the reader, newest at the bottom. With a filter, only the
