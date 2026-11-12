@@ -10,8 +10,9 @@ Rules for every item:
   `.kiro/specs/power-prologue/`, `docs/STORY_EXTRAS.md` and the steering.
 - Write or extend a Kiro spec for the item (requirements in EARS, design,
   tasks), commit it, then do the tasks in small commits.
-- `pio run` must pass. From Q1 on, the server build must pass too, in the
-  Docker container from Q1 (never claim it passed if it did not run).
+- `pio run` must pass. From Q1 on, the server build and the end-to-end
+  check must pass too, on the staging host via `tools/staging-check.ps1`
+  (never claim it passed if it did not run).
 - Every new screen gets ANSI art made with `tools/ansi/` and checked as PNG.
 - All caller-visible text is a draft for Juha's final edit; keep it in
   card files, not in code.
@@ -30,12 +31,32 @@ Rules for every item:
   `docs/STORY_EXTRAS.md` into the story-bible spec (love story A as the
   side story, B as Ty's texture; scenes; easter eggs as tasks; marketing
   voice into `product.md`).
-- [ ] **Q1 - Server build in Docker.** A `server/Dockerfile` (Rocky Linux
-  9 or the closest image with `civetweb-devel` from EPEL) that builds the
-  server and runs the phase-1 smoke check against a disposable copy of
-  `sd/`. A script `tools/server-check.ps1` runs it. Docker Desktop is
-  installed but may not be running: start it, or report that Juha must.
-  From now on this is the second build.
+- [x] **Q1 - Server build and end-to-end check on staging.** (done, b733fe5..HEAD of the Q1 commits; staging check PASS: server build, phase-1 smoke, /api/board, terminal page, Telnet e2e 12 passed, 0 failed, 1 skipped (crew login: no crew account on the card yet, run with `-Crew` once C1 exists); `pio run` passes; the build and test found no fault in the shared core. Placeholder on 8086 is swapped out for the run and restored. Docker is
+  out: no WSL on this PC, by choice.) Staging host, set up Nov 12:
+  `ssh lastcaller@helppox.com` (port 22, key auth from this PC already
+  works, no sudo), Rocky Linux 9.8, g++ 11.5, cmake 3.31, civetweb-devel
+  1.16. Work only under `/home/lastcaller/`. Bind only to `127.0.0.1`;
+  the allowed HTTP port is 8086 (use a localhost-only Telnet port of your
+  choice for tests). Never touch anything outside the home folder; a
+  Kouvosto board runs on the same host.
+  1. Create a bare repo `~/last-caller.git` on the host, add it as git
+     remote `staging`, push `main`.
+  2. `tools/staging-check.ps1`: push to `staging`, then over SSH: check
+     out into `~/lastcaller-staging/src`, `cmake` and build the server,
+     copy `sd/` to a fresh disposable card tree, run the phase-1 smoke
+     check, start the server on 127.0.0.1:8086 with that card, then run
+     an end-to-end test (a Python script in `tools/test/`, run on the
+     host, using only the standard library) over localhost Telnet:
+     brownout banner, a drop after the window (use a short test window),
+     `admin`/`admin`, ship console, power to RTG, ELIZA's wake-up, create
+     a caller account, see the main menu, ELIZA_WAKE scene plays, log in
+     as a crew account once that exists. Also `curl` `/api/board` and
+     the terminal page. Stop the server and print a clear PASS/FAIL
+     summary.
+  3. Fix whatever the server build or the test finds, in the shared core,
+     keeping `pio run` green.
+  4. `docs/TESTING.md`: how to run it. From now on this is the second
+     build for every item.
 - [x] **Q2 - Triggers (S5).** (done, e79fa6e..fe4cc9b plus the tick; `pio run`
   passes, host tests pass with `zig c++`, server build not run: Windows, Q1
   blocked; board test still to do once the C1 crew accounts exist.)
