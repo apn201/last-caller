@@ -1,0 +1,23 @@
+[0m[2J[H  [1mHALCYON-486 FLIGHT BIOS  REV 2.04  14 MAR 1997        [30mABOVE IT ALL HOLDINGS
+  ────────────────────────────────────────────────────────────────────────────
+  [0mCPU 486DX2-66   NPU PRESENT   CACHE 8K   BUS 33MHZ
+
+  MEMORY TEST [1m16384K OK [0;36m██████████████████████████[1;30m▒░░░░
+  EXTENDED 15360K   BASE 640K   SHADOW RAM ENABLED
+
+   [0mSOLAR BUS [1;30m.............. [36mDIRECT                                [30m▄▄▄▄▄▄
+   [0mBATTERY BANK [1;30m........... [31mOPEN CIRCUIT                        [30m▄█▄▀▀▀▀▄█▄
+   [0mRTG-1 [1;30m.................. [33mDISCONNECTED - MANUAL              [30m█▄▀      ▀▄█
+   [0mATTITUDE CONTROL [1;30m....... [33mOFFLINE                            [30m██        ██
+   [0mPAYLOAD BUS [1;30m............ [0mLOW DRAW                           [1;30m█▀▄      ▄▀█
+   [0mMODEM [1;30m.................. [0m28800 READY                         [1;30m▀█▀▄▄▄▄▀█▀
+   [0mELIZA MISSION AI [1;30m....... [0;33mNOT RESPONDING                        [1;30m▀▀▀▀▀▀
+
+  [33m///// SOLAR BUS ONLY - ATTITUDE CONTROL OFFLINE    /////
+
+   [0m┌─ [1mSERVICE LABEL [0m──────────────────────┐
+   │ MAINT ACCT   ADMIN                   │
+   │ PASSWORD     DEFAULT                 │ [1;36m< MAINT ACCT DEFAULTS
+   [0m│ [1;30m(CHANGE ON FIRST USE)                [0m│   [1;36mNOT CHANGED - SEE LABEL
+   [0m└─────────────────────────────────────[1;30m░[0m┘
+[0m
