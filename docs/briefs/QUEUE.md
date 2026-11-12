@@ -88,7 +88,7 @@ Rules for every item:
   port should just abort the run); and `tools/staging-check.ps1` fails in
   Windows PowerShell 5.1 because `git push` writes to stderr under
   `$ErrorActionPreference='Stop'`: check `$LASTEXITCODE` instead.
-- [ ] **Q5b - Prologue per caller (Juha, Nov 13).** Replaces the
+- [x] **Q5b - Prologue per caller (Juha, Nov 13).** (done, 9e6c012..4bb92f8 plus the tick; `pio run` passes, host test passes with `zig c++`, staging check PASS: server build, smoke, e2e 18 passed, 0 failed, 1 skipped (crew login); board test still to do, TESTING.md steps 1 to 15; the timer is `timer_sec` in `POWER.INI`.) Replaces the
   board-wide power state. Every new caller gets the brownout; nobody's
   game depends on anyone else's.
   - Front page: the brownout boot banner and a login prompt. No "New"
