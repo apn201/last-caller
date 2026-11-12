@@ -6,12 +6,15 @@ param(
   [string]$Remote = 'lastcaller@helppox.com',
   [string]$Crew = ''   # HANDLE:PASSWORD of a crew account, once one exists
 )
-$ErrorActionPreference = 'Stop'
+# Native tools (git, ssh) write progress to stderr; under 'Stop' Windows PowerShell 5.1
+# turns that into an error, so check $LASTEXITCODE instead.
+$ErrorActionPreference = 'Continue'
 Set-Location (Join-Path $PSScriptRoot '..')
 
 if (git status --porcelain) { Write-Warning 'Uncommitted changes are not tested: only the pushed main is built.' }
 if (-not (git remote | Where-Object { $_ -eq 'staging' })) {
   git remote add staging "${Remote}:last-caller.git"
+  if ($LASTEXITCODE -ne 0) { throw 'git remote add staging failed' }
 }
 git push staging main
 if ($LASTEXITCODE -ne 0) { throw 'git push staging main failed' }

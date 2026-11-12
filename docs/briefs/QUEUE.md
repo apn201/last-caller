@@ -73,7 +73,13 @@ Rules for every item:
   Also fix from the Q3 review: keys typed while a scene types out are
   echoed into the middle of the text; suppress the echo while a scene
   types (Enter still flushes).
-- [ ] **Q5 - Diagnostics and shell doors (S4b, S6b).**
+- [ ] **Q5 - Diagnostics and shell doors (S4b, S6b).** Plus two staging
+  fixes from the Q1 review: the port-8086 placeholder is gone for good
+  (it was a leftover test server), so remove the code in
+  `tools/staging-remote.sh` that stops and restores it (anything on the
+  port should just abort the run); and `tools/staging-check.ps1` fails in
+  Windows PowerShell 5.1 because `git push` writes to stderr under
+  `$ErrorActionPreference='Stop'`: check `$LASTEXITCODE` instead.
 - [ ] **Q6 - Manifest and endings (S8).** Pairs confirmed, ELIZA's row
   last, three endings, sticky ghost handle, notebook view.
 - [ ] **Q7 - Content act 1.** Accounts and user list, bulletins, public

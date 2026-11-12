@@ -20,17 +20,12 @@ FAILED=0
 note() { SUMMARY+=("$1  $2"); [ "$1" = "FAIL" ] && FAILED=1; }
 say() { printf '\n== %s\n' "$*"; }
 
-PLACEHOLDER_RESTORE=""
 SERVER_PID=""
 cleanup() {
   if [ -n "$SERVER_PID" ] && kill -0 "$SERVER_PID" 2>/dev/null; then
     kill "$SERVER_PID" 2>/dev/null
     for _ in $(seq 1 50); do kill -0 "$SERVER_PID" 2>/dev/null || break; sleep 0.1; done
     kill -9 "$SERVER_PID" 2>/dev/null || true
-  fi
-  if [ -n "$PLACEHOLDER_RESTORE" ]; then
-    # Put back the placeholder that held the port before the run.
-    (cd "$STAGE" && setsid -f python3 -m http.server "$HTTP_PORT" --bind 127.0.0.1 >/dev/null 2>&1 </dev/null)
   fi
 }
 trap cleanup EXIT
@@ -82,16 +77,13 @@ else
 fi
 rm -rf "$SMOKE"
 
-# 5. Port 8086: only our own placeholder may be moved aside.
+# 5. Port 8086: anything already on it aborts the run (nothing is stopped).
 say "start server"
 if ss -ltn "sport = :$HTTP_PORT" | grep -q LISTEN; then
-  PID="$(ss -ltnp "sport = :$HTTP_PORT" | sed -n 's/.*pid=\([0-9]*\).*/\1/p' | head -1)"
-  CMD="$(tr '\0' ' ' < "/proc/$PID/cmdline" 2>/dev/null)"
-  case "$CMD" in
-    "python3 -m http.server $HTTP_PORT --bind 127.0.0.1 "*) kill "$PID"; PLACEHOLDER_RESTORE=1; sleep 1;;
-    "$STAGE"/src/server/build/tinybbs-server*) kill "$PID"; sleep 1;;
-    *) note FAIL "port $HTTP_PORT is held by something else ($CMD)"; finish;;
-  esac
+  note FAIL "port $HTTP_PORT is already in use: not touching it"; finish
+fi
+if ss -ltn "sport = :$TELNET_PORT" | grep -q LISTEN; then
+  note FAIL "port $TELNET_PORT is already in use: not touching it"; finish
 fi
 : > "$LOG"
 nohup "$SRC/server/build/tinybbs-server" --root "$CARD" --web "$SRC/shared/web" \
