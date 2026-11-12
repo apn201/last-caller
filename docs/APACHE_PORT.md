@@ -226,14 +226,14 @@ in order, with threads intact.
 
 ### Phase 8: the rest of the identity
 
-- Door prose with the Kouvola and Kouvosto names (Legend's hall of fame and
-  rumours, VolaMUD's world) moves to text files under `/BBS/DOORS/` with the
+- Door prose with place names (Legend's hall of fame and rumours, VolaMUD's
+  world) moves to text files under `/BBS/DOORS/` with the
   current text as the default.
 - The page favicon and any remaining fixed strings come from the card.
 
-Check: `grep -ri kouvo src shared` finds only fallbacks and comments.
+Check: `grep -ri halcyon src shared` finds only fallbacks and comments.
 
-## Moving the live board to the server
+## Moving a board to the server
 
 The repository's `sd/BBS` has content and settings only. Users, messages,
 door saves, read pointers and the clock are in `BBS/DATA` on the stick's SD
@@ -242,7 +242,7 @@ the current state over, copy the whole `BBS` folder from the card to
 `/srv/tinybbs/BBS` (all of it, including `DATA`; `TEMP` and `LOGS` can be
 left out). Password hashes are the same on both, so accounts keep working.
 
-Do this when the server is about to go live, not before: until phase 7 there
+Do this when the server is about to be used, not before: until phase 7 there
 is no sync, so after the copy the stick and the server drift apart. Decide
 which one is the main board until then.
 
@@ -270,8 +270,8 @@ stop; step 7 is for later.
    (mod_proxy, mod_proxy_http and mod_proxy_wstunnel come with httpd.)
 2. Create a system user "tinybbs" with no login shell. Create /srv/tinybbs
    owned by it. Clone the repository to /srv/tinybbs/src.
-3. Do not create /srv/tinybbs/BBS yet: the owner will copy the live board's
-   data there when it goes live.
+3. Do not create /srv/tinybbs/BBS yet: the owner will copy the board's
+   data there when it is ready.
 4. Apache: /etc/httpd/conf.d/tinybbs.conf, a virtual host for <your-domain>
        ProxyPreserveHost On
        ProxyPass        /ws ws://127.0.0.1:8080/ws

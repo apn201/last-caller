@@ -1,44 +1,29 @@
-# TinyBBS
+# Last Caller
 
-A 1990s-style BBS running on a $10 ESP32-S3 USB dongle,
-the [Pocket-Dongle-S3](https://www.aliexpress.com/item/1005008896509314.html). No Internet, no modem, no
-phone line. The board makes its own WiFi network and you call it from a phone
-browser or a Telnet client.
+A 1990s-style BBS running on a $10 ESP32-S3 USB dongle, the
+[Pocket-Dongle-S3](https://www.aliexpress.com/item/1005008896509314.html). No
+Internet, no modem, no phone line. The board makes its own WiFi network and
+you call it from a phone browser or a Telnet client. A hosted server build
+runs the same core.
 
-The working board name is Kouvosto.
+The board is HALCYON BBS. In 1998 a secret, privately funded spacecraft flew
+the first private science mission, and it carried a BBS so the crew could
+write home; the mission AI, ELIZA, ran the board as its SysOp. Mission control
+lost contact, and 28 years later radio amateurs found the ship's signal again.
+You are dialling into that BBS, and you work out what happened to the crew
+from its messages, files, logs and ghosts.
 
-## Why
+## What it is
 
-This is an experiment on what can be done with a $10 ESP32 board with no
-GPIO. The first iteration was TinyIRC, a local IRC server. Now it is a local
-BBS, completely isolated from the Internet.
-
-I tried sticking it to a USB charger and plugging it in the toilet of a bar,
-creating the SSID. Nobody joined.
-
-It is a nod to my history with BBSes before the Internet. The board only
-contains some example content, but it should show how advanced and arty the
-scene already was in the 1990s. Maybe even more than now.
-
-Language was rough, art was questionable, rules were not yet made and sysops
-were dickheads. Yet it was still mostly more civil than today's social media.
-And people discussed important things, like religion and UFO cow mutilations.
-
-In the secret sections bad scans from Playboy were shared, and images drawn
-by Hajime Sorayama. Text files often contained "secret documents" from CIA
-projects, UFO reports, song lyrics and so on.
-
-It was not the Internet, but almost. You could download shareware and PD
-games, device drivers etc. And play door games like LORD.
-
-TinyBBS has the same parts in small: ANSI screens, message conferences, a
-back room for trusted callers, file areas with ratios, a SysOp who can lock
-you out, and two door games. Browser and Telnet callers are on the same
-board at the same time and see each other in WHO and chat.
+TinyBBS is the engine. Last Caller is the content and story on top of it.
+Browser and Telnet callers are two transports into the same BBS core. They
+share one pool of nodes and see each other in WHO and chat. The board has
+ANSI screens, message conferences, file areas with ratios, a SysOp tools
+console and a native door.
 
 ## What it does now
 
-- Opens an open WiFi access point, `THE_BOARD` by default. Phones get a
+- Opens an open WiFi access point, `HALCYON` by default. Phones get a
   captive portal that lands on the terminal.
 - Browser terminal at `http://192.168.4.1`: press DIAL, get a node. A page
   reload rejoins the same node, and the screen has 1000 lines of scrollback.
@@ -75,7 +60,7 @@ board at the same time and see each other in WHO and chat.
 - SysOp tools: user editor, node monitor with disconnect and one-way
   messages, answering a page into chat, and a file manager page in the
   browser for the SD card.
-- Two native doors: Legend of Kouvola and VolaMUD.
+- One native door: VolaMUD.
 - Optional dial-up sound in the browser, after you click for it.
 - A small LCD on the board shows the logo, SD state, IP and the last caller.
 
@@ -106,7 +91,7 @@ order, as one translation unit:
 | --- | --- |
 | `src/core` | Globals, helpers, the board clock, SD storage and INI reader, users, message store, message history from the card, sessions, paced output, the reader |
 | `src/bbs` | Settings, menus, file areas, ZIP reading, viewers, uploads, messages, SysOp tools and user editor, login, one `cmd_*.h` per command area, CP437 conversion |
-| `src/doors` | Legend of Kouvola, VolaMUD, dice cabinet and `doors.h`, the door table |
+| `src/doors` | VolaMUD, the shared purse (`legend.h`), `doors.h`, the door table |
 | `src/net` | Browser terminal and SysOp file manager pages (compiled into flash), HTTP and WebSocket routes, Telnet |
 | `src/hw` | Status LCD and the splash logo as DOS palette indexes |
 
@@ -238,11 +223,8 @@ description goes into that folder's `FILES.BBS`.
 
 ### Doors
 
-**Legend of Kouvola** is a daily-turn style RPG written for TinyBBS: forest
-fights, tavern rumours, bank, weapon and armour shop, dice, a leaderboard,
-and live duels between two callers on different nodes. Forest fights come
-back at midnight on the board clock. It does not run or
-include the original LORD.
+The door table lists only doors that work. The Legend and dice doors are
+removed from it.
 
 **VolaMUD** is a native C++ MUD door with a fixed Vola City hub and an
 endless deterministic wilderness. City locals provide directions, trading,
@@ -254,15 +236,16 @@ engage them; `FIGHT NPC` is possible but intentionally unwise.
 Characters persist their position, task, gold and equipment. `INV`, `WEAR`
 and `SELL` cover the current small inventory: boots, blade, shield, rings,
 amulet and the Black Crown. Worn loot changes HP or combat. The Black Crown
-of Kouvosto is a real archive task, held by seeded Lord Korja at `13,-8`.
-Gold and bank funds are one shared purse across VolaMUD, Legend of Kouvola
-and the dice cabinet. It is a playable vertical slice rather than a deep MUD:
+is a task item, held by seeded Lord Korja at `13,-8`.
+Gold and bank funds are a purse kept by the shared door code in
+`src/doors/legend.h`. It is a playable vertical slice rather than a deep MUD:
 there is no inventory UI, trading economy, party system, NPC memory or
 multi-stage quest engine yet. See [`docs/VOLA_MUD.md`](docs/VOLA_MUD.md).
 
 ### LCD
 
-The 160x80 screen draws the Kouvosto logo from palette-indexed rows, then
+The 160x80 screen draws the card's logo (`lcd_logo=` in `SYSTEM.INI`), or a
+neutral built-in splash, then
 three status lines: SD state and node count, AP IP address and the latest
 caller or page.
 
@@ -296,7 +279,7 @@ caller or page.
    card that already has users and messages. The script does not format the
    card.
 5. Insert the card and power the board from USB.
-6. Join `THE_BOARD`. Press DIAL in the browser, or Telnet to
+6. Join `HALCYON`. Press DIAL in the browser, or Telnet to
    `192.168.4.1:23`.
 7. Create a user named `SYSOP` first. While no SysOp exists, that handle
    becomes the level-255 SysOp. Change its password.
@@ -344,7 +327,7 @@ $env:PYTHONIOENCODING = 'utf-8'
 ```
 
 `Hash of data verified` for every segment and a reset without repeating USB
-chimes are the expected result. Confirm that `THE_BOARD` appears as a 2.4 GHz
+chimes are the expected result. Confirm that `HALCYON` appears as a 2.4 GHz
 SSID before trying browser or Telnet tests. The ESP ROM loader remains
 reachable over USB even after a bad application flash; do not erase the chip
 as a first response.
@@ -365,7 +348,7 @@ Do not edit `DATA`, `LOGS` or `TEMP` by hand while the board is in use.
 Callers never see SD paths.
 
 The file archive itself is not in this repository. `sd/BBS/FILES` is ignored
-by git. Archive rules are in [`docs/CURATION.md`](docs/CURATION.md).
+by git. Content rules are in [`docs/CONTENT_POLICY.md`](docs/CONTENT_POLICY.md).
 
 `sd/BBS/MSGBASE` is not in the repository either. Make it with
 `python tools/fidonet-seed.py`, which downloads the 150 MB source archive once
@@ -416,16 +399,13 @@ More in [`docs/ROADMAP.md`](docs/ROADMAP.md). The original 1.0 target is in
 | --- | --- |
 | `src/` | Firmware |
 | `sd/BBS/` | SD card content and config, including the music player |
-| `tools/` | SD preparation, content download and archive curation scripts |
-| `docs/` | Hardware, roadmap, curation policy, menu audit, VolaMUD notes, the 1.0 spec |
+| `tools/` | SD preparation, content download scripts |
+| `docs/` | Hardware, roadmap, content policy, menu audit, VolaMUD notes, the 1.0 spec |
 | `art/` | Source images for the splash screen |
 
 ## Credits
 
-Dial-up sound: a generic modem handshake recorded by William Termini on his
-iMac G3, from Oona Raisanen's
-["The sound of the dialup, pictured"](https://www.windytan.com/2012/11/the-sound-of-dialup-pictured.html).
-Mentioned because we are nice.
+Dial-up sound: source to be confirmed by the author.
 
 Message history: FidoNet traffic captured on the ExecPC BBS (1993-1999) and
 archived by Josh Renaud at
@@ -443,6 +423,6 @@ above are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 ## Licence
 
 MIT, see [`LICENSE`](LICENSE). That covers the code, the ANSI screens and the
-Kouvosto splash image. The player libraries on the card keep their own
+built-in splash image. The player libraries on the card keep their own
 licences (libopenmpt BSD, jsSID GPL v2), listed in
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

@@ -16,7 +16,7 @@ features, no new story.
   colour codes to greys (30/37/90/1;30/1;37 family) with one dark red
   (31) accent. Menu option areas are left alone, so `MENUS.INI` row/col
   stays valid. The script is run once and not committed.
-- `KOUVOLA_LEGEND.ANS` and `LEGEND.ANS` are deleted after `git grep` shows
+- The two Legend door art files in `ANSI/DOORS` are deleted after `git grep` shows
   only `legend.h` reaches them. Because `legend.h` stays compiled for the
   purse, its `art()` call is reachable only through the removed door row;
   the call is kept harmless or removed if the build needs it.
@@ -27,7 +27,7 @@ features, no new story.
   `dice.h` stay included so shared purse functions compile. Check that
   nothing else refers to the removed rows (state enum, sysop door
   settings).
-- Strings: "Kouvosto"/"Kouvola" in `volamud.h`, `legend.h`, `sysop.h`,
+- Strings: Old place names in `volamud.h`, `legend.h`, `sysop.h`,
   `user_editor.h` become neutral ("Black Crown", "the Bank", "the Hall").
   `WORLD.TXT` on the card gets the same treatment.
 - `scene_logo.h`: replace the pixel data with a neutral splash by making

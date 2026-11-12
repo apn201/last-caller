@@ -136,3 +136,7 @@ into the public domain, under "the same principles of free and unrestricted
 distribution as public domain software" (HVSC FAQ). Each file is copied byte
 for byte; its HVSC path is in the area's FILES.BBS.
 
+
+## Dial-up sound
+
+`ASSETS/DIALUP.MP3`: source to be confirmed by the author.

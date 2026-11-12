@@ -16,7 +16,8 @@ in `SPEC_1.0.md`.
   status.
 - SD-hosted ANSI, ASCII, bulletins, configuration and modem audio.
 - Paged ANSI and text views, plus a browser-only listed-file download route.
-- Separate native Legend of Kouvola and VolaMUD doors. VolaMUD has a static
+- Separate native Legend and VolaMUD doors (the Legend and dice doors are
+  no longer in the door table). VolaMUD has a static
   city hub, an SD-defined deterministic wilderness, visible seeded/random
   encounters, persistent equipment, NPC talk, trading and small tasks. Its
   gold and bank are shared with Legend and the dice cabinet.
@@ -189,7 +190,7 @@ where it left off.
   time of day then match the visitor's evening, which looks right.
 - Messages, last-call times, file dates for uploads, the caller log and the
   `S` system info screen all use the board clock instead of `UP hh:mm:ss`.
-- The Legend of Kouvola daily turns can then reset at board midnight instead
+- The Legend daily turns can then reset at board midnight instead
   of waiting for the SysOp.
 
 Done when: post a message, unplug the stick for ten minutes, plug it in, and
@@ -475,10 +476,10 @@ Low priority:
 
 ## Content and archive work
 
-Kouvosto archive material goes to its native Kouvosto areas. Preserve original
-archive names and FILE_ID.DIZ, DESC.SDI and DESCRIPT.ION data. Keep provenance
-in `/BBS/DATA/INDEX/KOUVOSTO_ORIGINS.json`, not in a caller-visible MPOLI
-folder. See `CURATION.md` before importing material.
+Archive material goes to its native areas. Preserve original archive names
+and FILE_ID.DIZ, DESC.SDI and DESCRIPT.ION data. Keep provenance in
+`docs/CONTENT_POLICY.md`, not in a caller-visible folder. See it before
+importing material.
 
 Never populate generated data, logs, temporary areas or QWK work directories
 by hand. Use the curator scripts in `tools` for archive ingest.

@@ -61,7 +61,7 @@ are allowed: they never appear on screen.
 | Screen | Keys | Notes |
 | --- | --- | --- |
 | Door menu | one per door in the door table, Q | |
-| Legend of Kouvola, town | F H B T M S L Q; C when someone in town can be challenged | C used to show with nobody to challenge. Now the town also lists who is in town. **Fixed.** |
+| Legend, town | F H B T M S L Q; C when someone in town can be challenged | C used to show with nobody to challenge. Now the town also lists who is in town. **Fixed.** |
 | Legend, tavern | R W L M Q; C as above | **Fixed.** |
 | Legend, arena | A, R on your turn; R while waiting | Strikes and misses reach the waiting fighter on a new line, and the side without the initiative is told to wait. **Fixed.** |
 | Legend, forest, shop, bank | as prompted | |

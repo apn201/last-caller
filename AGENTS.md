@@ -12,7 +12,7 @@ not separate applications.
    each slice ends with a test on the real board.
 2. `README.md` - what exists now, technical overview and SD-card setup.
 3. `docs/HARDWARE.md` - board, pins, display offsets, flashing and recovery.
-4. `docs/CURATION.md` - archive policy and provenance.
+4. `docs/CONTENT_POLICY.md` - what is on the card and its source.
 5. `docs/MENU_AUDIT.md` - every screen, its keys and who gets them.
 6. `docs/SPEC_1.0.md` - the original 1.0 specification. Where it disagrees
    with `docs/ROADMAP.md`, the roadmap wins.
@@ -74,8 +74,8 @@ history), `fetch-modules.py` and `fetch-sids.py` (music areas). They share
 - Preserve original archive names and FILE_ID.DIZ, DESC.SDI and DESCRIPT.ION
   data. `sd/BBS/FILES` and `sd/BBS/MSGBASE` are git-ignored and stay out of
   the repository.
-- Kouvosto provenance lives in `/BBS/DATA/INDEX/KOUVOSTO_ORIGINS.json`, not in
-  a caller-visible folder.
+- Content provenance is listed in `docs/CONTENT_POLICY.md`, not in a
+  caller-visible folder.
 
 ## Verification
 

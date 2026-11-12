@@ -4,8 +4,8 @@ Source: `docs/briefs/S1-rebrand.md`.
 
 ## Introduction
 
-The TinyBBS engine shipped with the name Kouvosto, Finnish place names, a
-live URL and two doors (Legend of Kouvola, Dice cabinet) that do not belong
+The TinyBBS engine shipped with its old board name, Finnish place names, a
+live URL and two doors (Legend, Dice cabinet) that do not belong
 on the ship. This slice makes the board HALCYON BBS, the ship's BBS run by
 ELIZA, with first-pass art, neutral wording and honest docs. No plot is
 added.
@@ -37,8 +37,7 @@ work.
 3. THE door menu SHALL list only doors that work.
 4. WHERE VolaMUD uses the shared purse in `legend.h`, THE code it needs
    SHALL stay compiled.
-5. WHEN no reachable code uses `ANSI/DOORS/KOUVOLA_LEGEND.ANS` or
-   `LEGEND.ANS`, THE files SHALL be deleted.
+5. WHEN no reachable code uses the two Legend door art files in `ANSI/DOORS`, THE files SHALL be deleted.
 
 ### 3. Bulletins
 

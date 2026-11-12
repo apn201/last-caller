@@ -28,15 +28,15 @@ fought. `FIGHT NPC` is possible, but city people are deliberately formidable.
 `TALK` provides city services, local flavour or occasional wilderness
 directions. `TASK` only works with a scout, guild member, archivist or a rare
 wilderness traveller. The archive's special task is to bring back the Black
-Crown of Kouvosto from Lord Korja at `13,-8`.
+Crown from Lord Korja at `13,-8`.
 
 `INV`, `WEAR <item>` and `SELL <item>` manage persistent loot. Worn rings,
 amulets and artefacts modify HP or combat; Tinker buys most loot. At the Bank
-of Kouvosto (`-1,-2`), use `BANK`, `BANK DEPOSIT <gold>` or `BANK WITHDRAW
+(`-1,-2`), use `BANK`, `BANK DEPOSIT <gold>` or `BANK WITHDRAW
 <gold>`.
 
-Gold and bank balance are deliberately shared between VolaMUD, Legend of
-Kouvola and the dice cabinet. `WALLET.DAT` is the authoritative purse. The
+Gold and bank balance are deliberately shared between VolaMUD and the
+shared door code. `WALLET.DAT` is the authoritative purse. The
 first visit migrates a caller's existing Legend purse into it. Character HP,
 level, XP, location and task remain in `VOLAMUD.DAT`.
 
