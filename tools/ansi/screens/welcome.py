@@ -16,29 +16,29 @@ def build():
     c.stars(0, 0, W, H, seed=11, density=0.05, avoid=lambda x, y: keep_clear(x, y) and y != 0)
     c.stars(58, 9, 22, 7, seed=5, density=0.06)
 
-    # --- logo
-    face = [WHITE, WHITE, LCYAN, LCYAN, LCYAN, LCYAN, CYAN, CYAN, CYAN, CYAN, CYAN, CYAN]
+    # --- logo: highlight on top, cyan body, blue drop shadow, fade at the foot
+    face = [WHITE, LCYAN, LCYAN, LCYAN, LCYAN, LCYAN, CYAN, CYAN, CYAN, CYAN, CYAN, CYAN]
     logo(c, 5, 1, "HALCYON", face, edge=WHITE, depth=BLUE, gap=2)
 
     # --- tagline
     c.text_center(8, "B U L L E T I N   B O A R D   S Y S T E M   ·   N O D E   1", DGREY)
-    c.hline(2, 8, 5, "─", DGREY)
-    c.hline(73, 8, 5, "─", DGREY)
+    c.text(2, 8, "══╡", DGREY)
+    c.text(74, 8, "╞══", DGREY)
 
-    # --- Earth
-    ground = PixelLayer(W, 18)
-    earth(ground, 40, 80, 72)
-    ground.flush(c, 0, 12)
+    # --- Earth's limb: half blocks on the edge, shade characters inside
+    planet(c, 0, 12, W, 9, 30, 60, 52, sun=(-0.62, -0.22, 0.75), seed=2.0)
 
     # --- the ship
-    sp = PixelLayer(24, 16)
-    ship(sp, 1, 1)
-    sp.flush(c, 56, 9)
+    sp = PixelLayer(26, 22)
+    ship(sp, 0, 0)
+    sp.flush(c, 52, 9)
+    c.put(50, 12, "+", WHITE)
 
-    # --- ELIZA: an amber ring and the greeting
+    # --- ELIZA: an amber ring with a halo, and the greeting
     ring = PixelLayer(14, 14)
     eliza_ring(ring, 6.5, 6.5, off=(3, 4, 13), dim=(5,))
     ring.flush(c, 3, 9)
+    c.glow(9.5, 12.5, 7.0, 10.0, AMBER, inner=7.0)
     c.text(19, 10, "Good evening, caller.", YELLOW)
     c.text(19, 11, "I am ELIZA. I look after this board.", AMBER)
     c.text(19, 12, "The crew are resting.", AMBER)
@@ -60,8 +60,9 @@ def build():
     c.text(62, 21, "BATT", GREY)
     c.text(67, 21, "OPEN", LRED)
     artist_tag(c, 62, 0)
-    # decay: a missing block in the logo, a separator that is not quite one
+    # decay: a missing block in the logo, a block gone soft, a separator that is not quite one
     c.put(60, 2, " ", GREY, BLACK)
+    c.put(26, 4, "▒", LCYAN, BLUE)
     c.put(31, 21, ":", DGREY)
 
     out = [c.save("ANSI/LOGIN/WELCOME.ANS")]

@@ -75,3 +75,29 @@ code, so that art can be regenerated, tweaked and checked.
 4. `docs/SLICES.md` and the brief are committed with the spec.
 5. THE server build cannot run on this Windows PC and SHALL be reported as
    not run.
+
+## Pass 2 (S1c): scene-style technique
+
+Source: `docs/briefs/S1c-ansi-polish.md`. Same screens, files and tools.
+
+### 7. Technique
+
+1. `build.py` SHALL have a `PixelCanvas` that draws on a canvas twice as tall
+   as the cell grid and renders `▀`/`▄` with fg and bg colours, so a cell
+   carries two pixels.
+2. SHADING SHALL use `░ ▒ ▓ █` ramps between two colours (`ramp()`); Earth
+   SHALL be half-block on its edge, shaded inside, with a thin cyan
+   atmosphere and amber city lights on the night side.
+3. THE HALCYON logo SHALL have shaped letters, a bright top and left
+   highlight, a mid-colour body, a blue drop shadow one cell right and down,
+   a `▓▒` fade on the lower rows and sparkles. Menu titles SHALL get a
+   highlight, body and drop shadow in the small font.
+4. THE ship SHALL have framed solar panels with cell lines, struts, a banded
+   hull, windows, a dish and an engine bell. ELIZA's ring SHALL have a halo
+   (`Canvas.glow`); the SysOp core SHALL be concentric rings.
+5. FRAMES SHALL be lit from the top left (light top and left edges, shadowed
+   bottom and right) with rivets set into the edges. Stars SHALL use
+   `. · + *` in three brightnesses.
+6. EACH screen SHALL keep two or three planned decay touches.
+7. EACH screen SHALL stay under 12 KB; 80 columns; option areas unchanged;
+   `render.py --menu` passes for all four menus.

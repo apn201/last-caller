@@ -41,6 +41,36 @@ def shade(back, front, t):
     raise ValueError("cannot shade %d into %d: both are bright" % (back, front))
 
 
+def ramp(colors, t):
+    """(char, fg, bg) for a smooth ramp through `colors` (each neighbouring
+    pair needs one colour in 0-7), t in 0..1. Four shade steps per segment."""
+    t = max(0.0, min(1.0, t))
+    p = t * (len(colors) - 1)
+    i = min(int(p), len(colors) - 2)
+    return shade(colors[i], colors[i + 1], p - i)
+
+
+def ramp_color(colors, t):
+    """The solid colour nearest to t on the ramp (for half-block pixels)."""
+    t = max(0.0, min(1.0, t))
+    return colors[int(round(t * (len(colors) - 1)))]
+
+
+def half(t, b):
+    """(char, fg, bg) for a cell whose top half is colour t and bottom half b
+    (None = black). A half block holds two colours; a bright fg needs a dark
+    bg, so two different bright colours fall back to b's dark twin."""
+    t = BLACK if t is None else t
+    b = BLACK if b is None else b
+    if t == b:
+        return (" ", GREY, BLACK) if t == BLACK else ("█", t, BLACK)
+    if b < 8:
+        return ("▀", t, b)
+    if t < 8:
+        return ("▄", b, t)
+    return ("▀", t, b - 8)
+
+
 class Canvas:
     def __init__(self, w=80, h=22):
         self.w, self.h = w, h
@@ -153,20 +183,46 @@ class Canvas:
                 r = rnd.random()
                 if r < density:
                     kind = rnd.random()
-                    if kind < 0.55:
+                    if kind < 0.45:
                         self.put(i, j, "·", DGREY)
-                    elif kind < 0.8:
+                    elif kind < 0.65:
                         self.put(i, j, ".", GREY)
-                    elif kind < 0.9:
+                    elif kind < 0.78:
                         self.put(i, j, "·", WHITE)
-                    elif kind < 0.96:
+                    elif kind < 0.88:
                         self.put(i, j, "+", DGREY)
+                    elif kind < 0.94:
+                        self.put(i, j, "*", GREY)
+                    elif kind < 0.97:
+                        self.put(i, j, "+", WHITE)
                     else:
                         self.put(i, j, "·", LCYAN)
 
     def rivets(self, x, y, w, h, fg=DGREY, ch="·"):
         for cx, cy in ((x, y), (x + w - 1, y), (x, y + h - 1), (x + w - 1, y + h - 1)):
             self.put(cx, cy, ch, fg)
+
+    def glow(self, cx, cy, r0, r1, color=AMBER, aspect=2.0, inner=0.0):
+        """Soft halo of ░▒ over empty cells. (cx, cy) in cells, r0 and r1 in
+        pixels (a cell is 1 px wide and `aspect` px high): full strength inside
+        r0, none beyond r1."""
+        for y in range(self.h):
+            for x in range(self.w):
+                c = self.cells[y][x]
+                if c[0] != " " or c[2] != BLACK:
+                    continue
+                d = math.hypot(x + 0.5 - cx, (y + 0.5 - cy) * aspect)
+                if d >= r1 or d < inner:
+                    continue
+                t = 1.0 if d <= r0 else 1 - (d - r0) / (r1 - r0)
+                # ordered dither so the halo has a grain, not bands
+                t -= ((x * 3 + y * 5) % 4) * 0.06
+                if t > 0.62:
+                    self.put(x, y, "▒", color, BLACK)
+                elif t > 0.3:
+                    self.put(x, y, "░", color, BLACK)
+                elif t > 0.12 and (x + y) % 2 == 0:
+                    self.put(x, y, "░", color, BLACK)
 
     # ---- output
     def lines(self):
@@ -277,18 +333,41 @@ class PixelLayer:
                     continue
                 cur = canvas.get(X, Y)
                 under = cur[2]
+                if t is None and b is None:
+                    continue
                 if t is None:
                     canvas.put(X, Y, "▄", b, under)
                 elif b is None:
                     canvas.put(X, Y, "▀", t, under)
-                elif t == b:
-                    canvas.put(X, Y, "█", t, BLACK)
-                elif b < 8:
-                    canvas.put(X, Y, "▀", t, b)
-                elif t < 8:
-                    canvas.put(X, Y, "▄", b, t)
-                else:  # two different bright colours: a half block needs a dark one
-                    canvas.put(X, Y, "▀", t, b - 8)
+                else:
+                    ch, fg, bg = half(t, b)
+                    canvas.put(X, Y, ch, fg, bg)
+
+
+class PixelCanvas(PixelLayer):
+    """Half-block picture canvas: every cell is two pixels tall, so a shape
+    gets twice the vertical resolution of the character grid. render() is
+    flush() under the name the brief uses; the helpers draw smooth shapes."""
+
+    def render(self, canvas, cx, cy):
+        self.flush(canvas, cx, cy)
+
+    def disc(self, cx, cy, r, c):
+        for j in range(self.h):
+            for i in range(self.w):
+                if math.hypot(i + 0.5 - cx, j + 0.5 - cy) <= r:
+                    self.p[j][i] = c
+
+    def ring(self, cx, cy, r0, r1, fn):
+        """Annulus; fn(angle 0..1, dx, dy, d) -> colour or None."""
+        for j in range(self.h):
+            for i in range(self.w):
+                dx, dy = i + 0.5 - cx, j + 0.5 - cy
+                d = math.hypot(dx, dy)
+                if r0 <= d <= r1:
+                    c = fn((math.atan2(dy, dx) + math.pi) / (2 * math.pi), dx, dy, d)
+                    if c is not None:
+                        self.p[j][i] = c
 
 
 # --------------------------------------------------------- small pixel font
@@ -349,107 +428,76 @@ def title5(canvas, x, y, text, color=WHITE, shadow=DGREY, gap=1):
 
 # --------------------------------------------------------- big logo font
 
-def _glyph(rows):
-    return rows
-
-
-def _stem(w, h):
-    return ["#" * w] * h
+GLYPHS = {
+    "H": ["##....##", "##....##", "##....##", "##....##", "##....##", "########",
+          "########", "##....##", "##....##", "##....##", "##....##", "##....##"],
+    "A": ["..####..", ".######.", "###..###", "##....##", "##....##", "########",
+          "########", "##....##", "##....##", "##....##", "##....##", "##....##"],
+    "L": ["##......", "##......", "##......", "##......", "##......", "##......",
+          "##......", "##......", "##......", "########", "########", ".#######"],
+    "C": [".######.", "########", "###..###", "##....##", "##......", "##......",
+          "##......", "##......", "##....##", "###..###", "########", ".######."],
+    "Y": ["##....##", "###..###", ".##..##.", ".######.", "..####..", "...##...",
+          "...##...", "...##...", "...##...", "...##...", "...##...", "...##..."],
+    "O": [".######.", "########", "###..###", "##....##", "##....##", "##....##",
+          "##....##", "##....##", "##....##", "###..###", "########", ".######."],
+    "N": ["###...##", "####..##", "####..##", "##.##.##", "##.##.##", "##.##.##",
+          "##.##.##", "##..####", "##..####", "##...###", "##....##", "##....##"],
+}
 
 
 def big_glyph(ch, w=8, h=12):
-    """Pixel masks for the logo letters, w x h, strokes two pixels thick."""
-    m = [["."] * w for _ in range(h)]
-
-    def px(x, y):
-        if 0 <= x < w and 0 <= y < h:
-            m[y][x] = "#"
-
-    def rect(x, y, rw, rh):
-        for j in range(y, y + rh):
-            for i in range(x, x + rw):
-                px(i, j)
-
-    explicit = {
-        "A": ["..####..", ".######.", "##....##", "##....##", "##....##", "########",
-              "########", "##....##", "##....##", "##....##", "##....##", "##....##"],
-        "C": [".######.", "########", "##....##", "##......", "##......", "##......",
-              "##......", "##......", "##......", "##....##", "########", ".######."],
-        "O": [".######.", "########", "##....##", "##....##", "##....##", "##....##",
-              "##....##", "##....##", "##....##", "##....##", "########", ".######."],
-        "Y": ["##....##", "##....##", "###..###", ".##..##.", ".######.", "..####..",
-              "...##...", "...##...", "...##...", "...##...", "...##...", "...##..."],
-    }
-    if ch in explicit and w == 8 and h == 12:
-        for j, r in enumerate(explicit[ch]):
-            for i, v in enumerate(r):
-                if v == "#":
-                    px(i, j)
-    elif ch == "H":
-        rect(0, 0, 2, h); rect(w - 2, 0, 2, h); rect(0, 5, w, 2)
-    elif ch == "A":
-        rect(0, 3, 2, h - 3); rect(w - 2, 3, 2, h - 3); rect(2, 0, w - 4, 2)
-        rect(1, 1, 1, 2); rect(w - 2, 1, 1, 2); rect(2, 6, w - 4, 2)
-        px(0, 3); px(w - 1, 3)
-    elif ch == "L":
-        rect(0, 0, 2, h); rect(0, h - 2, w, 2)
-    elif ch == "C":
-        rect(2, 0, w - 3, 2); rect(0, 1, 2, h - 2); rect(2, h - 2, w - 3, 2)
-        rect(w - 2, 2, 2, 2); rect(w - 2, h - 4, 2, 2)
-    elif ch == "Y":
-        for j in range(5):
-            a = round(j * 2.0 / 4)
-            rect(a, j, 2, 1); rect(w - 2 - a, j, 2, 1)
-        rect(w // 2 - 1, 4, 2, 1)
-        rect(w // 2 - 1, 5, 2, h - 5)
-    elif ch == "O":
-        rect(2, 0, w - 4, 2); rect(0, 1, 2, h - 2); rect(w - 2, 1, 2, h - 2); rect(2, h - 2, w - 4, 2)
-    elif ch == "N":
-        rect(0, 0, 2, h); rect(w - 2, 0, 2, h)
-        for j in range(h):
-            a = 1 + round(j * (w - 5) / (h - 1))
-            rect(a, j, 2, 1)
-    else:
-        raise ValueError(ch)
-    return ["".join(r) for r in m]
+    return GLYPHS[ch]
 
 
-def logo(canvas, x, y, word, face, edge, depth, gap=2, w=8, h=12, depth_n=2, bevel=None):
-    """Big shaded block letters. face: colour per pixel row (list of h), edge:
-    highlight colour on top and left edges, depth: extruded shadow colour
-    (down-right), bevel: dark colour on bottom and right edges."""
-    glyphs = [big_glyph(c, w, h) for c in word]
+def logo(canvas, x, y, word, face, edge=WHITE, depth=BLUE, gap=2, w=8, h=12,
+         fade=True, sparkles=True, **_ignored):
+    """HALCYON-style logo: shaped letters with half-block curves, a bright top
+    and left highlight, a mid-colour body, a dark drop shadow one cell down
+    and right, a ▓▒ fade on the lower rows and a few sparkles. `face` is the
+    colour per pixel row (h entries)."""
+    glyphs = [big_glyph(c) for c in word]
     total = len(word) * (w + gap) - gap
-    mask = [[False] * (total + depth_n) for _ in range(h + depth_n)]
+    sx, sy = 1, 2                                  # shadow: one cell right, one cell down
+    mask = [[False] * (total + sx) for _ in range(h + sy)]
     for n, g in enumerate(glyphs):
         for j in range(h):
             for i in range(w):
                 if g[j][i] == "#":
                     mask[j][n * (w + gap) + i] = True
-    layer = PixelLayer(total + depth_n, h + depth_n + (h + depth_n) % 2)
+    layer = PixelLayer(total + sx, h + sy)
 
     def on(i, j):
-        return 0 <= j < len(mask) and 0 <= i < len(mask[0]) and mask[j][i]
-    for j in range(len(mask)):
-        for i in range(len(mask[0])):
-            if on(i, j):
-                continue
-            for d in range(1, depth_n + 1):
-                if on(i - d, j - d):
-                    layer.set(i, j, depth)
-                    break
+        return 0 <= j < h + sy and 0 <= i < total + sx and mask[j][i]
+    for j in range(h + sy):
+        for i in range(total + sx):
+            if not on(i, j) and on(i - sx, j - sy):
+                layer.set(i, j, depth)
+            elif not on(i, j) and (on(i - 1, j - 1) or on(i - 1, j - 2) or on(i, j - 2)):
+                layer.set(i, j, depth)
     for j in range(h):
         for i in range(total):
             if not on(i, j):
                 continue
             c = face[j]
-            if bevel is not None and (not on(i + 1, j) or not on(i, j + 1)):
-                c = bevel
             if not on(i - 1, j) or not on(i, j - 1):
-                c = edge
+                c = edge if j < 3 or not on(i - 1, j) else face[j]
             layer.set(i, j, c)
     layer.flush(canvas, x, y)
-    return total + depth_n, (len(layer.p)) // 2
+    rows = (h + sy) // 2
+    if fade:
+        # lower rows: solid body thins to ▓ then ▒ in the body colour
+        for r, ch in ((rows - 3, "▓"), (rows - 2, "▒")):
+            for cx in range(x, x + total + sx):
+                cell = canvas.get(cx, y + r) if canvas.inside(cx, y + r) else None
+                if cell and cell[0] == "█" and cell[1] in (CYAN, LCYAN):
+                    canvas.put(cx, y + r, ch, CYAN, BLUE)
+    if sparkles:
+        for dx, dy, chh, col in ((-2, 0, "+", WHITE), (total + 2, 1, "·", LCYAN), (total // 2 - 3, -1, "·", WHITE),
+                                 (14, rows + 0, "·", DGREY), (total - 6, rows, ".", GREY)):
+            if canvas.inside(x + dx, y + dy) and canvas.get(x + dx, y + dy)[0] == " ":
+                canvas.put(x + dx, y + dy, chh, col)
+    return total + sx, rows
 
 
 # --------------------------------------------------------- build driver

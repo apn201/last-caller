@@ -19,3 +19,13 @@
   - [x] 5.3 `pio run` passes; `git grep -i kouvo` clean
   - [x] 5.4 Server build not run: Windows PC
   - [x] 5.5 Commit per group
+
+## Pass 2 (S1c)
+
+- [x] 6. Tools: `PixelCanvas`, `ramp()`, `half()`, `Canvas.glow`, new logo font and `logo()` (R7.1-7.3)
+- [x] 7. Shared pieces: `planet()`, `earth()` with dither, `ship()`, `ship_mini()`, `eliza_ring()`, `frame()`, `header()` (R7.2, R7.4, R7.5)
+- [x] 8. WELCOME.ANS: logo, ship, Earth's limb, ELIZA ring and halo (R7)
+- [x] 9. GOODBYE.ANS: ship into the terminator, day side into night (R7)
+- [x] 10. SYSOP.ANS: concentric ELIZA core with halo (R7)
+- [x] 11. Other screens pick up the new titles and frames (R7.3, R7.5)
+- [x] 12. Acceptance: all PNGs viewed (full and phone width), `--menu` passes for 4 menus, sizes under 12 KB, `pio run`
