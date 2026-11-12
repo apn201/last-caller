@@ -57,7 +57,7 @@ static void userList(Session &s) {
 static void sysopMenu(Session &s) {
   s.state = SYSOP_MENU; activity(s, "SYSOP CONSOLE");
   art(s, "/BBS/ANSI/MENUS/SYSOP.ANS", shortName() + " // SYSOP");
-  say(s, "[U] User editor                    [D] Door settings / forest fights");
+  say(s, "[U] User editor");
   say(s, "[W] Node monitor   [S] Board statistics   [R] Reload settings   [Q] Main Board");
   size_t waiting = uploadsWaiting();
   say(s, "[I] Incoming uploads" + (waiting ? " \x1b[1;35m(" + String(waiting) + " waiting)\x1b[0m" : String(" (none waiting)")));
@@ -95,11 +95,4 @@ static void sysopLogs(Session &s, String filter) {
   activity(s, "SYSOP LOGS");
   openRows(s, rows, filter.length() ? "Log: " + filter.substring(0, 16) : String("Event log"),
            "SPACE page  B back  \x18\x19 line  G/< top  Q console", sysopMenuBack, nullptr, true);
-}
-static void sysopDoors(Session &s) {
-  s.state = SYSOP_DOORS;
-  activity(s, "SYSOP DOOR SETTINGS");
-  say(s, "\x1b[1;35mDOOR SETTINGS\x1b[0m");
-  say(s, "[F handle count] Add forest fights (1-255)   [V handle] View fights");
-  prompt(s, "[Q] Return. Door settings command? ");
 }

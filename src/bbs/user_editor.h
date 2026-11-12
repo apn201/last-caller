@@ -91,10 +91,9 @@ static void showRecord(Session &s, const User &u) {
   fieldLine(s, 5, "Credits", sizeText(u.credits));
   fieldLine(s, 6, "Ratio", u.ratioEnforced ? "1:" + String(u.ratio) + ", may download " + u.ratio + "x what they upload" : String("off"));
   fieldLine(s, 7, "Password", "set a new one");
-  fieldLine(s, 8, "Forest fights", String(q.fights) + " left today (Legend)");
-  fieldLine(s, 9, "Real name", u.realName.length() ? u.realName : String("-"));
-  fieldLine(s, 10, "Location", u.location.length() ? u.location : String("-"));
-  fieldLine(s, 11, "Gold", String(q.gold) + " in the purse, " + q.bank + " banked (all doors)");
+  fieldLine(s, 8, "Real name", u.realName.length() ? u.realName : String("-"));
+  fieldLine(s, 9, "Location", u.location.length() ? u.location : String("-"));
+  fieldLine(s, 10, "Gold", String(q.gold) + " in the purse, " + q.bank + " banked (all doors)");
   say(s, "");
   say(s, String(" \x1b[1;33m[N]\x1b[0m Next user  \x1b[1;33m[P]\x1b[0m Previous  ") +
          (u.id != s.user.id ? "\x1b[1;33m[D]\x1b[0m Delete  " : "") + "\x1b[1;33m[Q]\x1b[0m User list");
@@ -133,10 +132,9 @@ static void openField(Session &s, uint8_t field) {
     case 5: prompt(s, "Credits, e.g. 100K (now " + sizeText(u.credits) + "): "); break;
     case 6: prompt(s, "Bytes they may download per byte uploaded, 1-999, or OFF (now " + ratioText(u) + "): "); break;
     case 7: s.hideInput = true; prompt(s, "New password, 6+ characters (ENTER cancels): "); break;
-    case 9: prompt(s, "Real name (now " + (u.realName.length() ? u.realName : String("empty")) + ", - clears): "); break;
-    case 10: prompt(s, "Location (now " + (u.location.length() ? u.location : String("empty")) + ", - clears): "); break;
-    case 8: loadQuest(u.id, q); prompt(s, "Forest fights left today, 0-255 (now " + String(q.fights) + "): "); break;
-    case 11: loadQuest(u.id, q); prompt(s, "Gold in the purse (now " + String(q.gold) + "): "); break;
+    case 8: prompt(s, "Real name (now " + (u.realName.length() ? u.realName : String("empty")) + ", - clears): "); break;
+    case 9: prompt(s, "Location (now " + (u.location.length() ? u.location : String("empty")) + ", - clears): "); break;
+    case 10: loadQuest(u.id, q); prompt(s, "Gold in the purse (now " + String(q.gold) + "): "); break;
     default: showRecord(s, u);
   }
 }
@@ -183,24 +181,13 @@ static void fieldValue(Session &s, const String &line) {
       else say(s, "Use a number from 1 to 999, or OFF.");
       what = "RATIO";
       break;
-    case 9: case 10: {
+    case 8: case 9: {
       String text = v == "-" ? String() : clean(v, 40);
-      if (s.editField == 9) { u.realName = text; what = "NAME"; } else { u.location = text; what = "LOCATION"; }
+      if (s.editField == 8) { u.realName = text; what = "NAME"; } else { u.location = text; what = "LOCATION"; }
       ok = true;
       break;
     }
-    case 8: {
-      if (!readNumber(v, n) || n > 255) { say(s, "Forest fights is a number from 0 to 255."); break; }
-      Session *live = nullptr;
-      for (auto &o : sessions) if (o.used && o.user.id == u.id && playingQuest(o)) { live = &o; break; }
-      Quest q;
-      if (live) q = live->quest; else loadQuest(u.id, q);
-      q.id = u.id; q.fights = n;
-      if (saveQuest(q)) { if (live) live->quest.fights = n; event("SYSOP_FIGHTS", s.user.handle + " -> " + u.handle + " " + n); say(s, "\x1b[1;32mSaved.\x1b[0m"); }
-      else say(s, "Door storage could not be written.");
-      break;
-    }
-    case 11: {  // the purse shared by Legend, the dice cabinet and VolaMUD
+    case 10: {  // the purse VolaMUD uses
       if (!readNumber(v, n) || n > 1000000) { say(s, "Gold is a number from 0 to 1000000."); break; }
       Session *live = nullptr;
       for (auto &o : sessions) if (o.used && o.user.id == u.id && (playingQuest(o) || playingMud(o))) { live = &o; break; }
@@ -284,7 +271,7 @@ static bool userEditorCommand(Session &s, String &line, const String &cmd) {
       say(s, "\x1b[1;31mDelete " + u.handle + " for good? Their messages stay.\x1b[0m");
       prompt(s, "Type YES to delete: "); return true;
     }
-    if (readNumber(cmd, n) && n >= 1 && n <= 11) { openField(s, n); return true; }
+    if (readNumber(cmd, n) && n >= 1 && n <= 10) { openField(s, n); return true; }
     say(s, "Pick a field 1-11, or N, P, D, Q.");
     prompt(s, "Field # or command: "); return true;
   }

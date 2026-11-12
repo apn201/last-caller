@@ -114,7 +114,7 @@ static void loginPrompt(Session &s) {
   s.state = LOGIN_CHOICE;
   activity(s, "AWAITING LOGIN");
   if (s.ansi) art(s, board.welcome.c_str(), board.name);
-  else say(s, board.name);
+  else plainArt(s, "/BBS/ASCII/LOGIN/WELCOME.ASC", board.name);
   prompt(s, "(N)ew user, (L)ogin, or (G)oodbye? ");
 }
 static void newSession(Session &s) {

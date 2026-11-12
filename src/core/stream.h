@@ -168,3 +168,26 @@ static void art(Session &s, const char *path, const String &fallback = "") {
   }
   say(s, fallback);
 }
+
+// Plain-text board art for callers without ANSI (ASCII/LOGIN/WELCOME.ASC):
+// printable bytes pass through, escapes and control characters are dropped.
+static void plainArt(Session &s, const char *path, const String &fallback = "") {
+  if (sdReady) {
+    File f = SD_MMC.open(path, FILE_READ);
+    if (f && !f.isDirectory() && f.size() && f.size() <= 6000) {
+      String text;
+      text.reserve(f.size() + 16);
+      while (f.available()) {
+        int b = f.read();
+        if (b < 0 || b == 0x1a) break;
+        if (b == '\n') text += "\r\n";
+        else if (b >= 32 && b < 127) text += char(b);
+      }
+      f.close();
+      write(s, text);
+      return;
+    }
+    if (f) f.close();
+  }
+  say(s, fallback);
+}
