@@ -46,7 +46,7 @@ Rules for every item:
 - [x] **Q3 - Scene engine.** (done, a222ce7..832d528 plus the tick; `pio run` passes, host tests pass with `zig c++`, server build not run: Windows, Q1 blocked; board test still to do.) The visual novel door from STORY_EXTRAS:
   portrait art, typed dialogue with pauses, choices that set flags, scenes
   as card files in `STORY/SCENES/`. Works on Telnet and browser.
-- [ ] **Q4 - Ghosts and ELIZA's voice (S6, S9).** Ghost callers in WHO,
+- [x] **Q4 - Ghosts and ELIZA's voice (S6, S9).** (done, 14ff630..0c0c5fb plus the tick; `pio run` passes, host tests pass with `zig c++`, server build not run: Windows, Q1 blocked; board test still to do.) Ghost callers in WHO,
   pages and chat with typing delays, ELIZA's scripted lines keyed by
   trigger and chat keyword (`STORY/GHOSTS.INI`, `STORY/SYSOP.INI`).
   Also fix from the Q3 review: keys typed while a scene types out are
