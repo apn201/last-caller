@@ -18,7 +18,7 @@ are allowed: they never appear on screen.
 
 | Key | Shown when | Notes |
 | --- | --- | --- |
-| M, N, A, D, C, W, U, S, ?, G | always | W opens the node monitor (kick, M) for the SysOp. G on a read-only crew account logs off to the login prompt and keeps the line (Q2: what the visit found goes to the caller's own login). |
+| M, N, A, D, C, W, U, S, ?, G | always | W opens the node monitor (kick, M) for the SysOp. G on a read-only crew account logs off to the login prompt and keeps the line (Q2: what the visit found goes to the caller's own login). Q4: W lists ghosts too, with an Idle column; a ghost's node is "no caller on that node" for the monitor. |
 | F | an area is open to the caller (an empty upload area counts in the browser) | |
 | B | a bulletin is visible to the caller | |
 | J | more than one message area can be joined | |
@@ -73,7 +73,7 @@ are allowed: they never appear on screen.
 | Screen | Keys | Notes |
 | --- | --- | --- |
 | Console | U D W I L S R Q; F in the browser | L shows the event log, L <text> filters it. |
-| Node chat | type to talk; /Q /W; /H for the SysOp | A bar on the last row shows who is here and the commands. |
+| Node chat | type to talk; /Q /W; /H for the SysOp | A bar on the last row shows who is here and the commands. Q4: ghosts with `chat=1` (ELIZA) are named in the bar and in /W for callers who can see them, and answer after a typing delay. |
 | User editor list | #, handle, A, Q; ENTER and P with more than one page | |
 | User record | 1-11 (11 = gold, shared by all doors), N, P, Q; D for other accounts | D used to show on your own record and then refuse. **Fixed.** |
 | Node monitor | node #, M <node or ALL> text, ENTER | |

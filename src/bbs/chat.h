@@ -10,14 +10,16 @@ static constexpr const char *CHAT_OLD = "/BBS/LOGS/CHAT.OLD";
 static constexpr uint32_t CHAT_LOG_MAX = 128 * 1024;  // then CHAT.OLD, a fresh log
 static constexpr uint8_t CHAT_SYSOP_BACKLOG = 20, CHAT_HISTORY = 200;
 
-static String chatHere() {
+// Who is in chat, as `viewer` sees it: the callers, then the ghosts shown to them (core/ghost.h).
+static String chatHere(Session &viewer) {
   String names;
   for (auto &n : sessions) if (n.used && n.state == CHAT) { if (names.length()) names += ", "; names += n.user.handle; }
+  for (const String &g : ghostsInChat(viewer)) { if (names.length()) names += ", "; names += g; }
   return names;
 }
 static void chatBar(Session &s) {
   if (!s.ansi) return;
-  String bar = " NODE CHAT  Here: " + chatHere();
+  String bar = " NODE CHAT  Here: " + chatHere(s);
   String keys = String("  /Q quit  /W who") + (isSysop(s) ? "  /H history" : "") + " ";
   if (bar.length() + keys.length() > 80) bar = bar.substring(0, 77 - keys.length()) + "...";
   while (bar.length() + keys.length() < 80) bar += ' ';
@@ -50,16 +52,21 @@ static std::vector<String> chatHistory(size_t count) {
   return rows;
 }
 
+// One line from someone else into this caller's chat: their prompt line is
+// cleared, the message printed, and the prompt drawn again with whatever they
+// had half typed. Also how a ghost's answer arrives (core/ghost.h).
+static void chatSpeak(Session &s, const String &from, const String &line) {
+  write(s, "\r\x1b[2K");
+  say(s, "\x1b[0;36m[" + from + "]\x1b[0m " + line);
+  prompt(s, "> ");
+  if (s.input.length() && !s.hideInput) write(s, s.input);
+}
 // To everyone in chat but the sender, who already sees the line (it was
-// echoed as they typed): their prompt line is cleared, the message printed,
-// and the prompt drawn again with whatever they had half typed.
+// echoed as they typed).
 static void broadcastChat(Session &from, const String &line) {
   for (auto &s : sessions) {
     if (!s.used || s.state != CHAT || &s == &from) continue;
-    write(s, "\r\x1b[2K");
-    say(s, "\x1b[0;36m[" + from.user.handle + "]\x1b[0m " + line);
-    prompt(s, "> ");
-    if (s.input.length() && !s.hideInput) write(s, s.input);
+    chatSpeak(s, from.user.handle, line);
   }
 }
 // The chat screen: cleared, the scroll region set, the bar drawn.
@@ -79,6 +86,7 @@ static void startChat(Session &s, const String &banner) {
   broadcastChat(s, "joined the chat.");
   chatBars();
   prompt(s, "> ");
+  ghostChatJoined(s);  // ELIZA's greeting, after her typing time
 }
 // Leaving chat, or losing carrier in it: the others are told and their bars
 // updated. The caller's own screen gets the whole screen back.
@@ -91,7 +99,7 @@ static void leaveChat(Session &s, const char *why) {
 static void chatResume(Session &s) { s.state = CHAT; chatScreen(s); chatBars(); prompt(s, "> "); }
 static void chatCommand(Session &s, const String &line, const String &cmd) {
   if (cmd == "/Q") { leaveChat(s, "left the chat."); mainMenu(s); return; }
-  if (cmd == "/W") { say(s, "\x1b[0;37mIn chat: " + chatHere() + "\x1b[0m"); chatPrompt(s); return; }
+  if (cmd == "/W") { say(s, "\x1b[0;37mIn chat: " + chatHere(s) + "\x1b[0m"); chatPrompt(s); return; }
   if (cmd == "/H" && isSysop(s)) {
     std::vector<String> rows = chatHistory(CHAT_HISTORY);
     if (rows.empty()) { say(s, "No chat saved yet."); chatPrompt(s); return; }
@@ -105,4 +113,5 @@ static void chatCommand(Session &s, const String &line, const String &cmd) {
   chatLog(s.user.handle, line);
   broadcastChat(s, line);
   prompt(s, "> ");
+  ghostChatHeard(s, line);  // ELIZA may answer, after her typing time
 }

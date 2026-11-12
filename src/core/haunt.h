@@ -19,6 +19,7 @@ static haunt::Table hauntRules;
 static std::vector<uint32_t> hauntIdleAt, hauntMinutesAt;  // after= values of the timed rules
 
 static void sceneStart(Session &s, const String &name);  // core/scene.h
+static void ghostTrigger(Session &s, const std::string &ruleId, const std::string &flags);  // core/ghost.h
 
 static std::string hauntStd(const String &s) { return std::string(s.c_str(), s.length()); }
 static String hauntStr(const std::string &s) { return String(s.c_str()); }
@@ -122,6 +123,10 @@ static void hauntEvent(Session &s, haunt::Ev ev, const String &match, uint32_t a
       h.text = hauntStr(r->page); h.art = hauntStr(r->art); h.scene = hauntStr(r->scene);
       if (s.hauntShows.size() < 8) s.hauntShows.push_back(h);
     }
+    // ELIZA's lines keyed by this rule (STORY/SYSOP.INI). They save flags to the
+    // account, so `own` is read again before the next rule touches it.
+    ghostTrigger(s, r->id, haunt::flagsAdd(c.flags, haunt::flagsOf(*r)));
+    if (haveOwn) haveOwn = hauntOwner(s, own);
   }
 }
 

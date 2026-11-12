@@ -84,7 +84,7 @@ edit.
 2. An answer SHALL be printed the way other callers' chat lines are, so it
    does not break a half-typed line. IF the caller has left chat before it is
    due, THEN it SHALL be dropped.
-3. At most three answers SHALL wait for one caller.
+3. At most six parts SHALL wait for one caller; a line that does not fit\n   is not spoken and is not marked.
 
 ### R6 - Scenes do not echo keys
 

@@ -44,6 +44,8 @@ struct StreamJob {
 struct Session;
 // A trigger's page or art, waiting until the caller is at a menu prompt (core/haunt.h).
 struct HauntShow { String from, text, art, scene; };
+// An answer from a ghost or ELIZA, waiting for its typing time to pass (core/ghost.h).
+struct GhostLine { uint32_t dueAt = 0; String from, text; };
 enum ReaderKind : uint8_t { READER_TEXT, READER_ANSI, READER_ROWS };
 struct Reader {
   ReaderKind kind = READER_ROWS;
@@ -115,6 +117,10 @@ struct Session {
   std::vector<HauntShow> hauntShows;
   scene::Player sceneRun;  // core/scene.h: the scene being played (state SCENE_PLAY)
   uint32_t hauntIdleSec = 0, hauntMinute = 0;
+  // Ghosts and ELIZA's voice (core/ghost.h): when the caller signed in, answers
+  // waiting to be "typed" in chat, and how many fallback lines were used.
+  uint32_t signedAt = 0, ghostTurn = 0;
+  std::vector<GhostLine> ghostSay;
 };
 static Session sessions[MAX_NODES];
 // Every writer of a caller's own data asks this first. A read-only account (the

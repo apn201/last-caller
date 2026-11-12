@@ -187,6 +187,15 @@ idle times. Page the caller, speak in chat with typing delays. The SysOp is
 one of them. Done when: the SysOp ghost pages you within 30 s of login on
 both transports.
 
+Built (Q4): spec `.kiro/specs/ghosts/`, `src/core/ghost.h` on
+`src/core/ghost_logic.h`; ghosts in `sd/BBS/STORY/GHOSTS.INI` (WHO rows with an
+idle column, node chat, a timed page), ELIZA's scripted lines (S9) in
+`sd/BBS/STORY/SYSOP.INI`, keyed by a trigger rule, a chat keyword, entering
+chat or a fallback, typed after a delay. Host tests:
+`tools/test/ghost_logic_test.cpp` (also checks the card's two files). Also the
+Q3 fix: keys typed while a scene types are no longer echoed. Board test still
+to run (spec task 10).
+
 ### S6b - NOWHERE shell door (Nov 21)
 
 A fake 1998 Unix-like shell on the haven's file system: `ls`, `cat`,

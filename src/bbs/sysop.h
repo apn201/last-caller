@@ -3,8 +3,12 @@
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
 
 static void who(Session &s) {
-  say(s, "\x1b[1;36mNode  User             Activity\x1b[0m");
-  for (auto &n : sessions) if (n.used && n.state != DEAD) { String h = n.user.handle.length() ? n.user.handle : "(logging in)"; char row[90]; snprintf(row, sizeof(row), "%-5u %-16s %s", n.node, h.c_str(), n.activity.c_str()); say(s, row); }
+  say(s, "\x1b[1;36mNode  User             Idle     Activity\x1b[0m");
+  uint32_t now = millis();
+  std::vector<WhoRow> rows;
+  for (auto &n : sessions) if (n.used && n.state != DEAD) rows.push_back({n.node, n.user.handle.length() ? n.user.handle : String("(logging in)"), String(ghost::idleText((now - n.lastAt) / 1000).c_str()), n.activity});
+  ghostWhoRows(s, rows);  // the ghosts this caller can see, in node order
+  for (const auto &r : rows) { char row[110]; snprintf(row, sizeof(row), "%-5u %-16s %-8s %s", (unsigned)r.node, r.handle.c_str(), r.idle.c_str(), r.activity.c_str()); say(s, row); }
 }
 static bool isSysop(const Session &s) { return s.authenticated && !s.user.locked && s.user.level == 255 && hasFlag(s.user, "SYSOP"); }
 static void refreshLiveUser(const User &changed) {

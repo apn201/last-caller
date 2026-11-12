@@ -78,6 +78,7 @@ static void doorMenu(Session &s) {
 }
 static void finishLogin(Session &s) {
   s.authenticated = true;
+  s.signedAt = millis();  // ghost pages count from here (core/ghost.h)
   s.readOnly = hasFlag(s.user, "READONLY");
   // Older cards could already contain a SYSOP-named account created before
   // the level/flag bootstrap rule was added.  SYSOP is the reserved primary

@@ -252,16 +252,30 @@ int main(int argc, char **argv) {
   }
 
   // ---- the card's own files ----
+  Table card;
   for (int i = 1; i < argc; ++i) {
     std::string path = argv[i], text = slurp(argv[i]);
     if (text.empty()) { printf("FAIL: cannot read %s\n", argv[i]); failures++; continue; }
     Table t;
     bool isGhosts = path.find("GHOSTS") != std::string::npos;
-    if (isGhosts) parseGhosts(ini(text), t); else parseLines(ini(text), t);
+    if (isGhosts) { parseGhosts(ini(text), t); card.ghosts = t.ghosts; } else { parseLines(ini(text), t); card.lines = t.lines; }
     printf("%s: %zu entries, %u skipped\n", argv[i], isGhosts ? t.ghosts.size() : t.lines.size(), t.skipped);
     for (const auto &p : t.problems) printf("  %s\n", p.c_str());
     if (t.skipped) failures++;
-    if (isGhosts) for (const auto &g : t.ghosts) if (g.chat && g.handle.empty()) failures++;
+  }
+  if (!card.ghosts.empty() && !card.lines.empty()) {
+    // Slice S6: the SysOp ghost pages a new caller within 30 s, and she is in chat with no conditions.
+    Ctx fresh; fresh.signedSec = 30; fresh.onlineMin = 0;
+    bool pages = false;
+    for (const auto &g : card.ghosts) if (g.handle == "ELIZA" && pageDue(g, fresh)) pages = true;
+    CHECK(pages);
+    CHECK(present(card, Ctx(), "ELIZA"));
+    // every chat line is spoken by someone who can be shown in chat to a fresh caller or to a caller with the line's own flags
+    for (const auto &l : card.lines) {
+      if (l.kind == K_TRIGGER) continue;
+      Ctx c; c.flags = l.has; c.onlineMin = 1000;
+      if (!present(card, c, l.from)) { printf("FAIL: line %s is by %s, who is not in chat\n", l.id.c_str(), l.from.c_str()); failures++; }
+    }
   }
 
   if (failures) { printf("%d check(s) failed\n", failures); return 1; }
