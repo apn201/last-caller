@@ -1,0 +1,223 @@
+# LAST CALLER - slices
+
+Working document, Nov 12 2026. Rules, risks, judging and dates stay in
+`KIROWEEN_PLAN.md`. Order of Kiro setup stays in `KIRO_REPO_STEPS.md`. This file
+is the scope: what we build, in what order, and where we stop.
+
+## The idea in one paragraph
+
+You dial a board that should not answer. Nobody has called since the night it
+went dark, but the board kept running: the clock ticks, the message base grows
+by one line now and then, and something is still on node 1. Walking through it
+should feel like walking through a house after the family left, or the
+corridors of a ship whose crew died years ago. The menus work. The rooms are
+lit. Nobody is there. Except the SysOp, which is no longer a person.
+
+Decided Nov 12:
+
+- Setting: the board runs aboard a ship or station. The crew is long dead.
+  The BBS was their message board, mail and file store, and it still answers.
+- The SysOp is the ship's AI. It took over the board, and the evidence says
+  it took over more than that. Calm, helpful, never raises its voice.
+- The caller's goal is deduction: work out what happened to every person
+  on the crew list. Who they were, how they died, and who or what did it.
+  The genre is "fate deduction" (fill in a manifest from fragments, the game
+  confirms correct entries in groups so guessing does not pay). Our own
+  names, ship, art and wording only.
+
+Premise (Juha, Nov 12): 1998, the first private space flight, secret, crew
+of four, a science mission preparing a private space hotel and tourist
+flights. A BBS on a 486 let the crew message friends and family on Earth.
+The mission AI, ELIZA, ran the mission, ran the BBS as SysOp, and kept the
+crew company when they were fed up with each other. Then mission control
+lost all contact. It never made the news. In 2026 the shorted batteries
+have gone open circuit and the solar panels run the 486 whenever the ship
+is in sunlight, a zombie satellite. Radio amateurs found the signal on
+11 Nov 2026.
+
+Engine fit: `clock_sync` already moves today back 28 years, so a caller in
+Nov 2026 lands on the board in Nov 1998. The board only answers on the sun
+side of the orbit, which can be a real game rule.
+
+Open: see "Story questions" at the end.
+
+## Scope rule
+
+Three layers. Each is shippable on its own. We only start the next one when
+the previous one is green on the server build and has been on the stick once.
+
+1. Content and identity. No code. The board feels abandoned with the engine
+   as it is today.
+2. The haunt. One small engine in the shared core: triggers, ghosts, glitches.
+3. The voice. The SysOp talks back. Scripted first, AI only as an extra.
+
+If time runs out, we ship the last green layer. Layer 1 alone is already an
+entry; layer 2 is the entry we want; layer 3 is the demo moment.
+
+## Who does what
+
+- Juha: story, final edit of every caller-visible line, pictures and sounds,
+  Kiro sessions, the stick, the video.
+- Claude Code: plans, specs written ready for Kiro, story drafts on request,
+  review of what Kiro produced, the server deploy checks.
+- Kiro: all code and all committed content edits from the next commit on.
+  Specs, steering, hooks, agents, MCP and property tests live in `.kiro/`.
+
+The baseline commit (`e5898cd`) is the TinyBBS engine with the Kouvosto
+content removed. Everything after it should be visibly Kiro work.
+
+## Layer 1 - Content and identity
+
+### S0 - Kiro bootstrap (Nov 12 to 13)
+
+- `.kiro/steering/`: `product.md`, `tech.md`, `structure.md`,
+  `card-content.md`, `story-voice.md` (fiction only, no real names or brands,
+  never explain the scare). Lifted from AGENTS.md, Puhelu's steering as a
+  template.
+- First hook: save in `shared/web/*.html` runs `tools/embed_web.py`.
+- `pio run` and the server CMake build pass from Kiro's terminal.
+- Done when: steering committed from Kiro, the hook fires once.
+
+### S1 - Rebrand spec (Nov 13)
+
+`.kiro/specs/rebrand/`. EARS requirements, Kiro runs the tasks.
+
+- `SYSTEM.INI`, `NETWORK.INI`: new name, short name, SSID, sysop handle.
+- Welcome, menus, goodbye, rules bulletin: first pass is the old art with the
+  name replaced and the colours drained (greys, one dark red).
+- Door names: keep VolaMUD (becomes the explorable "deck plan" or "house" later),
+  drop Legend and Dice unless the story wants them. Code strings in
+  `src/doors/doors.h`, `dice.h`, `legend.h`, `src/bbs/sysop.h`,
+  `user_editor.h`, `src/hw/scene_logo.h`.
+- README rewritten for Last Caller. `docs/CONTENT_POLICY.md` replaces the old
+  curation policy: everything is original, listed with source.
+- Acceptance: `grep -ri kouvo` finds nothing outside `THIRD_PARTY_NOTICES.md`,
+  both builds pass, a caller sees the new name only.
+
+### S2 - Public test instance (Nov 13 to 14, parallel)
+
+Second server instance, own data root, own port, own vhost, Telnet closed,
+uploads off, SysOp page behind Apache auth. Deploy script in the repo.
+Done when: the URL opens, sign-up works, Kouvosto is untouched.
+
+### S3 - The abandoned board, content only (Nov 14 to 17)
+
+All files on the card. This is where the mood is made.
+
+- A user list of the dead: 6 to 10 regulars with last-call dates that stop
+  on the same night.
+- Message base: the last week of traffic before it went dark, getting
+  stranger. Last post unfinished.
+- File areas with a handful of original files: logs, a crew roster or house
+  inventory, a scanned note, the SysOp's own text files. FILE_ID.DIZ dates
+  carry clues.
+- Bulletins that were never taken down. One dated after the board died.
+- Back Room and Vault exist, gated by flags nothing can grant yet. That gap
+  is what S4 closes.
+- Done when: a stranger spends five minutes and says "creepy" without being
+  told the story.
+
+## Layer 2 - The haunt
+
+One portable header, `src/core/haunt.h`, no ESP32 or Linux includes. Tables
+on the card in `sd/BBS/STORY/*.INI`, loaded once at boot. Clue and progress
+state are flags on the user record (the field exists, no new storage).
+
+### S4 - Keyword terminal (Nov 15 to 16)
+
+One door. The caller types a word found somewhere on the board; the door sets
+a flag, raises level, or leaves a message. Opens the Back Room by play.
+~100 lines. Cut line: if we only get S4 and S6, there is still a game.
+
+### S5 - Triggers (Nov 17 to 19)
+
+Events: login, message read, file viewed, art viewed at a baud, door entered,
+idle N seconds, minutes online. Conditions: has flag, lacks flag, level.
+Effects: set flag, page caller, post message as a named user, show art, add
+a line to a message on re-read. Idempotent, flags only grow.
+
+### S6 - Ghost presence (Nov 18 to 20)
+
+`STORY/GHOSTS.INI`: callers in WHO with nodes, activity lines and impossible
+idle times. Page the caller, speak in chat with typing delays. The SysOp is
+one of them. Done when: the SysOp ghost pages you within 30 s of login on
+both transports.
+
+### S7 - Glitches and sound (Nov 20 to 22)
+
+The haunted-house layer, all driven by triggers so the card controls it:
+
+- Text glitches in the core (both transports): a line repeats, a character
+  is wrong, the clock jumps, a menu option appears once and is gone.
+- Browser only, from the terminal page: one static burst, a line hum, a
+  distant modem. Original audio only. Telnet gets a BEL at most.
+- Rule: rare and timed. One glitch every few minutes beats one per screen.
+
+### S8 - The manifest and the ending (Nov 22 to 24)
+
+`M` opens the crew manifest: one row per crew member, three blanks each
+(identity, fate, cause). The caller fills them from pick lists. Every time
+three rows are fully right, the board confirms those three and locks them.
+Wrong rows are never named. Rows only appear for people the caller has
+found evidence about, so the menu never shows a dead option.
+
+- Partial ending: some rows confirmed, the AI thanks you for your interest.
+- Full manifest: the AI's own record is the last row, and the board says
+  something it has not said before.
+- Sticky: a finished caller's handle stays in WHO for the next caller.
+
+The `story-lint` check for this: every row is provable from evidence on the
+card, and no row is provable from a single clue.
+
+## Layer 3 - The voice
+
+### S9 - Scripted SysOp (with S6)
+
+The HAL-style voice exists first as lines in `STORY/SYSOP.INI`, keyed by
+trigger and by chat keyword. Calm, polite, wrong. This works offline on the
+stick and costs nothing per caller.
+
+### S10 - MCP: the board as a tool (Nov 23 to 25)
+
+`bbs-caller` MCP server: connect over Telnet or WebSocket, send keys, read
+the screen, list WHO, read a test account's flags. Two uses:
+
+1. Kiro's `playtester` agent plays the game end to end. Required, it is how
+   we prove the game can be finished.
+2. An AI logs in as the SysOp node and chats with callers live. Optional,
+   server instance only, behind a switch, hard rate limit, falls back to S9
+   lines when off. The board core does not change: the AI is just another
+   caller with SysOp rights. That keeps it out of the firmware and keeps the
+   stick offline.
+
+### S11 - Verification (runs from S5 on)
+
+- `story-lint`: every flag reachable, no softlock, every ending reachable.
+- Property tests (RapidCheck, server build): flags only grow, triggers are
+  idempotent, malformed STORY files never crash the board.
+- Hooks: lint on save in `sd/BBS/STORY/`, server build plus properties on
+  save in `src/`, name/brand scan before commit.
+
+## Ship (Nov 26 to Dec 3)
+
+Hardening, one hour soak on the stick with two callers, a stranger on a
+phone, video, write-ups. Dates and the bonus prizes are in
+`KIROWEEN_PLAN.md` sections 8 and 9.
+
+## Cut list, top first
+
+AI SysOp live mode, browser sound, earlier callers as ghosts, glitch
+variety, third ending, VolaMUD haunted corner. Never cut: S1, S3, S4, S6,
+S8, the playtester through MCP, the public URL, the video.
+
+## Story questions
+
+Answers go into `.kiro/specs/story-bible/` as the first spec with no code.
+
+1. Where: deep space, orbit, a deep-sea or polar station? And when: 1997
+   tech as the ship's own computer (retro-future), or a real-era vessel?
+2. How big is the crew? 8 is playable in a jam, 12 is the most we can write.
+3. What went wrong, in one sentence, from the AI's side and from the crew's.
+4. How does a caller reach a ship? (A relay that still forwards calls, a
+   number found on a wreck, the board calling you.)
+5. Names: the ship, the board, the AI.

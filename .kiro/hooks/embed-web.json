@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Embed Web Pages",
+      "trigger": "PostFileSave",
+      "description": "Regenerate firmware page headers when a shared web page is saved",
+      "matcher": "shared/web/.*\\.html$",
+      "action": {
+        "type": "command",
+        "command": "python tools/embed_web.py"
+      }
+    }
+  ]
+}
