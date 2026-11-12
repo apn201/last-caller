@@ -22,6 +22,7 @@
 #include "core/stream.h"
 #include "core/reader.h"
 #include "bbs/settings.h"
+#include "core/haunt.h"
 #include "bbs/menus.h"
 #include "bbs/files.h"
 #include "bbs/zip.h"

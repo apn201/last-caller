@@ -1,6 +1,7 @@
 // Host-side test of src/core/haunt_logic.h. No board, no Arduino types.
 //   zig c++ -std=c++17 -Wall -Wextra -I src/core tools/test/haunt_logic_test.cpp -o haunt_logic_test
 //   (or g++/clang++ with the same flags), then run ./haunt_logic_test
+//   ./haunt_logic_test sd/BBS/STORY/TRIGGERS.INI  also checks the card's own rules load
 #include "haunt_logic.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,7 +38,22 @@ static Ctx ctx(Ev ev, const std::string &match = "", const std::string &flags = 
   Ctx c; c.ev = ev; c.match = match; c.flags = flags; c.level = level; return c;
 }
 
-int main() {
+int main(int argc, char **argv) {
+  // With a path: the card's own TRIGGERS.INI must load with nothing skipped.
+  if (argc > 1) {
+    FILE *f = fopen(argv[1], "rb");
+    CHECK(f != nullptr);
+    if (f) {
+      std::string text; char buf[4096]; size_t n;
+      while ((n = fread(buf, 1, sizeof(buf), f)) > 0) text.append(buf, n);
+      fclose(f);
+      for (auto &ch : text) if (ch == '\r') ch = ' ';
+      Table card = load(text);
+      for (const auto &p : card.problems) printf("card: %s\n", p.c_str());
+      CHECK(card.skipped == 0 && !card.rules.empty());
+      printf("card: %u rules\n", (unsigned)card.rules.size());
+    }
+  }
   // ---- flags ----
   {
     CHECK(flagsClean(" sysop, backroom ,SYSOP,a-b") == "SYSOP,BACKROOM,AB");
@@ -206,6 +222,7 @@ int main() {
       {"[A]\nevent=login\nart=../../etc\n", "path in art name"},
       {"[A]\nevent=login\nadd=hi\n", "add on login"},
       {"[A]\nevent=read\nadd=hi\npage=x\n", "add with page"},
+      {"[A]\nevent=read\nadd=hi\nset=X\n", "add with set"},
     };
     for (const auto &b : bad) {
       Table x = load(b.text);

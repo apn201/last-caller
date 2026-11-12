@@ -41,6 +41,8 @@ struct StreamJob {
 // messages. A text file is indexed by the file offset of each screen line, an
 // ANSI picture is drawn into an 80-column cell buffer, a message is ready rows.
 struct Session;
+// A trigger's page or art, waiting until the caller is at a menu prompt (core/haunt.h).
+struct HauntShow { String from, text, art; };
 enum ReaderKind : uint8_t { READER_TEXT, READER_ANSI, READER_ROWS };
 struct Reader {
   ReaderKind kind = READER_ROWS;
@@ -104,6 +106,13 @@ struct Session {
   // Brownout: when this session is dropped, in millis(). Armed on the first tick in brownout.
   uint32_t dropAt = 0;
   bool dropArmed = false;
+  // Triggers (core/haunt.h). The caller behind this connection: the own account
+  // signed in here (kept across a crew login), and flags earned on a crew
+  // account before any own account signed in. Shows wait for a calm prompt.
+  uint32_t ownUserId = 0;
+  String carriedFlags;
+  std::vector<HauntShow> hauntShows;
+  uint32_t hauntIdleSec = 0, hauntMinute = 0;
 };
 static Session sessions[MAX_NODES];
 // Every writer of a caller's own data asks this first. A read-only account (the

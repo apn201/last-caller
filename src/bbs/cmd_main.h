@@ -81,7 +81,10 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
     else if (cmd == "USER" && isSysop(s)) { sysopUsers(s); }
     else if (tokenAt(cmd, 0) == "POWER" && isSysop(s)) { sysopPowerCommand(s, cmd); prompt(s, "Main Board Command? "); }
     else if (cmd == "Z" || cmd == "USER") { say(s, "SysOp access requires level 255 and the SYSOP flag."); prompt(s, "Main Board Command? "); }
-    else if (cmd == "G") { s.state = GOODBYE; activity(s, "LOGOFF"); uint32_t mins = (millis() - s.connectedAt) / 60000; art(s, board.goodbye.c_str()); say(s, "Time online: " + String(mins) + " minutes"); }
+    else if (cmd == "G") { s.state = GOODBYE; activity(s, "LOGOFF"); uint32_t mins = (millis() - s.connectedAt) / 60000; art(s, board.goodbye.c_str()); say(s, "Time online: " + String(mins) + " minutes");
+      // A crew (read-only) login logs off to the login prompt, line kept: the
+      // caller can sign in as themselves and keep what the visit found (core/haunt.h).
+      if (s.readOnly) logoutToLogin(s); }
     else if (!cmd.length()) mainMenu(s);
     else { say(s, "Unknown command. Type ? for help."); prompt(s, "Main Board Command? "); }
     return true;

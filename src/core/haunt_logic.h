@@ -212,7 +212,7 @@ inline bool buildRule(const std::string &id, const std::vector<Kv> &kv, Rule &r,
   if (r.postBody.empty() && (!r.postFrom.empty() || !r.postSubject.empty() || !r.postConf.empty())) { why = "post without a body"; return false; }
   if (!r.add.empty()) {
     if (r.ev != EV_READ) { why = "add needs event=read"; return false; }
-    if (r.visible()) { why = "add cannot share a rule with page, mail, post or art"; return false; }
+    if (r.visible() || !r.set.empty()) { why = "add cannot share a rule with set, page, mail, post or art"; return false; }
   }
   if (r.set.empty() && !r.visible() && r.add.empty()) { why = "rule has no effect"; return false; }
   return true;

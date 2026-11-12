@@ -137,10 +137,11 @@ static String afterTokens(String text, uint8_t count) {
   return text;
 }
 // "sysop, backroom,SYSOP" -> "SYSOP,BACKROOM": upper case, no junk, no repeats.
+// At most 255 characters (haunt::MAX_FLAGS): story flags and trigger markers live here too.
 static String cleanFlags(const String &in) {
   String out, word;
   auto take = [&]() {
-    if (word.length() && ("," + out + ",").indexOf("," + word + ",") < 0 && out.length() + word.length() < 63)
+    if (word.length() && ("," + out + ",").indexOf("," + word + ",") < 0 && out.length() + (out.length() ? 1 : 0) + word.length() <= 255)
       out += (out.length() ? "," : "") + word;
     word = "";
   };

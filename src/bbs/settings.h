@@ -84,6 +84,7 @@ static uint8_t iniLevel(const Ini &ini, const String &section) {
 
 // Returns a one-line summary for the SysOp.
 static String loadFileAreas();  // bbs/files.h
+static String loadTriggers();   // core/haunt.h
 static String loadSettings() {
   BoardSettings b;
   Ini ini;
@@ -162,10 +163,11 @@ static String loadSettings() {
   clockSyncSystem = clockSync == "SYSTEM";
   String clock = startClock(epoch);
   loadPower();  // STORY/POWER.INI; the power state itself is read once, at boot
+  String triggers = loadTriggers();  // STORY/TRIGGERS.INI
   String areas = loadFileAreas();
   String history = loadHistory();
   String syncDetail = clockSyncBrowser ? " (browser sync)" : (clockSyncSystem ? " (system sync)" : "");
-  return areas + ", " + history + ", clock " + clock + syncDetail + ", " + String(board.conferences.size()) + " conferences, " + board.bulletins.size() + " bulletins, " +
+  return areas + ", " + history + ", " + triggers + ", clock " + clock + syncDetail + ", " + String(board.conferences.size()) + " conferences, " + board.bulletins.size() + " bulletins, " +
          board.maxNodes + " nodes, " + (board.baud ? String(board.baud) + " baud" : String("no speed limit"));
 }
 

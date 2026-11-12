@@ -260,6 +260,10 @@ static void showMessage(Session &s, uint32_t id) {
   }
   rows.push_back("\x1b[0;34m------------------------------------------------------------------------------\x1b[0m");
   bodyRows(rows, m.body);
+  // Triggers: a read rule may add a line to this message, for this caller, every time.
+  std::vector<String> added;
+  hauntEvent(s, haunt::EV_READ, String(msgNo(m.id)), 0, &added);
+  for (const auto &line : added) bodyRows(rows, line);
   if (replies.length()) rows.push_back("\x1b[0;36mReplies:" + replies + "  (T shows the thread)\x1b[0m");
   rows.push_back("");
   s.msgId = m.id;

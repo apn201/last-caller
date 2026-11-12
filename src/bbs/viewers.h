@@ -90,7 +90,7 @@ static bool openZipList(Session &s, uint16_t number, const String &path, const S
 }
 
 // ---------- text and ANSI ------------------------------------------------------------------
-static bool openFileViewer(Session &s, uint16_t number, bool quiet = false) {
+static bool openFileViewerOnce(Session &s, uint16_t number, bool quiet) {
   String path, name;
   size_t bytes;
   if (!areaFile(s, number, path, name, bytes)) { if (!quiet) prompt(s, "No such file. File command? "); return false; }
@@ -149,6 +149,18 @@ static bool openFileViewer(Session &s, uint16_t number, bool quiet = false) {
   else { r.kind = READER_TEXT; r.crop = artLike; indexText(r); }
   activity(s, (ansi ? "VIEWING " : "READING ") + clean(name, 30));
   openReader(s, ansi);
+  return true;
+}
+// Every file opened, whichever way: the file= triggers, and art= for ANSI and ASCII art.
+static bool openFileViewer(Session &s, uint16_t number, bool quiet = false) {
+  if (!openFileViewerOnce(s, number, quiet)) return false;
+  String path, name;
+  size_t bytes;
+  if (areaFile(s, number, path, name, bytes)) {
+    hauntEvent(s, haunt::EV_FILE, name);
+    String upper = up(name);
+    if (upper.endsWith(".ANS") || upper.endsWith(".ANSI") || upper.endsWith(".ASC")) hauntEvent(s, haunt::EV_ART, name);
+  }
   return true;
 }
 // N and P in the viewer: the next or previous file in the folder that can be viewed.

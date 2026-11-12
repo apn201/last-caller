@@ -108,7 +108,10 @@ static void finishLogin(Session &s) {
     return;
   }
   // A read-only account never changes its record: no call count, no touch.
+  // An own account becomes the caller here, and takes what crew visits earned
+  // (core/haunt.h), in the same save.
   if (!s.readOnly) {
+    hauntOwnLogin(s);
     s.user.calls++;
     if (!touchUser(s.user)) say(s, "\r\nWarning: user statistics were not saved. See Serial console.");
   }
@@ -120,6 +123,9 @@ static void finishLogin(Session &s) {
   for (const auto &b : board.bulletins)
     if (b.mandatory && canSee(s.user, b.level, b.flag)) { showBulletin(s, b); shown = true; }
   if (!shown) say(s, "Welcome to " + board.name + ".");
+  // Triggers: an own login, or a visit to a crew account. Pages wait for the prompt below.
+  if (s.readOnly) hauntEvent(s, haunt::EV_CREW_LOGIN, s.user.handle);
+  else hauntEvent(s, haunt::EV_LOGIN, "");
   s.state = BULLETIN; prompt(s, "Press ENTER for Main Board: ");
 }
 static void loginPrompt(Session &s) {
