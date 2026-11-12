@@ -29,51 +29,35 @@ and needed: the power state and its timers, the brownout front end, the
 read-only flag and its enforcement, concurrent crew logins without shared
 writes, and private ELIZA messages.
 
-## State machine
+## Power per caller (Q5b, Nov 13; replaces the board-wide state machine)
 
-One board-wide state, kept in the shared core (no ESP32 or Linux headers):
+There is no board-wide state and no file. Every connection starts in brownout:
+the front page is the boot banner and `Login:` (no New).
 
 ```
-            solve step (confirmed key)
-  BROWNOUT ------------------------------> POWERED
-     ^                                        |
-     |  last caller left + 15 min (draft)     |
-     +----------------------------------------+
-     |  SysOp command FORCE BROWNOUT          |
-     +----------------------------------------+
-  (SysOp FORCE POWERED goes the other way)
+connect -> banner -> Login:
+   registered account -> board (powered, no timer)
+   admin/admin -> SHIP console, timer starts (timer_sec, 120)
+        timer runs out -> SUNSIDE screen, session ends
+        SOURCE RTG + key -> session powered, timer stops, ELIZA wakes,
+                            console gains CREW
+        CREW -> handle, password, real name, location -> "Log in with it"
+             -> Login: -> own account -> ELIZA_WAKE scene -> main menu
 ```
 
-- BROWNOUT. Sessions run a window timer. The login prompt shows login only.
-  After login: `admin` goes to the SHIP console. Any other account is
-  refused with a plain line ("MAINTENANCE ONLY") and the session ends at
-  the window. (Nobody else can play before the prologue.)
-- POWERED. The normal board: login and new account, bulletins, menus. ELIZA
-  is awake. Sessions use the normal idle limits.
-- Transition BROWNOUT to POWERED: the console confirms the switch; the core
-  writes `POWER.DAT`, tells every session, and fires ELIZA's wake line.
-- Transition POWERED to BROWNOUT: `bbsTick` watches the count of
-  authenticated and connecting sessions. When it reaches zero, it starts a
-  grace timer from `POWER.INI`. A new connection cancels it. When it runs
-  out, the state returns to BROWNOUT and is written. A SysOp command sets
-  either state at once.
-- Brownout reboot: not a real reboot. The drop is `closeSession` after a
-  "SUNSIDE ENDS - CARRIER LOST" line. The next connection plays the banner.
-  This runs the same on the stick and the server.
-- A restart of the board reads `POWER.DAT`. A missing file means BROWNOUT.
-  A stick that lost power while POWERED resumes POWERED with the grace timer
-  started.
+- State lives in the `Session`: `powered`, `powerTimerOn`, `powerAt`,
+  `makingCrew`. `bbsTick` ends a session whose timer is due
+  (`powerSessionsTick`, `powerTimerDue`).
+- `admin` is read-only and many sessions may use it at once, each with its
+  own timer. Nobody's prologue depends on anybody's.
+- Account creation lives only in the console: the existing `NEW_*` prompts
+  are reused with `makingCrew` set, and end at the login prompt, not in a
+  login. ENTER at the handle or password returns to the console.
+- A card without `POWER.INI` has no prologue (usual New user prompt).
+- The SysOp logs in like anyone else. No `POWER ON/OFF`.
 
-### Window timer
-
-On connect in brownout, the session picks a random length between `window_min`
-and `window_max` (60 and 120 seconds) and stores its deadline. `bbsTick` ends
-the session when the deadline passes. A per-session timer (not one shared
-window) is the recommendation: every caller gets the whole window and no one
-loses the step because another caller connected earlier. The story reads the
-same ("each caller is dropped as the ship tumbles into shadow"). The window
-ignores idle limits. The browser's own carrier timeout (180 s) is longer, so
-it does not interfere.
+Everything below this section that speaks of a board-wide state, `POWER.DAT`,
+the decay, the grace timer, the window or `POWER ON/OFF` is superseded.
 
 ## The prologue, step by step (draft wording)
 

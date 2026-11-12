@@ -78,3 +78,23 @@ Decisions taken from the brief, where the design left a choice:
 - [x] 13. `docs/TESTING.md`: manual prologue script for the board
 - [x] 14. Docs: `docs/SLICES.md` S4 status, `README.md` if it lists the card
   files
+
+
+## Group 4 - Power per caller (Q5b, Nov 13)
+
+Replaces the board-wide state of groups 1 to 3 (tasks 1.1, 1.2, 2.2, 2.3,
+3.1, 3.3, 4.2, 5.4 and 6 are superseded; `window_min`, `window_max`,
+`decay_after_idle_min`, `start=` and `POWER.DAT` are gone).
+
+- [x] 15. Requirements R1, R4, R5, R6 and the design rewritten for per-caller power
+- [x] 16. `power_logic.h`: `powerTimerMs`, `powerTimerDue`; host test updated
+- [x] 17. `power.h`: settings only (`timer_sec`, account, password, key); no state, no file
+- [x] 18. Session fields `powered`, `powerTimerOn`, `powerAt`, `makingCrew`;
+  the timer starts at the maintenance login and stops at the RTG; expiry
+  gives the SUNSIDE screen
+- [x] 19. Front page: banner and `Login:` only; no New; a registered login goes to the board
+- [x] 20. Ship console: `CREW` (effect `ACCOUNT`) only after the RTG; the new-account prompts
+  run there; the caller is told to log in; `ELIZA_WAKE` plays at that login
+- [x] 21. Removed: `powerSet`, `announcePower`, the idle decay, `POWER ON/OFF`,
+  `CONSOLE_ON` art
+- [x] 22. e2e test, `TESTING.md`, `MENU_AUDIT.md` updated

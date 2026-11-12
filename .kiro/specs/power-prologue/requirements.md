@@ -1,42 +1,43 @@
 # Requirements - Power prologue
 
-Spec with no code yet (requirements and design only). Brief:
+Q5b (Nov 13) made power per caller; R1, R4, R5 and R6 below are the current
+rules. Brief:
 `docs/briefs/S3b-power-prologue.md`. Story: `.kiro/specs/story-bible/`.
 Slice: S4 in `docs/SLICES.md`. All caller-visible wording here is a draft
 until the author's final edit.
 
 ## Glossary
 
-- Brownout: the board's state while the ship runs on the solar bus only.
-- Powered: the state after a caller switches the power source to the RTG.
+- Brownout: what every connection starts in: the ship runs on the solar bus only.
+- Powered: a session after its caller has switched the power source to the RTG,
+  or any session of a registered caller. Power is per session, never board-wide.
 - Prologue: everything a caller does in brownout, up to ELIZA waking.
 - Maintenance account: `admin`, password `admin`, a ship account, not the
   SysOp.
 - Ship systems console: the one menu the maintenance account sees.
 - Crew accounts: `TYVANCE`, `CMDR`, `GARDEN`, `CHAOS` and `admin`.
 - Read-only account: an account that cannot change anything on the board.
-- Window: the 60 to 120 seconds a session lasts in brownout.
+- Power timer: the 2 minutes (`timer_sec` in `POWER.INI`) the maintenance login has to switch to the RTG.
 
 ## Requirements
 
-### R1 - Brownout state
+### R1 - Front page and the power timer
 
-1. WHILE the board is in brownout, THE board SHALL show on connect a boot
-   banner with a BIOS-style memory count, the line "SOLAR BUS ONLY -
-   ATTITUDE CONTROL OFFLINE", ELIZA as "NOT RESPONDING" and a hint that the
-   maintenance account defaults are unchanged (for example "MAINT ACCT
-   DEFAULTS NOT CHANGED - SEE LABEL").
-2. WHILE in brownout, THE board SHALL offer a login prompt and nothing else:
-   no new accounts, no guest, no menus, no bulletins.
-3. WHILE in brownout, EVERY session SHALL end after a random time between
-   60 and 120 seconds from connect, with the line "SUNSIDE ENDS - CARRIER
-   LOST".
-4. WHEN a caller reconnects in brownout, THE board SHALL show the reboot
-   banner again.
-5. THE window SHALL be long enough to solve the power-up in two or three
-   tries (a first-time caller, 60 seconds at worst).
-6. WHILE in brownout, THE board SHALL treat the caller's time as paused
-   for idle limits: only the window ends a session.
+1. ON every connection, THE board SHALL show a boot banner with a BIOS-style
+   memory count, the line "SOLAR BUS ONLY - ATTITUDE CONTROL OFFLINE", ELIZA
+   as "NOT RESPONDING" and a hint that the maintenance account defaults are
+   unchanged (for example "MAINT ACCT DEFAULTS NOT CHANGED - SEE LABEL"),
+   then a login prompt. THE first connection since start-up SHALL get the
+   full banner, later ones the short reboot banner.
+2. THE front page SHALL offer a login prompt and nothing else: no "New", no
+   guest. A registered caller who logs in SHALL go straight to the board.
+3. WHEN the maintenance account logs in, THE board SHALL start a power timer
+   for that session only, of `timer_sec` seconds (default 120).
+4. IF the timer runs out before that caller has switched to the RTG, THEN
+   THE session SHALL end with the line "SUNSIDE ENDS - CARRIER LOST".
+5. WHEN the caller switches to the RTG, THE timer SHALL stop.
+6. THE timer SHALL be the only thing that ends a session early: no other
+   session, account or state affects it.
 
 ### R2 - Maintenance login
 
@@ -65,43 +66,40 @@ until the author's final edit.
 6. WHEN a caller reads the warning at step 3, THE caller SHALL be able to
    find the confirming key without any outside knowledge.
 
-### R4 - Power on
+### R4 - Power on (this caller)
 
-1. WHEN the confirmed switch succeeds, THE board SHALL change to powered,
-   stop dropping sessions and show "POWER SOURCE: RTG" with the systems
+1. WHEN the confirmed switch succeeds, THE session SHALL be powered: its
+   timer stops, and the console shows "POWER SOURCE: RTG" with the systems
    stabilising (attitude holding).
-2. WHEN power is restored, ELIZA's first line SHALL appear on the
-   switching caller's screen: "Good evening. I have been asleep for some
-   time." (draft).
-3. WHEN power is restored, EVERY other session in brownout SHALL be told
-   the ship has power and SHALL return to the login prompt without being
-   disconnected.
-4. WHEN the switching caller's console session ends, THE caller SHALL reach
-   the login prompt with the new-account option shown.
+2. WHEN power is restored, ELIZA's first line SHALL appear on that caller's
+   screen: "Good evening. I have been asleep for some time." (draft).
+3. THE switch SHALL NOT change any other session.
+4. WHEN power is restored, THE console SHALL gain one more option, CREW, to
+   create a crew account. BEFORE the switch THE option SHALL NOT be listed
+   and SHALL answer as an unknown command.
 
-### R5 - Then the board proper
+### R5 - Account creation and the board proper
 
-1. WHILE the board is powered, THE login prompt SHALL offer login and new
-   account.
-2. WHEN a caller creates an account, THE board SHALL start the story-bible
-   game for that caller: the WELCOME bulletin from ELIZA and the main menu.
-3. THE game SHALL NOT start for a caller who only used `admin`.
+1. THE only place an account is made SHALL be the CREW option of the ship
+   console (handle, password, real name, location). ENTER at the handle or
+   password SHALL cancel and return to the console.
+2. WHEN the account is made, THE caller SHALL be told to log in with it and
+   SHALL be back at the login prompt.
+3. AT the first login with that account, THE board SHALL start the
+   story-bible game for that caller: the `ELIZA_WAKE` scene, then the main
+   menu.
+4. THE game SHALL NOT start for a caller who only used `admin`.
+5. WHERE a card has no `POWER.INI`, THE board SHALL have no prologue and
+   the usual New user prompt.
 
-### R6 - Shared power state
+### R6 - Nothing is shared
 
-1. THE power state SHALL be board-wide: one caller's power-up SHALL open the
-   board for everyone online and for everyone who connects while it
-   holds.
-2. THE power state SHALL survive a restart of the board (stick or server).
-3. THE power-up SHALL be one-off: WHILE the board is powered, THE board
-   SHALL stay powered, because `decay_after_idle_min` defaults to 0 (decided
-   Nov 12). WHERE `decay_after_idle_min` is above 0, THE board SHALL fall
-   back to brownout that many minutes after the last caller leaves.
-4. THE SysOp SHALL have a command to force brownout or powered at any time.
-5. IF a caller connects while the decay timer runs, THEN THE timer SHALL
-   stop and powered SHALL stay.
-6. WHILE the board is in brownout, THE SysOp SHALL be able to log in, and a
-   SysOp session SHALL NOT be dropped by the brownout window.
+1. THE board SHALL have no board-wide power state, no `POWER.DAT`, no decay
+   timer and no SysOp `POWER ON` or `POWER OFF` command.
+2. NO caller's progress through the prologue SHALL depend on another
+   caller. Any number of sessions MAY be in the prologue at once, each with
+   its own timer, all as `admin`.
+3. THE SysOp SHALL log in like any registered caller.
 
 ### R7 - Solo play
 
