@@ -53,21 +53,25 @@ static bool hauntOwner(const Session &s, User &own) {
   uint32_t id = s.authenticated && !s.readOnly ? s.user.id : s.ownUserId;
   if (!id) return false;
   for (auto &n : sessions) if (n.used && n.authenticated && !n.readOnly && n.user.id == id) { own = n.user; return true; }
-  return findUserById(id, own);
+  if (!findUserById(id, own)) return false;
+  storyLoad(own);   // the story record is not in USERS.DAT
+  return true;
 }
 
-// Add flags to the caller. Saved before anything is shown; false = not saved.
+// Add flags to the caller's story record (core/story.h). Saved before anything
+// is shown; false = not saved.
 static bool hauntGrant(Session &s, User *own, const std::string &add) {
   std::string dropped;
   if (!own) {
     s.carriedFlags = hauntStr(haunt::flagsAdd(hauntStd(s.carriedFlags), add, &dropped));
   } else {
-    std::string before = hauntStd(own->flags), after = haunt::flagsAdd(before, add, &dropped);
+    std::string before = hauntStd(own->story), after = haunt::flagsAdd(before, add, &dropped);
     if (after != before) {
-      own->flags = hauntStr(after);
-      if (!touchUser(*own)) return false;
-      // Every online session of that account gets the new flags, so its next save keeps them.
-      for (auto &n : sessions) if (n.used && n.authenticated && n.user.id == own->id) n.user.flags = own->flags;
+      String saved = own->story;
+      own->story = hauntStr(after);
+      if (!storySave(*own)) { own->story = saved; return false; }
+      // Every online session of that account gets the new flags, so it sees them at once.
+      for (auto &n : sessions) if (n.used && n.authenticated && n.user.id == own->id) n.user.story = own->story;
     }
   }
   if (dropped.length()) event("TRIGGER_FULL", (own ? own->handle : String("(carried)")) + ": no room for " + hauntStr(dropped));
@@ -102,7 +106,7 @@ static void hauntEvent(Session &s, haunt::Ev ev, const String &match, uint32_t a
   haunt::Ctx c;
   c.ev = ev; c.match = hauntStd(match); c.amount = amount;
   c.baud = s.cps ? s.cps * 10 : 0;
-  c.flags = haveOwn ? hauntStd(own.flags) : hauntStd(s.carriedFlags);
+  c.flags = haveOwn ? userFlagList(own) : hauntStd(s.carriedFlags);
   c.level = haveOwn ? own.level : s.user.level;
   for (const haunt::Rule *r : haunt::due(hauntRules, c)) {
     if (!r->add.empty()) { if (adds) adds->push_back(hauntStr(r->add)); continue; }
@@ -130,6 +134,9 @@ static void hauntEvent(Session &s, haunt::Ev ev, const String &match, uint32_t a
   }
 }
 
+// event=screen: the user list, a bulletin ("BULLETIN <TITLE>") was shown.
+static void hauntScreen(Session &s, const String &what) { hauntEvent(s, haunt::EV_SCREEN, what); }
+
 // An own account signed in or signed up on this connection: it is now the
 // caller, and gets what was earned on crew accounts before it. Call before the
 // login's own save, so both go in one write.
@@ -137,7 +144,13 @@ static void hauntOwnLogin(Session &s) {
   s.ownUserId = s.user.id;
   if (!s.carriedFlags.length()) return;
   std::string dropped;
-  s.user.flags = hauntStr(haunt::flagsAdd(hauntStd(s.user.flags), hauntStd(s.carriedFlags), &dropped));
+  String before = s.user.story;
+  s.user.story = hauntStr(haunt::flagsAdd(hauntStd(s.user.story), hauntStd(s.carriedFlags), &dropped));
+  if (!storySave(s.user)) {   // the visit stays carried until a save works
+    s.user.story = before;
+    event("TRIGGER_FAIL", s.user.handle + ": carried flags not saved");
+    return;
+  }
   if (dropped.length()) event("TRIGGER_FULL", s.user.handle + ": no room for " + hauntStr(dropped));
   event("TRIGGER_CARRY", s.user.handle + " gets " + s.carriedFlags);
   s.carriedFlags = "";

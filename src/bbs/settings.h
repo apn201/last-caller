@@ -4,7 +4,7 @@
 // Read at boot and again with the SysOp RELOAD command.
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
 
-struct Conference { uint8_t id = 0; String name, description, flag; uint8_t level = 0; };
+struct Conference { uint8_t id = 0; String name, description, flag; uint8_t level = 0; bool readOnly = false; };  // readOnly: only the SysOp posts
 // A bulletin is an art file (path=) or a quick line of text (text=, | breaks lines).
 struct Bulletin { String title, path, text, flag; uint8_t level = 0; bool mandatory = false; };
 // A menu from MENUS.INI: header art, and where in it the generated options go.
@@ -124,6 +124,7 @@ static String loadSettings() {
       c.description = iniGet(ini, sec, "description");
       c.flag = iniGet(ini, sec, "required_flag");
       c.level = iniLevel(ini, sec);
+      c.readOnly = iniGet(ini, sec, "read_only", "0").toInt() != 0;
       b.conferences.push_back(c);
     }
   }
@@ -175,14 +176,22 @@ static String loadSettings() {
          board.maxNodes + " nodes, " + (board.baud ? String(board.baud) + " baud" : String("no speed limit"));
 }
 
+static void hauntScreen(Session &s, const String &what);  // core/haunt.h: a screen was shown (event=screen)
 static void showBulletin(Session &s, const Bulletin &b) {
-  if (b.path.length()) { art(s, b.path.c_str(), b.title); return; }
-  say(s, "\r\n\x1b[1;36m" + b.title + "\x1b[0m");
-  String text = b.text;
-  text.replace("|", "\r\n");
-  say(s, "\x1b[1;37m" + text + "\x1b[0m");
+  if (b.path.length()) art(s, b.path.c_str(), b.title);
+  else {
+    say(s, "\r\n\x1b[1;36m" + b.title + "\x1b[0m");
+    String text = b.text;
+    text.replace("|", "\r\n");
+    say(s, "\x1b[1;37m" + text + "\x1b[0m");
+  }
+  hauntScreen(s, "BULLETIN " + up(b.title));
 }
-static bool hasFlag(const User &u, const String &flag) { return ("," + up(u.flags) + ",").indexOf("," + up(flag) + ",") >= 0; }
+// The account's flag field and its story record (core/story.h) both count.
+static bool hasFlag(const User &u, const String &flag) {
+  const String want = "," + up(flag) + ",";
+  return ("," + up(u.flags) + ",").indexOf(want) >= 0 || ("," + up(u.story) + ",").indexOf(want) >= 0;
+}
 static bool canSee(const User &u, uint8_t level, const String &flag) {
   return u.level >= level && (!flag.length() || hasFlag(u, flag));
 }

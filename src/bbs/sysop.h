@@ -12,7 +12,7 @@ static void who(Session &s) {
 }
 static bool isSysop(const Session &s) { return s.authenticated && !s.user.locked && s.user.level == 255 && hasFlag(s.user, "SYSOP"); }
 static void refreshLiveUser(const User &changed) {
-  for (auto &n : sessions) if (n.used && n.user.id == changed.id) n.user = changed;
+  for (auto &n : sessions) if (n.used && n.user.id == changed.id) { String story = n.user.story; n.user = changed; n.user.story = story; }   // the story record is not in `changed`
 }
 static bool downloadAllowed(const User &u, size_t bytes, String &reason) {
   if (u.locked) { reason = "Account locked"; return false; }
@@ -30,16 +30,26 @@ static void nodeMonitor(Session &s, State back) {
   s.nodesBack = back; s.state = SYSOP_NODES; activity(s, "NODE MONITOR");
   prompt(s, "Node # to disconnect, M <node|ALL> <text> to message (ENTER = back): ");
 }
+// "1998-12-08 03:47" -> "08 Dec 03:47"; "never" for an account that has not called.
+static String lastCallText(const String &when) {
+  static const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+  if (when.length() < 16) return "never";
+  int m = when.substring(5, 7).toInt();
+  if (m < 1 || m > 12) return "never";
+  char b[16];
+  snprintf(b, sizeof(b), "%s %s %s", when.substring(8, 10).c_str(), months[m - 1], when.substring(11, 16).c_str());
+  return b;
+}
 // The caller-facing user list: locked accounts are not shown.
 static constexpr uint8_t USER_LIST_PAGE = 10;
 static uint16_t showUserList(Session &s) {
   uint16_t visible = 0, shown = 0, start = s.userPage * USER_LIST_PAGE;
-  say(s, "\x1b[1;36m#     Handle           Calls  Location\x1b[0m");
+  say(s, "\x1b[1;36m#     Handle           Calls  Last call     Location\x1b[0m");
   eachUser([&](const User &u) {
     if (u.locked || visible++ < start || shown >= USER_LIST_PAGE) return true;
     shown++;
-    char row[116];
-    snprintf(row, sizeof(row), "%-5lu %-16s %-6lu %s", (unsigned long)u.id, u.handle.c_str(), (unsigned long)u.calls, u.location.c_str());
+    char row[130];
+    snprintf(row, sizeof(row), "%-5lu %-16s %-6lu %-13s %s", (unsigned long)u.id, u.handle.c_str(), (unsigned long)u.calls, lastCallText(u.lastCall).c_str(), u.location.c_str());
     say(s, row);
     return true;
   });
@@ -55,6 +65,7 @@ static uint16_t userListPages() {
 }
 static void userList(Session &s) {
   s.state = USER_LIST; activity(s, "USER LIST"); uint16_t pages = showUserList(s);
+  hauntEvent(s, haunt::EV_SCREEN, "USERS");
   if (isSysop(s)) say(s, "[Z] User editor: levels, flags, limits and passwords");
   prompt(s, pages > 1 ? "ENTER next, P previous, Q board: " : "Q returns to board: ");
 }

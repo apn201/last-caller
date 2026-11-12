@@ -46,7 +46,7 @@ static std::shared_ptr<scene::Scene> sceneLoad(const String &name, String &why) 
 // The caller's flags as the triggers see them: the own account, or the flags a crew login carries.
 static std::string sceneFlagsOf(Session &s) {
   User own;
-  return hauntOwner(s, own) ? hauntStd(own.flags) : hauntStd(s.carriedFlags);
+  return hauntOwner(s, own) ? userFlagList(own) : hauntStd(s.carriedFlags);
 }
 static bool sceneGrant(Session &s, const std::string &add) {
   User own;

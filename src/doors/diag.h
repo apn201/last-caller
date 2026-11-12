@@ -14,7 +14,7 @@ static Ini diagIni;
 // (A const twin of scene.h's sceneFlagsOf, for the door table's `listed`.)
 static std::string doorFlagsOf(const Session &s) {
   User own;
-  return hauntOwner(s, own) ? hauntStd(own.flags) : hauntStd(s.carriedFlags);
+  return hauntOwner(s, own) ? userFlagList(own) : hauntStd(s.carriedFlags);
 }
 
 // "q 2-00" -> "Q200": upper case, no spaces or dashes.

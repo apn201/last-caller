@@ -10,10 +10,11 @@
 
 namespace haunt {
 
-enum Ev : uint8_t { EV_NONE, EV_LOGIN, EV_CREW_LOGIN, EV_READ, EV_FILE, EV_ART, EV_DOOR, EV_IDLE, EV_MINUTES };
+enum Ev : uint8_t { EV_NONE, EV_LOGIN, EV_CREW_LOGIN, EV_READ, EV_FILE, EV_ART, EV_DOOR, EV_IDLE, EV_MINUTES, EV_SCREEN };
 
 static constexpr size_t MAX_RULES = 300;   // memory on the stick
-static constexpr size_t MAX_FLAGS = 255;   // characters in a caller's flag list
+static constexpr size_t MAX_FLAGS = 255;         // characters in the account's flag field (access flags)
+static constexpr size_t MAX_STORY_FLAGS = 4000;  // characters in a caller's story record (core/story.h)
 static constexpr size_t MAX_ID = 24;       // characters in a rule id
 static constexpr size_t MAX_LINE = 200, MAX_BODY = 1200, MAX_NAME = 16, MAX_SUBJECT = 60, MAX_MATCH = 40;
 
@@ -87,14 +88,14 @@ inline bool flagsHas(const std::string &flags, const std::string &flag) {
   return false;
 }
 // Flags only grow: the result always starts with `flags`, byte for byte. Words
-// already there change nothing. A word that does not fit in MAX_FLAGS is not
+// already there change nothing. A word that does not fit in `cap` is not
 // added and is named in `dropped` (comma list) so the caller can log it.
-inline std::string flagsAdd(const std::string &flags, const std::string &add, std::string *dropped = nullptr) {
+inline std::string flagsAdd(const std::string &flags, const std::string &add, std::string *dropped = nullptr, size_t cap = MAX_STORY_FLAGS) {
   std::string out = flags;
   for (const auto &w : flagWords(add)) {
     if (flagsHas(out, w)) continue;
     size_t need = w.size() + (out.empty() ? 0 : 1);
-    if (out.size() + need > MAX_FLAGS) { if (dropped) { if (!dropped->empty()) *dropped += ','; *dropped += w; } continue; }
+    if (out.size() + need > cap) { if (dropped) { if (!dropped->empty()) *dropped += ','; *dropped += w; } continue; }
     if (!out.empty()) out += ',';
     out += w;
   }
@@ -107,6 +108,22 @@ inline bool flagsHasAll(const std::string &flags, const std::string &list) {
 inline bool flagsHasAny(const std::string &flags, const std::string &list) {
   for (const auto &w : flagWords(list)) if (flagsHas(flags, w)) return true;
   return false;
+}
+// Flags that open something by themselves stay in the account's flag field;
+// every other flag is story progress and lives in the story record.
+inline bool accessFlag(const std::string &word) {
+  const std::string w = upper(word);
+  return w == "SYSOP" || w == "READONLY" || w == "BACKROOM" || w == "VAULT";
+}
+struct Split { std::string access, story; };
+inline Split splitFlags(const std::string &list) {
+  Split s;
+  for (const auto &w : flagWords(list)) {
+    std::string &to = accessFlag(w) ? s.access : s.story;
+    if (!to.empty()) to += ',';
+    to += w;
+  }
+  return s;
 }
 inline std::string markerFor(const std::string &ruleId) { return "T_" + upper(ruleId); }
 
@@ -144,6 +161,7 @@ inline Ev parseEvent(const std::string &s) {
   if (e == "door") return EV_DOOR;
   if (e == "idle") return EV_IDLE;
   if (e == "minutes") return EV_MINUTES;
+  if (e == "screen") return EV_SCREEN;
   return EV_NONE;
 }
 inline bool idOk(const std::string &id) {

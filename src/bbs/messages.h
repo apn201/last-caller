@@ -17,6 +17,12 @@ static String textLine(const String &in, uint16_t max) {
   out.trim();
   return out;
 }
+// Posting: an account that can save, in a conference that is not read-only (the SysOp may post anywhere).
+static bool canPost(const Session &s) {
+  if (!canWrite(s)) return false;
+  const Conference *c = findConference(s.conference);
+  return !c || !c->readOnly || isSysop(s);
+}
 static bool canRead(const Session &s, const Message &m) {
   if (!m.priv) return true;
   String me = up(s.user.handle);
@@ -155,7 +161,7 @@ static void messageArea(Session &s) {
   std::vector<MenuItem> items;
   items.push_back({"R", "Read / list"});
   items.push_back({"N", "Read new"});
-  if (canWrite(s)) items.push_back({"P", "Post a message"});
+  if (canPost(s)) items.push_back({"P", "Post a message"});
   if (severalAreas(s.user)) items.push_back({"A", "Change area"});
   items.push_back({"Q", "Main Board"});
   showMenu(s, "MESSAGES", items, "MESSAGE BASES");
@@ -196,9 +202,9 @@ static String messageKeys(Session &s, bool reader) {
   Message m;
   bool known = getMessage(s.msgId, m);
   bool mine = known && canModify(s, m), history = known && m.versions > 1;
-  if (reader) return String("SPACE page  N/P msg  ") + (canWrite(s) ? "R reply  " : "") + "T thread  " + (mine ? "K kill  E edit  " : "") + (history ? "H hist  " : "") + "Q quit";
+  if (reader) return String("SPACE page  N/P msg  ") + (canPost(s) ? "R reply  " : "") + "T thread  " + (mine ? "K kill  E edit  " : "") + (history ? "H hist  " : "") + "Q quit";
   const char *y = "\x1b[1;33m", *n = "\x1b[0m";
-  return String(y) + "[N]" + n + "ext " + y + "[P]" + n + "rev " + (canWrite(s) ? String(y) + "[R]" + n + "eply " : String()) + y + "[T]" + n + "hread " +
+  return String(y) + "[N]" + n + "ext " + y + "[P]" + n + "rev " + (canPost(s) ? String(y) + "[R]" + n + "eply " : String()) + y + "[T]" + n + "hread " +
          (mine ? String(y) + "[K]" + n + "ill " + y + "[E]" + n + "dit " : String()) +
          (history ? String(y) + "[H]" + n + "istory " : String()) + y + "[Q]" + n + "uit (ENTER = next): ";
 }
@@ -247,7 +253,6 @@ static void showMessage(Session &s, uint32_t id) {
   rows.push_back("");
   rows.push_back("\x1b[1;36m" + confName(m.conference) + "\x1b[0m   \x1b[1;33mMsg #" + String(msgNo(m.id)) + "\x1b[0m   \x1b[1;37m" +
                  (at ? clockText(at, true) : m.when) + "\x1b[0m");
-  if (m.history) rows.push_back("\x1b[0;35mFidoNet echo " + historyEcho(m.id) + "\x1b[0m");
   rows.push_back("From : " + m.from);
   rows.push_back("To   : " + (m.to.length() ? m.to : String("ALL")) + (m.priv ? "  \x1b[1;31m(private)\x1b[0m" : ""));
   rows.push_back("Subj : " + m.subject);
@@ -263,6 +268,7 @@ static void showMessage(Session &s, uint32_t id) {
   // Triggers: a read rule may add a line to this message, for this caller, every time.
   std::vector<String> added;
   hauntEvent(s, haunt::EV_READ, String(msgNo(m.id)), 0, &added);
+  hauntEvent(s, haunt::EV_READ, "~" + m.subject.substring(0, 39), 0, &added);   // rules may name a message by its subject
   for (const auto &line : added) bodyRows(rows, line);
   if (replies.length()) rows.push_back("\x1b[0;36mReplies:" + replies + "  (T shows the thread)\x1b[0m");
   rows.push_back("");
@@ -347,7 +353,7 @@ static bool msgReaderKey(Session &s, const String &k) {
     showMessage(s, id);
     return true;
   }
-  if (((k == "r" || k == "R") && canWrite(s)) || k == "t" || k == "T") {
+  if (((k == "r" || k == "R") && canPost(s)) || k == "t" || k == "T") {
     s.reader = Reader();
     write(s, "\x1b[0m\x1b[2J\x1b[H");
     s.state = MSG_VIEW;
@@ -448,13 +454,13 @@ static void killMessage(Session &s, bool yes) {
 }
 static void readOnlyNotice(Session &s) { say(s, "This account is read-only."); }
 static void startPost(Session &s) {
-  if (!canWrite(s)) { readOnlyNotice(s); messageArea(s); return; }
+  if (!canPost(s)) { readOnlyNotice(s); messageArea(s); return; }
   s.replyTo = 0; s.pendingTo = ""; s.pendingPrivate = false;
   s.state = POST_TO; activity(s, "POSTING MESSAGE");
   prompt(s, "To (ENTER = ALL): ");
 }
 static void startReply(Session &s) {
-  if (!canWrite(s)) { readOnlyNotice(s); readerPrompt(s); return; }
+  if (!canPost(s)) { readOnlyNotice(s); readerPrompt(s); return; }
   Message m;
   if (!getMessage(s.msgId, m)) { say(s, "That message is gone."); readerPrompt(s); return; }
   s.replyTo = m.id; s.pendingTo = m.from; s.pendingPrivate = m.priv;
@@ -463,6 +469,7 @@ static void startReply(Session &s) {
   startEditor(s);
 }
 static void saveDraft(Session &s) {
+  if (!canPost(s) && !s.msgEdit) { s.draft = ""; readOnlyNotice(s); messageArea(s); return; }
   if (!canWrite(s)) { s.draft = ""; s.msgEdit = 0; readOnlyNotice(s); messageArea(s); return; }
   if (s.msgEdit) {  // an edit: the new text under the old id
     Message m;

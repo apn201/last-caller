@@ -23,7 +23,7 @@ static String shortName(const String &path) { int slash = path.lastIndexOf('/');
 // Names a caller never sees in a listing: hidden entries and description files.
 static bool hiddenEntry(const String &name) {
   String u = up(name);
-  return !name.length() || name[0] == '_' || name[0] == '.' || u == "FILES.BBS" || u == "DESCRIPT.ION" || u == "AREA.INI";
+  return !name.length() || name[0] == '_' || name[0] == '.' || u == "FILES.BBS" || u == "DESCRIPT.ION" || u == "AREA.INI" || u == "DATES.BBS";
 }
 // "014_BACKROOM_IMAGES" -> "Backroom Images".
 static String areaTitle(const String &folder) {
@@ -252,6 +252,27 @@ static String fitCols(const String &s, uint16_t cols) {
   return s;
 }
 
+// DATES.BBS in a folder: "NAME.EXT YYYY-MM-DD" per line, the date a file shows
+// in the listing instead of the card's (a copied card has the day it was
+// copied). `want` holds the names; the result has one MM-DD-YY text per name
+// ("" = none given).
+static std::vector<String> folderDates(const String &dir, const std::vector<std::pair<String, String>> &want) {
+  std::vector<String> out(want.size());
+  File f = SD_MMC.open(dir + "/DATES.BBS", FILE_READ);
+  while (f && f.available()) {
+    String line = f.readStringUntil('\n');
+    line.trim();
+    int sp = line.lastIndexOf(' ');
+    if (sp < 1 || line.length() - sp - 1 != 10 || line[sp + 5] != '-' || line[sp + 8] != '-') continue;
+    String name = line.substring(0, sp), date = line.substring(sp + 1);
+    name.trim();
+    for (size_t i = 0; i < want.size(); ++i)
+      if (!out[i].length() && up(want[i].first) == up(name)) out[i] = date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(2, 4);
+  }
+  if (f) f.close();
+  return out;
+}
+
 // ---------- listing -------------------------------------------------------------------
 static void zipDetails(const String &dir, std::vector<std::pair<String, String>> &want,
                        const std::vector<uint32_t> &sizes, std::vector<time_t> &when);  // bbs/zip.h
@@ -280,6 +301,7 @@ static void listArea(Session &s) {
   folderDescriptions(dir, want);
   std::vector<time_t> zipWhen;
   zipDetails(dir, want, sizes, zipWhen);
+  std::vector<String> dated = folderDates(dir, want);
   if (!want.empty()) say(s, "\x1b[0;36m  #   Name               Size Date      DL Description\x1b[0m");
   for (size_t k = 0; k < want.size(); ++k) {
     const FileEntry &f = list[s.fileOffset + k];
@@ -290,7 +312,7 @@ static void listArea(Session &s) {
       uint16_t dls = downloadCount(dir + "/" + f.name);
       desc = fitCols(desc, 36);  // by columns: DOS characters take several bytes
       snprintf(row, sizeof(row), "\x1b[1;33m[%3u]\x1b[0m \x1b[1;37m%-16.16s\x1b[0m \x1b[0;36m%6s\x1b[0m \x1b[0;32m%s\x1b[0m %s%3u\x1b[0m \x1b[0;37m%s\x1b[0m",
-               (unsigned)(s.fileOffset + k + 1), f.name.c_str(), sizeShort(f.size).c_str(), fileDate(zipWhen[k] ? zipWhen[k] : f.when).c_str(),
+               (unsigned)(s.fileOffset + k + 1), f.name.c_str(), sizeShort(f.size).c_str(), dated[k].length() ? dated[k].c_str() : fileDate(zipWhen[k] ? zipWhen[k] : f.when).c_str(),
                dls ? "\x1b[1;35m" : "\x1b[0;35m", (unsigned)dls, desc.c_str());
     }
     say(s, row);

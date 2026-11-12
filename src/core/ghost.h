@@ -46,7 +46,7 @@ static String loadGhosts() {
 
 // The caller's flags: the live session's copy for an own account, else what the trigger engine sees.
 static std::string ghostFlags(Session &s) {
-  if (s.authenticated && !s.readOnly) return hauntStd(s.user.flags);
+  if (s.authenticated && !s.readOnly) return userFlagList(s.user);
   return sceneFlagsOf(s);
 }
 static ghost::Ctx ghostCtx(Session &s, const std::string &flags) {

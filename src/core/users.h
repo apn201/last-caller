@@ -12,6 +12,8 @@ struct User {
   uint8_t level = 10;
   bool locked = false, ratioEnforced = false;
   String handle, normalized, realName, location, salt, hash, flags;
+  String lastCall;  // board time of the last sign-in, "1998-12-08 03:47"; empty = never
+  String story;     // story flags (core/story.h): loaded at sign-in, never written into USERS.DAT
 };
 static bool parseUser(const String &raw, User &u) {
   // A stray CR (a record once ended in CRLF) would land inside a field and
@@ -29,10 +31,11 @@ static bool parseUser(const String &raw, User &u) {
   u.downloadQuota = strtoul(field(line, 17).c_str(), nullptr, 10);
   u.uploads = field(line, 18).toInt(); u.downloads = field(line, 19).toInt();
   u.ratio = constrain(field(line, 20).toInt(), 1L, 999L);
+  u.lastCall = dec(field(line, 21));
   return u.id > 0;
 }
 static String userLine(const User &u) {
-  return String(u.id) + "|" + enc(u.handle) + "|" + u.normalized + "|" + enc(u.realName) + "|" + enc(u.location) + "|" + u.salt + "|" + u.hash + "|" + u.level + "|" + u.calls + "|" + u.minutes + "|" + u.messages + "|" + u.flags + "|" + (u.locked ? "1" : "0") + "|" + (u.ratioEnforced ? "1" : "0") + "|" + u.uploadBytes + "|" + u.downloadBytes + "|" + u.credits + "|" + u.downloadQuota + "|" + u.uploads + "|" + u.downloads + "|" + u.ratio;
+  return String(u.id) + "|" + enc(u.handle) + "|" + u.normalized + "|" + enc(u.realName) + "|" + enc(u.location) + "|" + u.salt + "|" + u.hash + "|" + u.level + "|" + u.calls + "|" + u.minutes + "|" + u.messages + "|" + u.flags + "|" + (u.locked ? "1" : "0") + "|" + (u.ratioEnforced ? "1" : "0") + "|" + u.uploadBytes + "|" + u.downloadBytes + "|" + u.credits + "|" + u.downloadQuota + "|" + u.uploads + "|" + u.downloads + "|" + u.ratio + "|" + enc(u.lastCall);
 }
 // Every account, oldest first. fn returns false to stop.
 template <typename F> static void eachUser(F fn) {

@@ -115,9 +115,11 @@ static void finishLogin(Session &s) {
   // An own account becomes the caller here, and takes what crew visits earned
   // (core/haunt.h), in the same save.
   if (!s.readOnly) {
+    storyOpen(s.user);   // the story record; story flags still in the flag field move into it
     hauntOwnLogin(s);
     endingRecord(s);   // a finished caller stays in WHO (doors/manifest.h)
     s.user.calls++;
+    s.user.lastCall = nowText();
     if (!touchUser(s.user)) say(s, "\r\nWarning: user statistics were not saved. See Serial console.");
   }
   if (repairedSysop) say(s, "\r\nPrimary SYSOP account normalized: level 255, SYSOP flag.");

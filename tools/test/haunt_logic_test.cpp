@@ -65,10 +65,10 @@ int main(int argc, char **argv) {
     CHECK(flagsAdd("b,a", "c") == "b,a,C");
     // The cap: a flag that does not fit is named, never silently lost, and nothing is rewritten.
     std::string full;
-    for (int i = 0; full.size() < MAX_FLAGS - 4 && i < 200; ++i) full = flagsAdd(full, "F" + std::to_string(i));
-    CHECK(full.size() <= MAX_FLAGS);
+    for (int i = 0; full.size() < MAX_STORY_FLAGS - 4 && i < 4000; ++i) full = flagsAdd(full, "F" + std::to_string(i));
+    CHECK(full.size() <= MAX_STORY_FLAGS);
     std::string dropped, more = flagsAdd(full, "ZZZZZZZZZZ,Y", &dropped);
-    CHECK(more.size() <= MAX_FLAGS && more.compare(0, full.size(), full) == 0);
+    CHECK(more.size() <= MAX_STORY_FLAGS && more.compare(0, full.size(), full) == 0);
     CHECK(dropped.find("ZZZZZZZZZZ") != std::string::npos);
     CHECK(flagsAdd(more, "ZZZZZZZZZZ") == more);
   }
@@ -81,11 +81,79 @@ int main(int argc, char **argv) {
       for (int k = 0; k < n; ++k) { if (k) add += ','; add += "F" + std::to_string(rnd() % 90); }
       std::string next = flagsAdd(flags, add);
       CHECK(next.size() >= flags.size() && next.compare(0, flags.size(), flags) == 0);
-      CHECK(next.size() <= MAX_FLAGS);
+      CHECK(next.size() <= MAX_STORY_FLAGS);
       CHECK(flagsAdd(next, add) == next);
       for (const auto &w : flagWords(flags)) CHECK(flagsHas(next, w));
       flags = next;
     }
+  }
+  // ---- the story record (Q7): the flag field keeps access flags, the rest moves ----
+  {
+    Split sp = splitFlags("sysop,CREW,KHI,readonly,T_X,BACKROOM,SC_ELIZA_WAKE,vault");
+    CHECK(sp.access == "SYSOP,READONLY,BACKROOM,VAULT");
+    CHECK(sp.story == "CREW,KHI,T_X,SC_ELIZA_WAKE");
+    CHECK(splitFlags("").access.empty() && splitFlags("").story.empty());
+    // The old 255-character field overflowed with 40 evidence items, trigger and scene markers.
+    // The story record takes a full game: 300 flags of up to 12 characters.
+    std::string story;
+    std::string dropped;
+    for (int i = 0; i < 300; ++i) story = flagsAdd(story, "T_RULE_" + std::to_string(i), &dropped);
+    CHECK(dropped.empty() && story.size() > 255 && story.size() <= MAX_STORY_FLAGS);
+    // Property: through any mix of migration (split + merge), grants and carries, every flag ever held is still held.
+    std::string field, record, everything;
+    for (int i = 0; i < 3000; ++i) {
+      std::string add;
+      int n = 1 + rnd() % 3;
+      for (int k = 0; k < n; ++k) {
+        if (k) add += ',';
+        switch (rnd() % 5) {
+          case 0: add += "SYSOP"; break;
+          case 1: add += "READONLY"; break;
+          case 2: add += "K" + std::string(1, (char)('A' + rnd() % 26)) + std::string(1, (char)('A' + rnd() % 3)); break;
+          case 3: add += "T_R" + std::to_string(rnd() % 120); break;
+          default: add += "SC_S" + std::to_string(rnd() % 40); break;
+        }
+      }
+      everything = flagsAdd(everything, add);
+      int how = rnd() % 3;
+      if (how == 0) {          // a trigger grants: always to the record
+        std::string before = record;
+        record = flagsAdd(record, add);
+        CHECK(record.compare(0, before.size(), before) == 0);
+      } else if (how == 1) {   // an old account: the field gets story flags, then the next sign-in moves them
+        field = flagsAdd(field, add, nullptr, MAX_FLAGS);
+        Split s2 = splitFlags(field);
+        std::string before = record, d2;
+        std::string merged = flagsAdd(record, s2.story, &d2);
+        CHECK(d2.empty());
+        CHECK(merged.compare(0, before.size(), before) == 0);
+        record = merged;
+        field = s2.access;
+      } else {                 // a crew visit carried flags into the record
+        record = flagsAdd(record, add);
+      }
+      CHECK(field.size() <= MAX_FLAGS && record.size() <= MAX_STORY_FLAGS);
+    }
+    // What the account holds is the union, and it holds all of what was granted, except the access flags
+    // that were only ever asked for the record (those are fine in the record too: hasFlag looks at both).
+    std::string held = flagsClean(field + "," + record);
+    for (const auto &w : flagWords(everything)) {
+      bool ok = flagsHas(held, w);
+      if (!ok) { printf("lost flag %s\n", w.c_str()); }
+      CHECK(ok);
+    }
+    for (const auto &w : flagWords(field)) CHECK(accessFlag(w));
+  }
+  // ---- events added in Q7: screen, and a message named by its subject ----
+  {
+    Table t = load("[USERS]\nevent=screen\nmatch=users\nset=KHI\n[CREWB]\nevent=screen\nmatch=bulletin the crew\nset=KAI\n[SUBJ]\nevent=read\nmatch=~on the thermostat\nset=KAI\n");
+    CHECK(t.skipped == 0 && t.rules.size() == 3);
+    CHECK(due(t, ctx(EV_SCREEN, "USERS")).size() == 1);
+    CHECK(due(t, ctx(EV_SCREEN, "BULLETIN THE CREW")).size() == 1);
+    CHECK(due(t, ctx(EV_SCREEN, "BULLETIN RULES")).empty());
+    CHECK(due(t, ctx(EV_READ, "~ON THE THERMOSTAT")).size() == 1);
+    CHECK(due(t, ctx(EV_READ, "12")).empty());
+    CHECK(due(t, ctx(EV_SCREEN, "USERS", "KHI")).empty());   // set-only rule: spent once held
   }
   // ---- parsing: a good file ----
   const char *good =

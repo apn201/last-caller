@@ -14,6 +14,7 @@ static String bbsBegin() {
   else { if (!storageFault.length()) storageFault = "storage setup failed"; sdReady = false; trace("SD_OFFLINE", storageFault); }
   String summary = loadSettings();
   ensureMaintAccount();  // after the settings: POWER.INI names the account
+  ensureStoryAccounts();  // STORY/ACCOUNTS.INI: the crew, ELIZA, the ground relay
   return summary;
 }
 // Paced output, the board clock and idle timeouts. Call often (every loop),
