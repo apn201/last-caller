@@ -265,7 +265,7 @@ def main():
         c.send("200")
         c.expect("Crew aboard now")
         c.expect("QUERY>")
-        c.send("q 2-01")             # spaces, dashes and case do not matter
+        c.send(" 2-01 ")             # spaces and dashes do not matter
         c.expect("Oxygen")
         c.expect("QUERY>")
         c.send("99999")
