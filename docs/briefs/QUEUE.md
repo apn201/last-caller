@@ -81,7 +81,7 @@ Rules for every item:
   Also fix from the Q3 review: keys typed while a scene types out are
   echoed into the middle of the text; suppress the echo while a scene
   types (Enter still flushes).
-- [ ] **Q5 - Diagnostics and shell doors (S4b, S6b).** Plus two staging
+- [x] **Q5 - Diagnostics and shell doors (S4b, S6b).** (done, see `git log` from "Q5: staging fixes" to "Q5: e2e: ls order" plus the tick; `pio run` passes, host tests pass with `zig c++`, staging check PASS: server build, smoke, e2e 16 passed, 0 failed, 1 skipped (crew login); board test still to do, spec shell-doors task 8; the comms manual with the query codes and the haven tree come with Q7 and Q9.) Plus two staging
   fixes from the Q1 review: the port-8086 placeholder is gone for good
   (it was a leftover test server), so remove the code in
   `tools/staging-remote.sh` that stops and restores it (anything on the
