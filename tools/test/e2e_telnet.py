@@ -152,9 +152,10 @@ def mfile(c):
     start = len(c.all)
     c.send("S")
     c.expect("Rows confirmed:")
-    answer = c.all[start:]
     c.expect("MANIFEST>")
-    return answer
+    answer = c.all[start:]
+    at = answer.index("Rows confirmed:")
+    return answer[:answer.index("\n", at)]     # the board's answer only, not the rows listed after it
 
 def main():
     ap = argparse.ArgumentParser()
@@ -518,7 +519,7 @@ def main():
         start = len(c.all)
         c.send("S")
         c.expect("Rows confirmed: 5 of 5", timeout=15)
-        if "ELIZA" not in c.all[start:]:
+        if "Confirmed and locked: ELIZA" not in c.all[start:]:
             raise AssertionError("the last row was not named when confirmed")
         advance(c, "The crew are dead")
         advance(c, "Main Board Command?")
