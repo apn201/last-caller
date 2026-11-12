@@ -36,7 +36,10 @@ Rules for every item:
   `sd/`. A script `tools/server-check.ps1` runs it. Docker Desktop is
   installed but may not be running: start it, or report that Juha must.
   From now on this is the second build.
-- [ ] **Q2 - Triggers (S5).** `src/core/haunt.h`, `STORY/TRIGGERS.INI`:
+- [x] **Q2 - Triggers (S5).** (done, e79fa6e..fe4cc9b plus the tick; `pio run`
+  passes, host tests pass with `zig c++`, server build not run: Windows, Q1
+  blocked; board test still to do once the C1 crew accounts exist.)
+  `src/core/haunt.h`, `STORY/TRIGGERS.INI`:
   events, conditions, effects as in SLICES S5, plus: private ELIZA mail
   to one caller, and crew-login visits granting flags to the caller's own
   account. Idempotent, flags only grow. Host-side tests.
