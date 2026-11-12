@@ -43,7 +43,7 @@ Rules for every item:
   events, conditions, effects as in SLICES S5, plus: private ELIZA mail
   to one caller, and crew-login visits granting flags to the caller's own
   account. Idempotent, flags only grow. Host-side tests.
-- [ ] **Q3 - Scene engine.** The visual novel door from STORY_EXTRAS:
+- [x] **Q3 - Scene engine.** (done, a222ce7..832d528 plus the tick; `pio run` passes, host tests pass with `zig c++`, server build not run: Windows, Q1 blocked; board test still to do.) The visual novel door from STORY_EXTRAS:
   portrait art, typed dialogue with pauses, choices that set flags, scenes
   as card files in `STORY/SCENES/`. Works on Telnet and browser.
 - [ ] **Q4 - Ghosts and ELIZA's voice (S6, S9).** Ghost callers in WHO,
