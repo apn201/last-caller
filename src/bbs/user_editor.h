@@ -29,7 +29,7 @@ static void eachFlag(const String &list, std::function<void(const String &)> fn)
 // carry that nothing checks (shown as "not used").
 struct FlagUse { String flag, opens; };
 static std::vector<FlagUse> knownFlags() {
-  std::vector<FlagUse> flags{{"SYSOP", "SysOp access"}};
+  std::vector<FlagUse> flags{{"SYSOP", "SysOp access"}, {"READONLY", "read-only account: no posting, uploads or saves; many logins at once"}};
   auto add = [&](const String &flag, const String &what) {
     String f = up(flag);
     if (!f.length()) return;

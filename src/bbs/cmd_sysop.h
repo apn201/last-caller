@@ -9,6 +9,7 @@ static bool sysopCommand(Session &s, String &line, const String &cmd) {
     if (cmd == "W") { nodeMonitor(s, SYSOP_MENU); return true; }
     if (cmd == "I") { uploadQueue(s); return true; }
     if (tokenAt(cmd, 0) == "L") { sysopLogs(s, afterTokens(line, 1)); return true; }
+    if (tokenAt(cmd, 0) == "POWER") { sysopPowerCommand(s, cmd); prompt(s, "SysOp command? "); return true; }
     if (cmd == "R" || cmd == "RELOAD") {
       say(s, "Settings reloaded: " + loadSettings() + ".");
       say(s, "Network settings take effect after a restart.");

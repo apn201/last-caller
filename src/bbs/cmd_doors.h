@@ -7,9 +7,9 @@ static bool doorCommand(Session &s, String &line, const String &cmd) {
     if (cmd == "Q" || !cmd.length()) { mainMenu(s); return true; }
     if (cmd.length() == 1)
       for (const Door &d : DOORS)
-        if (strchr(d.keys, cmd[0])) { d.enter(s); return true; }
+        if (doorOpen(d, s) && strchr(d.keys, cmd[0])) { d.enter(s); return true; }
     String keys;
-    for (const Door &d : DOORS) { keys += d.keys[0]; keys += ", "; }
+    for (const Door &d : DOORS) if (doorOpen(d, s)) { keys += d.keys[0]; keys += ", "; }
     say(s, "Choose " + keys + "or Q."); prompt(s, "Door command? "); return true;
   }
   if (const Door *d = doorFor(s)) { d->handle(s, line, cmd); return true; }

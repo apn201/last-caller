@@ -12,7 +12,9 @@ static String bbsBegin() {
   bootAt = millis();
   if (sdReady && prepareStorage()) { userCounters(); messageCounters(); }
   else { if (!storageFault.length()) storageFault = "storage setup failed"; sdReady = false; trace("SD_OFFLINE", storageFault); }
-  return loadSettings();
+  String summary = loadSettings();
+  ensureMaintAccount();  // after the settings: POWER.INI names the account
+  return summary;
 }
 // Paced output, the board clock and idle timeouts. Call often (every loop),
 // holding the BBS lock. `transports` runs in between: it may open sessions,
@@ -23,10 +25,14 @@ template <typename F> static void bbsTick(F transports) {
   transports();
   tickClock();
   now = millis();
+  powerTick(now);
+  powerSessionsTick(now);
   for (auto &s : sessions) {
     if (!s.used) continue;
     uint32_t idleLimit = s.authenticated ? 30UL * 60UL * 1000UL : LOGIN_TIMEOUT_MS;
-    if (now - s.lastAt >= idleLimit || (s.web && now - s.lastPoll >= WEB_CARRIER_TIMEOUT_MS))
+    // In brownout only the window ends a session (power.h); idle time does not count.
+    bool idle = !boardBrownout() && now - s.lastAt >= idleLimit;
+    if (idle || (s.web && now - s.lastPoll >= WEB_CARRIER_TIMEOUT_MS))
       closeSession(s);
   }
 }

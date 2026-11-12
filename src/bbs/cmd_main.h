@@ -74,11 +74,12 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
     }
     else if (cmd == "A") { ansiGallery(s); }
     else if (cmd == "F") { s.galleryCabinet = false; fileMenu(s); }
-    else if (cmd == "D") { doorMenu(s); }
+    else if (cmd == "D" && anyDoorOpen(s)) { doorMenu(s); }
     else if (cmd == "?" || cmd == "H") { say(s, "Type a command and press ENTER. Q backs out of most menus."); if (isSysop(s)) say(s, "USER opens the user editor."); s.state = BULLETIN; prompt(s, "Press ENTER: "); }
     else if (cmd == "Z" && isSysop(s)) { sysopMenu(s); }
     else if (cmd == "RELOAD" && isSysop(s)) { say(s, "Settings reloaded: " + loadSettings() + "."); say(s, "Network settings take effect after a restart."); prompt(s, "Main Board Command? "); }
     else if (cmd == "USER" && isSysop(s)) { sysopUsers(s); }
+    else if (tokenAt(cmd, 0) == "POWER" && isSysop(s)) { sysopPowerCommand(s, cmd); prompt(s, "Main Board Command? "); }
     else if (cmd == "Z" || cmd == "USER") { say(s, "SysOp access requires level 255 and the SYSOP flag."); prompt(s, "Main Board Command? "); }
     else if (cmd == "G") { s.state = GOODBYE; activity(s, "LOGOFF"); uint32_t mins = (millis() - s.connectedAt) / 60000; art(s, board.goodbye.c_str()); say(s, "Time online: " + String(mins) + " minutes"); }
     else if (!cmd.length()) mainMenu(s);

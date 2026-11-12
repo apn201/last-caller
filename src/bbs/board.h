@@ -18,7 +18,7 @@ static void mainMenu(Session &s) {
   items.push_back({"N", "New scan"});
   if (files) items.push_back({"F", "File cabinets"});
   items.push_back({"A", "ANSI gallery"});
-  items.push_back({"D", "Doors & games"});
+  if (anyDoorOpen(s)) items.push_back({"D", "Doors & games"});
   items.push_back({"C", "Node chat"});
   if (bulletins) items.push_back({"B", "Bulletins"});
   if (severalAreas(s.user)) items.push_back({"J", "Conferences"});
@@ -71,13 +71,14 @@ static void fileMenu(Session &s) {
 static void doorMenu(Session &s) {
   s.state = DOOR_MENU; activity(s, "DOORS & GAMES");
   std::vector<MenuItem> items;
-  for (const Door &d : DOORS) items.push_back({String(d.keys[0]), doorName(d.keys[0], d.name)});
+  for (const Door &d : DOORS) if (doorOpen(d, s)) items.push_back({String(d.keys[0]), doorName(d.keys[0], d.name)});
   items.push_back({"Q", "Main Board"});
   showMenu(s, "DOORS", items, "DOORS & GAMES");
   prompt(s, "Door command? ");
 }
 static void finishLogin(Session &s) {
   s.authenticated = true;
+  s.readOnly = hasFlag(s.user, "READONLY");
   // Older cards could already contain a SYSOP-named account created before
   // the level/flag bootstrap rule was added.  SYSOP is the reserved primary
   // operator identity, so normalize that record on its next successful login
@@ -98,8 +99,19 @@ static void finishLogin(Session &s) {
       trace("SYSOP_REPAIR", "normalized primary SYSOP account");
     }
   }
-  s.user.calls++;
-  if (!touchUser(s.user)) say(s, "\r\nWarning: user statistics were not saved. See Serial console.");
+  // The ship's maintenance account goes straight to the ship console: no
+  // counters, no bulletins, no menu.
+  if (isMaintenance(s.user)) {
+    event("LOGIN", s.user.handle + " node " + s.node);
+    trace("LOGIN_OK", s.user.handle + " node " + s.node);
+    enterShip(s);
+    return;
+  }
+  // A read-only account never changes its record: no call count, no touch.
+  if (!s.readOnly) {
+    s.user.calls++;
+    if (!touchUser(s.user)) say(s, "\r\nWarning: user statistics were not saved. See Serial console.");
+  }
   if (repairedSysop) say(s, "\r\nPrimary SYSOP account normalized: level 255, SYSOP flag.");
   callers++; loadPointer(s); event("LOGIN", s.user.handle + " node " + s.node); trace("LOGIN_OK", s.user.handle + " node " + s.node); activity(s, "BULLETINS");
   say(s, "\r\nCaller #" + String(callers) + "  Security: " + String(s.user.level) + "  Conference: " + confName(s.conference));
@@ -111,6 +123,7 @@ static void finishLogin(Session &s) {
   s.state = BULLETIN; prompt(s, "Press ENTER for Main Board: ");
 }
 static void loginPrompt(Session &s) {
+  if (boardBrownout()) { activity(s, "AWAITING LOGIN"); brownoutLogin(s); return; }
   s.state = LOGIN_CHOICE;
   activity(s, "AWAITING LOGIN");
   if (s.ansi) art(s, board.welcome.c_str(), board.name);

@@ -74,7 +74,7 @@ static String uploadName(String name) {
   return out;
 }
 static bool uploadsHere(const Session &s) {
-  return s.web && board.uploadMax && s.fileArea < fileAreas.size() && fileAreas[s.fileArea].uploads && canUseArea(s, s.fileArea);
+  return s.web && canWrite(s) && board.uploadMax && s.fileArea < fileAreas.size() && fileAreas[s.fileArea].uploads && canUseArea(s, s.fileArea);
 }
 
 // ---------- the caller's side ------------------------------------------------------

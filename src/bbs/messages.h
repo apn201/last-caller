@@ -96,7 +96,7 @@ static std::vector<Message> messageVersions(uint32_t id) {
 }
 // The author and the SysOp may kill or edit a message.
 // History from the card is read-only for everyone.
-static bool canModify(const Session &s, const Message &m) { return !m.history && (isSysop(s) || up(m.from) == up(s.user.handle)); }
+static bool canModify(const Session &s, const Message &m) { return canWrite(s) && !m.history && (isSysop(s) || up(m.from) == up(s.user.handle)); }
 // Messages and new ones in every conference, in one pass over the message
 // file (it is read twice per pass, so one pass per area adds up).
 struct AreaCount { uint32_t total = 0, fresh = 0; };
@@ -155,7 +155,7 @@ static void messageArea(Session &s) {
   std::vector<MenuItem> items;
   items.push_back({"R", "Read / list"});
   items.push_back({"N", "Read new"});
-  items.push_back({"P", "Post a message"});
+  if (canWrite(s)) items.push_back({"P", "Post a message"});
   if (severalAreas(s.user)) items.push_back({"A", "Change area"});
   items.push_back({"Q", "Main Board"});
   showMenu(s, "MESSAGES", items, "MESSAGE BASES");
@@ -196,9 +196,9 @@ static String messageKeys(Session &s, bool reader) {
   Message m;
   bool known = getMessage(s.msgId, m);
   bool mine = known && canModify(s, m), history = known && m.versions > 1;
-  if (reader) return String("SPACE page  N/P msg  R reply  T thread  ") + (mine ? "K kill  E edit  " : "") + (history ? "H hist  " : "") + "Q quit";
+  if (reader) return String("SPACE page  N/P msg  ") + (canWrite(s) ? "R reply  " : "") + "T thread  " + (mine ? "K kill  E edit  " : "") + (history ? "H hist  " : "") + "Q quit";
   const char *y = "\x1b[1;33m", *n = "\x1b[0m";
-  return String(y) + "[N]" + n + "ext " + y + "[P]" + n + "rev " + y + "[R]" + n + "eply " + y + "[T]" + n + "hread " +
+  return String(y) + "[N]" + n + "ext " + y + "[P]" + n + "rev " + (canWrite(s) ? String(y) + "[R]" + n + "eply " : String()) + y + "[T]" + n + "hread " +
          (mine ? String(y) + "[K]" + n + "ill " + y + "[E]" + n + "dit " : String()) +
          (history ? String(y) + "[H]" + n + "istory " : String()) + y + "[Q]" + n + "uit (ENTER = next): ";
 }
@@ -343,7 +343,7 @@ static bool msgReaderKey(Session &s, const String &k) {
     showMessage(s, id);
     return true;
   }
-  if (k == "r" || k == "R" || k == "t" || k == "T") {
+  if (((k == "r" || k == "R") && canWrite(s)) || k == "t" || k == "T") {
     s.reader = Reader();
     write(s, "\x1b[0m\x1b[2J\x1b[H");
     s.state = MSG_VIEW;
@@ -442,12 +442,15 @@ static void killMessage(Session &s, bool yes) {
   uint32_t next = stepMessage(s, m.id, true);
   if (next) showMessage(s, next); else messageArea(s);
 }
+static void readOnlyNotice(Session &s) { say(s, "This account is read-only."); }
 static void startPost(Session &s) {
+  if (!canWrite(s)) { readOnlyNotice(s); messageArea(s); return; }
   s.replyTo = 0; s.pendingTo = ""; s.pendingPrivate = false;
   s.state = POST_TO; activity(s, "POSTING MESSAGE");
   prompt(s, "To (ENTER = ALL): ");
 }
 static void startReply(Session &s) {
+  if (!canWrite(s)) { readOnlyNotice(s); readerPrompt(s); return; }
   Message m;
   if (!getMessage(s.msgId, m)) { say(s, "That message is gone."); readerPrompt(s); return; }
   s.replyTo = m.id; s.pendingTo = m.from; s.pendingPrivate = m.priv;
@@ -456,6 +459,7 @@ static void startReply(Session &s) {
   startEditor(s);
 }
 static void saveDraft(Session &s) {
+  if (!canWrite(s)) { s.draft = ""; s.msgEdit = 0; readOnlyNotice(s); messageArea(s); return; }
   if (s.msgEdit) {  // an edit: the new text under the old id
     Message m;
     uint32_t id = s.msgEdit;

@@ -217,9 +217,13 @@ static WebRouteResponse webRoute(const WebRouteRequest &request) {
     Session *s = webAreaFile(request, FILE_LIST, nullptr, path, name, bytes);
     if (!s || !fileAreas[s->fileArea].downloads) return webText(404, "text/plain", "File unavailable");
     if (!downloadAllowed(s->user, bytes, reason)) return webText(403, "text/plain", reason);
-    s->user.downloadBytes += bytes; if (s->user.downloads != UINT16_MAX) s->user.downloads++;
-    if (!touchUser(s->user)) trace("DOWNLOAD_ACCOUNT_WARN", s->user.handle);
-    refreshLiveUser(s->user); countDownload(path); event("DOWNLOAD", s->user.handle + " " + name);
+    // A read-only account downloads without any change to its record.
+    if (canWrite(*s)) {
+      s->user.downloadBytes += bytes; if (s->user.downloads != UINT16_MAX) s->user.downloads++;
+      if (!touchUser(s->user)) trace("DOWNLOAD_ACCOUNT_WARN", s->user.handle);
+      refreshLiveUser(s->user);
+    }
+    countDownload(path); event("DOWNLOAD", s->user.handle + " " + name);
     return webCardFile(path, "application/octet-stream", true, "no-store");
   }
   if (request.method == "GET" && request.path == "/view") {

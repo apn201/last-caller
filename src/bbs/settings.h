@@ -161,6 +161,7 @@ static String loadSettings() {
   clockSyncBrowser = clockSync == "BROWSER";
   clockSyncSystem = clockSync == "SYSTEM";
   String clock = startClock(epoch);
+  loadPower();  // STORY/POWER.INI; the power state itself is read once, at boot
   String areas = loadFileAreas();
   String history = loadHistory();
   String syncDetail = clockSyncBrowser ? " (browser sync)" : (clockSyncSystem ? " (system sync)" : "");
