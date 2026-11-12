@@ -89,7 +89,7 @@ if ss -ltn "sport = :$HTTP_PORT" | grep -q LISTEN; then
   CMD="$(tr '\0' ' ' < "/proc/$PID/cmdline" 2>/dev/null)"
   case "$CMD" in
     "python3 -m http.server $HTTP_PORT --bind 127.0.0.1 "*) kill "$PID"; PLACEHOLDER_RESTORE=1; sleep 1;;
-    *tinybbs-server*) kill "$PID"; sleep 1;;
+    "$STAGE"/src/server/build/tinybbs-server*) kill "$PID"; sleep 1;;
     *) note FAIL "port $HTTP_PORT is held by something else ($CMD)"; finish;;
   esac
 fi
