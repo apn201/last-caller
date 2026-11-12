@@ -15,7 +15,15 @@ Rules for every item:
   (never claim it passed if it did not run).
 - Every new screen gets ANSI art made with `tools/ansi/` and checked as PNG.
 - All caller-visible text is a draft for Juha's final edit; keep it in
-  card files, not in code.
+  card files, not in code. Follow `.kiro/steering/writing.md` (copy it
+  from `docs/briefs/WRITING_RULES.md` in the next run if it is missing).
+  The plot must be good as literature, not just correct as a puzzle.
+- Game design (Juha, Nov 13): the game must be finishable, take a good
+  amount of time (target 60 to 120 minutes for a first-time player), and
+  have no grinding: no credit farming, no repeated actions to fill a meter,
+  no waiting except the 2-minute prologue. Every gate opens by noticing
+  something or thinking, never by repetition. From Q7 on, extend the e2e
+  test so a scripted player finishes everything built so far.
 - Tick the item here when done, with the commit range, and stop. One item
   per run.
 
@@ -80,6 +88,28 @@ Rules for every item:
   port should just abort the run); and `tools/staging-check.ps1` fails in
   Windows PowerShell 5.1 because `git push` writes to stderr under
   `$ErrorActionPreference='Stop'`: check `$LASTEXITCODE` instead.
+- [ ] **Q5b - Prologue per caller (Juha, Nov 13).** Replaces the
+  board-wide power state. Every new caller gets the brownout; nobody's
+  game depends on anyone else's.
+  - Front page: the brownout boot banner and a login prompt. No "New"
+    option on the front page any more.
+  - Registered callers log in normally and go straight to the powered
+    board (they restored the power when they joined).
+  - No account: log in as `admin`/`admin` (read-only, many at once). The
+    session gets a 2-minute power timer (in `POWER.INI`). If the caller
+    has not switched the power to the RTG when it runs out, the session
+    ends with the power-glitch screen ("SUNSIDE ENDS - CARRIER LOST").
+  - Switching to the RTG stops that caller's timer, ELIZA wakes for that
+    caller, and the ship console gains one new option: create a crew
+    account (handle, password, the usual new-user steps). Account
+    creation lives only here. After creating it the caller is told to
+    log in with it; the ELIZA_WAKE scene plays at that first login.
+  - Remove the global power state, the RTG decay, and the SysOp POWER
+    ON/OFF commands, or reduce them to what is still needed; keep the
+    code and card files small. Update the power-prologue spec, `TESTING.md`,
+    `MENU_AUDIT.md` and the e2e test (timer drop, power restored, account
+    created in the console, log in with it, registered caller skips the
+    prologue). Staging check must PASS.
 - [ ] **Q6 - Manifest and endings (S8).** Pairs confirmed, ELIZA's row
   last, three endings, sticky ghost handle, notebook view.
 - [ ] **Q7 - Content act 1.** Accounts and user list, bulletins, public

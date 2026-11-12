@@ -34,6 +34,8 @@
 #include "doors/legend.h"
 #include "doors/dice.h"
 #include "doors/ship.h"
+#include "doors/diag.h"
+#include "doors/shell.h"
 #include "doors/doors.h"
 #include "bbs/sysop.h"
 #include "bbs/board.h"

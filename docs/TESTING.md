@@ -86,14 +86,13 @@ Commit first: only the pushed `main` is tested. The script pushes to the
    8 s, `decay_after_idle_min=0`, no `DATA/STATE`) and runs the phase-1 smoke
    check on a throwaway copy;
 3. starts `tinybbs-server` on `127.0.0.1:8086` with Telnet on
-   `127.0.0.1:2323` (the placeholder web server our own account keeps on 8086
-   is stopped for the run and put back afterwards; anything else on the port
-   aborts the run);
+   `127.0.0.1:2323` (nothing is stopped:
+   anything already on the HTTP or Telnet port aborts the run);
 4. `curl`s `/api/board` and the terminal page;
 5. runs `tools/test/e2e_telnet.py` (standard library only): brownout banner,
    wrong name, drop after the window, reconnect, `admin`/`admin`, ship console,
    `SOURCE RTG` (abort, then `K`), ELIZA's wake-up, power holds, new account,
-   the `ELIZA_WAKE` scene, a second login, Goodbye, and a crew login when
+   the `ELIZA_WAKE` scene, the doors menu, Diagnostics (query codes), the NOWHERE shell (its gate is opened on the disposable card, `--shell-open`), a second login, Goodbye, and a crew login when
    `-Crew` is given (SKIP otherwise);
 6. stops the server and prints `STAGING CHECK: PASS` or `FAIL` (exit code 0 or 1).
 

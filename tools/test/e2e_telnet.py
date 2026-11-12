@@ -127,6 +127,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, required=True)
     ap.add_argument("--window-max", type=int, default=8, help="brownout window_max in seconds")
+    ap.add_argument("--shell-open", action="store_true", help="the card's SHELL.INI has needs= empty")
     ap.add_argument("--crew", default="", help="HANDLE:PASSWORD of a crew account, if one exists")
     args = ap.parse_args()
     port = args.port
@@ -244,6 +245,68 @@ def main():
         c.send("")
         c.expect("Main Board Command?", timeout=30)
 
+    @step("doors menu lists Diagnostics; the shell only when its gate is open")
+    def doors_menu():
+        c = state["c"]
+        c.send("D")
+        c.expect("Door command?", timeout=15)
+        seen = c.all[-1500:]
+        if "Diagnostics" not in seen:
+            raise AssertionError("Diagnostics is not in the door menu")
+        has_shell = "NOWHERE shell" in seen
+        if has_shell != args.shell_open:
+            raise AssertionError("NOWHERE shell listed=%s, expected %s" % (has_shell, args.shell_open))
+
+    @step("Diagnostics answers a query code, refuses nonsense, QUIT returns")
+    def diag():
+        c = state["c"]
+        c.send("I")
+        c.expect("QUERY>", timeout=15)
+        c.send("200")
+        c.expect("Crew aboard now")
+        c.expect("QUERY>")
+        c.send("q 2-01")             # spaces, dashes and case do not matter
+        c.expect("Oxygen")
+        c.expect("QUERY>")
+        c.send("99999")
+        c.expect("no query with that code")
+        c.expect("QUERY>")
+        c.send("QUIT")
+        c.expect("Door command?", timeout=10)
+
+    @step("NOWHERE shell: ls, cat, cd, pwd, unknown command, exit")
+    def shell():
+        if not args.shell_open:
+            return "SKIP shell gate is closed on this card (pass --shell-open)"
+        c = state["c"]
+        c.send("N")
+        c.expect("guest@nowhere:/$", timeout=15)
+        c.send("ls")
+        c.expect("README")
+        c.expect("etc/")
+        c.expect("guest@nowhere:/$")
+        c.send("cat etc/motd")
+        c.expect("Your data is NOWHERE.")
+        c.expect("guest@nowhere:/$")
+        c.send("cd var/log")
+        c.expect("guest@nowhere:/var/log$")
+        c.send("cat outbound")
+        c.expect("No jobs queued")
+        c.expect("$")
+        c.send("cat ../../nothing")
+        c.expect("No such file or directory")
+        c.expect("$")
+        c.send("rm -rf /")
+        c.expect("command not found")
+        c.expect("$")
+        c.send("exit")
+        c.expect("Door command?", timeout=10)
+
+    @step("leave the doors menu")
+    def doors_leave():
+        c = state["c"]
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
     @step("a second signed-in session does not break the first")
     def second():
         c = Conn(port)
@@ -282,9 +345,9 @@ def main():
         c.expect("Press ENTER", "Main Board Command?", timeout=20)
         c.close()
 
-    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, signup, scene, second, bye, crew):
+    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, signup, scene, doors_menu, diag, shell, doors_leave, second, bye, crew):
         ok = fn()
-        if not ok and fn in (banner, reconnect, console, rtg, wake, signup):
+        if not ok and fn in (banner, reconnect, console, rtg, wake, signup, doors_menu):
             results.append(("SKIP", "remaining steps", "stopped after a step they depend on failed"))
             break
 

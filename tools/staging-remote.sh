@@ -65,6 +65,8 @@ for d in FILES/001_BBS_SOFTWARE UPLOADS/INCOMING DATA/INDEX; do mkdir -p "$CARD/
 rm -rf "$CARD/BBS/DATA/STATE"
 sed -i "s/^window_min=.*/window_min=$WINDOW_MIN/; s/^window_max=.*/window_max=$WINDOW_MAX/" "$CARD/BBS/STORY/POWER.INI"
 sed -i "s/^decay_after_idle_min=.*/decay_after_idle_min=0/" "$CARD/BBS/STORY/POWER.INI"
+# Open the NOWHERE shell gate on the disposable card so the test can walk it.
+sed -i "s/^needs=.*/needs=/" "$CARD/BBS/STORY/SHELL.INI"
 
 # 4. Phase-1 smoke check (own throwaway copy: it creates runtime files).
 say "phase-1 smoke"
@@ -108,7 +110,7 @@ rm -f "$STAGE/page.html"
 
 # 7. End-to-end over Telnet.
 say "end-to-end"
-python3 "$SRC/tools/test/e2e_telnet.py" --port "$TELNET_PORT" --window-max "$WINDOW_MAX" ${CREW:+--crew "$CREW"} | tee "$STAGE/e2e.out"
+python3 "$SRC/tools/test/e2e_telnet.py" --port "$TELNET_PORT" --window-max "$WINDOW_MAX" --shell-open ${CREW:+--crew "$CREW"} | tee "$STAGE/e2e.out"
 if [ "${PIPESTATUS[0]}" -eq 0 ]; then note PASS "end-to-end Telnet test ($(tail -1 "$STAGE/e2e.out"))"; else note FAIL "end-to-end Telnet test ($(tail -1 "$STAGE/e2e.out"))"; fi
 
 # 8. Server still alive and quiet.

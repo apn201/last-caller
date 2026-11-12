@@ -160,6 +160,8 @@ Cut line: S4 plus S6 plus S8 is a game.
 ELIZA answers system queries by number, truthfully, in her voice. Query
 codes come from the comms manual on the board.
 
+Built (Q5): spec `.kiro/specs/shell-doors/`, `src/doors/diag.h`, answers in `sd/BBS/STORY/DIAG.INI`. The door does not list the codes; the comms manual (Q7) carries them.
+
 ### S5 - Triggers (Nov 17 to 19)
 
 Events: login, message read, file viewed, art viewed at a baud, door entered,
@@ -202,6 +204,8 @@ A fake 1998 Unix-like shell on the haven's file system: `ls`, `cat`,
 `cd`, the orders, the client list, the outbound queue. The final command
 is typed here. Side door for later: the haven's servers boot with 1990s
 security, "but that is another story".
+
+Built (Q5): `src/core/shell_logic.h` + `src/doors/shell.h`, tree and final command in `sd/BBS/STORY/SHELL.INI` (a small draft tree; Q9 fills it and grants the gate flag `NOWHERE_OPEN`). Host tests: `tools/test/shell_logic_test.cpp`.
 
 ### S7 - Glitches and sound (Nov 20 to 22)
 

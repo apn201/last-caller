@@ -19,6 +19,10 @@ static const Door DOORS[] = {
   {"V", "VolaMUD", enterMud, playingMud, handleMud, true, nullptr},
   // The ship console: entered at login by the maintenance account, never from the menu.
   {"", "Ship systems", enterShip, ownsShip, handleShip, false, shipListed},
+  // ELIZA's diagnostics: query codes from the comms manual; open while the ship has power.
+  {"I", "Diagnostics", enterDiag, ownsDiag, handleDiag, false, diagListed},
+  // The NOWHERE shell: in the menu only for callers who hold SHELL.INI's needs= flags.
+  {"N", "NOWHERE shell", enterShell, ownsShell, handleShell, false, shellListed},
   // Scenes (core/scene.h): started by a trigger rule (scene=NAME), never from the menu.
   {"", "Scene", sceneEnter, ownsScene, handleScene, false, sceneListed},
 };
