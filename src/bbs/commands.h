@@ -45,6 +45,15 @@ static void input(Session &s, const String &bytes) {
     return;
   }
   for (uint16_t i = 0; i < bytes.length() && s.used && s.state != GOODBYE; ++i) { char c = bytes[i];
+    // A scene types its own text: a key typed meanwhile is neither echoed nor
+    // kept (it would land in the middle of a sentence). Enter still reaches the
+    // scene, as an empty line, to skip the typing or the pause.
+    const bool quiet = s.state == SCENE_PLAY && !s.sceneRun.wantsEcho();
+    if (quiet) {
+      if (c == '\r') { s.input = ""; s.ignoreNextLf = true; handleLine(s, ""); }
+      else if (c == '\n') { if (s.ignoreNextLf) { s.ignoreNextLf = false; continue; } s.input = ""; handleLine(s, ""); }
+      continue;
+    }
     // CRLF is one Enter key.  Without this guard the LF becomes a phantom
     // handle/command in Telnet clients such as PuTTY.
     if (c == '\r') { if (!s.hideInput) say(s); String line = s.input; s.input = ""; s.ignoreNextLf = true; handleLine(s, line); }

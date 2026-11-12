@@ -245,6 +245,10 @@ class Player {
   const std::string &flags() const { return flags_; }
   const std::string &nodeId() const { return node_; }
   unsigned steps() const { return steps_; }
+  // Should the board echo the caller's keys now? Only at a choice prompt. While
+  // the text types, pauses or waits for Enter a key would land in the middle
+  // of a sentence, so it is dropped (Enter still skips: see input()).
+  bool wantsEcho() const { return ph_ == P_CHOICE; }
 
   Out start(std::shared_ptr<const Scene> sc, const std::string &flags, bool ansi, uint32_t now) {
     sc_ = std::move(sc); flags_ = flags; ansi_ = ansi; steps_ = 0; ph_ = P_IDLE; node_.clear();

@@ -234,6 +234,27 @@ int main(int argc, char **argv) {
     CHECK(o.grant == "POLITE");
   }
 
+  // ---- player: keys are echoed only at a choice prompt ----
+  if (sc) {
+    Player p; uint32_t now = 9000;
+    CHECK(!p.wantsEcho());                           // not started
+    p.start(sc, "", false, now);
+    CHECK(p.phase() == P_TYPE && !p.wantsEcho());    // typing
+    p.input("", now + 10);
+    CHECK(p.phase() == P_PAUSE && !p.wantsEcho());   // pause
+    p.input("", now + 20);
+    p.input("", now + 30);                           // flush the choice node's text
+    CHECK(p.phase() == P_CHOICE && p.wantsEcho());   // choice prompt
+    p.input("1", now + 40);
+    CHECK(!p.wantsEcho());
+    auto k = load("[SCENE]\n[START]\ntext=x\nkey=1\ngo=END\n");
+    Player q; q.start(k, "", true, 0);
+    q.tick(5000);
+    CHECK(q.phase() == P_KEY && !q.wantsEcho());     // waiting for Enter
+    q.input("", 5001);
+    CHECK(!q.wantsEcho());                           // finished
+  }
+
   // ---- player: art, set on entry, redirects ----
   {
     auto s = load("[SCENE]\n[START]\nart=PIC_ONE\nset=SEEN\ngo=TWO\n[TWO]\nart=PIC_TWO\ntext=Hi\n");
