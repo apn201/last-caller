@@ -20,7 +20,7 @@ Rules for every item:
 
 ## Items
 
-- [ ] **Q0 - S4 follow-up.** Power-up is one-off: default
+- [x] **Q0 - S4 follow-up.** (done, e6ec1a0..c76ec9f; `pio run` passes, server build not run: Windows.) Power-up is one-off: default
   `decay_after_idle_min=0` and make that the documented behaviour; keep
   the SysOp force command for demos, and let the SysOp log in during
   brownout (today `POWER OFF` locks the SysOp out). Commit
