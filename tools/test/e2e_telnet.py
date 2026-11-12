@@ -168,7 +168,7 @@ def main():
     ap.add_argument("--timer", type=int, default=8, help="power timer_sec in seconds")
     ap.add_argument("--shell-open", action="store_true", help="the card's SHELL.INI has needs= empty")
     ap.add_argument("--evidence", action="store_true", help="the card has the E2E_EVIDENCE rule (entering Diagnostics grants the manifest evidence flags)")
-    ap.add_argument("--crew", default="", help="HANDLE:PASSWORD of a crew account, if one exists")
+    ap.add_argument("--crew", default="TYVANCE:140374", help="HANDLE:PASSWORD of a crew account (the card's TYVANCE, Ty's birthday)")
     args = ap.parse_args()
     port = args.port
     handle = "e2e%04d" % random.randint(0, 9999)

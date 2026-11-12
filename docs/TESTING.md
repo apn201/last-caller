@@ -71,6 +71,23 @@ Wording is draft. The real evidence flags come with the content (Q7 to Q9); unti
 
 Host test: `zig c++ -std=c++17 -Wall -Wextra -I src/core tools/test/manifest_logic_test.cpp -o manifest_logic_test` then `./manifest_logic_test sd/BBS/STORY/MANIFEST.INI`.
 
+## Act 1 (Q7)
+
+Wording is draft. On the stick and on the server, over Telnet and the browser, as a caller who has never seen the board:
+
+1. Prologue as above, make an account in the ship console, log in. The Rules and the Welcome bulletins show; the `ELIZA_WAKE` scene plays. The main menu has no `R Crew manifest` yet.
+2. `B`, bulletin 3 (The Crew): four bios, five accounts named, Ty's birthday (14 Mar 1974). Back at the menu `R Crew manifest` is there. `R` lists the four crew rows. Without ANSI the same bulletins show as plain text.
+3. `U`: the crew accounts with their last calls (CMDR 27 Nov, GARDEN 1 Dec, CHAOS 3 Dec, TYVANCE 8 Dec 03:47, MCC 22 Nov 14:08, ELIZA). TYVANCE is "All decks (VIP)".
+4. `M`: the Lounge offers Post; post something. `A`, 1 (Mission Log): no Post, no Reply key, `P` says the account is read-only. Garden Notes and Mission Log read like a diary. Radio Room and the two Spoilers areas take posts.
+5. `F`: Ty's Gallery (journal, Orbit 1, Orbit 2, dates in 1998) and the Library (`COMMS.TXT` lists the query codes, `README.1ST`, `GALLEY.TXT`). Orbit 1 and 2 look right in the browser and over Telnet.
+6. Stay two minutes without visiting Ty: ELIZA pages about his account. `J` does not list `Mail: TYVANCE`.
+7. Goodbye, then log in as `TYVANCE`. A wrong guess is refused. The password is his birthday as six digits: day, month, year (140374). The `TY_DESK` scene plays in his voice. `J` lists `Mail: TYVANCE`; four of his mails are from his mother, his uncle's office and `lumen`. No Post anywhere. Goodbye returns to `Login:`.
+8. Log in as yourself: ELIZA's mail about Ty's account is in your inbox, and `J` now lists `Mail: TYVANCE` for you.
+9. Story flags: after steps 1 to 8 `DATA/STATE/STORY.DAT` holds a line for your account (with `T_`, `SC_` and `K` flags) and the flag field in the user editor shows only access flags. An older card with story flags in the flag field moves them on the next login (event `STORY_MOVED`).
+10. SysOp: `U` for the user editor shows `READONLY` on the crew accounts. Post in Mission Log as SysOp: allowed.
+
+Host tests of the new logic (flags only grow through grants, carries and migration): `tools/test/haunt_logic_test.cpp`, same command as the other host tests.
+
 ## Server build and end-to-end check (second build, from Q1)
 
 The server cannot be built on this Windows PC. The staging host builds and
@@ -94,7 +111,7 @@ Commit first: only the pushed `main` is tested. The script pushes to the
    `127.0.0.1:2323` (nothing is stopped:
    anything already on the HTTP or Telnet port aborts the run);
 4. `curl`s `/api/board` and the terminal page;
-5. runs `tools/test/e2e_telnet.py` (standard library only): front page (no New), wrong name,
+5. runs `tools/test/e2e_telnet.py` (standard library only; since Q7 it also plays act 1: bulletins, user list, a post in the Lounge, no post in Mission Log, file areas and the journal, `TYVANCE` with a wrong and then the right password, his desk scene and mailbox, back to the own account): front page (no New), wrong name,
    `admin`/`admin` and the timer drop, reconnect, ship console (no `CREW`),
    `SOURCE RTG` (abort, then `K`), ELIZA's wake-up, the timer stopped, `CREW`,
    (cancel, then an account made in the console), log in with it, the `ELIZA_WAKE` scene, the doors menu, Diagnostics (query codes), the NOWHERE shell (its gate is opened on the disposable card, `--shell-open`), the crew manifest and the endings (`--evidence`: on the disposable card, entering Diagnostics grants the evidence flags; see below), a registered caller with no prologue and no timer, `admin` twice, Goodbye, and a crew login when

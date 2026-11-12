@@ -22,7 +22,7 @@ are allowed: they never appear on screen.
 | M, N, A, D, C, W, U, S, ?, G | always | W opens the node monitor (kick, M) for the SysOp. G on a read-only crew account logs off to the login prompt and keeps the line (Q2: what the visit found goes to the caller's own login). Q4: W lists ghosts too, with an Idle column; a ghost's node is "no caller on that node" for the monitor. |
 | F | an area is open to the caller (an empty upload area counts in the browser) | |
 | B | a bulletin is visible to the caller | |
-| J | more than one message area can be joined | |
+| J | more than one message area can be joined | Q7: a conference with a `required_flag` (Mail: TYVANCE, `VISIT_TY`) is listed only for callers who hold it, from the account flag field or the story record. |
 | P | a SysOp is online | |
 | R | the caller can save (not a crew login, not `admin`) and holds evidence about at least one crew row (`STORY/MANIFEST.INI`) | Q6. G with an unfinished manifest shows ELIZA's thanks (partial ending). |
 | Z | SysOp only | Hidden for the SysOp: `USER`, `RELOAD`. |
@@ -91,3 +91,11 @@ are allowed: they never appear on screen.
 | Pick list | option number, 0, Q | Only options the caller has evidence for. |
 | Notebook | Q | Notes the caller has earned. |
 | NOWHERE shell | final command | `release outbound` needs the full manifest; otherwise it is `command not found`. The `ENDING` scene follows. |
+
+## Message areas (Q7)
+
+| Key | Shown when | Notes |
+| --- | --- | --- |
+| P (post), R (reply) | the caller can save and the conference is not `read_only=1` (the SysOp may post anywhere) | Q7. Mission Log, Garden Notes and the mailboxes are read-only; Lounge, Spoilers, No Spoilers and Radio Room take posts. |
+| B | a bulletin is visible; a `.ANS` bulletin shows its `.ASC` twin under `ASCII/` to a caller without ANSI | Q7. |
+| U | always | Shows the last call of each account (`1998-12-08 03:47` as `08 Dec 03:47`). |

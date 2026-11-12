@@ -5,7 +5,7 @@ Evidence ids (E01...) and fact ids are in `design.md`.
 
 ## Group 1 - Content (card only, slice S3)
 
-- [ ] C1. Accounts and user list. Seven accounts: `CMDR`, `CHAOS`, `GARDEN`,
+- [x] C1. (Q7, accounts as built: `STORY/ACCOUNTS.INI`; `CMDR`/`GARDEN` passwords are placeholders for act 2.) Accounts and user list. Seven accounts: `CMDR`, `CHAOS`, `GARDEN`,
   `TYVANCE`, `ELIZA` (SysOp), `MCC` (ground relay, inbound mail stops
   22 Nov) and `admin` (ship maintenance, password `admin`, not the SysOp).
   `TYVANCE`, `CMDR`, `GARDEN`, `CHAOS` and `admin` are read-only crew
@@ -20,7 +20,7 @@ Evidence ids (E01...) and fact ids are in `design.md`.
   ARCHIVE hidden (E26). Dated posts 2 Nov to 7 Dec 1998, weekdays checked.
   Normal life first, small wrong notes, then silence. Last post unfinished.
   Achterberg's jettison post is Mon 23 Nov; ELIZA's reply is polite.
-- [ ] C4. Bulletins: WELCOME (ELIZA), CREW bios (E01), RULES, and the
+- [~] C4. (Q7: WELCOME, CREW, STATUS done; the rest is act 2.) Bulletins: WELCOME (ELIZA), CREW bios (E01), RULES, and the
   8 Dec 04:15 status line ("All crew are well. Thank you for your
   patience."), the last timestamp on the board.
 - [ ] C5. File areas with files and DIZ dates:
@@ -101,7 +101,7 @@ Evidence ids (E01...) and fact ids are in `design.md`.
 Source: `docs/STORY_EXTRAS.md`. Queue items in `docs/briefs/QUEUE.md` do the
 work. All wording is draft for the author.
 
-- [ ] S1. Public conferences Lounge, Spoilers, No Spoilers, Radio Room with
+- [x] S1. (Q7) Public conferences Lounge, Spoilers, No Spoilers, Radio Room with
   posting; story conferences, crew mail and logs read-only. Needs a
   `read_only` key in `CONFERENCES.INI` (R13). Q7.
 - [ ] S2. Side story A: Keiko and the radio amateur, Nov 1998 posts through
