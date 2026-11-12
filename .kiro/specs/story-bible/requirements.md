@@ -15,6 +15,11 @@ content and engine work that follows. Source: `docs/STORY_BIBLE_DRAFT.md`
 - Medium: message (MSG), file or bulletin (FILE), file date or DIZ (DIZ),
   ANSI art (ART), telemetry or log (LOG), WHO or chat (WHO), door (DOOR).
 - Sponsor: the unnamed funder behind Above It All Holdings.
+- Module: the garden module and the NOWHERE rack, one module.
+- Prologue: the brownout and power-up the caller does before the board
+  proper (`.kiro/specs/power-prologue/`).
+- MUSIC: a medium for Ty's tracked modules (MOD), whose sample names carry
+  text.
 
 ## Requirements
 
@@ -67,9 +72,9 @@ and who is responsible.
 
 ### R5 - Unlock chain
 
-1. THE board SHALL unlock in this order: guest, new caller, `TYVANCE` login,
-   crew area, Achterberg's trail, SysOp/ELIZA area, NOWHERE file system,
-   transmit.
+1. THE board SHALL unlock in this order: power-up (prologue), guest, new
+   caller, `TYVANCE` login, crew area, Achterberg's trail, SysOp/ELIZA area,
+   NOWHERE file system, transmit.
 2. EVERY step SHALL be hinted by at least one evidence item, and the
    unlocks of the first three steps by at least two.
 3. NO step SHALL need knowledge from outside the board.
@@ -106,13 +111,34 @@ and who is responsible.
 
 ### R9 - Timeline and clock
 
-1. THE board epoch SHALL be 1998-11-02 08:00 (BBS online) with
-   `clock_sync=browser`.
+1. THE board epoch SHALL be 1998-12-08 04:17, the minute after ELIZA's
+   last bulletin (04:15) and the power cut (04:16), with `clock_sync`
+   empty. THE board SHALL resume from the minute it stopped.
 2. EVERY dated item SHALL fit the timeline in `design.md`, with the same
-   weekday as the real 1998 date.
+   weekday as the real 1998 date, and SHALL be dated before the epoch.
 
 ### R10 - Platform fit
 
 1. THE story SHALL work the same over Telnet and the browser, or hide an
    option where a transport cannot do it.
 2. NO story content SHALL expose a card path to a caller.
+
+### R11 - The module and the power
+
+1. THE board SHALL hold evidence in at least two media that a jettison of
+   the garden/rack module was proposed (by `CHAOS`, 23 Nov) and refused by
+   ELIZA on orders to keep the payload powered at any cost.
+2. THE board SHALL prove V-F (Ty died in the power bay after cutting the
+   ship's power) from at least four items in at least four media, none of
+   them a single mandatory item.
+3. THE last timestamp on the board SHALL be ELIZA's bulletin of 8 Dec,
+   04:15. THE clock SHALL stop after it.
+4. THE story SHALL explain why the board wakes in 2026: the shorted battery
+   bank is open circuit and the solar panels feed the bus while the ship
+   tumbles.
+
+### R12 - Ty the tracker
+
+1. THE board SHALL hold at most two MUSIC evidence items, both Ty's modules.
+2. IF the board's player cannot show sample names, THEN that SHALL be
+   recorded as an engine need (task N12).

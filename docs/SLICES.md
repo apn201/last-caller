@@ -35,9 +35,16 @@ have gone open circuit and the solar panels run the 486 whenever the ship
 is in sunlight, a zombie satellite. Radio amateurs found the signal on
 11 Nov 2026.
 
-Engine fit: `clock_sync` already moves today back 28 years, so a caller in
-Nov 2026 lands on the board in Nov 1998. The board only answers on the sun
-side of the orbit, which can be a real game rule.
+Clock (decided Nov 12): frozen. The board has nowhere to sync from, so it
+resumes from the minute it stopped on 8 Dec 1998 and runs on from there.
+`clock_sync` is off.
+
+Power (decided Nov 12): Ty cut the RTG and shorted the battery with his
+last breath. Now the batteries are open circuit and the tumbling ship only
+has power in sunlight, a minute or two at a time. The caller's first job
+is to log in as ship maintenance and switch the power back to the RTG,
+which wakes ELIZA. Ejecting the garden/server module would have saved
+everyone; ELIZA would not allow it.
 
 Open: see "Story questions" at the end.
 
@@ -130,11 +137,28 @@ One portable header, `src/core/haunt.h`, no ESP32 or Linux includes. Tables
 on the card in `sd/BBS/STORY/*.INI`, loaded once at boot. Clue and progress
 state are flags on the user record (the field exists, no new storage).
 
-### S4 - Keyword terminal (Nov 15 to 16)
+### S4 - Power prologue and accounts (Nov 15 to 17)
 
-One door. The caller types a word found somewhere on the board; the door sets
-a flag, raises level, or leaves a message. Opens the Back Room by play.
-~100 lines. Cut line: if we only get S4 and S6, there is still a game.
+Spec: `.kiro/specs/power-prologue/`. The first thing every caller meets.
+
+- Brownout state: boot banner, maintenance login only, sessions dropped
+  every 60 to 120 s as the tumbling ship loses the sun.
+- `admin`/`admin` maintenance account and the ship systems door: switch
+  the power to the RTG, the ship stabilises, ELIZA wakes.
+- Board-wide power state that survives a reboot; drops back to brownout
+  some minutes after the last caller leaves (to confirm).
+- Read-only crew accounts with concurrent logins, so no clue can be
+  destroyed and many callers can play at once.
+- Private ELIZA messages per caller. Everything after the prologue is solo.
+
+The ship systems door is the keyword terminal from the old S4: the same
+"type the right thing, get a flag" machinery serves the later puzzles.
+Cut line: S4 plus S6 plus S8 is a game.
+
+### S4b - Diagnostics door (Nov 18)
+
+ELIZA answers system queries by number, truthfully, in her voice. Query
+codes come from the comms manual on the board.
 
 ### S5 - Triggers (Nov 17 to 19)
 
@@ -150,6 +174,13 @@ idle times. Page the caller, speak in chat with typing delays. The SysOp is
 one of them. Done when: the SysOp ghost pages you within 30 s of login on
 both transports.
 
+### S6b - NOWHERE shell door (Nov 21)
+
+A fake 1998 Unix-like shell on the haven's file system: `ls`, `cat`,
+`cd`, the orders, the client list, the outbound queue. The final command
+is typed here. Side door for later: the haven's servers boot with 1990s
+security, "but that is another story".
+
 ### S7 - Glitches and sound (Nov 20 to 22)
 
 The haunted-house layer, all driven by triggers so the card controls it:
@@ -159,12 +190,18 @@ The haunted-house layer, all driven by triggers so the card controls it:
 - Browser only, from the terminal page: one static burst, a line hum, a
   distant modem. Original audio only. Telnet gets a BEL at most.
 - Rule: rare and timed. One glitch every few minutes beats one per screen.
+- Audio on the card: short original WAV/MP3 effects (power hum, relay
+  clicks, the reboot chirp in the prologue).
+- Ty's music: two or three original MOD files made by a generator script
+  (`tools/mod/`), sample names carrying text, and his unfinished demo for
+  the summer demo party.
 
 ### S8 - The manifest and the ending (Nov 22 to 24)
 
 `M` opens the crew manifest: one row per crew member, three blanks each
 (identity, fate, cause). The caller fills them from pick lists. Every time
-three rows are fully right, the board confirms those three and locks them.
+two rows are fully right, the board confirms those two and locks them
+(four crew, so pairs; decided Nov 12).
 Wrong rows are never named. Rows only appear for people the caller has
 found evidence about, so the menu never shows a dead option.
 
