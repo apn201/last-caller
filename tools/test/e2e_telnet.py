@@ -467,8 +467,8 @@ def main():
         mfill(c, 4, (4, 4, 4))      # TYVANCE, right
         start = len(c.all)
         answer = mfile(c)
-        if "CHAOS and TYVANCE" not in answer or "Rows confirmed: 4 of 4" not in answer:
-            raise AssertionError("expected CHAOS and TYVANCE, 4 of 4; got %r" % answer[-160:])
+        if "CHAOS and TYVANCE" not in answer or "Rows confirmed: 4 of 5" not in answer:
+            raise AssertionError("expected CHAOS and TYVANCE, 4 of 5 (the ELIZA row counts once it is shown); got %r" % answer[-160:])
         if "[5]" not in c.all[start:]:
             raise AssertionError("the ELIZA row did not open")
         mfill(c, 5, (1, 1, 2))      # ELIZA: the last blank is wrong
