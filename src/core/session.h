@@ -64,6 +64,7 @@ struct Reader {
   uint32_t top = 0, playRow = 0;
   bool playing = false;
   String keyEsc;                    // a cursor key's escape sequence, arriving byte by byte
+  String num;                       // digits typed in the message reader: a message number, ENTER goes to it
   bool (*onKey)(Session &, const String &) = nullptr;  // the owner's keys, tried first
   void (*onQuit)(Session &) = nullptr;
 };

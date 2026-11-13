@@ -13,7 +13,11 @@ static bool loginCommand(Session &s, String &line, const String &cmd) {
   if (s.state == LOGIN_HANDLE) { s.pendingHandle = clean(line, 16, true); User u;
     if (!s.pendingHandle.length() || !findUser(up(s.pendingHandle), u)) { say(s, "Unknown caller."); if (powerEnabled && powerCfg.unknownHint.length()) say(s, powerCfg.unknownHint); loginRetry(s); }
     else if (u.locked) { say(s, "This account is locked. Page the SysOp."); event("AUTH_LOCKED", u.handle); loginRetry(s); } else { s.user = u; s.state = LOGIN_PASSWORD; s.hideInput = true; prompt(s, "Password: "); } return true; }
-  if (s.state == LOGIN_PASSWORD) { s.hideInput = false; if (sha256hex(s.user.salt + ":" + line) != s.user.hash) { say(s, "\r\nBad password."); event("AUTH_FAIL", s.pendingHandle); loginRetry(s); } else { claimAccount(s); finishLogin(s); } return true; }
+  // The service label prints ADMIN in capitals: the maintenance password also works in lower case (Q12b).
+  if (s.state == LOGIN_PASSWORD) { s.hideInput = false;
+    String lowered = line; lowered.toLowerCase();
+    bool right = sha256hex(s.user.salt + ":" + line) == s.user.hash || (isMaintenance(s.user) && sha256hex(s.user.salt + ":" + lowered) == s.user.hash);
+    if (!right) { say(s, "\r\nBad password."); event("AUTH_FAIL", s.pendingHandle); loginRetry(s); } else { claimAccount(s); finishLogin(s); } return true; }
   // ENTER on an empty line backs out of signing up, at the handle and the password.
   if ((s.state == NEW_HANDLE || s.state == NEW_PASSWORD) && !line.length() && s.makingCrew) { crewAccountCancel(s); return true; }
   if ((s.state == NEW_HANDLE || s.state == NEW_PASSWORD) && !line.length()) { s.hideInput = false; say(s, "\r\nNo account made."); loginPrompt(s); return true; }

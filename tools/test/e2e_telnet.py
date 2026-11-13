@@ -281,6 +281,10 @@ def main():
         c.expect("Login:")
         if "(N)ew" in c.all:
             raise AssertionError("the front page offers New")
+        c.send("ADMIN")                     # Q12b: the label prints it in capitals, so capitals work
+        c.expect("Password:")
+        c.send("ADMIN")
+        c.expect("SHIP>", timeout=15)
         c.close()
 
     @step("admin/admin starts the power timer; the session drops when it runs out")

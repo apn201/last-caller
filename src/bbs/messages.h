@@ -304,6 +304,7 @@ static void showThread(Session &s) {
   };
   uint32_t root = rootOf(s.msgId);
   uint8_t shown = 0;
+  std::vector<std::pair<String, String>> read;   // number and subject of each post shown: read triggers fire after the pass
   std::vector<String> rows;
   rows.push_back("");
   rows.push_back("\x1b[1;36mTHREAD\x1b[0m");
@@ -313,10 +314,16 @@ static void showThread(Session &s) {
     rows.push_back("\x1b[1;33m-- #" + String(msgNo(m.id)) + "  " + m.from + " -> " + (m.to.length() ? m.to : String("ALL")) + "  " + m.when +
                    (m.replyTo ? "  (re #" + String(msgNo(m.replyTo)) + ")" : String()) + (m.editedAt.length() ? "  [edited]" : "") + "\x1b[0m");
     if (!m.replyTo) rows.push_back("\x1b[1;37m" + m.subject + "\x1b[0m");
+    read.push_back({String(msgNo(m.id)), m.subject});
     bodyRows(rows, m.history ? historyBody(m.id) : m.body);
     rows.push_back("");
     return ++shown < 40;
   }, true);
+  // A post shown in a thread is read: its triggers fire as if it had been opened (Q12b).
+  for (const auto &r : read) {
+    hauntEvent(s, haunt::EV_READ, r.first);
+    hauntEvent(s, haunt::EV_READ, "~" + r.second.substring(0, 39));
+  }
   showRows(s, rows, "Thread of #" + String(msgNo(root)));
 }
 // Message keys in the reader: N and P step through the area (SPACE at the end
@@ -349,6 +356,26 @@ static bool msgReaderKey(Session &s, const String &k) {
     write(s, "\x1b[0m\x1b[2J\x1b[H");
     s.state = MSG_VIEW;
     if (k == "k" || k == "K") startKill(s); else if (k == "e" || k == "E") startEdit(s); else showHistory(s);
+    return true;
+  }
+  // Digits then ENTER go to that message (the plain reader takes a number at its prompt too).
+  if (k.length() == 1 && k[0] >= '0' && k[0] <= '9' && s.reader.num.length() < 6) {
+    s.reader.num += k;
+    showPage(s, "Go to #" + s.reader.num + "  ENTER goes, any other key cancels");
+    return true;
+  }
+  if (s.reader.num.length()) {
+    uint32_t n;
+    String typed = s.reader.num;
+    s.reader.num = "";
+    if (k == "\r" && readNumber(typed, n)) {
+      s.reader = Reader();
+      write(s, "\x1b[0m\x1b[2J\x1b[H");
+      s.state = MSG_VIEW;
+      showMessage(s, msgFromNo(n));
+      return true;
+    }
+    showPage(s);
     return true;
   }
   bool next = k == "n" || k == "N" || ((k == " " || k == "\r") && readerAtEnd(s));
