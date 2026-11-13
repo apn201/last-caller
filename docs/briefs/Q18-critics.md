@@ -79,11 +79,16 @@ target, the round number, earlier scores or what was changed.
 3. Average the two `SCORE:` lines. Record the round in
    `docs/reviews/LOOP.md`: date, commit played, both scores, average, and
    the top issues.
-4. If the average is 83 or more: stop, go to "Done".
+4. If the average reaches the current target (start: 83): check whether it
+   passed too easily. It passed too easily when it is reached in round 1
+   or 2, or when the average is 5 or more points over the target. Then
+   raise the target by 5 (at most to 93), note it in `LOOP.md`, and carry
+   on fixing towards the new target. Otherwise stop and go to "Done".
 5. Otherwise fix (section 3), then start the next round.
 
-Stop after round 6 even if 83 is not reached, and report why the score is
-stuck.
+Stop after round 6 even if the target is not reached, and report why the
+score is stuck. If the bar was raised, rounds after the raise may go up to
+round 8.
 
 ## 3. Fixing
 
@@ -119,7 +124,8 @@ is rerun from a fresh board.
 
 ## Done
 
-When one round averages 83 or more, or round 6 is finished. Tick Q18 in
+When one round reaches the current target without passing too easily
+(section 2, step 4), or the round limit is reached. Tick Q18 in
 `docs/briefs/QUEUE.md` with: rounds played, the scores per round, the commit
 range, the biggest changes, anything in `CHANGES.md` Juha should look at
 first, and what the last two critics still disliked.
