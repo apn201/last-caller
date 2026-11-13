@@ -14,13 +14,6 @@ from _common import *
 from act1 import TY_TAG
 
 
-def ascii_screen(path, rows):
-    c = Canvas(80, len(rows))
-    for y, r in enumerate(rows):
-        c.text(0, y, r)
-    return c.save_plain(path)
-
-
 # ------------------------------------------------------------------ POST
 
 def post():

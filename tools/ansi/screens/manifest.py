@@ -17,29 +17,6 @@ from _common import *
 ROWS = 12
 
 
-def ascii_screen(rel, rows):
-    c = Canvas(80, len(rows))
-    for y, r in enumerate(rows):
-        c.text(0, y, r)
-    return c.save_plain(rel)
-
-
-def frame12(c, label, rows=ROWS):
-    """The scene frame (as in scenes.py): a rule on top with the label, one below, rivets, a grille."""
-    c.hline(2, 0, 76, "\u2500", DGREY)
-    c.text(4, 0, " " + label + " ", GREY)
-    c.hline(2, rows - 1, 76, "\u2500", DGREY)
-    artist_tag(c, 60, rows - 1)
-    for x, y in ((2, 0), (77, 0), (2, rows - 1), (77, rows - 1)):
-        c.put(x, y, "\u253c", DGREY)
-
-
-def leader(c, y, label, value, vcol, x=44, lead_to=14):
-    c.text(x, y, label, GREY)
-    c.text(x + len(label) + 1, y, "." * (lead_to - len(label) - 1), DGREY)
-    c.text(x + lead_to + 1, y, value, vcol)
-
-
 # ---------------------------------------------------------------- MANIFEST
 
 def manifest():
@@ -79,7 +56,7 @@ def manfull():
     eliza_ring(ring, 9.5, 9.5, r_out=9.4, r_in=6.0, segs=16, off=(), dim=(), core=True)
     ring.flush(c, 8, 1)
     c.glow(8 + 10, 1 + 5, 10.5, 13.0, AMBER, inner=9.8)
-    frame12(c, "HALCYON // MISSION AI")
+    scene_frame(c, "HALCYON // MISSION AI")
     grille(c, 70, 9, 6, 1, DGREY, GREY)
     title5(c, 40, 2, "ELIZA", [WHITE, YELLOW, YELLOW, AMBER, AMBER], DGREY)
     c.text(44, 7, "MISSION AI", GREY)
@@ -107,7 +84,7 @@ def manfull():
 
 def end_sent():
     c = Canvas(80, ROWS)
-    frame12(c, "HALCYON // DOWNLINK")
+    scene_frame(c, "HALCYON // DOWNLINK")
     c.stars(3, 1, 74, 9, seed=17, density=0.03, avoid=lambda x, y: x < 34 or x > 46)
     sp = PixelLayer(26, 10)
     ship_mini(sp, 2, 0)
@@ -144,7 +121,7 @@ def end_sent():
 
 def end_crew():
     c = Canvas(80, ROWS)
-    frame12(c, "HALCYON // CREW LIST")
+    scene_frame(c, "HALCYON // CREW LIST")
     ring = PixelLayer(14, 14)
     eliza_ring(ring, 6.5, 6.5, r_out=6.3, r_in=4.0, segs=12, off=(), dim=(2,), core=True)
     ring.flush(c, 6, 3)

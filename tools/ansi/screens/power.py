@@ -17,20 +17,6 @@ FULL, DARK, MID, LIGHT = "\u2588", "\u2593", "\u2592", "\u2591"
 UPPER, LOWER = "\u2580", "\u2584"
 
 
-def ascii_screen(name, rows):
-    """The plain twin for callers without ANSI: 7-bit text, 80 columns."""
-    c = Canvas(80, len(rows))
-    for y, r in enumerate(rows):
-        c.text(0, y, r)
-    return c.save_plain("ASCII/POWER/%s.ASC" % name)
-
-
-def leader(c, y, label, value, vcol, x=3, lead_to=24, lcol=GREY):
-    c.text(x, y, label, lcol)
-    c.text(x + len(label) + 1, y, "." * (lead_to - len(label) - 1), DGREY)
-    c.text(x + lead_to + 1, y, value, vcol)
-
-
 # ---------------------------------------------------------------- BOOT
 
 def boot():
@@ -47,13 +33,13 @@ def boot():
     c.text(51, 4, LIGHT * 4, DGREY)
     c.text(2, 5, "EXTENDED 15360K   BASE 640K   SHADOW RAM ENABLED", DGREY)
 
-    leader(c, 7, "SOLAR BUS", "DIRECT", LCYAN)
-    leader(c, 8, "BATTERY BANK", "OPEN CIRCUIT", LRED)
-    leader(c, 9, "RTG-1", "DISCONNECTED - MANUAL", YELLOW)
-    leader(c, 10, "ATTITUDE CONTROL", "OFFLINE", YELLOW)
-    leader(c, 11, "PAYLOAD BUS", "LOW DRAW", GREY)
-    leader(c, 12, "MODEM", "28800 READY", GREY)
-    leader(c, 13, "ELIZA MISSION AI", "NOT RESPONDING", AMBER)
+    leader(c, 7, "SOLAR BUS", "DIRECT", LCYAN, lead_to=24, x=3)
+    leader(c, 8, "BATTERY BANK", "OPEN CIRCUIT", LRED, lead_to=24, x=3)
+    leader(c, 9, "RTG-1", "DISCONNECTED - MANUAL", YELLOW, lead_to=24, x=3)
+    leader(c, 10, "ATTITUDE CONTROL", "OFFLINE", YELLOW, lead_to=24, x=3)
+    leader(c, 11, "PAYLOAD BUS", "LOW DRAW", GREY, lead_to=24, x=3)
+    leader(c, 12, "MODEM", "28800 READY", GREY, lead_to=24, x=3)
+    leader(c, 13, "ELIZA MISSION AI", "NOT RESPONDING", AMBER, lead_to=24, x=3)
     c.put(2, 12, " ")
 
     # a dark ELIZA: the ring is there, nothing is lit but one light going out
@@ -75,7 +61,7 @@ def boot():
     c.text(46, 19, "MAINT ACCT DEFAULTS", LCYAN)
     c.text(46, 20, "NOT CHANGED - SEE LABEL", LCYAN)
     c.put(44, 19, "<", LCYAN)
-    return [c.save("ANSI/POWER/BOOT.ANS"), ascii_screen("BOOT", [
+    return [c.save("ANSI/POWER/BOOT.ANS"), ascii_screen("ASCII/POWER/BOOT.ASC", [
         "HALCYON-486 FLIGHT BIOS  REV 2.04  14 MAR 1997        ABOVE IT ALL HOLDINGS",
         "-" * 76,
         "CPU 486DX2-66   NPU PRESENT   CACHE 8K   BUS 33MHZ",
@@ -108,7 +94,7 @@ def reboot():
     c.text(2, 1, "MEMORY TEST  16384K OK", GREY)
     c.text(2, 3, "RESTART AFTER POWER LOSS", DGREY)
     c.text(2, 4, "SOLAR BUS ONLY - ATTITUDE CONTROL OFFLINE", YELLOW)
-    leader(c, 6, "ELIZA MISSION AI", "NOT RESPONDING", AMBER, x=2)
+    leader(c, 6, "ELIZA MISSION AI", "NOT RESPONDING", AMBER, x=2, lead_to=24)
     c.text(2, 7, "MAINT ACCT DEFAULTS NOT CHANGED - SEE LABEL", LCYAN)
     # the label is still on the case for every later caller (found by the Q12 playtest: a caller
     # who reached the short banner had no way in)
@@ -117,7 +103,7 @@ def reboot():
     c.text(5, 10, "MAINT ACCT   ADMIN", GREY)
     c.text(5, 11, "PASSWORD     ADMIN", GREY)
     c.text(5, 12, "(CHANGE ON FIRST USE)", DGREY)
-    return [c.save("ANSI/POWER/REBOOT.ANS"), ascii_screen("REBOOT", [
+    return [c.save("ANSI/POWER/REBOOT.ANS"), ascii_screen("ASCII/POWER/REBOOT.ASC", [
         "HALCYON-486 FLIGHT BIOS  REV 2.04",
         "MEMORY TEST  16384K OK",
         "",
@@ -151,7 +137,7 @@ def sunside():
     c.text(35, 4, "\u2592\u2591\u2591       0%", DGREY)
     c.text(1, 6, "NO CARRIER", DGREY)
     c.put(58, 6, "\u2591", DGREY)
-    return [c.save("ANSI/POWER/SUNSIDE.ANS"), ascii_screen("SUNSIDE", [
+    return [c.save("ANSI/POWER/SUNSIDE.ANS"), ascii_screen("ASCII/POWER/SUNSIDE.ASC", [
         "####====----....",
         "",
         "                    SUNSIDE ENDS - CARRIER LOST",
@@ -214,7 +200,7 @@ def console(powered):
         "",
         "  TYPE HELP FOR COMMANDS",
     ]
-    return [c.save("ANSI/POWER/%s.ANS" % name), ascii_screen(name, rows_ascii)]
+    return [c.save("ANSI/POWER/%s.ANS" % name), ascii_screen("ASCII/POWER/%s.ASC" % name, rows_ascii)]
 
 
 # ---------------------------------------------------------------- WARNING
@@ -251,7 +237,7 @@ def warning():
     c.text(3, 8, "OPERATOR ACK", YELLOW)
     c.text(3, 9, "REQUIRED", YELLOW)
     hazard(c, 0, 10, 80, 1)
-    return [c.save("ANSI/POWER/WARNING.ANS"), ascii_screen("WARNING", [
+    return [c.save("ANSI/POWER/WARNING.ANS"), ascii_screen("ASCII/POWER/WARNING.ASC", [
         "//////////////////////////////////////////////////////////////////////////////",
         "",
         "  RTG-1  BUS TIE      [ RTG ]=====[ gap ]=====[ BUS ]",
@@ -283,7 +269,7 @@ def wake():
     leader(c, 11, "ATTITUDE", "HOLD", LCYAN, x=40, lead_to=14)
     leader(c, 12, "CREW", "4  ALL WELL", YELLOW, x=40, lead_to=14)
     c.put(70, 12, "\u2591", DGREY)
-    return [c.save("ANSI/POWER/WAKE.ANS"), ascii_screen("WAKE", [
+    return [c.save("ANSI/POWER/WAKE.ANS"), ascii_screen("ASCII/POWER/WAKE.ASC", [
         "",
         "          .-\"\"\"\"\"-.",
         "        / o o o o o \\          ELIZA",

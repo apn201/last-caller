@@ -13,29 +13,9 @@ from _common import *
 ROWS = 12
 
 
-def ascii_screen(name, rows):
-    c = Canvas(80, len(rows))
-    for y, r in enumerate(rows):
-        c.text(0, y, r)
-    return c.save_plain("ASCII/STORY/%s.ASC" % name)
-
-
-def leader(c, y, label, value, vcol, x=44, lead_to=14):
-    c.text(x, y, label, GREY)
-    c.text(x + len(label) + 1, y, "." * (lead_to - len(label) - 1), DGREY)
-    c.text(x + lead_to + 1, y, value, vcol)
-
-
 def common(c, label):
     """The frame: a rule on top with the label, a rule below, rivets, a grille."""
-    c.hline(2, 0, 76, "\u2500", DGREY)
-    c.text(4, 0, " " + label + " ", GREY)
-    c.hline(2, ROWS - 1, 76, "\u2500", DGREY)
-    artist_tag(c, 60, ROWS - 1)
-    c.put(2, 0, "\u253c", DGREY)
-    c.put(77, 0, "\u253c", DGREY)
-    c.put(2, ROWS - 1, "\u253c", DGREY)
-    c.put(77, ROWS - 1, "\u253c", DGREY)
+    scene_frame(c, label, ROWS)
     grille(c, 70, 9, 6, 1, DGREY, GREY)
     c.stars(3, 1, 5, 10, seed=12, density=0.12)
 
@@ -56,7 +36,7 @@ def wake1():
     leader(c, 9, "BUS", "RTG", LCYAN)
     leader(c, 10, "VOICE", "LOW", YELLOW)
     c.put(69, 7, "\u2591", DGREY)          # a missing block: the label is peeling
-    return [c.save("ANSI/STORY/ELIZA_WAKE_1.ANS"), ascii_screen("ELIZA_WAKE_1", [
+    return [c.save("ANSI/STORY/ELIZA_WAKE_1.ANS"), ascii_screen("ASCII/STORY/ELIZA_WAKE_1.ASC", [
         "-- HALCYON // MISSION AI " + "-" * 51,
         "",
         "       .-\"\"\"\"\"-.",
@@ -85,7 +65,7 @@ def wake2():
     lights(c, 44, 8, "11111111", on=YELLOW)
     leader(c, 9, "BUS", "RTG", LCYAN)
     leader(c, 10, "VOICE", "NORMAL", LCYAN)
-    return [c.save("ANSI/STORY/ELIZA_WAKE_2.ANS"), ascii_screen("ELIZA_WAKE_2", [
+    return [c.save("ANSI/STORY/ELIZA_WAKE_2.ANS"), ascii_screen("ASCII/STORY/ELIZA_WAKE_2.ASC", [
         "-- HALCYON // MISSION AI " + "-" * 51,
         "",
         "       .-\"\"\"\"\"-.",

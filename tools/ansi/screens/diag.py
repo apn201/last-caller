@@ -14,13 +14,6 @@ from _common import *
 ROWS = 12
 
 
-def ascii_screen(name, rows):
-    c = Canvas(80, len(rows))
-    for y, r in enumerate(rows):
-        c.text(0, y, r)
-    return c.save_plain("ASCII/DOORS/%s.ASC" % name)
-
-
 def diag():
     c = Canvas(80, ROWS)
     c.hline(2, 0, 76, "\u2500", DGREY)
@@ -37,7 +30,7 @@ def diag():
     c.text(62, 10, "MISSION AI", DGREY)
     c.text(63, 11, TAG, DGREY)
     c.put(40, 7, "\u2591", DGREY)          # a worn spot
-    return [c.save("ANSI/DOORS/DIAG.ANS"), ascii_screen("DIAG", [
+    return [c.save("ANSI/DOORS/DIAG.ANS"), ascii_screen("ASCII/DOORS/DIAG.ASC", [
         "-- HALCYON // DIAGNOSTICS --------------------------------------------------",
         "",
         "  DIAG                                            .-\"\"\"\"\"-.",
@@ -71,7 +64,7 @@ def nowhere():
     c.text(52, 10, "UNIT 03", DGREY)
     c.text(60, 10, "NO RESPONSE", AMBER)
     c.text(63, 11, TAG, DGREY)
-    return [c.save("ANSI/DOORS/NOWHERE.ANS"), ascii_screen("NOWHERE", [
+    return [c.save("ANSI/DOORS/NOWHERE.ANS"), ascii_screen("ASCII/DOORS/NOWHERE.ASC", [
         "-- NOWHERE DATA HAVEN ------------------------------------------------------",
         "",
         "  N   N  OOO  W   W H   H EEEEE RRRR  EEEEE          +----------------------+",

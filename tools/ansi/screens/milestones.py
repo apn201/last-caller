@@ -11,7 +11,7 @@ The art does not move the cursor. DRAFT text: every line is a draft. The author
 makes the final edit.
 """
 from _common import *
-from scenes import ROWS, ascii_screen, common, leader
+from scenes import ROWS, common
 
 
 def ring_at(c, off=(), dim=(), core=True, x=8, y=1, glow=(9.0, 11.5)):
@@ -42,7 +42,7 @@ def welcome():
     rows[6] += "               CREW LIST .. CLOSED"
     rows[7] += "              LOUNGE ..... OPEN"
     rows += ["", "-" * 78]
-    return [c.save("ANSI/STORY/ELZ_WELCOME.ANS"), ascii_screen("ELZ_WELCOME", rows[:ROWS - 1] + ["-" * 78])]
+    return [c.save("ANSI/STORY/ELZ_WELCOME.ANS"), ascii_screen("ASCII/STORY/ELZ_WELCOME.ASC", rows[:ROWS - 1] + ["-" * 78])]
 
 
 def talk():
@@ -59,7 +59,7 @@ def talk():
     c.put(2, 3, "\u253c", DGREY)
     c.put(77, 3, "\u253c", DGREY)
     return [c.save("ANSI/STORY/ELZ_TALK.ANS"),
-            ascii_screen("ELZ_TALK", ["-- HALCYON // MISSION AI // SYSOP CHAT " + "-" * 39, "",
+            ascii_screen("ASCII/STORY/ELZ_TALK.ASC", ["-- HALCYON // MISSION AI // SYSOP CHAT " + "-" * 39, "",
                                       "ELIZA  * * * * * * * *  SysOp. Mission computer", "-" * 78])]
 
 
@@ -81,7 +81,7 @@ def glitch():
     for x in range(44, 76, 3):
         c.put(x, 10, "\u2591" if (x // 3) % 2 else "\u2592", DGREY)
     c.put(61, 8, "\u2593", DGREY)
-    return [c.save("ANSI/STORY/MEM_GLITCH.ANS"), ascii_screen("MEM_GLITCH", [
+    return [c.save("ANSI/STORY/MEM_GLITCH.ANS"), ascii_screen("ASCII/STORY/MEM_GLITCH.ASC", [
         "-- HALCYON // MISSION AI " + "-" * 51,
         "",
         "       .-\"\"\"\"\"-.",
@@ -112,7 +112,7 @@ def grant():
     leader(c, 9, "RANGES", "4", LCYAN)
     leader(c, 10, "GAPS", "1", LRED)
     c.put(61, 8, "\u2593", DGREY)
-    return [c.save("ANSI/STORY/ELZ_GRANT.ANS"), ascii_screen("ELZ_GRANT", [
+    return [c.save("ANSI/STORY/ELZ_GRANT.ANS"), ascii_screen("ASCII/STORY/ELZ_GRANT.ASC", [
         "-- HALCYON // MISSION AI // MEMCHK " + "-" * 42,
         "",
         "       .-\"\"\"\"\"-.",
@@ -144,7 +144,7 @@ def ops():
     c.text(19, 7, "08 DEC 04:15", GREY);  c.text(32, 7, "Status bulletin filed.", AMBER)
     c.text(19, 8, "08 DEC 04:16", GREY);  c.text(32, 8, "\u2588", AMBER)
     c.put(66, 8, "\u2591", DGREY)
-    return [c.save("ANSI/STORY/ELZ_OPS.ANS"), ascii_screen("ELZ_OPS", [
+    return [c.save("ANSI/STORY/ELZ_OPS.ANS"), ascii_screen("ASCII/STORY/ELZ_OPS.ASC", [
         "-- OPERATIONS LOG // MISSION COMPUTER " + "-" * 39,
         "",
         "     .-\"-.        07 DEC 21:34  Separation sequence run.",

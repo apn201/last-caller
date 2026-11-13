@@ -360,15 +360,6 @@ def frag(letter, n, code, lines):
 ROWS = 12
 
 
-def scene_frame(c, label):
-    c.hline(2, 0, 76, "\u2500", DGREY)
-    c.text(4, 0, " " + label + " ", GREY)
-    c.hline(2, ROWS - 1, 76, "\u2500", DGREY)
-    artist_tag(c, 60, ROWS - 1)
-    for x, y in ((2, 0), (77, 0), (2, ROWS - 1), (77, ROWS - 1)):
-        c.put(x, y, "\u253c", DGREY)
-
-
 def mem_eva():
     c = Canvas(80, ROWS)
     scene_frame(c, "SUIT 1 // 27 NOV 11:31 // RECORDED BY THE MISSION COMPUTER")

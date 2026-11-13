@@ -230,41 +230,6 @@ def ship(layer, ox, oy, lights=True, decay=True):
     px(20, 0, LCYAN)
 
 
-def ship_mini(layer, ox, oy, lights=True, decay=True):
-    """The same ship, small: 22 x 10 pixels, wings edge-on."""
-    s = layer.set
-
-    def rect(x, y, w, h, col):
-        layer.rect(ox + x, oy + y, w, h, col)
-
-    def px(x, y, c):
-        s(ox + x, oy + y, c)
-    for top, edge in ((0, LCYAN), (8, CYAN)):
-        rect(4, top, 12, 2, BLUE)
-        rect(4, top if top == 0 else top + 1, 12, 1, edge)
-        for gx in range(4, 16, 3):
-            px(gx, top if top == 0 else top + 1, WHITE if top == 0 else LCYAN)
-            px(gx, top + (1 if top == 0 else 0), CYAN)
-    if decay:
-        px(10, 1, BLACK)
-    px(7, 2, GREY); px(13, 2, GREY); px(7, 7, DGREY); px(13, 7, DGREY)
-    for j, col in enumerate([WHITE, GREY, GREY, DGREY, DGREY]):
-        rect(4, 3 + j, 10, 1, col)
-    px(8, 4, DGREY); px(8, 5, DGREY); px(11, 4, DGREY); px(11, 5, DGREY)
-    for j, col in enumerate([WHITE, GREY, DGREY]):
-        rect(1, 4 + j, 3, 1, col)
-    px(0, 5, DGREY)
-    for j, col in enumerate([WHITE, GREY, GREY, DGREY]):
-        rect(14, 3 + j, 3, 1, col)
-    rect(17, 4, 3, 2, DGREY)
-    px(19, 4, BLACK); px(19, 5, BLACK)
-    px(16, 2, GREY); px(17, 1, WHITE); px(18, 1, WHITE); px(19, 2, GREY)
-    if lights:
-        px(6, 5, YELLOW)
-
-
-# ------------------------------------------------------------- ELIZA ring
-
 def eliza_ring(layer, cx, cy, r_out=6.6, r_in=4.2, segs=16, off=(), dim=(), core=True):
     """ELIZA's motif: a ring of amber lights lit from the upper left, a dark
     inner rim and, on bigger rings, a small hot core. `off` are dead lights,
@@ -298,6 +263,31 @@ def eliza_ring(layer, cx, cy, r_out=6.6, r_in=4.2, segs=16, off=(), dim=(), core
 
 
 # ----------------------------------------------------- console decoration
+
+def ascii_screen(path, rows):
+    """The plain twin for callers without ANSI: 7-bit text, 80 columns."""
+    c = Canvas(80, len(rows))
+    for y, r in enumerate(rows):
+        c.text(0, y, r)
+    return c.save_plain(path)
+
+
+def leader(c, y, label, value, vcol, x=44, lead_to=14, lcol=GREY):
+    """LABEL ....... VALUE, the value starting lead_to + 1 columns after x."""
+    c.text(x, y, label, lcol)
+    c.text(x + len(label) + 1, y, "." * (lead_to - len(label) - 1), DGREY)
+    c.text(x + lead_to + 1, y, value, vcol)
+
+
+def scene_frame(c, label, rows=12):
+    """The scene frame: a rule on top with the label, one below, rivets."""
+    c.hline(2, 0, 76, "\u2500", DGREY)
+    c.text(4, 0, " " + label + " ", GREY)
+    c.hline(2, rows - 1, 76, "\u2500", DGREY)
+    artist_tag(c, 60, rows - 1)
+    for x, y in ((2, 0), (77, 0), (2, rows - 1), (77, rows - 1)):
+        c.put(x, y, "\u253c", DGREY)
+
 
 def bar(c, x, y, w, value, fg=CYAN, back=DGREY, full="█", empty="░"):
     n = round(w * value)
