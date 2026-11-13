@@ -71,6 +71,7 @@ static bool messageCommand(Session &s, String &line, const String &cmd) {
     return true;
   }
   if (s.state == POST_SUBJECT) {
+    if (overrun::inBody(std::string(line.c_str(), line.length()))) { overrunHit(s); return true; }   // M5 in the subject too
     s.pendingSubject = textLine(line, 55);
     startEditor(s);
     return true;
@@ -78,7 +79,7 @@ static bool messageCommand(Session &s, String &line, const String &cmd) {
   if (s.state == POST_BODY) {
     if (cmd == "/A") {
       bool edit = s.msgEdit;
-      s.draft = ""; s.msgEdit = 0; s.draftOverrun = false;
+      s.draft = ""; s.msgEdit = 0;
       say(s, edit ? "Edit aborted, the message is unchanged." : "Message aborted.");
       if (s.replyTo || edit) { s.state = MSG_VIEW; readerPrompt(s); } else messageArea(s);
       return true;
@@ -89,7 +90,7 @@ static bool messageCommand(Session &s, String &line, const String &cmd) {
     }
     if (cmd == "/L") { listDraft(s); editorPrompt(s); return true; }
     if (cmd == "/?" || cmd == "/H") { editorHelp(s); editorPrompt(s); return true; }
-    if (cmd == "/C") { s.draft = ""; s.draftLines = 0; s.draftOverrun = false; say(s, "Cleared."); editorPrompt(s); return true; }
+    if (cmd == "/C") { s.draft = ""; s.draftLines = 0; say(s, "Cleared."); editorPrompt(s); return true; }
     if (tokenAt(cmd, 0) == "/D" || tokenAt(cmd, 0) == "/R") {
       auto lines = draftLineList(s);
       uint32_t n;
@@ -100,8 +101,10 @@ static bool messageCommand(Session &s, String &line, const String &cmd) {
       listDraft(s); editorPrompt(s); return true;
     }
     if (s.draftLines >= DRAFT_LINES || s.draft.length() >= DRAFT_CHARS) { say(s, "The message is full. /S saves, /A aborts."); prompt(s, "  : "); return true; }
-    // M5: a run of 255 zeros on one typed line counts even where the line is cut to fit (Q12d run 5).
-    if (overrun::inBody(std::string(line.c_str(), line.length()))) s.draftOverrun = true;
+    // M5: a typed line with a run of 255 zeros overruns the line buffer at once, like Ty's held
+    // key (playtest run 5b: callers do not save a line they see cut). Runs split over several
+    // lines are caught when the draft is saved.
+    if (overrun::inBody(std::string(line.c_str(), line.length()))) { overrunHit(s); return true; }
     if (s.draftLines) s.draft += '\n';
     s.draft += textLine(line, 254);   // the manual: a message line holds 254 characters
     s.draftLines++;

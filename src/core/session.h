@@ -127,7 +127,6 @@ struct Session {
   String carriedFlags;
   // Gates (haunt.h gateFlags): a read-only login reads the own account behind it now and then, not on every message.
   mutable String gateOwn;
-  bool draftOverrun = false;   // bbs/messages.h: a typed line of the draft held a run of 255 zeros (M5)
   mutable uint32_t gateAt = 0;
   std::vector<HauntShow> hauntShows;
   String shellCwd = "/";  // doors/shell.h: the NOWHERE shell's working directory (state SHELL_PROMPT)

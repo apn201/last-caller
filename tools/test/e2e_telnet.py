@@ -1120,7 +1120,15 @@ def main():
         advance(c, "lost my place", timeout=90)
         advance(c, "Main Board Command?", timeout=60)
         # one long typed line overruns too (playtest run 5 typed it that way); the scene plays only once
-        post(c, "e2e zeros long", ["0" * 340])
+        c.send("M")                                   # the line overruns as it is typed: no /S needed
+        c.expect("Message command?", timeout=15)
+        c.send("P")
+        c.expect("To (ENTER", timeout=10)
+        c.send("")
+        c.expect("Subject:")
+        c.send("e2e zeros long")
+        c.expect(" 1:", timeout=10)
+        c.send("0" * 340)
         c.expect("MESSAGE LOST", timeout=10)
         c.expect("Message command?", timeout=10)
         c.send("Q")
