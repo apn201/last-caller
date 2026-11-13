@@ -11,7 +11,7 @@ static void loginRetry(Session &s) {
 static bool loginCommand(Session &s, String &line, const String &cmd) {
   if (s.state == LOGIN_CHOICE) { if (cmd == "N" || cmd == "NEW") { s.state = NEW_HANDLE; prompt(s, "Handle (3-16 chars, ENTER cancels): "); } else if (cmd == "L" || cmd == "LOGIN") { s.state = LOGIN_HANDLE; prompt(s, "Handle: "); } else if (cmd == "G") { closeSession(s); } else prompt(s, "N, L or G? "); return true; }
   if (s.state == LOGIN_HANDLE) { s.pendingHandle = clean(line, 16, true); User u;
-    if (!s.pendingHandle.length() || !findUser(up(s.pendingHandle), u)) { say(s, "Unknown caller."); loginRetry(s); }
+    if (!s.pendingHandle.length() || !findUser(up(s.pendingHandle), u)) { say(s, "Unknown caller."); if (powerEnabled && powerCfg.unknownHint.length()) say(s, powerCfg.unknownHint); loginRetry(s); }
     else if (u.locked) { say(s, "This account is locked. Page the SysOp."); event("AUTH_LOCKED", u.handle); loginRetry(s); } else { s.user = u; s.state = LOGIN_PASSWORD; s.hideInput = true; prompt(s, "Password: "); } return true; }
   if (s.state == LOGIN_PASSWORD) { s.hideInput = false; if (sha256hex(s.user.salt + ":" + line) != s.user.hash) { say(s, "\r\nBad password."); event("AUTH_FAIL", s.pendingHandle); loginRetry(s); } else { claimAccount(s); finishLogin(s); } return true; }
   // ENTER on an empty line backs out of signing up, at the handle and the password.

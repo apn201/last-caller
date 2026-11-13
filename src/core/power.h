@@ -16,6 +16,7 @@ struct PowerConfig {
   PowerTiming timing;
   String maintAccount = "admin", maintPassword = "admin";  // the ship's maintenance login
   String confirmKey = "K";                                  // the key the RTG warning asks for
+  String unknownHint;                                       // one line after "Unknown caller." (Q12b)
 };
 static PowerConfig powerCfg;
 static bool powerEnabled = false;       // POWER.INI exists
@@ -34,6 +35,7 @@ static void loadPower() {
     String key = iniGet(ini, "POWER", "confirm_key", "K");
     if (key.length()) c.confirmKey = key.substring(0, 1);
     c.confirmKey.toUpperCase();
+    c.unknownHint = clean(iniGet(ini, "TEXT", "unknown_hint", ""), 78);
   }
   powerCfg = c;
 }
