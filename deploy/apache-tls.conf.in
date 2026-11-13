@@ -1,0 +1,76 @@
+# HALCYON, HTTP and HTTPS. Rendered by deploy/install.sh once the certificate
+# exists. Apache terminates TLS and proxies to tinybbs-server on 127.0.0.1.
+# Needs mod_ssl, mod_proxy, mod_proxy_http, mod_proxy_wstunnel, mod_rewrite,
+# mod_headers, mod_auth_basic, mod_authn_file, mod_authz_user, mod_reqtimeout.
+<VirtualHost *:80>
+    ServerName @DOMAIN@
+    ServerSignature Off
+
+    Alias /.well-known/acme-challenge/ /var/www/halcyon-acme/.well-known/acme-challenge/
+    <Directory /var/www/halcyon-acme/.well-known/acme-challenge>
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    RewriteEngine on
+    RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+
+    ErrorLog /var/log/httpd/halcyon-error.log
+    CustomLog /var/log/httpd/halcyon-access.log combined
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+    ServerName @DOMAIN@
+    ServerSignature Off
+
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/@DOMAIN@/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/@DOMAIN@/privkey.pem
+    SSLProtocol all -SSLv3 -TLSv1 -TLSv1.1
+
+    ErrorLog /var/log/httpd/halcyon-error.log
+    CustomLog /var/log/httpd/halcyon-access.log combined
+
+    # ---- Limits (this vhost only) ----
+    # Callers send keystrokes (a few bytes) and nothing else. No uploads.
+    LimitRequestBody 4096
+    LimitRequestFields 40
+    LimitRequestFieldSize 4094
+    LimitRequestLine 2048
+    <IfModule mod_reqtimeout.c>
+        RequestReadTimeout header=10-20,MinRate=500 body=10,MinRate=500
+    </IfModule>
+    TimeOut 60
+
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "no-referrer"
+
+    # ---- The SysOp file manager: basic auth first, then its own one-use link ----
+    <LocationMatch "^/sysop">
+        AuthType Basic
+        AuthName "HALCYON SysOp"
+        AuthUserFile /etc/halcyon/sysop.htpasswd
+        Require valid-user
+        Header always set Cache-Control "no-store"
+    </LocationMatch>
+
+    # ---- Proxy ----
+    ProxyPreserveHost On
+    ProxyRequests Off
+    ProxyTimeout 120
+    ProxyPass /.well-known/acme-challenge/ !
+
+    # The browser terminal's WebSocket. It is idle for long stretches.
+    ProxyPass        /ws ws://127.0.0.1:@HTTP_PORT@/ws timeout=3600
+    ProxyPassReverse /ws ws://127.0.0.1:@HTTP_PORT@/ws
+    ProxyPass        /   http://127.0.0.1:@HTTP_PORT@/
+    ProxyPassReverse /   http://127.0.0.1:@HTTP_PORT@/
+
+    <Location /api/>
+        Header set Cache-Control "no-store"
+    </Location>
+</VirtualHost>
+</IfModule>

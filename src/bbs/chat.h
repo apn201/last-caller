@@ -7,6 +7,7 @@
 
 static constexpr const char *CHAT_LOG = "/BBS/LOGS/CHAT.LOG";
 static constexpr const char *CHAT_OLD = "/BBS/LOGS/CHAT.OLD";
+static constexpr size_t CHAT_LINE_MAX = 240;  // longest line one caller can put into the chat
 static constexpr uint32_t CHAT_LOG_MAX = 128 * 1024;  // then CHAT.OLD, a fresh log
 static constexpr uint8_t CHAT_SYSOP_BACKLOG = 20, CHAT_HISTORY = 200;
 
@@ -110,8 +111,10 @@ static void chatCommand(Session &s, const String &line, const String &cmd) {
     return;
   }
   if (!line.length()) { prompt(s, "> "); return; }
-  chatLog(s.user.handle, line);
-  broadcastChat(s, line);
+  // One chat line is at most CHAT_LINE_MAX characters (a screen line, not a page): the rest is cut.
+  const String said = line.length() > CHAT_LINE_MAX ? line.substring(0, CHAT_LINE_MAX) : line;
+  chatLog(s.user.handle, said);
+  broadcastChat(s, said);
   prompt(s, "> ");
-  ghostChatHeard(s, line);  // ELIZA may answer, after her typing time
+  ghostChatHeard(s, said);  // ELIZA may answer, after her typing time
 }

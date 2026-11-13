@@ -1,0 +1,19 @@
+# HALCYON, plain HTTP: the certificate challenge and a redirect. Rendered by
+# deploy/install.sh. Used alone until the certificate exists.
+<VirtualHost *:80>
+    ServerName @DOMAIN@
+    ServerSignature Off
+
+    Alias /.well-known/acme-challenge/ /var/www/halcyon-acme/.well-known/acme-challenge/
+    <Directory /var/www/halcyon-acme/.well-known/acme-challenge>
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    RewriteEngine on
+    RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+
+    ErrorLog /var/log/httpd/halcyon-error.log
+    CustomLog /var/log/httpd/halcyon-access.log combined
+</VirtualHost>

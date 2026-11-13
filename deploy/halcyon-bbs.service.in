@@ -1,0 +1,37 @@
+# HALCYON board. Rendered by deploy/install.sh (@NAME@ values come from /etc/halcyon/halcyon.env).
+[Unit]
+Description=HALCYON BBS (tinybbs-server)
+After=network.target
+
+[Service]
+Type=simple
+User=halcyon
+Group=halcyon
+ExecStart=/opt/halcyon/bin/tinybbs-server --root /var/lib/halcyon --web /opt/halcyon/web --http 127.0.0.1:@HTTP_PORT@ --telnet 127.0.0.1:@TELNET_PORT@
+Restart=on-failure
+RestartSec=3
+# The board is small. These caps keep a bug or a flood from taking the host.
+MemoryMax=256M
+TasksMax=64
+CPUQuota=50%
+LimitNOFILE=512
+
+# Sandbox: the board reads its binary and web pages and writes one folder.
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ReadWritePaths=/var/lib/halcyon
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=yes
+RestrictRealtime=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target
