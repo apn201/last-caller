@@ -100,14 +100,14 @@ To: ALL
 Subject: Day 22
 Date: 1998-11-22 15:40
 
-1352: tank 2 failed, service module. Four crew present, none hurt. Cabin 20.4 and
-holding on tank 1. Suits out, not worn.
+1352: tank 2 failed, service module. Four crew present, none hurt. Cabin 20.4
+and holding on tank 1. Suits out, not worn.
 
 1409: Mission Control contact lost mid-sentence. 1441: ELIZA reports antenna
 fault.
 
-Rationing from 1900. Vance quiet. Tanabe took the garden lamps down without being
-asked.
+Rationing from 1900. Vance quiet. Tanabe took the garden lamps down without
+being asked.
 
 M.H.
 #MSG
@@ -122,8 +122,8 @@ ask her to explain.
 
 Tanabe offered the garden. I said not yet.
 
-High-gain antenna gone, ELIZA says, and the low-gain too weak. EVA when the cabin
-allows.
+High-gain antenna gone, ELIZA says, and the low-gain too weak. EVA when the
+cabin allows.
 
 M.H.
 #MSG
@@ -147,11 +147,11 @@ Subject: Day 26
 Date: 1998-11-26 20:10
 
 EVA planned 0840 tomorrow. Backup antenna on the cupola truss, 90 min outside.
-Kit stowed in the lock. Suit 1 checked twice. Suit 2 wrist ring leaks again, 0.3
-kPa/min.
+Kit stowed in the lock. Suit 1 checked twice. Suit 2 wrist ring leaks again,
+0.3 kPa/min.
 
-ELIZA will cycle the lock on my call. She has agreed to this in writing, which I
-asked for and which made Achterberg laugh.
+ELIZA will cycle the lock on my call. She has agreed to this in writing, which
+I asked for and which made Achterberg laugh.
 
 Pen back to the nav station.
 
@@ -162,8 +162,8 @@ To: ALL
 Subject: Day 27
 Date: 1998-11-27 06:10
 
-0610. Suit 1: 29.6 kPa, O2 100, reserve 300 min. Kit in the lock. Out 0840, back
-by 1100.
+0610. Suit 1: 29.6 kPa, O2 100, reserve 300 min. Kit in the lock. Out 0840,
+back by 1100.
 
 Tanabe made me eat. Vance made coffee and spilled it, which I allowed.
 

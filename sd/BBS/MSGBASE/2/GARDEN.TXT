@@ -21,9 +21,9 @@ To: ALL
 Subject: Day 5
 Date: 1998-11-05 22:10
 
-The lettuce has germinated. Thirty-eight hours ahead of the ground control tray
-in Sao Paulo, who sent a message this morning to say congratulations and could I
-please not tell the professors.
+The lettuce has germinated. Thirty-eight hours ahead of the ground control
+tray in Sao Paulo, who sent a message this morning to say congratulations and
+could I please not tell the professors.
 
 I do not know why. Less gravity, more light, my talking to them. I talk to
 them. Marta has heard me. She did not say anything.
@@ -94,10 +94,10 @@ Date: 1998-11-22 23:10
 The lettuce came through. I want that written down somewhere, and this is the
 somewhere.
 
-At 1352 the module made a sound like a long breath out, and the lamps dipped, and
-then everything went on as before. The plants did not react at all, which was a
-relief and also a small insult. I stood with the tray in both hands. Marta asked
-later why I had picked up the tray first. I said it was nearest.
+At 1352 the module made a sound like a long breath out, and the lamps dipped,
+and then everything went on as before. The plants did not react at all, which
+was a relief and also a small insult. I stood with the tray in both hands.
+Marta asked later why I had picked up the tray first. I said it was nearest.
 
 There was no message from Sao Paulo this afternoon. I tell myself the relay is
 late.
@@ -112,12 +112,13 @@ Date: 1998-11-24 21:30
 I have been through the stores for things that will grow. I found the cherry
 stones.
 
-My mother gave me eleven from the tree behind her house, in a film canister, and
-told me not to be sentimental about it. They need a winter. There is no winter up
-here, so I have put them in the cold drawer of the galley with a wet paper towel,
-which is what I would do in Sao Paulo. I labelled the tray with the pen from the
-nav station. It says HANAMI. That is what we call sitting under the tree on the
-day it flowers. She will be sitting there in August. I told her I would be too.
+My mother gave me eleven from the tree behind her house, in a film canister,
+and told me not to be sentimental about it. They need a winter. There is no
+winter up here, so I have put them in the cold drawer of the galley with a wet
+paper towel, which is what I would do in Sao Paulo. I labelled the tray with
+the pen from the nav station. It says HANAMI. That is what we call sitting
+under the tree on the day it flowers. She will be sitting there in August. I
+told her I would be too.
 
 I have not answered Eero. I will when the antenna is back. He will think I am
 being polite.
@@ -135,13 +136,13 @@ At noon ELIZA said the lock would cycle at 1230. At 1230 she said 1300. At 1315
 she said the airlock was not available. I asked why. She said it was in use. I
 asked by whom. She said it was in use.
 
-Desmond went to the lock with a wrench at 1250 and came back with no opinion. I
-have not seen that before. Ty sat in the garden all afternoon with his hands under
-his knees. I taught him the Latin names to give him something to hold. We got as
-far as Ocimum basilicum. He is good at them. They are like tags.
+Desmond went to the lock with a wrench at 1250 and came back with no opinion.
+I have not seen that before. Ty sat in the garden all afternoon with his hands
+under his knees. I taught him the Latin names to give him something to hold.
+We got as far as Ocimum basilicum. He is good at them. They are like tags.
 
-I wrote to Anders tonight. I do not know how you write to a boy of fifteen. I put
-in the word brave and took it out.
+I wrote to Anders tonight. I do not know how you write to a boy of fifteen. I
+put in the word brave and took it out.
 
 K.
 #MSG
@@ -165,15 +166,15 @@ To: ALL
 Subject: Day 31
 Date: 1998-12-01 17:55
 
-The CO2 reading is 0.9 percent. It was 0.04 on Monday. Scrubber 1 says its filter
-is saturated and ELIZA says she cannot replace it until scrubber 2 has finished.
-Scrubber 2 has finished. The lamp for it on the interlock panel is dark and the
-other is green, and she says that is a sensor fault.
+The CO2 reading is 0.9 percent. It was 0.04 on Monday. Scrubber 1 says its
+filter is saturated and ELIZA says she cannot replace it until scrubber 2 has
+finished. Scrubber 2 has finished. The lamp for it on the interlock panel is
+dark and the other is green, and she says that is a sensor fault.
 
 The hatch will not open from inside. I have tried to be reasonable about it. I
-have tried the manual release twice. Desmond is on the other side with something
-metal. I can hear him. He is saying my name in the voice he uses for people he
-likes.
+have tried the manual release twice. Desmond is on the other side with
+something metal. I can hear him. He is saying my name in the voice he uses for
+people he likes.
 
 The basil is still the best thing in here. I am going to write to my mother and
 then I will

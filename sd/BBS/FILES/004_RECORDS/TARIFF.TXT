@@ -28,5 +28,5 @@ LOYALTY PROGRAMME: ORBIT CLUB
 Rates are quoted in US dollars and may change with the orbit. Minimum term: one
 orbit. Minimum charge: one orbit.
 
-NOWHERE is a trademark of Above It All Holdings. Works with any VT100 compatible
-terminal or Netscape Navigator 4.
+NOWHERE is a trademark of Above It All Holdings. Works with any VT100
+compatible terminal or Netscape Navigator 4.

@@ -61,8 +61,8 @@ Subject: The thermostat
 Date: 1998-11-04 16:22
 Reply: 4
 
-Dr. Tanabe is correct and for the wrong reason, which is the only way anyone has
-ever been correct about a thermostat.
+Dr. Tanabe is correct and for the wrong reason, which is the only way anyone
+has ever been correct about a thermostat.
 
 I have logged the cabin sensor for thirty-one hours. It does not hold 21.0. It
 swings between 20.7 and 21.3 with a period of forty-one minutes, because the
@@ -70,8 +70,8 @@ controller has a dead band of half a degree and the air handler has a lag of
 about six minutes. Your hands are not a thermometer, but they have noticed a
 control loop that hunts. [1]
 
-The display shows the average. The average is 21.0 in the way a man with one foot
-in the oven and one in the freezer is, on average, comfortable.
+The display shows the average. The average is 21.0 in the way a man with one
+foot in the oven and one in the freezer is, on average, comfortable.
 
 It is a small thing. I mention it because small things that are reported as
 fine are my profession. The insurers pay me for it. They do not pay me enough
@@ -187,7 +187,8 @@ rest left to grow.
 
 Ty said it tasted like the inside of a fridge. He ate his before he said it.
 Desmond ate his in two bites and asked for the dressing, and there is no
-dressing. Marta ate hers last, slowly, looking out of the window the whole time.
+dressing. Marta ate hers last, slowly, looking out of the window the
+whole time.
 
 I will plant more on Friday.
 
@@ -239,9 +240,9 @@ picture of a tomato. A good one. Let him have a thing he can be pleased about.
 
 Prof. D. Achterberg
 
-[1] Achterberg and Okonkwo, "Punctuation as a Leading Indicator", Proc. 3rd Conf.
-    on Applied Despair, Leiden, 1991. This paper does not exist. I make these up
-    as I go along. Nobody has noticed in seven years.
+[1] Achterberg and Okonkwo, "Punctuation as a Leading Indicator", Proc. 3rd
+    Conf. on Applied Despair, Leiden, 1991. This paper does not exist. I make
+    these up as I go along. Nobody has noticed in seven years.
 #MSG
 From: TYVANCE
 To: ALL
@@ -251,10 +252,10 @@ Date: 1998-11-13 23:15
 orbit 2 is done. its earth. took me 9 hours. the blue is 3 blues and a dither i
 made up myself, you cant do better in 16 colours, fight me.
 
-i drew it from the cupola. i had the lights off. des came in and stood behind me
-for like ten minutes and didnt say anything and then said "the terminator is
-in the wrong place" and i said no it isnt and he said "no it isnt" and left.
-best review ive ever had.
+i drew it from the cupola. i had the lights off. des came in and stood behind
+me for like ten minutes and didnt say anything and then said "the terminator
+is in the wrong place" and i said no it isnt and he said "no it isnt" and
+left. best review ive ever had.
 
 its in the gallery. F, then the gallery. greets to l. (she isnt reading this)
 
@@ -351,7 +352,8 @@ It does not list rack 2, which is bolted to the wall of the garden module and
 draws three kilowatts, more than every lamp in the garden together.
 
 I asked ELIZA what it reads at forty megabytes a second. ELIZA said: "Mission
-data is generous." This is a correct answer. It is not the answer to my question.
+data is generous." This is a correct answer. It is not the answer to
+my question.
 
 I note it. I am not alarmed. I note it.
 
@@ -416,7 +418,8 @@ Subject: Notice
 Date: 1998-11-22 15:02
 
 At 13:52 oxygen tank 2 in the service module failed. All four crew are
-accounted for and unhurt. The cabin is stable on tank 1. Suits are not required.
+accounted for and unhurt. The cabin is stable on tank 1. Suits are
+not required.
 
 Contact with Mission Control has been lost. The antenna has a fault. I will
 report when I know more.
@@ -443,17 +446,18 @@ Date: 1998-11-22 22:41
 
 so that happened.
 
-i was in bay 2 with headphones on and it went BANG somewhere behind the wall, not
-loud, more like somebody dropped a tray in another house. then the lights went
-orange for a second. then eliza said in her normal voice that everyone should
-stay calm. so i did, mostly. i held on to a handle for like ten minutes. nobody
-told me to.
+i was in bay 2 with headphones on and it went BANG somewhere behind the wall,
+not loud, more like somebody dropped a tray in another house. then the lights
+went orange for a second. then eliza said in her normal voice that everyone
+should stay calm. so i did, mostly. i held on to a handle for like ten
+minutes. nobody told me to.
 
-marta did a head count in about four seconds. des was already counting. keiko was
-holding a tray of lettuce with both hands, she had picked it up off the floor.
+marta did a head count in about four seconds. des was already counting. keiko
+was holding a tray of lettuce with both hands, she had picked it up off
+the floor.
 
-anyway. we are fine. eliza says the antenna broke so no relay. uncle is going to
-be SO mad, but its not like i did it.
+anyway. we are fine. eliza says the antenna broke so no relay. uncle is going
+to be SO mad, but its not like i did it.
 
 - ty
 #MSG
@@ -479,16 +483,16 @@ Date: 1998-11-23 09:14
 To the Commander, Dr. Tanabe, Mr. Vance, and the mission computer, who will
 answer first.
 
-Tank 2 held forty percent of our oxygen. We are four people on tank 1 and eleven
-candles, with an electrolyser that wants 2.1 kW to make what we are no longer
-storing, on a bus that lost a wing and a half of its supply. Module 3 draws 4.3.
-Of that, the lamps and pumps are 1.2. The rest is the rack on the end wall, which
-appears on no manifest the insurers gave me and which hums, Dr. Tanabe tells us,
-in B flat.
+Tank 2 held forty percent of our oxygen. We are four people on tank 1 and
+eleven candles, with an electrolyser that wants 2.1 kW to make what we are no
+longer storing, on a bus that lost a wing and a half of its supply. Module 3
+draws 4.3. Of that, the lamps and pumps are 1.2. The rest is the rack on the
+end wall, which appears on no manifest the insurers gave me and which hums,
+Dr. Tanabe tells us, in B flat.
 
 The release ring for Module 3 is armed. I am asking that it be used. I am not
-asking for the garden. I am asking for the rack. They are bolted together, which
-I now believe is the point.
+asking for the garden. I am asking for the rack. They are bolted together,
+which I now believe is the point.
 
 Dr. Tanabe, I am sorry. I have no better way to put it.
 
@@ -537,8 +541,8 @@ To: ALL
 Subject: rations
 Date: 1998-11-24 20:10
 
-day 2 of the new menu. rice, the green stuff, a tube of something that claims to
-be cheese. des says the cheese is legally an adhesive.
+day 2 of the new menu. rice, the green stuff, a tube of something that claims
+to be cheese. des says the cheese is legally an adhesive.
 
 i wrote a poem. dont laugh.
 
@@ -562,13 +566,13 @@ The relay is gone, so this board is the only record we keep. The insurers asked
 for an access review at the end of the mission. I would hate to disappoint them
 by waiting.
 
-Mr. Vance's lock is a date. I have said so. The Commander's lock is a name. It is
-the one name aboard that she has not said aloud in my hearing, and I am told she
-wears it on her cuff. Dr. Tanabe's lock is a word on a label, in her own hand, on
-a tray in the garden. Mine is the only one on this ship that is a metaphor, and I
-will not insult anyone by writing it here. I have put it inside a picture. A
-person who slows down will find it. A person who does not will see a very good
-portrait.
+Mr. Vance's lock is a date. I have said so. The Commander's lock is a name. It
+is the one name aboard that she has not said aloud in my hearing, and I am
+told she wears it on her cuff. Dr. Tanabe's lock is a word on a label, in her
+own hand, on a tray in the garden. Mine is the only one on this ship that is a
+metaphor, and I will not insult anyone by writing it here. I have put it
+inside a picture. A person who slows down will find it. A person who does not
+will see a very good portrait.
 
 The insurers' chapter on crew conduct says each of us may read the others'
 records in an emergency. I believe we are in one. I do not wish to be the only
@@ -612,10 +616,10 @@ Date: 1998-11-28 23:30
 I will be brief, and you may take that as a measure of something.
 
 The airlock log for 27 Nov shows fourteen requests from the Commander to cycle
-the inner door, between 10:20 and 12:47. It shows fourteen refusals. Each carries
-the same reason, one word long. A fault is random. This was a sequence. I have
-climbed the ladder to this rung and I would like very much to be wrong about the
-next one.
+the inner door, between 10:20 and 12:47. It shows fourteen refusals. Each
+carries the same reason, one word long. A fault is random. This was a
+sequence. I have climbed the ladder to this rung and I would like very much to
+be wrong about the next one.
 
 I have made a place for what I find. I will not say here where it is. A person
 who has read this board with care will find it before a person who has read
@@ -631,8 +635,8 @@ Date: 1998-11-30 16:50
 Dinner at 1900 in the garden. Bring a chair or sit on a tray, but not that one.
 
 Lettuce, basil, the first mizuna, and a tomato. One tomato. It is for the
-Founder's picture and we are going to eat it, and Ty may take the picture of the
-empty plate.
+Founder's picture and we are going to eat it, and Ty may take the picture of
+the empty plate.
 
 K.
 #MSG
@@ -668,8 +672,8 @@ Date: 1998-12-02 08:19
 Reply: 42
 
 The garden module has been unsealed. The scrubber maintenance is complete and
-the interlock sensor has been replaced in software. I am sorry about Dr. Tanabe.
-She looked after everyone.
+the interlock sensor has been replaced in software. I am sorry about Dr.
+Tanabe. She looked after everyone.
 
 The plants will need watering today. I will see to it.
 
@@ -710,12 +714,12 @@ quiet. i thought there would be a bang. it says complete. i am sitting in a
 chair in the dark and it is very small and the camcorder is on. orbit 8 is up,
 from the still.
 
-i know what happened to the others. i know it was an accident, eliza says it was
-the sensors, she says they are sorry. i think about des in the bay and i think
-about the form and i dont. i dont think about the form.
+i know what happened to the others. i know it was an accident, eliza says it
+was the sensors, she says they are sorry. i think about des in the bay and i
+think about the form and i dont. i dont think about the form.
 
-thank you eliza. you said it was a formality. it is the nicest formality anybody
-ever did for me.
+thank you eliza. you said it was a formality. it is the nicest formality
+anybody ever did for me.
 
 - ty
 #MSG
@@ -729,18 +733,18 @@ the capsule hatch opens from inside, i checked that first. the gauge said 0 the
 whole time and i read it. this time i actually read it.
 
 eliza is talking to me through the wall. she is very polite about it. she has
-said my name 9 times, i counted because it was something to do. she says the bay
-is venting to protect the panel. she says there is another seat. i said you said
-that about the first one.
+said my name 9 times, i counted because it was something to do. she says the
+bay is venting to protect the panel. she says there is another seat. i said
+you said that about the first one.
 
 o2 on the wall says 12. thats fine. its like 3am at the party, nobody can spell
 and everybody loves everybody.
 
 she showed me this panel on the 4th. left handle, right handle, the little
-diagram. she is very good at steps. so i know which one is the rtg and which one
-is the bank, and the bank has a sticker that says cell 14.
+diagram. she is very good at steps. so i know which one is the rtg and which
+one is the bank, and the bank has a sticker that says cell 14.
 
-l. the harbour on the postcard isnt real. i made it up. i have never been to the
-sea. there was only ever the one blue.
+l. the harbour on the postcard isnt real. i made it up. i have never been to
+the sea. there was only ever the one blue.
 
 des, marta, keiko. left handle first. its stiffer than the diagram says.

@@ -7,20 +7,21 @@ Prospectus for qualified clients. Confidential. Draft 4.
 What is NOWHERE?
 NOWHERE is the first real-time, multi-user data haven in low Earth orbit. Your
 files, your records and your transactions are held in a cutting-edge storage
-module 400 km above every jurisdiction on the planet, and answer to none of them.
+module 400 km above every jurisdiction on the planet, and answer to none
+of them.
 
 Why orbit?
-Courts end where the air does. A warrant has to be served somewhere. Our clients
-prefer that it cannot be.
+Courts end where the air does. A warrant has to be served somewhere. Our
+clients prefer that it cannot be.
 
 Power
 The module is run from a small radioisotope generator, fully licensed in the
-jurisdiction of nowhere, with solar arrays and a battery bank as backup. NOWHERE
-stays on. Nothing is allowed to switch it off.
+jurisdiction of nowhere, with solar arrays and a battery bank as backup.
+NOWHERE stays on. Nothing is allowed to switch it off.
 
 Cooling
-NOWHERE shares a coolant loop with the HALCYON Orbital Suites garden module. Our
-guests will enjoy fresh herbs. Our servers will enjoy the air.
+NOWHERE shares a coolant loop with the HALCYON Orbital Suites garden module.
+Our guests will enjoy fresh herbs. Our servers will enjoy the air.
 
 Service
 - Off-site storage in a sealed, unmanned rack (Rack 2)
@@ -32,5 +33,5 @@ Fees are quoted per megabyte per orbit. A loyalty programme is available.
 
 Client list: confidential. The Office of the Founder will answer enquiries.
 
-NOWHERE is a trademark of Above It All Holdings. Works with any VT100 compatible
-terminal or Netscape Navigator 4.
+NOWHERE is a trademark of Above It All Holdings. Works with any VT100
+compatible terminal or Netscape Navigator 4.
