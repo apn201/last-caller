@@ -455,7 +455,7 @@ static void editorHelp(Session &s) {
   say(s, "\x1b[1;36m/R n text replaces line n, /C clears all, /? shows this. (" + String(DRAFT_LINES) + " lines max)\x1b[0m");
 }
 static void startEditor(Session &s) {
-  s.draft = ""; s.draftLines = 0; s.msgEdit = 0;
+  s.draft = ""; s.draftLines = 0; s.msgEdit = 0; s.draftOverrun = false;
   s.state = POST_BODY; activity(s, "WRITING A MESSAGE");
   editorHelp(s);
   editorPrompt(s);
@@ -465,6 +465,7 @@ static void startEdit(Session &s) {
   Message m;
   if (!getMessage(s.msgId, m) || !canModify(s, m)) { say(s, "You can only edit your own messages."); readerPrompt(s); return; }
   s.state = POST_BODY; activity(s, "EDITING A MESSAGE");
+  s.draftOverrun = false;
   s.draft = m.body;
   s.draftLines = 1;  // draftLineList() reads the draft only when it has lines
   s.draftLines = m.body.length() ? draftLineList(s).size() : 0;
@@ -511,7 +512,7 @@ static void startReply(Session &s) {
 // swallows the post (nobody else sees anything), glitches this caller's screen, and the caller
 // has damaged her memory (OVR). The scene MEM_GLITCH plays at the next calm prompt.
 static void overrunHit(Session &s) {
-  s.draft = ""; s.draftLines = 0; s.msgEdit = 0;
+  s.draft = ""; s.draftLines = 0; s.msgEdit = 0; s.draftOverrun = false;
   event("OVERRUN", s.user.handle + " node " + s.node);
   say(s, "");
   if (s.ansi) {
@@ -527,7 +528,7 @@ static void overrunHit(Session &s) {
 static void saveDraft(Session &s) {
   if (!canPost(s) && !s.msgEdit) { s.draft = ""; readOnlyNotice(s); messageArea(s); return; }
   if (!canWrite(s)) { s.draft = ""; s.msgEdit = 0; readOnlyNotice(s); messageArea(s); return; }
-  if (overrun::inBody(std::string(s.draft.c_str(), s.draft.length()))) { overrunHit(s); return; }
+  if (s.draftOverrun || overrun::inBody(std::string(s.draft.c_str(), s.draft.length()))) { overrunHit(s); return; }
   if (s.msgEdit) {  // an edit: the new text under the old id
     Message m;
     uint32_t id = s.msgEdit;

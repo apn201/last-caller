@@ -1119,13 +1119,19 @@ def main():
         c.expect("MESSAGE LOST", timeout=10)
         advance(c, "lost my place", timeout=90)
         advance(c, "Main Board Command?", timeout=60)
+        # one long typed line overruns too (playtest run 5 typed it that way); the scene plays only once
+        post(c, "e2e zeros long", ["0" * 340])
+        c.expect("MESSAGE LOST", timeout=10)
+        c.expect("Message command?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
         start = len(c.all)
         c.send("M")
         c.expect("Message command?", timeout=15)
         c.send("R")
         c.expect("Read #", timeout=10)
         seg = c.all[start:]
-        if "e2e zeros 254" not in seg or "e2e zeros 255" in seg:
+        if "e2e zeros 254" not in seg or "e2e zeros 255" in seg or "e2e zeros long" in seg:
             raise AssertionError("the near miss must be posted and the overrun swallowed: %r" % seg[-800:])
         c.send("Q")
         c.expect("Message command?", timeout=10)

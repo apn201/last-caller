@@ -78,7 +78,7 @@ static bool messageCommand(Session &s, String &line, const String &cmd) {
   if (s.state == POST_BODY) {
     if (cmd == "/A") {
       bool edit = s.msgEdit;
-      s.draft = ""; s.msgEdit = 0;
+      s.draft = ""; s.msgEdit = 0; s.draftOverrun = false;
       say(s, edit ? "Edit aborted, the message is unchanged." : "Message aborted.");
       if (s.replyTo || edit) { s.state = MSG_VIEW; readerPrompt(s); } else messageArea(s);
       return true;
@@ -89,19 +89,21 @@ static bool messageCommand(Session &s, String &line, const String &cmd) {
     }
     if (cmd == "/L") { listDraft(s); editorPrompt(s); return true; }
     if (cmd == "/?" || cmd == "/H") { editorHelp(s); editorPrompt(s); return true; }
-    if (cmd == "/C") { s.draft = ""; s.draftLines = 0; say(s, "Cleared."); editorPrompt(s); return true; }
+    if (cmd == "/C") { s.draft = ""; s.draftLines = 0; s.draftOverrun = false; say(s, "Cleared."); editorPrompt(s); return true; }
     if (tokenAt(cmd, 0) == "/D" || tokenAt(cmd, 0) == "/R") {
       auto lines = draftLineList(s);
       uint32_t n;
       if (!readNumber(tokenAt(cmd, 1), n) || n < 1 || n > lines.size()) { say(s, "No such line. /L lists them."); editorPrompt(s); return true; }
       if (tokenAt(cmd, 0) == "/D") lines.erase(lines.begin() + (n - 1));
-      else lines[n - 1] = textLine(afterTokens(line, 2), 200);
+      else lines[n - 1] = textLine(afterTokens(line, 2), 254);
       setDraft(s, lines);
       listDraft(s); editorPrompt(s); return true;
     }
     if (s.draftLines >= DRAFT_LINES || s.draft.length() >= DRAFT_CHARS) { say(s, "The message is full. /S saves, /A aborts."); prompt(s, "  : "); return true; }
+    // M5: a run of 255 zeros on one typed line counts even where the line is cut to fit (Q12d run 5).
+    if (overrun::inBody(std::string(line.c_str(), line.length()))) s.draftOverrun = true;
     if (s.draftLines) s.draft += '\n';
-    s.draft += textLine(line, 200);
+    s.draft += textLine(line, 254);   // the manual: a message line holds 254 characters
     s.draftLines++;
     editorPrompt(s);
     return true;
