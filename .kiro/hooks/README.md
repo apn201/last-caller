@@ -5,11 +5,15 @@ Active:
 1. **embed-web** - On save of `shared/web/*.html`, run
    `python tools/embed_web.py` to regenerate `src/net/web_terminal.h` and
    `src/net/sysop_page.h`.
+2. **Story Lint** (`verification.json`) - On save in `sd/BBS/STORY`, `MSGBASE`,
+   `BULLETINS`, `CONFIG` or `FILES`, run `python tools/story_lint.py --quiet`.
+3. **Host Logic And Property Tests** (`verification.json`) - On save of a
+   `*_logic.h`, `haunt.h` or a test in `tools/test/`, run
+   `python tools/run_host_tests.py`.
 
-Planned (S11 in `docs/SLICES.md`):
+Kiro runs file hooks for changes the agent makes, not for hand edits.
 
-- **story-lint** - planned. On save in `sd/BBS/STORY/`, run the story lint.
-- **server-build-properties** - planned. On save in `src/`, run the server
-  build and the property tests.
-- **name-brand-scan** - planned. Before commit, scan caller-visible text for
-  real names and brands.
+Planned:
+
+- **name-brand-scan** - Before commit, scan caller-visible text for real names
+  and brands.

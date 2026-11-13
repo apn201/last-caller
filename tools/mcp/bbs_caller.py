@@ -23,6 +23,7 @@ codes and Telnet negotiation removed, as a caller would read it. It waits until
 the board has been quiet for `quiet_ms` (scenes type with pauses, so the default
 is generous) or `max_ms` has passed, whichever comes first.
 """
+import codecs
 import json
 import os
 import re
@@ -45,6 +46,8 @@ class Caller:
         self.buf = ""
         self.eof = False
         self.iac = bytearray()
+        self.raw = ""
+        self.dec = codecs.getincrementaldecoder("utf-8")("replace")
         self.lock = threading.Lock()
 
     # ---- wire
@@ -91,7 +94,9 @@ class Caller:
                 continue
             out.append(raw[i])
             i += 1
-        self.buf += ANSI.sub("", out.decode("utf-8", "replace")).replace("\r", "")
+        # Decode across chunk edges (a multi-byte character may be split) and keep the raw text:
+        # colour codes are removed in _collect, once a code cannot be cut in half any more.
+        self.raw += self.dec.decode(bytes(out)).replace("\r", "")
         return True
 
     def _collect(self, quiet_ms, max_ms):
@@ -102,7 +107,15 @@ class Caller:
                 last = time.time()
             elif time.time() - last >= quiet_ms / 1000.0:
                 break
-        text, self.buf = self.buf, ""
+        # Strip complete colour codes; hold back a code that is still arriving.
+        tail = re.search(r"\x1b(\[[0-9;?]*)?$", self.raw)
+        keep = ""
+        if tail and not self.eof:
+            keep = self.raw[tail.start():]
+            self.raw = self.raw[:tail.start()]
+        text = ANSI.sub("", self.raw)
+        self.raw = keep
+        self.buf = ""
         text = re.sub(r"\n{4,}", "\n\n\n", text)
         if len(text) > MAX_RETURN:
             text = "[... %d characters cut ...]\n" % (len(text) - MAX_RETURN) + text[-MAX_RETURN:]
@@ -116,6 +129,7 @@ class Caller:
             self.disconnect()
             self.eof = False
             self.buf = ""
+            self.raw = ""
             try:
                 self.sock = socket.create_connection((host or HOST, int(port or PORT)), timeout=8)
             except OSError as e:

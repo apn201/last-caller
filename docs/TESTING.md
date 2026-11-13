@@ -175,3 +175,32 @@ The server log is `~/lastcaller-staging/server.log`; the last e2e output is
 text changes, change the marker in `tools/test/e2e_telnet.py`.
 
 The report for each item must say whether this ran. "Not run" is never "passed".
+
+## Verification (Q12)
+
+On the Windows PC, no board needed:
+
+- `python tools/story_lint.py` : every flag granted, every fact and ending
+  reachable, no softlock, scenes sound, targets exist, evidence with one
+  source and banned words as warnings. Runs on save of card story files (hook).
+- `python tools/run_host_tests.py` : builds and runs the host tests of the
+  shared logic, including `story_property_test` (random orders of play over the
+  card's own triggers and manifest). Runs on save of the logic headers (hook).
+  This is not the server build.
+- `python tools/test/bbs_caller_selftest.py` : the bbs-caller MCP server
+  against a fake board.
+
+The server build runs the same tests through CTest (`ctest --test-dir
+server/build`); `tools/staging-check.ps1` does it and fails if one fails.
+
+Playing it with the `playtester` agent:
+
+1. Commit, then `powershell tools/staging-playtest.ps1` (leave it running). It
+   builds the pushed main on the host, starts the board on a fresh card with the
+   card's own timers and forwards 127.0.0.1:12323 here.
+2. In Kiro pick the `playtester` agent (`.kiro/agents/playtester.md`); the
+   `bbs-caller` MCP server comes from `.kiro/settings/mcp.json`. Without MCP:
+   `python tools/mcp/bbs_caller.py cli connect|send "text"|keys "K"|read|stop`.
+3. Stop the board: `ssh lastcaller@helppox.com "touch ~/lastcaller-staging/stop"`.
+
+Record in `docs/PLAYTEST.md`. The run of 13 Nov is there.

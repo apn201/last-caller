@@ -107,3 +107,5 @@ the ESP32. Test Telnet against a disposable server card copy before merging.
 `src/net/routes.h` is also shared: keep route decisions and streamed upload
 state there, with `esp_web.h` and `server/net/http.cpp` only adapting their
 web-server APIs.
+
+Story checks (Q12): python tools/story_lint.py and python tools/run_host_tests.py run without a board; ctest in the server build runs the same tests. 	ools/staging-playtest.ps1 serves a fresh board for the playtester agent (see docs/TESTING.md, docs/PLAYTEST.md).

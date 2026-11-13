@@ -13,6 +13,7 @@ import socket
 import subprocess
 import sys
 import threading
+import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SERVER = os.path.join(HERE, "..", "mcp", "bbs_caller.py")
@@ -28,7 +29,9 @@ def fake_board(listener):
             if not d:
                 return
             got += d.replace(bytes([255, 252, 24]), b"")
-        conn.sendall(b"\r\n\x1b[32mWelcome " + got.strip() + b"\x1b[0m\r\nMAIN> ")
+        conn.sendall(b"\r\n\x1b[3")          # a colour code cut in half by the network
+        time.sleep(0.4)
+        conn.sendall(b"2mWelcome " + got.strip() + b"\x1b[0m\r\nMAIN> ")
         conn.recv(10)
         conn.sendall(b"\r\nNO CARRIER\r\n")
 
@@ -63,7 +66,7 @@ def main():
     r = rpc(3, "tools/call", {"name": "bbs_connect", "arguments": {"quiet_ms": 300}})
     text = r["result"]["content"][0]["text"]
     check("HALCYON" in text and "\x1b" not in text and "Login:" in text, "connect: colours and Telnet bytes removed")
-    r = rpc(4, "tools/call", {"name": "bbs_send", "arguments": {"text": "ty", "quiet_ms": 300}})
+    r = rpc(4, "tools/call", {"name": "bbs_send", "arguments": {"text": "ty", "quiet_ms": 900}})
     text = r["result"]["content"][0]["text"]
     check("Welcome ty" in text and "\x1b" not in text, "send: reply to a typed line")
     r = rpc(5, "tools/call", {"name": "bbs_send", "arguments": {"text": "Q", "enter": False, "quiet_ms": 300}})
