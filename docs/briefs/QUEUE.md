@@ -181,7 +181,7 @@ Rules for every item:
   spacecraft silhouette, decay over the timeline), glitches (S7), the
   1998 marketing copy in README and bulletins, mobile check of the
   browser terminal.
-- [ ] **Q14 - Deploy package.** `deploy/`: build and install script,
+- [x] **Q14 - Deploy package.** (done, 5cb4acd..6bfe651 plus the tick; `pio run` passes, staging check PASS on 9b468ee: server build, ctest, smoke, e2e 63 passed, 0 failed, 0 skipped, event log clean. Checked on the staging host: `bash -n` on the scripts, both Apache templates with `httpd -t` on a throwaway config, the SysOp bootstrap against a disposable card (second run exits 3). NOT run: `install.sh` and `reset.sh` themselves, the unit, certbot (no root on staging, no shellcheck): the first real run on the target host is their test. Chat lines are capped at 240 characters in the shared core (`CHAT_LINE_MAX`). Defaults: HTTP port 8087, loopback Telnet 2327, 16 nodes, uploads off, `/sysop` behind basic auth. No per-address rate limit in Apache (needs a module that would reach the other board) and no firewall change: both listed in `docs/DEPLOY.md`. A caller can reach the board for a few seconds during a reset before SYSOP is made again.) `deploy/`: build and install script,
   systemd unit, Apache vhost (HTTP and WebSocket proxy, TLS), hardening
   (uploads off, SysOp page behind auth, rate limits, chat length), a
   reset script for demos, `docs/DEPLOY.md`, and `deploy/AGENT_PROMPT.md`:
