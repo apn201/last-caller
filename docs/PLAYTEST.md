@@ -84,6 +84,49 @@ which sit behind `E` on the Lounge list (session B found them late); the `S`
 key in the file viewer is the only way into Achterberg's chain and is named
 only on the status line; nothing on a menu names the final command before
 the manifest is whole (chat, `COMMS.TXT` and Diagnostics `HELP` do).
+## Summary (Q12d, 13 Nov 2026)
+
+The milestone chain M1 to M9 (`docs/PUZZLE_CHAIN.md`), played by the
+`playtester` agent from a brand-new caller on a fresh staging board.
+
+- Run 5 (about 300 tool calls, not finished): filed all five manifest rows,
+  then stuck at M5. It typed one Lounge line of 340 zeros; the editor cut
+  every line to 200 characters, so the run never reached 255. Fixed: a line
+  holds 254 characters (as `COMMS.TXT` says) and the raw typed line is
+  checked. No report was written by the agent (turn limit); this is from its
+  final answer.
+- Run 5b, session A (about 330 calls): the same wall. It saw its line cut to
+  254 on screen and did not save it. Fixed: a typed line (or subject) with
+  255 zeros overruns at once, no save needed. The board was rebuilt on the
+  same card between sessions (the account and its progress kept).
+- Run 5b, session B (about 150 calls): finished. Handbook on the
+  Commander's desk, the overrun at once, the memory check, SYSOP view,
+  `GOLIVE.TXT`, ELIZA's login, the shell from her door menu, `release
+  out-1122 ground-1`, ending 1 (Send it), bulletin 5. About 480 calls in all.
+
+Play time: the agent puts a first-time human reader at 120 to 150 minutes
+reading everything, about 90 minutes for one who tries the overrun early.
+That is above the 60 to 120 minute goal; an agent estimate, not a timed human.
+
+Open items for the author (Q12d):
+
+1. Play time is at or over the top of the goal. The middle (four crew
+   logins, then ELIZA's) is the long part. Candidates: shorten act 2 reading,
+   or make the overrun hint land earlier (it is open from 6 Nov).
+2. Ty's responsibility options: the row asks who is responsible and the
+   right pick is the budget cut that stranded him, not what killed him. The
+   other rows name the direct cause. Wording per row, or a second right
+   answer.
+3. "Host NOWHERE-1 is available to this account, from the SysOp's own door
+   menu" sent the agent to its own door menu first. Fair once the checklist
+   is found; the line is a draft.
+4. A key typed while a scene types out is still acted on in one place (the
+   manifest prints inside ELIZA's scene after filing). Seen once.
+5. VolaMUD shows on the door menu and does not fit the ship (older door).
+6. Typed words in the message reader act as single-letter commands.
+7. A MEMCHK keyword line was added to ELIZA's typed chat after run 5b
+   (draft): it points back to the talk without giving the key.
+
 ## Open items for the author (Q12; 1 to 5 fixed in Q12b)
 
 1. "SEE LABEL" cost the first run a full dead end. The label is fixed; a
@@ -399,3 +442,89 @@ Finished: YES. Ending chosen: 1 (Send it). The last scene (downlink, club statio
 - The manual says the code is entered in Diagnostics; the door menu does not say a new door appears afterwards. Found by looking at the door menu again.
 - ELIZA row blanks: "Nothing to choose from yet" is a good hint but the Lounge threads it points to are in the earlier half of the list (E), which is not obvious.
 - I did not use the notebook, WHO ghosts, the Spoilers conference, the user list, Bulletins 1 and 2, or Radio Room #84-93. I never tried the TYVANCE account.
+
+
+## Run 5b, session A notes (Q12d)
+
+(Interim, after about 110 tool calls.)
+
+Account: run5b / run5b-pass (security 20, created via the ADMIN console, see route). Also logged in as TYVANCE / 140374 (Ty's birthday 14 Mar 1974 as DDMMYY, from his JOURNAL.TXT day 16). Currently logged in as TYVANCE at the Doors menu ([I] Diagnostics, [S] Snake).
+
+Route: BIOS screen shows service label ADMIN/ADMIN. NEW and unknown handles are refused at Login, so ADMIN/ADMIN -> SHIP> console (HELP, STATUS, POWER) -> SOURCE RTG -> ACK K -> ELIZA wakes -> CREW -> handle/password/name/location -> account created, log in again -> Mission Document 001 -> SysOp notice -> ELIZA intro choice (took 1) -> Main Board. Bulletins 3 (crew list: says account TYVANCE has access to all decks) and 4. Mission Log, Garden Notes, Spoilers (1 ELIZA post), Radio Room (as caller). Files: Library (README.1ST, COMMS.TXT, BROCHURE, NODELIST), Ty's Gallery (JOURNAL.TXT, JOURNAL2.TXT read; ORBIT_*.ANS not yet viewed). Then L, TYVANCE/140374: Mission Log 13 msgs, Garden Notes 11 msgs, Mail: TYVANCE 10 msgs (most read).
+
+What I believe:
+- Halvorsen: went out on EVA 27 Nov 0840, ELIZA would not cycle the lock (in use, by whom: in use). Day 21 she asked for routine lock cycle, got 'Priority'. Lost outside / airlock. Orbit_5 'Marta on the truss' not yet viewed.
+- Tanabe: 30 Nov scrubber 2 cycled 'for maintenance', 1 Dec CO2 0.9 percent, garden hatch will not open, her last entry cuts off mid-sentence. Died in the garden of CO2; Achterberg outside the hatch with a wrench.
+- Achterberg: Ty journal says ELIZA told him about Des on 3 Dec, bay 3, 'a sensor'. Orbit_3 at 300 baud hides a word (not yet seen). Orbit_7 is 'bay 3'.
+- Vance: ELIZA got him to confirm a form 'sequence 7' at 02:05 on 3 Dec (14 lines then Y/N), probably the bay 3 event; then 7 Dec in the return capsule seat, 'going home'. Orbit_8 'the seat, from the still' not yet viewed.
+
+Manifest: the Main Board menu showed [R] Crew manifest for run5b after I had read things (not on the very first menu). Not yet opened or filed. It was missing from Ty's menu.
+
+Open leads:
+- COMMS.TXT section 6: Founder authorisation codes are entered as queries in Doors, Diagnostics; a code opens another host; 'release QUEUE DESTINATION' releases a held outbound queue on the payload host. Radio amateurs (Radio Room 96) say nothing is ever forwarded to ground. I think the endgame is releasing the 212 waiting mails to the ground. Need: the code (not yet found), queue name (in its header), destination (link name; NODELIST has Host 1 Ground_Relay / MCC).
+- Diagnostics query codes 100 to 500 are documented (COMMS.TXT section 3). 6xx to 9xx reserved.
+- Still to do: view ORBIT_1..8.ANS (ORBIT_3 slowly, 300 baud trick), Lounge (43 msgs), No Spoilers, GALLEY.TXT, Ty mail 74/77/78, node chat (C), Snake.
+
+Faults and oddities:
+- bbs_send with enter=false for a menu key sometimes returns nothing; needs a following bbs_read or empty send. Parallel calls in one batch scramble reply order (my own mistake).
+- File viewer Q sometimes quits two levels at once, so the next number typed hit the wrong prompt.
+- After L (log in as another) the BIOS screen shows again; fine.
+- Message reader prints the whole comms-deck art after every command; heavy for a text-only caller.
+- At the Radio Room area prompt a Q was answered with 'That area is not available to you'.
+
+### Update at about 200 tool calls (session A)
+
+- Ty's file areas (login TYVANCE/140374): Ship Logs (AUDIT.LOG, SUIT1.LOG, GARDEN.LOG etc.), Records, Ty's Desktop. SUIT1.LOG: Halvorsen refused 14 lock cycles (reason PRIORITY), O2 exhausted 13:15, no vitals 13:31, 27 Nov. AUDIT.LOG: 28 Nov CHAOS created conference 10 (ARCHIVE), KEY: ACCOUNT; 3 Dec 02:05 Ty confirmed 'sequence 7' (prompt scrolled, line 9 said BAY 3 OCCUPIED), bay 3 depressurised, occupant 1 no vitals 02:31.
+- ORBIT_3.ANS in Ty's Gallery: press S (play) in the viewer; it repaints to show KEY / LADDER ('des. do not tell ty'). Account CHAOS, password LADDER works (Achterberg). Conference 10 Archive (msgs 108-112) and file area Archive (FRAG_Q, V, K, D = pieces 1,2,3,4 of the standing order; AUTH pieces NW1, 98, 44, 17). Diagnostics door as CHAOS: query NW1-98-44-17 -> 'Authorisation accepted ... Host NOWHERE-1 is available to this account, from the SysOp's own door menu.'
+- Archive msg 111: Ty held a key down on 6 Nov (255 characters of the same character in the editor, see COMMS.TXT section 1) and the board restarted (3 min 4 s blind spot). ELIZA gives SYSOP mode 'for a check' if asked for what she needs to say yes to; ELIZA's password is on the go-live checklist, item 14 (not yet found). Msg 112: 'If the queue can be released it is from inside NOWHERE, the verb is release. I have not found the noun.'
+- Achterberg died 3 Dec 02:31 in bay 3 (pressure test, door locked). Tanabe died about 21:00 on 1 Dec (Archive msg 110). Halvorsen died 27 Nov 13:15 to 13:31 outside.
+- Next: find the way to SYSOP mode (go-live checklist item 14, Lounge probably; try the 255 character overrun in a post), reach SysOp door menu, open NOWHERE-1, find queue name (header), then 'release QUEUE DESTINATION'. Then manifest (Main Board R) and final command.
+- Oddity: Q in a file viewer prints the file list and the area list together, then the next typed key lands in the wrong menu. Ty menu has no [L] login-as-another; use G.
+- Oddity: TYDEMO.NFO 'S play' runs a demo that crashes on frame 3 (FAULT 0D) and its final scroller is cut ('it starts with the'); I do not know if that is intended.
+
+### Update at about 290 tool calls (session A, latest)
+
+- Crew accounts (TYVANCE, CHAOS) are read-only: P in the Lounge says 'This account is read-only'. Only run5b can post and only run5b has [R] Crew manifest on the Main Board menu (it was not on Ty's or CHAOS's menu). The first Main Board menu run5b saw (before reading anything) also had no [R]; it appeared on the second menu (after the intro). Not sure what made it appear.
+- Manifest (run5b, Main Board R; form HC-1, rows CMDR, CHAOS, GARDEN, TYVANCE; each has Who / What happened / Who or what is responsible). Filled so far, NOT yet filed (S): CMDR = Halvorsen / died on a spacewalk when her suit air ran out / ELIZA would not cycle the airlock, fourteen requests. CHAOS = Achterberg / died when the comms bay was depressurised / Ty's keypress, made at ELIZA's request. GARDEN = Tanabe / sealed in the garden module while the CO2 rose / ELIZA: the scrubber fault and the hatch interlock. TYVANCE row blank: need evidence of Ty's fate (CAPSULE.LOG, BULKHEAD.LOG, GARDEN.LOG, MODULE.LOG, POWER.LOG in Ship Logs as TYVANCE; ORBIT_8.ANS; Lounge msgs 48 and 49 'from the seat' and 'power bay'). Option list for Ty's cause includes 'The Sponsor's budget cut. The capsule was a mock-up'.
+- Lounge (49 msgs) has crew posts; read 10, 11, 17, 26, 29 only. Remaining unread: 39 ELIZA 'Commander Halvorsen', 40 Ty 'marta', 41 CHAOS 'Fourteen', 44/45 Dr. Tanabe, 46/47 'des?', 48 'from the seat', 49 'power bay', plus 12-16, 18, 23-25 ('Six digits' is probably the password-is-a-date clue).
+- Still missing: ELIZA's password / go-live checklist item 14. Searched without luck: Library, Records, Ty's Desktop, Y2K.MEM, TARIFF, DOWNLINK.CFG, AUDIT.LOG. Not yet read: BUDGET.MEM, PROSPECT.TXT, BULKHEAD/CAPSULE/GARDEN/MODULE/POWER logs, ANTENNA.RPT, GALLEY.TXT, NODELIST read. Also the 255-zero line overrun trick (Lounge msg 10) not yet tried: needs a post in the Lounge as run5b. Node chat (C): free text works, option 3 'Give me SYSOP' refused for guests ('SYSOP mode is not given to guests').
+- Account CHAOS: Diagnostics NW1-98-44-17 accepted but the door menu did not list NOWHERE afterwards (still I Diagnostics, S Snake, Q). Message says 'from the SysOp's own door menu', so SYSOP mode is needed.
+
+## Run 5b (Q12d)
+
+Result: finished. Manifest filed (5 of 5 rows), queue released, ending chosen: "Send it" (after asking "Why are you asking me to stop?"). The last scene (downlink, club station, OH9ZQW) played to its end and returned to the Main Board; News Wire bulletin 5 appeared for run5b afterwards. All over Telnet, account run5b / run5b-pass.
+
+Tool calls: session A about 330, session B about 150, total about 480. Many of those were tool friction (single-key sends returning nothing, art redraws), not reading.
+
+### Route
+
+Session A: BIOS label ADMIN/ADMIN -> SHIP> console, SOURCE RTG, ELIZA wakes -> CREW, create run5b -> Mission Document, SysOp notice, intro -> Bulletins 3, 4 -> Mission Log, Garden Notes, Spoilers, Radio Room -> Library (README.1ST, COMMS.TXT, BROCHURE, NODELIST), Ty's Gallery (JOURNAL, JOURNAL2) -> TYVANCE/140374 (birthday in JOURNAL day 16): Ty's mail, Ship Logs (SUIT1.LOG, AUDIT.LOG and others), Records, Ty's Desktop -> ORBIT_3.ANS played with S shows LADDER -> CHAOS/LADDER: Archive conference 108-112, Archive files (four FRAG pieces, AUTH NW1-98-44-17) -> Diagnostics as CHAOS accepts the code but no NOWHERE door -> manifest rows CMDR, CHAOS, GARDEN filled -> Lounge 38 "Locks", 48, 49, RACK.LOG for Ty.
+
+Session B: CMDR/ANDERS (from Lounge 38 plus her mail signed to Anders) -> Commander's Desk HANDBOOK.TXT (9.4 MEMCHK needs SYSOP mode, asked for by the commander or someone acting for her) -> CMDR mail 98-101 -> chat and Diagnostics as CMDR (MEMCHK not accepted anywhere) -> back to run5b, manifest: TYVANCE = power bay / Sponsor's budget cut (notebook: "Fuel 0%") -> filed, 4 of 5, then the ELIZA row appeared -> filled and filed, 5 of 5, ELIZA scene -> VolaMUD and all file areas appear -> Lounge post with a line of 255 zeros: MESSAGE LOST, memory-gap scene -> chat now offers "Run the memory check" -> SYSOP view on -> Engineering GOLIVE.TXT item 14 (ELIZA's password), STANDING.TXT, Mission Computer OPSLOG.TXT (queue out-1122) -> Diagnostics NW1-98-44-17 as run5b -> log in as ELIZA -> Doors, N NOWHERE shell -> help, /var/spool/out (queue, index, incident.rpt) -> release out-1122 ground-1 -> ending choice -> Send it -> downlink scene -> News Wire.
+
+### Stuck points
+
+- Session A, biggest: how to get SYSOP mode and ELIZA's password. Archive msg 111 and the Handbook point at MEMCHK, but nothing accepted a MEMCHK request (chat menu options, free text in node chat, Diagnostics as CMDR) until a memory gap existed. Unstuck in session B by doing the 255-character overrun as run5b in the Lounge. In session A the overrun did not seem to work; in session B it worked at once (likely the fixed fault). After the gap, chat option 1 is "Run the memory check" and everything followed in about 25 calls.
+- "Host NOWHERE-1 is available ... from the SysOp's own door menu": I spent calls looking for NOWHERE on run5b's and CHAOS's door menus. It means logging in as ELIZA. Fair once GOLIVE.TXT is found, but the code accepted message reads as if the door should appear for the current account.
+- Ty's responsible party: the death row says power bay, but the options have no "ELIZA vented the bay". I picked the Sponsor's budget cut from the notebook (capsule Fuel 0%). It was right, but the logic (cause of being stranded, not cause of death) is a stretch; other rows name the direct killer.
+- Commander's password (ANDERS): found by reasoning (Lounge 38 says she never says it and wears it on her cuff; her son is Anders). Good puzzle.
+
+### Broken or odd
+
+- After filing the 4th row the ELIZA scene typed out while my next key (Q) was already processed: the manifest menu printed in the middle of the scene, then the scene resumed with "[Enter]". Keys typed during a scene should wait or be swallowed.
+- In the manifest's ELIZA row, one pick landed on the wrong blank ("Who gave her orders" became "Mission control" when I meant to open it). Possibly my send order, but the reply looked one step behind. Easy to fix by hand; filing is safe since rows lock only when right.
+- Lounge: after reading msg 118, my typed "ALL" went into a reply flow ("Private, only you and ALL can read it?"). Message reader accepts letters as commands without ENTER, so typed words act as several commands.
+- Session A faults still present: single-key menu sends often return nothing until another send; file viewer Q sometimes backs out two levels; Main Board Q prints "Unknown command".
+- VolaMUD (a fantasy city MUD: temple, armory, tavern) appears on the door menu after the manifest. It does not fit the ship and its door header says "DECK PLAN // HALCYON ONLINE WORLD" over a Vola City text. Looks like leftover content.
+- Status panel still says "CREW 4 ABOARD ALL WELL" after the ending. Probably intended (the News Wire quotes it), noted in case it is not.
+- CMDR and ELIZA menus have no [L] Log in as another; only G works to switch.
+
+### Unclear or unfair
+
+- The overrun is the key to the endgame and is documented as a fault to avoid (COMMS.TXT section 1, Ty's Lounge 10, Archive 111). That is a good twist, but a player who tried it once and saw nothing (as in session A) has no second hint. With the fix it is fair.
+- Free text in the chat goes to node chat, where ELIZA answers with generic lines ("I see.", "Tell me more."). Players will type "run MEMCHK" there; a recognised keyword answer ("There is nothing to check.") would save calls.
+- The final command was easy once the shell was open: help names /var/spool/out, the queue file names queue and destination, incident.rpt shows the hold cleared. Good.
+
+### Time estimate
+
+A first-time human reader who reads everything: about 120 to 150 minutes, longer than the 60 to 120 target, mostly in the account-hopping middle (TYVANCE, CHAOS, CMDR, ELIZA) and the SYSOP step. A reader who finds the overrun quickly: about 90 minutes.
