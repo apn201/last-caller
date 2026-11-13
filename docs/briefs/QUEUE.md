@@ -131,7 +131,7 @@ Rules for every item:
   ProTracker MODs; Ty's two or three tunes with text in sample names; the
   player shows sample names (browser) and a text view on Telnet; short
   original sound effects and their browser cues.
-- [ ] **Q11 - Easter eggs and nerd stuff.** From STORY_EXTRAS: modem
+- [x] **Q11 - Easter eggs and nerd stuff.** (done, cf6e35a..HEAD of the Q11 commits plus the tick; `pio run` passes, host test `egg_logic_test` passes with `zig c++`, staging check PASS: server build, smoke, e2e 55 passed, 0 failed, 0 skipped (the whole game, then the eggs: modem commands, hidden words, files, ELIZA in chat, Ty's demo scene, snake, `ATH0`), event log clean; board test still to do, `docs/TESTING.md` "Easter eggs". `MODEM.WAV` plays when a browser caller dials. No egg sets a flag; the demo leaves only the scene's own markers. Not done: the arrow-key cheat code, ROT13 lounge posts, hex dump, excuse generator, the demo does not play Ty's MOD (its line points to SUNSIDE in the gallery). Door menu slots raised to 5. The hidden node is Ty's group board (number in `NODELIST.TXT`). All text is draft.) From STORY_EXTRAS: modem
   commands, hidden commands, POST screen, Y2K memo, brochure, price list,
   Ty's demo (ANSI animation with his MOD), Ty's snake door, fortunes.
 - [ ] **Q12 - Verification.** `story-lint` (every fact reachable, no

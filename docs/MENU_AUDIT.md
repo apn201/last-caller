@@ -60,11 +60,20 @@ are allowed: they never appear on screen.
 | G | an ANSI area is open to the caller | |
 | Q | always | |
 
+## Eggs (Q11)
+
+| Where | Words | Notes |
+| --- | --- | --- |
+| Login, main menu, door menu, Press ENTER | AT, ATZ, ATE0 and the other setup commands, +++, ATI0-9, ATH, ATD<number> | In no menu. At the login prompt only real commands count, never a name on the board. Writes nothing. |
+| Main menu only | XYZZY, FORTUNE, /FORTUNE, POST, REBOOT | In no menu and not in ?. |
+| Node chat | famous requests (STORY/SYSOP.INI keys) | ELIZA answers; no flag. |
+
 ## Doors
 
 | Screen | Keys | Notes |
 | --- | --- | --- |
 | Door menu | one per door in the door table, Q | |
+| Snake (Ty's) | W A S D (several at once), ENTER goes on, Q; after a game over ENTER plays again | In the door menu (key S) for every caller who is not the maintenance login and when the card has its title art. Saves nothing, so read-only accounts have it too. |
 | Legend, town | F H B T M S L Q; C when someone in town can be challenged | C used to show with nobody to challenge. Now the town also lists who is in town. **Fixed.** |
 | Legend, tavern | R W L M Q; C as above | **Fixed.** |
 | Legend, arena | A, R on your turn; R while waiting | Strikes and misses reach the waiting fighter on a new line, and the side without the initiative is told to wait. **Fixed.** |

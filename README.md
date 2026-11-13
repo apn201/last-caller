@@ -45,6 +45,7 @@ console and a native door.
 - Tracker music (MOD, S3M, XM, IT) plays with `V` in the browser: a
   tracker-style screen with the live pattern and channel meters, played by
   libopenmpt from the card. Fifty modules from The Mod Archive to start with.
+- Easter eggs for people who remember 1998: modem commands (`ATI`, `+++`, `ATH0`, `ATDT`), a few unlisted words at the main menu, a snake game in the doors menu, Ty's unfinished demo. None of them is needed to finish the game.
 - Ty's three tunes (`SUNSIDE`, `THERMO`, `HARBOUR`) are original modules made by `tools/mod/`.
   Their sample names carry his messages: the player lists them, and Telnet gets a text view of
   the module header. Short original sound effects (hum, relay, chirp, static) play as cues in

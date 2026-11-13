@@ -24,6 +24,7 @@ Rules:
 | `ASSETS/DIALUP.MP3` | Source to be confirmed by the author |
 | `ASSETS/SFX/*.WAV` (hum, relay, chirp, static, modem) | Original: made by `tools/mod/gen_sfx.py` from arithmetic, MIT |
 | `FILES/001_ANSI_GALLERY/SUNSIDE.MOD`, `THERMO.MOD`, `FILES/006_TY_DESKTOP/HARBOUR.MOD` | Original compositions and instruments: made by `tools/mod/gen_mods.py`, no samples, no copied notes, MIT. Sample names are story text (drafts) |
+| `STORY/EGGS.INI`, `FILES/002_LIBRARY/BROCHURE.TXT`, `NODELIST.TXT`, `FILES/004_RECORDS/Y2K.MEM`, `TARIFF.TXT`, `FILES/006_TY_DESKTOP/TYDEMO.NFO`, `STORY/SCENES/TY_DEMO.INI`, the POST, SNAKE, NODE_LUMEN and TY_DEMO art | Original to this project (Q11), MIT. The BIOS maker, modem make and boards are invented. Drafts |
 | `ASSETS/PLAYER/` (libopenmpt, jsSID, `player.js`, `stream.js`) | Third party libraries and project glue code; licences in `THIRD_PARTY_NOTICES.md` |
 
 ## Made by scripts, not in the repository

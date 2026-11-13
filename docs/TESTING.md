@@ -125,6 +125,20 @@ Wording is draft. The tunes and sounds come from `tools/mod/` (`python tools/mod
 
 Host test: `zig c++ -std=c++17 -Wall -Wextra -I src/core tools/test/modinfo_logic_test.cpp -o modinfo_logic_test`, then `./modinfo_logic_test sd/BBS/FILES/001_ANSI_GALLERY/SUNSIDE.MOD sd/BBS/FILES/001_ANSI_GALLERY/THERMO.MOD sd/BBS/FILES/006_TY_DESKTOP/HARBOUR.MOD`. The scene test covers the `sound=` key.
 
+## Easter eggs (Q11)
+
+Wording is draft. None of these touches the game; check that last.
+
+1. Signed-in caller, main menu. `ATI` prints `28800` and `OK`; `+++` and `ATZ` print `OK`; `ATFOO` prints `ERROR`; `ATDT` prints `NO DIALTONE`; `ATDT 555-0199` is `BUSY`, `ATDT 555-0188` is `NO ANSWER`. After each, the prompt is back.
+2. `ATDT 555-0172` (the number is in the Library's `NODELIST.TXT`): `DIALING`, `CONNECT 2400`, the SUBLEVEL 2 screen and the away message, `NO CARRIER`, then the prompt. In the browser, with the volume up, the distant modem plays once (`MODEM.WAV`). Telnet hears nothing and sees no escape text.
+3. `ATH0` (or `ATH`): `NO CARRIER` and the connection closes. At the login prompt `AT` answers `OK`, `ATH` hangs up, and a name that merely starts with AT (`atlas`) is still just an unknown name; a real account named like a modem command still logs in.
+4. Main menu: `XYZZY` answers; `FORTUNE` and `/FORTUNE` print a different line now and then; `POST` shows the 486's self test (BIOS 06/14/94, memory test 8200K for 8192K installed, the Turbo switch on); `REBOOT` does the same. None is in the menu or in `?`.
+5. Node chat: type `open the pod bay doors`. ELIZA answers about hatches and does not repeat the line. `shall we play a game` and `daisy` get a line each (once per caller).
+6. Files: Library `BROCHURE.TXT` and `NODELIST.TXT`; Records (after the crew visit) `Y2K.MEM` and `TARIFF.TXT`; Ty's Desktop (Ty's account) `TYDEMO.NFO`. Opening `TYDEMO.NFO` and going back to the menu plays Ty's demo: three frames, the scroller, the crash on frame 3 at the same word every time; Enter skips; you are at the main menu after it.
+7. Doors: `S`, "Snake (by tyv)", for any caller with power (also a crew login). W A S D, several at once; an empty line goes on. Walls, the bulkhead, the rack and yourself end it; the crew's table shows with `YOU` in it; ENTER plays again, Q leaves. Nothing is saved: sign in again and the table is the crew's.
+8. Nothing changed in the game: the manifest, the notebook, the flags (`SC_TY_DEMO` and `T_EV_TYDEMO` are the only traces) and the endings are as before. The e2e test plays the whole game and then uses the eggs.
+
+Host test: `zig c++ -std=c++17 -Wall -Wextra -I src/core tools/test/egg_logic_test.cpp -o egg_logic_test`, then `./egg_logic_test` (modem parser and snake rules).
 ## Server build and end-to-end check (second build, from Q1)
 
 The server cannot be built on this Windows PC. The staging host builds and
