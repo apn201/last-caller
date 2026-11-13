@@ -1197,7 +1197,7 @@ def main():
         sync(c)
         pos = pick_file_area(c, "Engineering")
         open_file(c, number_of(c, pos - 3000, "GOLIVE.TXT"), "KESTREL4")
-        open_file(c, number_of(c, pos - 3000, "STANDING.ORD"), "THE CREW ARE THE COST")
+        open_file(c, number_of(c, pos - 3000, "STANDING.TXT"), "THE CREW ARE THE COST")
         c.send("Q")
         c.expect("File area?", timeout=10)
         c.send("Q")
