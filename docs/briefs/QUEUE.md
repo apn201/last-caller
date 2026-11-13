@@ -246,3 +246,11 @@ Rules for every item:
   brownout, listening, speaking, page); `lcd_mode=` on the card and a
   stick-only SysOp switch bring back the old panel (the BOOT button is broken off). Plus a parametric OpenSCAD PLA sleeve for the
   Deluxe Edition stick, with board measurements left for Juha.
+- [ ] **Q18 - Critics' loop to 83 %.** Brief: `docs/briefs/Q18-critics.md`
+  (Claude Code, 14 Nov 2026, Juha's request). Two invented adventure-game
+  critics (Ada: puzzles, Mara: story) play from a brand-new caller through
+  `bbs-caller` with no memory of earlier rounds and score on a fixed
+  100-point rubric. Fix what they found, run two new critics, repeat until
+  one round averages 83 or more (stop after round 6). Anything may change
+  with a good reason; every change goes in `docs/reviews/CHANGES.md`.
+  Loop state in `docs/reviews/LOOP.md` so later runs resume.
