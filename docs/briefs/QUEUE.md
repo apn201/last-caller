@@ -213,5 +213,6 @@ Rules for every item:
   Code, 13 Nov 2026). Docs truth pass before the repo goes public (README,
   content policy, notices, counted numbers in DEVPOST.md, secret check),
   press-kit screenshots from e2e captures (`tools/presskit.py`), a `?rec=1`
-  recording mode in the browser terminal, and one merged board test
+  recording mode in the browser terminal, judge savegame accounts
+  (`tools/make-savegame.py`), and one merged board test
   checklist for the stick. No story or puzzle changes.

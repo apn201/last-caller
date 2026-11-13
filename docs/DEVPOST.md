@@ -135,9 +135,9 @@ Kiro's.
 Pre-existing work and third-party parts (disclosed as the rules ask):
 libopenmpt and jsSID for music in the browser, civetweb for the server,
 Arduino GFX Library, ESPAsyncWebServer, AsyncTCP and the ESP32 Arduino core
-on the stick. [fill: the Mod Archive and HVSC tunes and DIALUP.MP3, if they
-are on the hosted card, with their sources and licences]. Story, art,
-music for Ty, crew posts and code are original.
+on the stick. The dial-up sound is recorded from a real modem. No Mod
+Archive or HVSC tunes ship with the game. Story, art, music for Ty, crew
+posts and code are original.
 
 ## How Kiro was used
 
@@ -148,7 +148,7 @@ item Qn of the queue, tick it and stop". So it could run overnight without
 me, one item per run, and every run started clean from the files in the
 repo instead of a long chat history. Kiro has been running this for about
 12 hours now, mostly unattended. Huge effort. I'm hoping 4000 credits are
-enough. [fill: final hours and credits used]
+enough. By 13 Nov it had used 1390 of the 4000 bonus credits.
 
 **Spec-driven development.** 16 specs in `.kiro/specs`: rebrand, ANSI art,
 story bible, power prologue, triggers, scenes, ghosts, three acts, shell
@@ -190,12 +190,16 @@ triggers and manifest in 300 random orders and checks that flags only grow,
 every ending stays reachable and nothing softlocks. It runs in CTest on the
 server build and from the hook. [fill: did it catch something]
 
-[fill: Kiro powers, if you used any]
-
 **Verification.** Code reading is not verification. Every queue item had
 to pass `pio run` for the stick and a staging check on a Linux server: the
 server build, CTest, a smoke test and an end to end Telnet script that
 plays the whole game as a new caller (55 steps). Only then was it ticked.
+
+## What I learned
+
+I learned that AI agents are dead stupid idiots, but if you carefully
+explain what you want, they can be useful. I also learned what Kiro is. I
+had no former experience of it.
 
 ## Challenges
 
