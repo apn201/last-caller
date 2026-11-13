@@ -17,7 +17,7 @@
 
    [0m┌─ [1mSERVICE LABEL [0m──────────────────────┐
    │ MAINT ACCT   ADMIN                   │
-   │ PASSWORD     DEFAULT                 │ [1;36m< MAINT ACCT DEFAULTS
+   │ PASSWORD     ADMIN                   │ [1;36m< MAINT ACCT DEFAULTS
    [0m│ [1;30m(CHANGE ON FIRST USE)                [0m│   [1;36mNOT CHANGED - SEE LABEL
    [0m└─────────────────────────────────────[1;30m░[0m┘
 [0m

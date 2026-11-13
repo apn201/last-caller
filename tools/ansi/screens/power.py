@@ -69,7 +69,7 @@ def boot():
     c.box(3, 17, 40, 5, "single", GREY)
     c.text(5, 17, " SERVICE LABEL ", WHITE)
     c.text(5, 18, "MAINT ACCT   ADMIN", GREY)
-    c.text(5, 19, "PASSWORD     DEFAULT", GREY)
+    c.text(5, 19, "PASSWORD     ADMIN", GREY)
     c.text(5, 20, "(CHANGE ON FIRST USE)", DGREY)
     c.put(41, 21, "\u2591", DGREY)        # the corner is peeling
     c.text(46, 19, "MAINT ACCT DEFAULTS", LCYAN)
@@ -95,7 +95,7 @@ def boot():
         "",
         "+--- SERVICE LABEL ------------------+",
         "| MAINT ACCT   ADMIN                 |   MAINT ACCT DEFAULTS",
-        "| PASSWORD     DEFAULT               |   NOT CHANGED - SEE LABEL",
+        "| PASSWORD     ADMIN                 |   NOT CHANGED - SEE LABEL",
         "+------------------------------------+",
     ])]
 
@@ -103,13 +103,20 @@ def boot():
 # ---------------------------------------------------------------- REBOOT
 
 def reboot():
-    c = Canvas(80, 9)
+    c = Canvas(80, 14)
     c.text(2, 0, "HALCYON-486 FLIGHT BIOS  REV 2.04", WHITE)
     c.text(2, 1, "MEMORY TEST  16384K OK", GREY)
     c.text(2, 3, "RESTART AFTER POWER LOSS", DGREY)
     c.text(2, 4, "SOLAR BUS ONLY - ATTITUDE CONTROL OFFLINE", YELLOW)
     leader(c, 6, "ELIZA MISSION AI", "NOT RESPONDING", AMBER, x=2)
     c.text(2, 7, "MAINT ACCT DEFAULTS NOT CHANGED - SEE LABEL", LCYAN)
+    # the label is still on the case for every later caller (found by the Q12 playtest: a caller
+    # who reached the short banner had no way in)
+    c.box(3, 9, 40, 5, "single", GREY)
+    c.text(5, 9, " SERVICE LABEL ", WHITE)
+    c.text(5, 10, "MAINT ACCT   ADMIN", GREY)
+    c.text(5, 11, "PASSWORD     ADMIN", GREY)
+    c.text(5, 12, "(CHANGE ON FIRST USE)", DGREY)
     return [c.save("ANSI/POWER/REBOOT.ANS"), ascii_screen("REBOOT", [
         "HALCYON-486 FLIGHT BIOS  REV 2.04",
         "MEMORY TEST  16384K OK",
@@ -119,6 +126,12 @@ def reboot():
         "",
         "ELIZA MISSION AI .... NOT RESPONDING",
         "MAINT ACCT DEFAULTS NOT CHANGED - SEE LABEL",
+        "",
+        "+--- SERVICE LABEL ------------------+",
+        "| MAINT ACCT   ADMIN                 |",
+        "| PASSWORD     ADMIN                 |",
+        "| (CHANGE ON FIRST USE)              |",
+        "+------------------------------------+",
     ])]
 
 

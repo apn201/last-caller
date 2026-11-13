@@ -7,4 +7,9 @@
   [0mELIZA MISSION AI [1;30m....... [0;33mNOT RESPONDING
   [1;36mMAINT ACCT DEFAULTS NOT CHANGED - SEE LABEL
 
+   [0m┌─ [1mSERVICE LABEL [0m──────────────────────┐
+   │ MAINT ACCT   ADMIN                   │
+   │ PASSWORD     ADMIN                   │
+   │ [1;30m(CHANGE ON FIRST USE)                [0m│
+   └──────────────────────────────────────┘
 [0m
