@@ -3,7 +3,7 @@
 ANSI/STORY/MEM_BAY       the portrait of the memory scene MEM_BAY: the power
                          bay, 8 Dec 04:12, Ty at panel 2, the oxygen figure
                          in red (an alarm: red means something), ELIZA's ring
-                         in the wall speaker
+                         in the wall speaker, a torn band across the foot
 BULLETINS/005_NEWS       the wire story of 13 Nov 2026, bulletin 5, shown only
                          to a caller who has sent the queue (END1)
 
@@ -51,6 +51,10 @@ def mem_bay():
     portrait(lay, 0, 0, "V")
     lay.flush(c, 62, 2)
     c.text(63, 10, "04:12:40", DGREY)
+    # the fault band (Q12d): the fight is replayed from a log that is torn here and there
+    for x in range(3, 58):
+        if (x * 7 + 3) % 5 < 2:
+            c.put(x, 10, "\u2592" if x % 2 else "\u2591", DGREY)
     plain_rows = [
         "-- POWER BAY // 8 DEC 04:12 // RECORDED BY THE MISSION COMPUTER " + "-" * 12, "",
         "   +--- PANEL 2 ---------------------+        ,---.", "   |  RTG        BANK                 |       ( ( o ) )      ,---.",
