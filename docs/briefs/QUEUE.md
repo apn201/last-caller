@@ -201,3 +201,11 @@ Rules for every item:
   module check is run 50 times in a loop on staging without a failure (no
   root needed: a fake `httpd` script that prints a long module list), and
   the staging check passes.
+- [ ] **Q15 - Refactor pass.** Read `docs/briefs/Q15-refactor.md` and do
+  it: go through the whole repository for repetition, dead code,
+  simplification and documentation, with no change to caller output and no
+  edit to card story text. Spec first in `.kiro/specs/refactor/`, then small
+  commits per area. Done when `pio run`, host tests, story lint and the
+  staging check pass with the e2e count unchanged, and the tick lists lines
+  removed and added, RAM and flash before and after, what was archived, and
+  any bugs found.
