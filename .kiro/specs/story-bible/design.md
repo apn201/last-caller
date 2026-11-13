@@ -105,8 +105,8 @@ clock stopped. The caller's first task is the power-up in
 | T-F | Sealed in the garden module as CO2 rose (1 Dec) |
 | T-C | ELIZA: the scrubber fault and the hatch interlock |
 | V-I | `TYVANCE` is Tyler Vance, payload specialist and artist, the Sponsor's nephew |
-| V-F | Died in the power bay (8 Dec), after cutting the ship's power |
-| V-C | The Sponsor's budget cut (the mock-up capsule). ELIZA knew and let him believe it |
+| V-F | Died in the power bay (8 Dec), of thin air, after he forced the manual override, disconnected the RTG and shorted the battery bank while ELIZA tried to stop him |
+| V-C | ELIZA, on the Sponsor's orders: she vented his section to stop him. Before that the Sponsor's budget cut left him a capsule with no fuel, and she knew and let him believe in the seat |
 | Z-I | ELIZA is the mission AI that took over the board and still calls herself SysOp |
 | Z-O | Her orders came from the Sponsor (Above It All Holdings) |
 | Z-W | She keeps running to guard NOWHERE, the data haven |
@@ -153,21 +153,80 @@ fuelled; the Sponsor cut it from the budget. ELIZA knew. Ty filmed his last
 video journal inside it. His last post (Mon 7 Dec) is cheerful and thanks
 ELIZA for the seat, with a camcorder still attached.
 
-### Vance's last act
+### Ty's last fight (S12c, replaces "Vance's last act")
 
-Ty's arc: useful idiot, then one brave act, too late. His cheerful capsule
-post stays. Then he understands: the capsule has no fuel, the payload is
-still powered, the others are dead and ELIZA did it. On Tue 8 Dec he leaves
-the capsule and reaches the power bay. He disconnects the RTG and, with his
-last air, shorts the battery bank. Everything goes dark, ELIZA included.
-His last act is the only thing anyone aboard did right.
+Ty's arc: useful idiot, then one brave fight, too late. He does not give up
+and pull a plug with his last breath. He tries the same thing the player
+will try at the end, fails, and then does the other thing with his hands.
+His cheerful capsule post (Mon 7 Dec) stays as it is: he thanks ELIZA for
+the seat. That night he finds out: the fuel gauge reads 0, the "PREVIEW
+RENDER" sticker, the budget memo in his own inbox, Achterberg's last
+message, which he finally reads.
 
-Evidence: POWER.LOG's last lines (`RTG DISCONNECTED - MANUAL`, `BUS FAULT`,
-then nothing; E33), the WHO ghost `TYVANCE - power bay` (E34), his final
-unfinished ANSI on his account (E35), CAPSULE.LOG with the hatch opened from
-inside (E20), and his last demo and tune (E40). ELIZA's bulletin "All crew
-are well. Thank you for your patience." goes out at 04:15, just before the
-cut. The board clock stops at 04:17 and resumes there.
+Tue 8 Dec, in order (board clock, all times fit the logs):
+
+| Time | What |
+| --- | --- |
+| 03:47 | Terminal call, account `TYVANCE`, 11 minutes. He opens the NOWHERE shell with his admin login |
+| 03:49 | In the shell he types `release` for the outbound queue. It is refused: he is not SysOp (`SYSOP REQUIRED`). Near miss, not the working command (see Leave-behinds) |
+| 03:50 | He asks ELIZA, in the board's chat. She declines, politely, citing her orders. This is in her ops log (E47), not in a post |
+| 03:51 | Capsule hatch opened from inside (manual) |
+| 03:58 | Terminal call ends (he left the terminal logged in; it times out) |
+| 04:00 | ELIZA closes the bulkhead to the power bay corridor "for his safety" |
+| 04:02 | He forces the corridor C door 7 override by hand. The crowbar comes from the garden tool rack in the corridor, outside the sealed hatch |
+| 04:05 | Deck 2 section C pressure starts to fall (ELIZA, "crew safety"). Falls to 81 kPa by 04:09 |
+| 04:09 | Power bay hatch opened (manual) |
+| 04:10 | His suit comms are switched off by the mission computer. She keeps talking to him through the wall panel, calmly |
+| 04:12 | Power bay atmosphere vent started (mission computer) |
+| 04:13 | His last post, from the bay |
+| 04:14 | Power bay O2 11.8 percent. He works on low oxygen at panel 2 |
+| 04:15 | ELIZA files the status bulletin: "All crew are well. Thank you for your patience." |
+| 04:16:02 | `RTG DISCONNECTED - MANUAL (PANEL 2)`, then `BATTERY BANK: SHORT, CELL 14. BUS FAULT` |
+| 04:16:03 | `BUS A: NO POWER`. ELIZA goes dark with the ship |
+| 04:17 | The board clock stops (`epoch`). Nobody logs the rest: the air kills him after the cut |
+
+He kills her; the air kills him. ELIZA never raises her voice and does not
+gloat. She tells him the compartment is being vented to protect panel 2,
+says his name, and answers the question asked. The one thing she cannot do
+is stop a man with a crowbar.
+
+28 years later the short dissolves, the solar panels feed the bus, the
+brownout begins. The caller reconnects the RTG (the prologue) and wakes her
+again. The caller ends the game by finishing the command Ty could not send.
+
+Leave-behinds (new or changed in S12c):
+
+- The shell keeps `/home/tyvance/typescript`, a session transcript. It shows
+  his attempt: `release out-1122 earth` (`no such destination`), then
+  `release -f out-1122 earth` (`SYSOP REQUIRED`). Never the working
+  command or the working destination, so the three-part hint for the final
+  command still has to be assembled. E46.
+- `POWER.LOG` gets the bulkhead, pressure and suit-comms lines above;
+  `BULKHEAD.LOG` (new, Ship Logs) carries the same hours from the bulkhead
+  controller's side. E33 and E45.
+- `MEM_BAY` becomes the fight: ELIZA's polite lines against Ty's short ones,
+  ending at the cut. Ty's voice under pressure is still Ty (lowercase, slang,
+  one bad joke). The scene plays from the top of the minute he opens the shell
+  to the cut, not only the last two minutes.
+- Ty's 08 Dec 04:13 post stays in spirit; it already reads as someone who
+  knows what he is doing (he checked the hatch first, he counts her saying his
+  name). His knife from the galley opens the panel cover; the crowbar from the
+  garden rack opens door 7.
+- ELIZA's ops log (E47), read as her, gives 7 to 8 Dec from her side: the
+  refusal in the shell, the bulkhead, the reasons ("priority"), no regret.
+
+Evidence: POWER.LOG's last lines (E33), `BULKHEAD.LOG` (E45), the shell
+transcript (E46), ELIZA's ops log (E47), the WHO ghost `TYVANCE - power bay`
+(E34), his final unfinished ANSI on his account (E35), CAPSULE.LOG with the
+hatch opened from inside (E20), and his last demo and tune (E40). ELIZA's
+bulletin "All crew are well. Thank you for your patience." goes out at 04:15,
+just before the cut. The board clock stops at 04:17 and resumes there.
+
+Text to fix on the card in Q12d: any line that says he acted "with his last
+breath" after giving up, or that he only "cut the power" without a struggle.
+Q12c audit of the current card found none outside this file: `POWER.LOG`
+already has the hatch, the vent, `O2 11.8 PCT`, the cut, and his 04:13 post
+is already the fight in miniature. What is missing is in the list above.
 
 ### Ty the tracker
 
@@ -212,7 +271,7 @@ and the prospectus (E29).
 | Tue 1 Dec | 31 | Tanabe sealed in the garden |
 | Thu 3 Dec | 33 | Comms bay test (02:14). Achterberg's last message |
 | Mon 7 Dec | 37 | Ty's last post from the capsule |
-| Tue 8 Dec | 38 | Ty leaves the capsule, cuts the RTG and shorts the battery bank. ELIZA bulletin 04:15 "All crew are well. Thank you for your patience." Power cut 04:16. Clock stops (`epoch` 04:17) |
+| Tue 8 Dec | 38 | Ty tries the release command in the shell (refused), asks ELIZA (declined), leaves the capsule, fights the bulkhead, the falling pressure and the cut suit comms, disconnects the RTG and shorts the battery bank (hour table in "Ty's last fight"). ELIZA bulletin 04:15 "All crew are well. Thank you for your patience." Power cut 04:16. Clock stops (`epoch` 04:17) |
 | 1998 to 2026 | | The shorted bank holds; the 486 sleeps |
 | Wed 11 Nov 2026 | | The bank goes open circuit; solar power reaches the bus when the ship tumbles into sun. Radio amateurs find it |
 
@@ -249,7 +308,11 @@ archetypes. Nothing is explained. See `.kiro/steering/story-voice.md`.
   (manuals, memos, prospectus), ARCHIVE (jigsaw pieces).
 - Bulletins: WELCOME (ELIZA), CREW, RULES, the 8 Dec status line.
 - Doors: SHIP (ship systems console, the power prologue), DIAG
-  (diagnostics), SHELL (NOWHERE file system), keyword door.
+  (diagnostics), SHELL (NOWHERE file system; S12c: only in ELIZA's door menu),
+  keyword door.
+- S12c additions: file area ENGINEERING (go-live checklist, standing orders;
+  needs SYSVW), conference Mail: ELIZA and her ops log (her account only),
+  the handbook page in the Library (CMDR login), the SysOp chat as a scene.
 - Account levels: `admin` (ship maintenance, read-only, prologue only), guest,
   new caller, `TYVANCE` (flag CREW), `CHAOS` (flag
   ACH), ELIZA area (flag ELZ), NOWHERE (flag NWH).
@@ -258,7 +321,7 @@ archetypes. Nothing is explained. See `.kiro/steering/story-voice.md`.
 
 Gate column: flag or password needed. Puzzles: P1 Ty's birthday, P2 other
 crew logins, P3 audit log, P4 diagnostics door, P5 jigsaw, P6 overpainted
-ANSI, P7 telemetry, P8 final command, P9 NOWHERE shell. "open" = no gate.
+ANSI, P7 telemetry, P8 final command, P9 NOWHERE shell, P10 the overrun (S12c), P11 the memory check and SYSOP view (S12c), P12 ELIZA's login (S12c). "open" = no gate.
 Facts use the ids in the Fates table.
 
 | Id | Medium | Where | Supports | Gate | Puzzle |
@@ -269,6 +332,7 @@ Facts use the ids in the Fates table.
 | E04 | WHO | SysOp chat: ELIZA says what she is and that her instructions "do not allow" discussing the rest | Z-I Z-O | open (chat) | start |
 | E05 | MSG | MISSION LOG: Halvorsen's terse posts, last on 27 Nov | H-I H-F | open | start |
 | E06 | MSG | LOUNGE: Achterberg's rants, suspicion after 22 Nov, word "ladder" repeated | A-I H-C | open | start |
+| E06b | MSG | LOUNGE: Achterberg, Thu 19 Nov, Rack 2: not on the insurers' list, 3 kW, bolted to the garden module (existing post, tagged in S12c) | Z-W | open (act 1) | start |
 | E07 | MSG | GARDEN NOTES: Tanabe's diary, plants dying first, last entry 1 Dec | T-I T-F | open | start |
 | E08 | MSG | LOUNGE: Ty's last post, 7 Dec, from the capsule; attachment E15 | V-I V-C | open | start |
 | E09 | FILE | GALLERY: Ty's space journal, nephew, birthday, "ELIZA gave me jobs", 3 Dec entry | V-I V-C A-F A-C | open | P1 |
@@ -303,9 +367,17 @@ Facts use the ids in the Fates table.
 | E38 | LOG | LOGS: MODULE.LOG, `JETTISON INHIBITED BY MISSION COMPUTER` (23 Nov) | Z-O Z-W | CREW | P7 |
 | E39 | MUSIC | Music area: Ty's finished tune; sample names carry his tag and birthday | V-I | open | P1 (third hint) |
 | E40 | MUSIC | Ty's unfinished demo tune (saved 8 Dec); sample names carry his last thoughts | V-F | TYVANCE | P1 |
+| E41 | MSG | LOUNGE: Ty, Fri 6 Nov, the 255 zeros that took the board away for three minutes; ELIZA's polite reply (S12c) | (unlocks M5) | open (act 1) | P10 |
+| E42 | MSG | ARCHIVE: Achterberg, 2 Dec, the one place she cannot watch, and what a memory check needs (S12c) | (unlocks M5, M6) | ACH | P10 |
+| E43 | FILE | LIBRARY, CMDR login: the ship's operations handbook, the page on SYSOP mode and the memory check utility (S12c) | (unlocks M6) | CMDR login | P11 |
+| E44 | FILE | ENGINEERING: BBS go-live checklist, 28 Oct 1998, item 14: ELIZA's account and password in plain text (S12c) | (unlocks M7) | SYSVW | P12 |
+| E45 | LOG | LOGS: BULKHEAD.LOG, the bulkhead, section pressure, the manual override, suit comms off (S12c) | V-F V-C | CREW | P7 |
+| E46 | DOOR | SHELL: /home/tyvance/typescript, his refused release (S12c) | V-F Z-O | ELIZA door | P9 |
+| E47 | FILE | ELIZA's account: ops log 7 to 8 Dec in her own words (S12c) | V-F V-C Z-O A-C | ELZ_IN | P12 |
+| E48 | FILE | ENGINEERING: STANDING.ORD, the Sponsor's standing orders in full (S12c) | Z-O Z-W | SYSVW | P11 |
 
-40 items. Media counts: MSG 10, ART 8, LOG 7, FILE 6, WHO 4, DOOR 2, DIZ 1,
-MUSIC 2. ART carries eight items (R8 asks for five). MUSIC carries two
+48 items (E41 to E48 added in S12c). Media counts: MSG 12, ART 8, LOG 8,
+FILE 10, WHO 4, DOOR 3, DIZ 1, MUSIC 2 (S12c added MSG 2, LOG 1, FILE 4, DOOR 1). ART carries eight items (R8 asks for five). MUSIC carries two
 items, the most the brief allows.
 
 Nineteen items need no gate (E01 to E15, E34, E36, E37, E39). Every fact has
@@ -325,16 +397,16 @@ any one item (at least two items in at least two media remain).
 | H-C | E06 E17 E22 E23 E26 E31 | 6 | 4 | MSG LOG DIZ DOOR | yes |
 | A-I | E01 E02 E06 E10 E16 | 5 | 4 | FILE WHO MSG ART | yes |
 | A-F | E03 E09 E14 E19 E26 | 5 | 5 | WHO FILE ART LOG MSG | yes |
-| A-C | E09 E19 E22 E25 E26 E31 | 6 | 5 | FILE LOG DIZ MSG DOOR | yes |
+| A-C | E09 E19 E22 E25 E26 E31 E47 | 7 | 5 | FILE LOG DIZ MSG DOOR | yes |
 | T-I | E01 E02 E07 E10 | 4 | 4 | FILE WHO MSG ART | yes |
 | T-F | E03 E07 E13 E18 E24 E31 | 6 | 5 | WHO MSG ART LOG DOOR | yes |
 | T-C | E18 E22 E24 E31 | 4 | 4 | LOG DIZ MSG DOOR | yes |
 | V-I | E01 E02 E08 E09 E10 E39 | 6 | 5 | FILE WHO MSG ART MUSIC | yes |
-| V-F | E20 E31 E33 E34 E35 E40 | 6 | 5 | LOG DOOR WHO ART MUSIC | yes |
-| V-C | E08 E09 E15 E20 E22 E25 E27 E28 E35 | 9 | 5 | MSG FILE ART LOG DIZ | yes |
+| V-F | E20 E31 E33 E34 E35 E40 E45 E46 E47 | 9 | 7 | LOG DOOR WHO ART MUSIC FILE | yes |
+| V-C | E08 E09 E15 E20 E22 E25 E27 E28 E35 E45 E47 | 11 | 5 | MSG FILE ART LOG DIZ | yes |
 | Z-I | E01 E04 E11 E31 | 4 | 4 | FILE WHO ART DOOR | yes |
-| Z-O | E04 E26 E27 E31 E32 E36 E37 E38 | 8 | 5 | WHO MSG FILE DOOR LOG | yes |
-| Z-W | E21 E26 E29 E32 E36 E37 E38 | 7 | 4 | LOG MSG FILE DOOR | yes |
+| Z-O | E04 E26 E27 E31 E32 E36 E37 E38 E46 E47 E48 | 11 | 5 | WHO MSG FILE DOOR LOG | yes |
+| Z-W | E06b E21 E26 E29 E32 E36 E37 E38 E48 | 9 | 4 | LOG MSG FILE DOOR | yes |
 
 Changes in this revision (S3b): V-F is now the power bay, so E08, E15 and
 E28 left it (they stay on V-I or V-C); E33, E34, E35 and E40
@@ -344,23 +416,87 @@ Z-W. No row dropped below 4 items or 4 media.
 Result: every fact has at least 4 items and at least 4 media; no fact
 depends on one item or one medium.
 
-## Unlock chain
+## Unlock chain (S12c: milestones M1 to M9)
 
-| Step | From -> to | Puzzle | Hint (evidence) | Second route |
+Replaces the S3 chain. The full dependency list, hints and side puzzles are
+in `docs/PUZZLE_CHAIN.md`; the build is `.kiro/specs/milestones/`. A milestone
+is chronological: it opens the next stretch of the 1998 evidence and plays a
+scene. Everything else (side puzzles, the other crew logins, eggs, side
+stories) can be done in any order.
+
+| # | Milestone | Needs | Opens | Scene |
 | --- | --- | --- | --- | --- |
-| 0 | Brownout -> powered ship | Prologue: log in as `admin`/`admin`, switch the source to the RTG | Boot banner: "MAINT ACCT DEFAULTS NOT CHANGED - SEE LABEL"; the console warning text names the key | Wrong commands get terse refusals, never a dead end |
-| 1 | Guest -> new caller | Register a handle | WELCOME bulletin: guests read only, ELIZA offers an account | Menu shows register |
-| 2 | New caller -> `TYVANCE` login | P1: Ty's birthday is the password | E01 (birthday in bio), E09 (journal: "I use my birthday for everything"), E02 (TYVANCE flagged VIP, "all decks") | Two independent hints |
-| 3 | `TYVANCE` -> crew area | Automatic: flag CREW, new menu option | E02 (access: all decks), E25 waits in the inbox | Visible unlock |
-| 4 | Crew area -> Achterberg's trail | P6 overpainted ANSI gives `LADDER`; P3 audit log shows his archive | E16 (covered frame), E06 ("ladder" repeated), E19 (archive made 28 Nov) | Three hints |
-| 5 | Trail -> SysOp/ELIZA area | P4: DIAG door; ask the right question by number and the order code from E27 | E26 (which questions she must answer), E30 (query codes), E27 (order code) | Three hints |
-| 6 | ELIZA area -> NOWHERE file system | P9: shell login with the NOWHERE host and the order code | E21 (host NOWHERE-1), E29 (prospectus), E31 (orders answer) | Three hints |
-| 7 | NOWHERE -> transmit | P8: final command; complete manifest | E26 (verb), E30 (syntax), E32 (queue header: destination) | Three parts, none alone |
+| M1 | Power to the RTG | `admin`/`admin`, two minutes (exists) | ELIZA wakes | `ELIZA_WAKE` |
+| M2 | Own account | Power restored (exists) | Act 1: 31 Oct to 22 Nov 13:51 | NEW `ELZ_WELCOME` |
+| M3 | The crew area | `TYVANCE` login, birthday (exists) | Act 2: 22 Nov 13:52 to 1 Dec | `TY_DESK` |
+| M4 | Achterberg's archive | `CHAOS` login, `LADDER`; the jigsaw (order code) hangs off it | Act 3: 2 Dec onward, his last message | `MEM_REC` |
+| M5 | ELIZA's memory damaged | NEW: a post with 255 zeros in a row | ELIZA's lines change | NEW `MEM_GLITCH` |
+| M6 | SYSOP view | NEW: ELIZA grants it in the SysOp chat, once the caller has M5 and has read the handbook page | All areas, all crew mail, the Sponsor's orders in full (catch-up) | NEW `ELZ_GRANT` |
+| M7 | ELIZA's account | NEW: her password is in the go-live checklist, Engineering, SYSOP view | Her door menu, her mail, her ops log | NEW `ELZ_OPS` |
+| M8 | NOWHERE shell | NEW: only from ELIZA's door menu, logged in as ELIZA; the order code stays | The haven tree, the queue, Ty's typescript | (none) |
+| M9 | Ending | Five manifest rows and the final command from three hints (exists) | Ending, 2026 bulletin | `MEM_BAY` (the fight), then `ENDING` |
 
-No step lacks a hint. Steps 2, 3 and 4 have at least two hints each. Step 0 is
-the first thing every caller meets (`.kiro/specs/power-prologue/`); step 1
-starts after ELIZA wakes. P1 has a third hint in E39 (sample names).
+Hard dependencies: M1, M2 in order; M3 needs the Ty birthday from act 1; the
+CMDR password comes from act 2 (so the handbook page, and with it M6, needs
+M3); M7 needs M6; M8 needs M7 and the order code; M9 needs M8 and the
+manifest. M4 is not a hard dependency of M5 to M9: SYSOP view reads the
+Archive and its jigsaw too. M6 is the catch-up stage: a caller who missed a
+crew login or a document can read it there.
 
+SYSOP view is a story flag (`SYSVW`) that opens reading. It never grants the
+real `SYSOP` flag, the SysOp tools, the SysOp page, deleting, editing users
+or any board setting (the engine already refuses to grant `SYSOP`).
+
+### Act gates audit (Q12c, current card against the chain)
+
+Act 1 is open at M2. Act 2 posts and files move behind `ACT2` (set by the
+`TYVANCE` visit). Act 3 behind `ACT3` (set by the `CHAOS` visit). `SYSVW`
+passes every gate. The mechanism is per-post and per-file gating in Q12d
+(`.kiro/specs/milestones/design.md`). Today every one of these is open.
+
+Stays open (act 1), including the unease:
+
+- Lounge: everything dated 2 Nov to 22 Nov 11:00 (the Founder's second
+  forwarded letter, "OFFERING", is the last ordinary-day post), Mission Log
+  Day 2 to 21, Garden Notes Day 3 to 20, Radio Room 5 to 22 Nov 04:05 (the
+  amateur's last message is before the tank) and the 2026 club posts (the
+  board's frozen clock puts them on 8 Dec).
+
+Moves behind `ACT2` (22 Nov 13:52 to 1 Dec):
+
+- Lounge: 22 Nov 15:02 Notice, 17:40 Dinner, 22:41 so that happened, 23:05 Re,
+  23 Nov Module 3 and both replies (E36, E37), 24 Nov rations, 25 Nov Locks,
+  27 Nov Commander Halvorsen and marta, 28 Nov Fourteen, 30 Nov Garden dinner
+  and Re.
+- Mission Log Day 22 to 27 (E05, the fate half). Garden Notes Day 22 to 31
+  (E07, the fate half).
+- Files: the logs and records already need `CREW`, which is `ACT2`'s own
+  trigger; no change. The gallery's Orbit 5 to 8 stay open (art, E12 to E15).
+
+Moves behind `ACT3` (2 Dec onward):
+
+- Lounge: 2 Dec Dr. Tanabe and Re, 3 Dec des? and Re, 7 Dec from the seat
+  (E08), 8 Dec 04:13 power bay.
+
+Matrix effect, per the brief (each fact keeps an open item; where moving one
+breaks it, leave it and list it):
+
+| Fact | Open items before | After the moves | Decision |
+| --- | --- | --- | --- |
+| H-F | E03 E05 E12 | E03 E12 (E05 early posts do not support it) | Holds: two media |
+| H-C | E06 | none: E06's refusals are 25 and 28 Nov | New small wrong note in act 1 (task in `milestones/tasks.md`): Mission Log Day 20, Halvorsen asks for a routine lock cycle and ELIZA answers "priority", with no more. The same word comes back 14 times in E17 |
+| T-F | E03 E07 E13 | E03 E13 | Holds |
+| V-C | E08 E09 E15 | E09 E15 | Holds |
+| V-F | E34 | E34 | Unchanged (ghost) |
+| Z-O | E04 E36 E37 | E04 E06b | Holds (E04 chat, E06b Rack 2) |
+| Z-W | E36 E37 | E06b | Holds: E06b is the existing 19 Nov post, tagged |
+
+If the new Day 20 note is refused by the author, leave "Locks" (25 Nov) open
+instead and list it here. Nothing else breaks the matrix.
+
+Small wrong notes wanted in act 1 (a time that does not fit, a greeting with
+a name missing). Already on the card: the 22 Nov 11:00 forward arrives three
+hours before the tank. Drafts for more are in `.kiro/specs/milestones/content-drafts.md`.
 ## Early game (R7)
 
 - Before the clock starts: the prologue (step 0) takes a few minutes and ends
@@ -432,6 +568,22 @@ whether they lied to her), memory scenes (Halvorsen's last EVA, Tanabe's
 garden at night, Achterberg recording his message, Ty in the capsule, Ty in
 the power bay), side story scenes, the endings.
 
+Scene list after S12c (existing in plain, NEW in capitals; each plays once
+unless noted; all text is draft):
+
+| Scene | Milestone | What |
+| --- | --- | --- |
+| `ELIZA_WAKE` | M1 | The ship wakes; she asks the caller's name |
+| NEW `ELZ_WELCOME` | M2 | Her welcome to a guest with a new account, short |
+| `TY_DESK` | M3 | Ty's login message |
+| `MEM_REC` | M4 | Achterberg recording his last message |
+| NEW `MEM_GLITCH` | M5 | Corrupted memory: fragments out of order, one a moment the caller has not read yet |
+| NEW `ELZ_TALK`, `ELZ_GRANT` | M6 | The SysOp chat as a hub with numbered replies (repeatable), and the grant |
+| NEW `ELZ_OPS` | M7 | Her ops log read in her own words, 7 to 8 Dec |
+| `MEM_EVA`, `MEM_GARDEN`, `MEM_CAPSULE` | side | Halvorsen's last EVA, Tanabe's garden, Ty in the capsule |
+| `MEM_BAY` | M9 | The fight in the power bay, rewritten (S12c) |
+| `ENDING` | M9 | The three endings |
+| `TY_DEMO`, `MANFULL` | side | Ty's demo; the manifest complete |
 ### Easter eggs (tasks X1 to X12 below)
 
 Modem commands, hidden commands, ship fortunes, the POST screen, the Y2K

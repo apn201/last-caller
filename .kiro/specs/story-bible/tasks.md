@@ -132,3 +132,17 @@ work. All wording is draft for the author.
 - [ ] X11. ELIZA's own `README.1ST`, perfectly polite. Q7.
 - [ ] X12. Hidden ANSI by Ty visible only at 300 baud, for jokes as well as
   clues (the overpaint mechanic of E16). Q8, Q11.
+## Group 4 - Milestones (S12c, queue items Q12c and Q12d)
+
+Brief: `docs/briefs/S12c-milestones.md`. Spec: `.kiro/specs/milestones/`. Chain:
+`docs/PUZZLE_CHAIN.md`. Q12c is design only; the rest is Q12d.
+
+- [x] M-1. (Q12c) Ty's last fight, timeline, fates V-F and V-C, unlock chain
+  M1 to M9, scene list and act-gate audit in `design.md`.
+- [ ] M-2. (Q12d) Card: the fight in `POWER.LOG`, `BULKHEAD.LOG`, the shell
+  typescript, `MEM_BAY`; find and fix any card line that still says he acted
+  with his last breath after giving up.
+- [ ] M-3. (Q12d) Card: the overrun post and reply, Archive "blind spot", the
+  handbook page, ENGINEERING, ELIZA's mail and ops log, the new scenes.
+- [ ] M-4. (Q12d) Re-run the matrix check on the real card after the act
+  gates (C9).

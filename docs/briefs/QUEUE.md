@@ -158,6 +158,17 @@ Rules for every item:
   `docs/PLAYTEST.md`. Done when run 4 finishes the game with no fault and
   the staging check passes; note its play time against the 60 to 120
   minute goal.
+- [ ] **Q12c - Milestones, design.** Read `docs/briefs/S12c-milestones.md`
+  and do its Q12c part: story-bible update (Ty's last fight, timeline,
+  fates, unlock chain M1 to M9, scenes), `docs/PUZZLE_CHAIN.md`, the spec
+  `.kiro/specs/milestones/`, content drafts. No engine code. Done when the
+  spec is committed and the story lint still passes on the current card.
+- [ ] **Q12d - Milestones, build.** Build the Q12d part of
+  `docs/briefs/S12c-milestones.md` from `.kiro/specs/milestones/`. The
+  story never grants the real `SYSOP` access flag. Done when lint, the
+  property test, `pio run` and the staging check pass, the e2e plays the
+  new chain, and `playtester` run 5 finishes from a brand-new caller
+  (recorded in `docs/PLAYTEST.md` with play time).
 - [ ] **Q13 - Polish.** Art pass 3 (Ty's tag on his screens, a real
   spacecraft silhouette, decay over the timeline), glitches (S7), the
   1998 marketing copy in README and bulletins, mobile check of the
