@@ -549,7 +549,7 @@ def main():
         for t in ("COMMS.TXT", "README.1ST", "10-28-98"):
             if t not in seg:
                 raise AssertionError("library listing lacks %r" % t)
-        c.send("1")
+        c.send(number_of(c, len(c.all) - 1500, "COMMS.TXT"))
         c.expect("QUERY CODES", timeout=15)
         c.expect("N/P file", timeout=10)
         time.sleep(0.4)
