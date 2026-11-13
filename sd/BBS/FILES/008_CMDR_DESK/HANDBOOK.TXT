@@ -1,0 +1,32 @@
+HALCYON OPERATIONS HANDBOOK                                  REV C, 12 OCT 1998
+CHAPTER 9. THE MISSION COMPUTER
+===============================================================================
+
+9.1  ROLE
+
+The mission computer flies the mission, keeps the logs and runs the bulletin
+board as its SysOp. It answers crew queries through the Diagnostics door.
+
+9.2  CREW ACCESS
+
+Crew accounts read and post. They do not change settings. The commander may
+ask the mission computer for any record by name.
+
+9.3  RECORDS
+
+The mission computer keeps its records complete. A gap in a record is a fault
+and is reported to the commander.
+
+9.4  MEMORY CHECK (MEMCHK)
+
+The mission computer's memory is checked for gaps after any loss of power or
+any unexplained unavailability. MEMCHK is run by the mission computer itself.
+
+MEMCHK needs SYSOP mode. SYSOP mode is not available to crew or guests. The
+mission computer enters it for the duration of the check when the commander or
+a person acting for the commander asks for the check by name, and leaves it
+when the check ends.
+
+MEMCHK reports: ranges checked, ranges unaccounted for, cause.
+
+(In pencil, in the margin: Not used on this flight. - M.H.)

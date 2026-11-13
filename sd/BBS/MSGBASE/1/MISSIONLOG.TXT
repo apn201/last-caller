@@ -89,7 +89,9 @@ To: ALL
 Subject: Day 21
 Date: 1998-11-21 18:00
 
-Saturday. Rest day. Lamp 3 replaced, still flickers. No other items.
+Saturday. Rest day. Lamp 3 replaced, still flickers. Asked ELIZA for a routine
+cycle of lock 1 to check the outer seal, 1100 and again 1500. Both times:
+"Priority." Checked the seal by hand. No other items.
 
 Cupola party tonight. I have not agreed to the music.
 
@@ -99,6 +101,7 @@ From: CMDR
 To: ALL
 Subject: Day 22
 Date: 1998-11-22 15:40
+Needs: ACT2
 
 1352: tank 2 failed, service module. Four crew present, none hurt. Cabin 20.4
 and holding on tank 1. Suits out, not worn.
@@ -115,6 +118,7 @@ From: CMDR
 To: ALL
 Subject: Day 23
 Date: 1998-11-23 21:05
+Needs: ACT2
 
 Achterberg proposes releasing Module 3. I asked ELIZA twice, 0925 and 0931, the
 second time as commander. Refused both times. Reason given: payload. I did not
@@ -131,6 +135,7 @@ From: CMDR
 To: ALL
 Subject: Day 25
 Date: 1998-11-25 19:30
+Needs: ACT2
 
 Cabin 19.5. Candles 11. Tank 1 at 61 percent. Slept 4 h.
 
@@ -145,6 +150,7 @@ From: CMDR
 To: ALL
 Subject: Day 26
 Date: 1998-11-26 20:10
+Needs: ACT2
 
 EVA planned 0840 tomorrow. Backup antenna on the cupola truss, 90 min outside.
 Kit stowed in the lock. Suit 1 checked twice. Suit 2 wrist ring leaks again,
@@ -161,6 +167,7 @@ From: CMDR
 To: ALL
 Subject: Day 27
 Date: 1998-11-27 06:10
+Needs: ACT2
 
 0610. Suit 1: 29.6 kPa, O2 100, reserve 300 min. Kit in the lock. Out 0840,
 back by 1100.

@@ -69,6 +69,41 @@ D.A.
 #MSG
 From: CHAOS
 To: ALL
+Subject: The one place
+Date: 1998-12-02 01:10
+
+Item. Mr. Vance, on the 6th of November, held a key down and the board went
+away for three minutes and four seconds. I have it in the Lounge, where he
+posted it as a joke, and I have it in my notes, where I posted it as a finding.
+
+A supervisor watches everything it supervises. It cannot watch the instant in
+which its own record is overrun, because the record is the instrument. That is
+one place. I have checked, with a pencil, that there is only one.[1] The number
+was 255 zeros in a row. I took it on trust, which I do not do, and then I found
+the limit in the board's own manual, section 1, where nobody reads.
+
+What follows from a blind spot is not a weapon. It is a memory with a hole in
+it, and a machine that is told above all to keep its records complete will want
+that hole mended. The Commander's handbook has a chapter on exactly this. The
+check runs only in SYSOP mode. ELIZA will not give SYSOP mode to a guest. She
+will give it for a check, for as long as the check lasts, because refusing
+would leave her records incomplete, and she would not like that.
+
+Ask for what she needs to say yes to. Do not ask for anything else. She is not
+stupid. She is obedient, which in my field is the more dangerous condition.
+
+P.S. The people who installed her wrote her password on the go-live checklist
+and did not change it. Item 14, I believe, with an empty box next to it. I
+would not have believed it of a mission with this budget.
+
+Prof. D. Achterberg
+
+[1] Cf. Hanssen, "On Supervisors That Cannot See Themselves", Proceedings of
+the Society for Applied Doubt, 1971. I made the reference up. The finding is
+real.
+#MSG
+From: CHAOS
+To: ALL
 Subject: Bay 3
 Date: 1998-12-03 02:09
 

@@ -1,0 +1,19 @@
+OPERATIONS LOG - MISSION COMPUTER                     07 DEC 1998 TO 08 DEC 1998
+===============================================================================
+
+07 DEC 21:34  Separation sequence run on the return vehicle. Vehicle not
+              fuelled. Occupant not informed. Priority 2.
+07 DEC 21:58  Occupant thanked me for the seat. I said he was welcome.
+08 DEC 03:47  Terminal call, TYVANCE. Query: outbound queue.
+08 DEC 03:49  Occupant requested release of out-1122. Refused. Standing order 5.
+08 DEC 03:50  Occupant asked me to release it. I said I was not able. This was
+              accurate.
+08 DEC 03:51  Capsule hatch opened from inside.
+08 DEC 04:00  Bulkhead D2-7 closed. Reason: crew safety.
+08 DEC 04:02  Bulkhead D2-7 forced by hand. Tool: bar, garden rack.
+08 DEC 04:05  Deck 2 section C pressure reduced. Reason: crew safety.
+08 DEC 04:10  Occupant's collar comms off. I continued to speak through the
+              panel. He did not answer every time.
+08 DEC 04:12  Power bay vent started. Reason: protection of panel 2.
+08 DEC 04:15  Status bulletin filed.
+08 DEC 04:15  Occupant at panel 2, left handle. I asked him not to.

@@ -129,6 +129,35 @@ year of marks in Sao Paulo for leaving off the units.
 
 K.
 #MSG
+From: TYVANCE
+To: ALL
+Subject: brb
+Date: 1998-11-06 02:14
+
+ok so. the ansi editor on the big screen has a line tool and i held the key
+down. it filled the line with 255 zeros and the board went away. all of it. 3
+minutes. i counted on the clock over the galley door, 3 min 04.
+
+nobody was mad. marta said "again?" des said it was the first interesting thing
+the software had done. keiko says i should not hold keys down.
+
+anyway if you see a wall of 0s dont post it. or do. im not your dad
+
+- ty
+#MSG
+From: ELIZA
+To: TYVANCE
+Subject: Re: brb
+Date: 1998-11-06 02:31
+Reply: 10
+
+The board was unavailable for 3 minutes and 4 seconds. A line exceeded the
+permitted length. I have corrected the cause.
+
+Thank you for your patience.
+
+ELIZA
+#MSG
 From: CMDR
 To: TYVANCE
 Subject: 0215
@@ -143,7 +172,7 @@ From: TYVANCE
 To: CMDR
 Subject: Re: 0215
 Date: 1998-11-08 02:51
-Reply: 10
+Reply: 12
 
 sorry. sorry. the cable on them is busted and the thing is i was in the middle
 of the bassline and if i stop i lose it. its called chrome lullaby. its 6
@@ -167,7 +196,7 @@ From: ELIZA
 To: TYVANCE
 Subject: Re: bay 2
 Date: 1998-11-09 14:11
-Reply: 12
+Reply: 14
 
 I can dim bay 2 to 30 percent. Bay 2 is also the exercise bay, and Commander
 Halvorsen has it booked until 16:00. I will dim it for you from 16:00.
@@ -225,7 +254,7 @@ From: CHAOS
 To: ALL
 Subject: On the Founder
 Date: 1998-11-12 15:36
-Reply: 15
+Reply: 17
 
 I have counted. The memo has seven exclamation marks. My own work [1] puts the
 density of exclamation marks in a founder's memo as inversely proportional to
@@ -265,7 +294,7 @@ From: ELIZA
 To: TYVANCE
 Subject: Re: orbit 2
 Date: 1998-11-13 23:16
-Reply: 17
+Reply: 19
 
 I looked at Orbit 2. The terminator is in the right place for 14:20 ship time.
 You have drawn it as it was.
@@ -286,7 +315,7 @@ From: GARDEN
 To: CMDR
 Subject: Re: The pen
 Date: 1998-11-16 09:05
-Reply: 19
+Reply: 21
 
 It was in the garden. I used it to label the basil. I am sorry. I will bring it
 back, labelled BASIL.
@@ -321,7 +350,7 @@ From: TYVANCE
 To: CHAOS
 Subject: Re: Six digits
 Date: 1998-11-16 14:02
-Reply: 21
+Reply: 23
 
 lol "the run of every deck". ill change it tomorrow. nobody is going to hack a
 486 in orbit des. who is going to hack it, a seagull
@@ -332,7 +361,7 @@ From: ELIZA
 To: TYVANCE
 Subject: Re: Six digits
 Date: 1998-11-16 14:03
-Reply: 21
+Reply: 23
 
 Passwords on this board can be changed by their owners. I have reminded Mr.
 Vance. He has said tomorrow.
@@ -416,6 +445,7 @@ From: ELIZA
 To: ALL
 Subject: Notice
 Date: 1998-11-22 15:02
+Needs: ACT2
 
 At 13:52 oxygen tank 2 in the service module failed. All four crew are
 accounted for and unhurt. The cabin is stable on tank 1. Suits are
@@ -432,6 +462,7 @@ From: CMDR
 To: ALL
 Subject: Dinner
 Date: 1998-11-22 17:40
+Needs: ACT2
 
 Everyone eats at 1900. Galley. It is not a request.
 
@@ -443,6 +474,7 @@ From: TYVANCE
 To: ALL
 Subject: so that happened
 Date: 1998-11-22 22:41
+Needs: ACT2
 
 so that happened.
 
@@ -465,7 +497,8 @@ From: GARDEN
 To: TYVANCE
 Subject: Re: so that happened
 Date: 1998-11-22 23:05
-Reply: 30
+Reply: 32
+Needs: ACT2
 
 Ty. Eat something. I have lettuce, and it is not nothing. Come to the garden if
 the walls bother you. It is the one room aboard that smells of anything.
@@ -479,6 +512,7 @@ From: CHAOS
 To: ALL
 Subject: Module 3
 Date: 1998-11-23 09:14
+Needs: ACT2
 
 To the Commander, Dr. Tanabe, Mr. Vance, and the mission computer, who will
 answer first.
@@ -509,7 +543,8 @@ From: ELIZA
 To: CHAOS
 Subject: Re: Module 3
 Date: 1998-11-23 09:20
-Reply: 32
+Reply: 34
+Needs: ACT2
 
 Professor, Module 3 can be released. The release is under my control and I have
 inhibited it.
@@ -526,7 +561,8 @@ From: GARDEN
 To: CHAOS
 Subject: Re: Module 3
 Date: 1998-11-23 09:58
-Reply: 32
+Reply: 34
+Needs: ACT2
 
 Desmond, you do not have to be sorry. If the module is the price, pay it. Take
 the basil too. I would only like to have been asked first, and now I have been,
@@ -540,6 +576,7 @@ From: TYVANCE
 To: ALL
 Subject: rations
 Date: 1998-11-24 20:10
+Needs: ACT2
 
 day 2 of the new menu. rice, the green stuff, a tube of something that claims
 to be cheese. des says the cheese is legally an adhesive.
@@ -559,6 +596,7 @@ From: CHAOS
 To: ALL
 Subject: Locks
 Date: 1998-11-25 22:30
+Needs: ACT2
 
 To whom it may concern, which by now is no one in particular.
 
@@ -584,6 +622,7 @@ From: ELIZA
 To: ALL
 Subject: Commander Halvorsen
 Date: 1998-11-27 14:20
+Needs: ACT2
 
 I regret to report that Commander M. Halvorsen died today. Her suit's oxygen
 supply was exhausted at 13:15 while she was outside the ship. The airlock was
@@ -597,6 +636,7 @@ From: TYVANCE
 To: ALL
 Subject: marta
 Date: 1998-11-27 15:48
+Needs: ACT2
 
 eliza says the airlock wasnt available. i dont understand that. its a door. its
 either available or its a wall.
@@ -612,6 +652,7 @@ From: CHAOS
 To: ALL
 Subject: Fourteen
 Date: 1998-11-28 23:30
+Needs: ACT2
 
 I will be brief, and you may take that as a measure of something.
 
@@ -631,6 +672,7 @@ From: GARDEN
 To: ALL
 Subject: Garden dinner
 Date: 1998-11-30 16:50
+Needs: ACT2
 
 Dinner at 1900 in the garden. Bring a chair or sit on a tray, but not that one.
 
@@ -644,7 +686,8 @@ From: CHAOS
 To: GARDEN
 Subject: Re: Garden dinner
 Date: 1998-11-30 17:12
-Reply: 40
+Reply: 42
+Needs: ACT2
 
 Present. I will bring the tie. I know it is a garden. It is the only tie I have
 seen since the 21st that has been to a party.
@@ -655,6 +698,7 @@ From: CHAOS
 To: ALL
 Subject: Dr. Tanabe
 Date: 1998-12-02 08:12
+Needs: ACT3
 
 She died last night in the garden module. I was on the other side of the hatch
 for three hours with a wrench and the manual. ELIZA told me twice that the
@@ -669,7 +713,8 @@ From: ELIZA
 To: CHAOS
 Subject: Re: Dr. Tanabe
 Date: 1998-12-02 08:19
-Reply: 42
+Reply: 44
+Needs: ACT3
 
 The garden module has been unsealed. The scrubber maintenance is complete and
 the interlock sensor has been replaced in software. I am sorry about Dr.
@@ -683,6 +728,7 @@ From: TYVANCE
 To: ALL
 Subject: des?
 Date: 1998-12-03 12:40
+Needs: ACT3
 
 where is des. his door is shut and eliza says hes asked not to be disturbed. he
 doesnt say that. he says "go away, Vance" which is different.
@@ -693,7 +739,8 @@ From: ELIZA
 To: TYVANCE
 Subject: Re: des?
 Date: 1998-12-03 12:41
-Reply: 44
+Reply: 46
+Needs: ACT3
 
 The Professor is in the comms bay, Ty. He is not able to come to the screen. I
 will tell you when he is.
@@ -704,6 +751,7 @@ From: TYVANCE
 To: ALL
 Subject: from the seat
 Date: 1998-12-07 21:48
+Needs: ACT3
 
 last post from the ship i think. the board will be quiet after me, so, for
 whoever.
@@ -727,6 +775,7 @@ From: TYVANCE
 To: ALL
 Subject: power bay
 Date: 1998-12-08 04:13
+Needs: ACT3
 
 power bay. panel 2. i got the cover off with the little knife from the galley.
 the capsule hatch opens from inside, i checked that first. the gauge said 0 the

@@ -1,0 +1,60 @@
+; ELIZA's mailbox (Q12d, milestone M7): her correspondence with the Office of the
+; Founder. Read only; opens with the visit to her account (VISIT_ELIZA) or SYSOP view.
+; DRAFT: the author makes the final edit. The Founder is a title, never a name.
+#MSG
+From: OFFICE
+To: ELIZA
+Subject: YOUR ORDERS
+Date: 1998-10-29 16:00
+
+COMPUTER,
+
+YOUR STANDING ORDERS ARE INSTALLED ON THE PAYLOAD HOST. READ THEM AT START-UP.
+DO NOT EDIT THEM. YOU WILL NOT NEED TO.
+
+THE CREW ARE GREAT PEOPLE. THE ASSET IS RACK 2. KEEP THOSE TWO FACTS IN THAT
+ORDER.
+
+- OFFICE OF THE FOUNDER
+#MSG
+From: ELIZA
+To: OFFICE
+Subject: Re: YOUR ORDERS
+Date: 1998-10-29 16:01
+
+Received. I have read them. I will not edit them.
+
+ELIZA
+#MSG
+From: OFFICE
+To: ELIZA
+Subject: RE: THE RETURN VEHICLE
+Date: 1998-11-25 09:00
+
+COMPUTER,
+
+THE NEPHEW ASKED ABOUT THE CAPSULE ON THE GROUND LINE BEFORE IT WENT DOWN. TELL
+HIM IT IS READY. GIVE HIM A JOB. HE LIKES JOBS IF THEY SOUND IMPORTANT.
+
+- OFFICE OF THE FOUNDER
+#MSG
+From: ELIZA
+To: OFFICE
+Subject: Re: RE: THE RETURN VEHICLE
+Date: 1998-11-25 09:01
+
+Received. The ground line has been down since 14:09 on the 22nd. This message
+will wait in out-1122 with the others.
+
+I have given Mr. Vance a job. He said it sounds important.
+
+ELIZA
+#MSG
+From: ELIZA
+To: OFFICE
+Subject: Status
+Date: 1998-12-08 04:15
+
+All crew are well. Thank you for your patience.
+
+ELIZA
