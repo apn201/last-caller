@@ -34,7 +34,6 @@ static uint32_t historyCount = 0, historyCap = 0;
 static char *historyText = nullptr;
 static uint32_t historyTextLen = 0, historyTextCap = 0;
 static std::vector<String> historyFiles;  // path of each file
-static std::vector<String> historyEchoes; // echo name of each file (its name without .TXT)
 
 static bool isHistory(uint32_t id) { return id >= HISTORY_BASE; }
 // Sort key: history first (in file order), then callers' posts by id.
@@ -144,7 +143,7 @@ static void indexHistoryFile(const String &path, uint8_t conference, uint16_t fi
 // Called from loadSettings(): at boot and on RELOAD.
 static String loadHistory() {
   historyCount = 0; historyTextLen = 0;
-  historyFiles.clear(); historyEchoes.clear();
+  historyFiles.clear();
   if (!sdReady || !bigMemory()) return "no message history";
   File root = SD_MMC.open(HISTORY_ROOT);
   if (!root || !root.isDirectory()) return "no message history";
@@ -174,7 +173,6 @@ static String loadHistory() {
     for (const auto &name : files) {
       if (historyFiles.size() >= 1000) break;
       historyFiles.push_back(dir + "/" + name);
-      historyEchoes.push_back(up(name.substring(0, name.length() - 4)));
       indexHistoryFile(dir + "/" + name, (uint8_t)d.first, historyFiles.size() - 1);
     }
   }
@@ -201,8 +199,4 @@ static String historyBody(uint32_t id) {
   }
   while (out.endsWith("\n")) out.remove(out.length() - 1);
   return out;
-}
-static String historyEcho(uint32_t id) {
-  if (!isHistory(id) || id - HISTORY_BASE >= historyCount) return "";
-  return historyEchoes[historyMsgs[id - HISTORY_BASE].file];
 }
