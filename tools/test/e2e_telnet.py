@@ -238,6 +238,22 @@ def pick_file_area(c, name):
     return len(c.all)
 
 
+def read_tune(c, num, title, last):
+    """File command? -> open a tune: its text view shows the title, and the sample names down to `last`."""
+    c.send(str(num))
+    c.expect(title, timeout=15)
+    for _ in range(4):
+        if last.lower() in c.buf.lower():
+            break
+        c.expect("N/P file", timeout=10)
+        key(c, " ")
+        time.sleep(0.4)
+        c._pump()
+    else:
+        raise AssertionError("the text view of %r never showed %r: %r" % (title, last, c.buf[-300:]))
+    key(c, "q")
+    c.expect("File command?", timeout=15)
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, required=True)
@@ -654,7 +670,12 @@ def main():
         open_file(c, number_of(c, pos - 3000, "ORBIT_6.ANS"), "HANAMI")
         for name in ("ORBIT_4.ANS", "ORBIT_7.ANS", "ORBIT_8.ANS"):
             open_file(c, number_of(c, pos - 3000, name), name[:7].replace("_", " "))
-
+        # Q10: Ty's tunes are in the gallery, dated; over Telnet they open as a text view of the module header.
+        for t in ("SUNSIDE.MOD", "THERMO.MOD", "11-09-98", "11-05-98"):
+            if t not in seg:
+                raise AssertionError("gallery lacks %r" % t)
+        read_tune(c, number_of(c, pos - 3000, "SUNSIDE.MOD"), "sunside - tyv 98", "she dimmed the lights")
+        read_tune(c, number_of(c, pos - 3000, "THERMO.MOD"), "thermostat blues", "he wont get it")
     @step("act 2: Orbit 3 shows a portrait; the covered row appears only while it plays")
     def act2_overpaint():
         c = state["c"]
@@ -839,6 +860,7 @@ def main():
         advance(c, "Main Board Command?", timeout=150)
         pos = pick_file_area(c, "Ty's Desktop")
         open_file(c, number_of(c, pos - 3000, "ORBIT_9.ANS"), "ORBIT 9")
+        read_tune(c, number_of(c, pos - 3000, "HARBOUR.MOD"), "harbour (not done)", "bay 3 is so quiet")
         c.send("Q")
         c.expect("File area?", timeout=10)
         c.send("Q")

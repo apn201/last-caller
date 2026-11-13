@@ -104,6 +104,14 @@ if echo "$BOARD" | grep -q 'HALCYON'; then note PASS "/api/board names the board
 CODE="$(curl -s -m 5 -o "$STAGE/page.html" -w '%{http_code}' "http://127.0.0.1:$HTTP_PORT/")"
 if [ "$CODE" = "200" ] && grep -qi '<html' "$STAGE/page.html"; then note PASS "terminal page (HTTP 200)"; else note FAIL "terminal page (HTTP $CODE)"; fi
 rm -f "$STAGE/page.html"
+# Cues (Q10): a sound file is served, an unknown name and a path trick are not.
+CODE="$(curl -s -m 5 -o "$STAGE/cue.wav" -w '%{http_code} %{content_type}' "http://127.0.0.1:$HTTP_PORT/sfx/CHIRP.WAV")"
+if [ "${CODE%% *}" = "200" ] && [ "${CODE#* }" = "audio/wav" ] && [ "$(head -c 4 "$STAGE/cue.wav")" = "RIFF" ]; then note PASS "/sfx/CHIRP.WAV is a WAV (HTTP $CODE)"; else note FAIL "/sfx/CHIRP.WAV (HTTP $CODE)"; fi
+rm -f "$STAGE/cue.wav"
+CODE="$(curl -s -m 5 -o /dev/null -w '%{http_code}' "http://127.0.0.1:$HTTP_PORT/sfx/NOSUCH.WAV")"
+if [ "$CODE" = "404" ]; then note PASS "/sfx/NOSUCH.WAV is 404"; else note FAIL "/sfx/NOSUCH.WAV (HTTP $CODE)"; fi
+CODE="$(curl -s -m 5 --path-as-is -o /dev/null -w '%{http_code}' "http://127.0.0.1:$HTTP_PORT/sfx/../CONFIG/SYSTEM.WAV")"
+if [ "$CODE" = "404" ]; then note PASS "/sfx path trick is 404"; else note FAIL "/sfx path trick (HTTP $CODE)"; fi
 
 # 7. End-to-end over Telnet.
 say "end-to-end"
