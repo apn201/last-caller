@@ -181,14 +181,27 @@ def sync(c):
 
 
 def read_msg(c, n, marker):
-    """Message command? -> read message n, see `marker`, back to Message command?."""
+    """Message command? -> read message n (a number, or a subject from the list R shows), see `marker`."""
+    start = len(c.all)
     c.send("R")
     c.expect("Read #", timeout=10)
+    if isinstance(n, str):
+        rows = re.findall(r"^\s*\*?\s*(\d+)\s.*?" + re.escape(n) + r"\s*$", c.all[start:], re.M)
+        if not rows:
+            raise AssertionError("no message %r in the list: %r" % (n, c.all[start:][-600:]))
+        n = rows[-1]
     c.send(str(n))
     c.expect(marker, timeout=15)
-    time.sleep(0.4)
-    c.send("Q")
+    # Short messages end on a line prompt; long ones open the reader, which takes single keys.
+    hit = c.expect("ENTER = next", "Q quit", timeout=10)
+    time.sleep(0.3)
+    if hit == "Q quit":
+        key(c, "q")
+    else:
+        c.send("Q")
     c.expect("Message command?", timeout=10)
+    c.buf = ""
+    time.sleep(0.3)
 
 
 def pick_area(c, name):
@@ -604,11 +617,11 @@ def main():
                           (42, "I will not make a joke"), (46, "my name is on it")):
             read_msg(c, n, marker)
         pick_area(c, "Mission Log")
-        read_msg(c, 13, "Vance made coffee")
+        read_msg(c, "Day 27", "Vance made coffee")
         pick_area(c, "Garden Notes")
-        read_msg(c, 11, "write to my mother")
+        read_msg(c, "Day 31", "write to my mother")
         pick_area(c, "Radio Room")
-        read_msg(c, 10, "porch light")
+        read_msg(c, "Porch light", "porch light")
         pick_area(c, "Lounge")
         c.send("Q")
         c.expect("Main Board Command?", timeout=15)
@@ -625,8 +638,9 @@ def main():
         if "ORBIT_9" in seg:
             raise AssertionError("Ty's desktop picture is in the public gallery")
         open_file(c, number_of(c, pos - 3000, "JOURNAL2.TXT"), "SPACE JOURNAL 2")
+        start = len(c.all)
         open_file(c, number_of(c, pos - 3000, "ORBIT_5.ANS"), "ORBIT 5")
-        if "ANDERS" not in c.all[-1500:]:
+        if "ANDERS" not in c.all[start:]:
             raise AssertionError("Orbit 5 does not show the patch")
         open_file(c, number_of(c, pos - 3000, "ORBIT_6.ANS"), "HANAMI")
         for name in ("ORBIT_4.ANS", "ORBIT_7.ANS", "ORBIT_8.ANS"):
@@ -722,7 +736,7 @@ def main():
     @step("act 2: CMDR opens with ANDERS; her mailbox holds the last message from the airlock")
     def act2_cmdr():
         crew_session("CMDR", "ANDERS", "BETTY", "")
-        mailbox("Mail: CMDR", 4, "wrist unit")
+        mailbox("Mail: CMDR", "the lock", "wrist unit")
 
     @step("act 2: GARDEN opens with HANAMI; her mailbox holds the queued reply and the last letter")
     def act2_garden():
@@ -738,7 +752,7 @@ def main():
         c.expect("Password:")
         c.send("HANAMI")
         advance(c, "Main Board Command?", timeout=60)
-        mailbox("Mail: GARDEN", 6, "Itte kimasu")
+        mailbox("Mail: GARDEN", "sensor", "Itte kimasu")
 
     @step("act 2: CHAOS opens with LADDER; the Archive conference and its files open")
     def act2_chaos():
@@ -754,7 +768,7 @@ def main():
         c.expect("Password:")
         c.send("LADDER")
         advance(c, "Main Board Command?", timeout=60)
-        mailbox("Archive", 1, "got through a lock")
+        mailbox("Archive", "To whoever comes after", "got through a lock")
 
     @step("act 2: back as yourself: the visits are carried; the Archive, its order in four pieces, and Bay 3")
     def act2_archive():
@@ -773,14 +787,8 @@ def main():
         pick_area(c, "Mail: GARDEN")
         pick_area(c, "Mail: CMDR")
         pick_area(c, "Archive")
-        read_msg(c, 2, "torn it into four")
-        c.send("R")
-        c.expect("Read #", timeout=10)
-        c.send("4")
-        c.expect("tell them the", timeout=15)
-        time.sleep(0.4)
-        c.send("Q")
-        c.expect("Message command?", timeout=10)
+        read_msg(c, "The order", "torn it into four")
+        read_msg(c, "Bay 3", "tell them the")
         # the Bay 3 memory scene plays at the next calm prompt, then the main menu is back
         advance(c, "tell them the", timeout=150)
         time.sleep(0.3)
