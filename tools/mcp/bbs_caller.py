@@ -33,10 +33,12 @@ import sys
 import threading
 import time
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from telnet_wire import ANSI, strip_iac  # noqa: E402
+
 HOST = os.environ.get("BBS_HOST", "127.0.0.1")
 PORT = int(os.environ.get("BBS_PORT", "12323"))
 CTL_PORT = int(os.environ.get("BBS_CTL_PORT", "12399"))
-ANSI = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 MAX_RETURN = 12000
 
 
@@ -51,6 +53,14 @@ class Caller:
         self.lock = threading.Lock()
 
     # ---- wire
+    def _refuse(self, verb, option):
+        # refuse every option politely: DO -> WONT, WILL -> DONT
+        if verb in (253, 251):
+            try:
+                self.sock.sendall(bytes([255, 252 if verb == 253 else 254, option]))
+            except OSError:
+                pass
+
     def _pump(self, wait):
         if self.sock is None:
             return False
@@ -65,38 +75,11 @@ class Caller:
         if not data:
             self.eof = True
             return False
-        raw = bytes(self.iac) + data
-        self.iac = bytearray()
-        out = bytearray()
-        i = 0
-        while i < len(raw):
-            if raw[i] == 255:
-                if i + 1 >= len(raw):
-                    self.iac = bytearray(raw[i:])
-                    break
-                verb = raw[i + 1]
-                if verb == 255:
-                    out.append(255)
-                    i += 2
-                elif verb >= 251:
-                    if i + 2 >= len(raw):
-                        self.iac = bytearray(raw[i:])
-                        break
-                    # refuse every option politely: DO -> WONT, WILL -> DONT
-                    if verb in (253, 251):
-                        try:
-                            self.sock.sendall(bytes([255, 252 if verb == 253 else 254, raw[i + 2]]))
-                        except OSError:
-                            pass
-                    i += 3
-                else:
-                    i += 2
-                continue
-            out.append(raw[i])
-            i += 1
+        out, rest = strip_iac(bytes(self.iac) + data, self._refuse)
+        self.iac = bytearray(rest)
         # Decode across chunk edges (a multi-byte character may be split) and keep the raw text:
         # colour codes are removed in _collect, once a code cannot be cut in half any more.
-        self.raw += self.dec.decode(bytes(out)).replace("\r", "")
+        self.raw += self.dec.decode(out).replace("\r", "")
         return True
 
     def _collect(self, quiet_ms, max_ms):

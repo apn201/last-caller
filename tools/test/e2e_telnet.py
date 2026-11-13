@@ -12,13 +12,16 @@ step failed. Caller-visible wording is draft, so the markers matched here are
 short and few; change them with the text.
 """
 import argparse
+import os
 import random
 import re
 import socket
 import sys
 import time
 
-ANSI = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from telnet_wire import ANSI, strip_iac  # noqa: E402
+
 results = []
 
 
@@ -47,29 +50,8 @@ class Conn:
             self.eof = True
             return
         # Strip Telnet negotiation (IAC x y) before decoding.
-        raw = bytes(self.iac) + data
-        self.iac = bytearray()
-        out = bytearray()
-        i = 0
-        while i < len(raw):
-            if raw[i] == 255:
-                if i + 1 >= len(raw):
-                    self.iac = bytearray(raw[i:])
-                    break
-                verb = raw[i + 1]
-                if verb == 255:
-                    out.append(255)
-                    i += 2
-                elif verb >= 251:
-                    if i + 2 >= len(raw):
-                        self.iac = bytearray(raw[i:])
-                        break
-                    i += 3
-                else:
-                    i += 2
-                continue
-            out.append(raw[i])
-            i += 1
+        out, rest = strip_iac(bytes(self.iac) + data)
+        self.iac = bytearray(rest)
         text = ANSI.sub("", out.decode("utf-8", "replace")).replace("\r", "")
         self.buf += text
         self.all += text
