@@ -621,7 +621,7 @@ def main():
         for n, marker in ((27, "HANDLES IT"), (32, "Tank 2 held forty percent"), (33, "inhibited it"),
                           (37, "Commander M. Halvorsen died"), (39, "fourteen requests"),
                           (42, "I will not make a joke"), (46, "my name is on it"),
-                          (47, "left handle first")):
+                          (47, "little knife")):
             read_msg(c, n, marker)
         pick_area(c, "Mission Log")
         read_msg(c, "Day 27", "Vance made coffee")
