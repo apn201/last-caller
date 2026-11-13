@@ -210,6 +210,28 @@ Rules for every item:
   staging check pass with the e2e count unchanged, and the tick lists lines
   removed and added, RAM and flash before and after, what was archived, and
   any bugs found.
+- [ ] **Q15b - Refactor pass, code.** Finish tasks 7 and 8 of
+  `.kiro/specs/refactor/` under the same rules as `docs/briefs/Q15-refactor.md`
+  (no change to caller output, no edit to card story text, ESP32 RAM and
+  flash reported before and after). Work through every area, one commit
+  each, building and running host tests and story lint after each: (1)
+  repetition in `tools/ansi/screens/` into `_common.py`; (2) Python helpers
+  duplicated across `tools/story_lint.py`, `tools/bbscard.py`,
+  `tools/test/e2e_telnet.py`, `tools/mcp/bbs_caller.py` and the other tools
+  into one shared module; (3) shell functions in `deploy/` into
+  `deploy/lib.sh` (`bash -n` on every script); (4) door boilerplate and the
+  `*_logic.h` helpers in `src/`, menu, prompt, INI and flag code repeated
+  across `src/bbs` and `src/doors`; (5) long functions split, deep nesting
+  flattened, magic numbers named; (6) dead-code scan beyond functions:
+  `SYSTEM.INI` and `STORY/*.INI` keys the code never reads (and code reading
+  keys no card has), routes, CSS and JS in `shared/web/`, scripts in `tools/`
+  nothing calls, each removal with the search that proves it. Prefer doing
+  all six in this run; if one cannot be finished, finish the others, run the
+  staging check, and tick it PARTIAL naming exactly what is left. Done when
+  `pio run`, host tests, story lint and the staging check pass with the e2e
+  count unchanged, and the tick gives commit range, lines removed and added
+  per area, RAM and flash before and after, and any bugs found (listed, not
+  fixed).
 - [ ] **Q16 - Launch prep.** Brief: `docs/briefs/Q16-launch.md` (Claude
   Code, 13 Nov 2026). Docs truth pass before the repo goes public (README,
   content policy, notices, counted numbers in DEVPOST.md, secret check),
