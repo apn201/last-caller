@@ -141,7 +141,7 @@ python3 "$SRC/tools/test/e2e_telnet.py" --port "$TELNET_PORT" --timer "$TIMER" -
 if [ "${PIPESTATUS[0]}" -eq 0 ]; then note PASS "end-to-end Telnet test ($(tail -1 "$STAGE/e2e.out"))"; else note FAIL "end-to-end Telnet test ($(tail -1 "$STAGE/e2e.out"))"; fi
 
 # 7b. The event log must hold no failure: flags that did not fit or were not saved, broken story files.
-if grep -E "\|(TRIGGER_FULL|TRIGGER_FAIL|SCENE_FAIL|SCENE_SKIP|GHOST_FAIL|MANIFEST_FAIL|MANIFEST_SKIP|SHELL_FAIL|DIAG_FAIL|TRIGGER_SKIP|GHOST_SKIP|ACCOUNT_SKIP|ACCOUNT_FAIL|STORY_FULL|STORY_FAIL)\|" "$CARD/BBS/LOGS/EVENTS.LOG"; then note FAIL "event log holds story failures (listed above)"; else note PASS "event log: no story failures"; fi
+if grep -E "\|(TRIGGER_FULL|TRIGGER_FAIL|SCENE_FAIL|SCENE_SKIP|GHOST_FAIL|MANIFEST_FAIL|MANIFEST_SKIP|SHELL_FAIL|DIAG_FAIL|TRIGGER_SKIP|GHOST_SKIP|ACCOUNT_SKIP|ACCOUNT_FAIL|GLITCH_SKIP|STORY_FULL|STORY_FAIL)\|" "$CARD/BBS/LOGS/EVENTS.LOG"; then note FAIL "event log holds story failures (listed above)"; else note PASS "event log: no story failures"; fi
 
 # 8. Server still alive and quiet.
 if kill -0 "$SERVER_PID" 2>/dev/null; then note PASS "server survived the run"; else note FAIL "server died during the run"; tail -20 "$LOG"; fi

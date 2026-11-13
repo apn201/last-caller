@@ -1,5 +1,23 @@
 # Last Caller
 
+> **HALCYON.** A real-time multi-user science fiction horror experience.
+> A puzzle game like no other, powered by state-of-the-art bulletin board
+> technology.
+>
+> Dial in. Wake the ship. Find out what happened to the crew of the first
+> private spaceflight.
+>
+> - Up to 32 simultaneous callers (eight on the stick)
+> - ANSI graphics
+> - Digital sound
+> - Over a dozen interactive screens, one very polite computer
+> - Requires a modem and nerves of steel
+>
+> *Works on any VT100 compatible terminal or Netscape Navigator 4. Best
+> viewed at 800x600. Some features may not be available in all regions of
+> cyberspace. Draft copy: the author makes the final edit.*
+
+Below the copy, the facts.
 A 1990s-style BBS running on a $10 ESP32-S3 USB dongle, the
 [Pocket-Dongle-S3](https://www.aliexpress.com/item/1005008896509314.html). No
 Internet, no modem, no phone line. The board makes its own WiFi network and

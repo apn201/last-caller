@@ -28,6 +28,7 @@
 #include "core/haunt.h"
 #include "core/scene.h"
 #include "core/ghost.h"
+#include "core/glitch.h"
 #include "bbs/menus.h"
 #include "bbs/files.h"
 #include "bbs/zip.h"

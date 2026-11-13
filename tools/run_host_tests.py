@@ -22,6 +22,7 @@ TESTS = {   # name -> arguments (the card's own files)
     "egg_logic_test": [],
     "wrap_logic_test": [],
     "overrun_logic_test": [],
+    "glitch_logic_test": [os.path.join(STORY, "GLITCH.INI")],
     "power_logic_test": [],
     "modinfo_logic_test": [],
     "haunt_logic_test": [os.path.join(STORY, "TRIGGERS.INI")],

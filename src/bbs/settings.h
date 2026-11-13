@@ -86,6 +86,7 @@ static uint8_t iniLevel(const Ini &ini, const String &section) {
 static String loadFileAreas();  // bbs/files.h
 static String loadTriggers();   // core/haunt.h
 static String loadGhosts();     // core/ghost.h
+static void loadGlitches();     // core/glitch.h
 static String loadManifest();   // doors/manifest.h
 static String loadSettings() {
   BoardSettings b;
@@ -168,6 +169,7 @@ static String loadSettings() {
   loadPower();  // STORY/POWER.INI
   String triggers = loadTriggers();  // STORY/TRIGGERS.INI
   String ghosts = loadGhosts();      // STORY/GHOSTS.INI, STORY/SYSOP.INI
+  loadGlitches();                    // STORY/GLITCH.INI
   String manifestInfo = loadManifest();  // STORY/MANIFEST.INI
   String areas = loadFileAreas();
   String history = loadHistory();

@@ -30,6 +30,7 @@ template <typename F> static void bbsTick(F transports) {
   hauntTick(now);
   sceneTick(now);
   ghostTick(now);
+  glitchTick(now);
   for (auto &s : sessions) {
     if (!s.used) continue;
     uint32_t idleLimit = s.authenticated ? 30UL * 60UL * 1000UL : LOGIN_TIMEOUT_MS;

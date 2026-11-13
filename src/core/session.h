@@ -136,6 +136,8 @@ struct Session {
   scene::Player sceneRun;  // core/scene.h: the scene being played (state SCENE_PLAY)
   snake::Game snake;       // doors/snake.h: the game in progress (state SNAKE_PLAY)
   uint32_t hauntIdleSec = 0, hauntMinute = 0;
+  uint32_t glitchAt = 0;   // when this caller last saw a glitch (core/glitch.h); 0 = none yet
+  size_t glitchNext = 0;   // which glitch is next
   // Ghosts and ELIZA's voice (core/ghost.h): when the caller signed in, answers
   // waiting to be "typed" in chat, and how many fallback lines were used.
   uint32_t signedAt = 0, ghostTurn = 0;
