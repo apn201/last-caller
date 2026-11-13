@@ -39,3 +39,34 @@ target_link_libraries(tinybbs-server PRIVATE tinybbs-miniz ${MBEDCRYPTO_LIBRARY}
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   target_link_libraries(tinybbs-server PRIVATE pthread)
 endif()
+
+# ---- Property and logic tests (queue item Q12) ----------------------------------------
+# Host tests of the shared logic headers (src/core/*_logic.h). They include no Arduino
+# or Linux headers, so they build and run the same here as on the stick's PC. Each test
+# that takes card files gets the card's own, so a broken story file fails the build's
+# `ctest`. The last test is the story lint (tools/story_lint.py, needs python3).
+enable_testing()
+set(TB_STORY ${CMAKE_CURRENT_SOURCE_DIR}/../sd/BBS/STORY)
+file(GLOB TB_SCENES ${TB_STORY}/SCENES/*.INI)
+set(TB_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../tools/test)
+function(tb_logic_test name)
+  add_executable(${name} ${TB_TEST_DIR}/${name}.cpp)
+  target_compile_features(${name} PRIVATE cxx_std_17)
+  target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src/core)
+  target_compile_options(${name} PRIVATE -Wall -Wextra)
+  add_test(NAME ${name} COMMAND ${name} ${ARGN})
+endfunction()
+tb_logic_test(egg_logic_test)
+tb_logic_test(power_logic_test)
+tb_logic_test(modinfo_logic_test)
+tb_logic_test(haunt_logic_test ${TB_STORY}/TRIGGERS.INI)
+tb_logic_test(manifest_logic_test ${TB_STORY}/MANIFEST.INI)
+tb_logic_test(ghost_logic_test ${TB_STORY}/GHOSTS.INI ${TB_STORY}/SYSOP.INI)
+tb_logic_test(scene_logic_test ${TB_SCENES})
+tb_logic_test(shell_logic_test ${TB_STORY}/SHELL.INI)
+tb_logic_test(story_property_test ${TB_STORY}/TRIGGERS.INI ${TB_STORY}/MANIFEST.INI)
+find_program(TB_PYTHON NAMES python3 python)
+if(TB_PYTHON)
+  add_test(NAME story_lint
+           COMMAND ${TB_PYTHON} ${CMAKE_CURRENT_SOURCE_DIR}/../tools/story_lint.py --card ${CMAKE_CURRENT_SOURCE_DIR}/../sd/BBS)
+endif()
