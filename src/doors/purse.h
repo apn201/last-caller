@@ -1,5 +1,5 @@
 #pragma once
-// The shared purse (gold and bank) and the Legend record it grew from. The Legend
+// purse.h: the shared purse (gold and bank) and the Legend record it grew from. The Legend
 // and dice doors are gone from the door table and the code; this keeps the files
 // VolaMUD and the SysOp's user editor still read and write (DATA/DOORS/WALLET.DAT,
 // KOUVQUEST.DAT). Depends on core/session.h (Quest, Wallet) and core/storage.

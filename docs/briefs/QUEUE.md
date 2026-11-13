@@ -232,6 +232,7 @@ Rules for every item:
   count unchanged, and the tick gives commit range, lines removed and added
   per area, RAM and flash before and after, and any bugs found (listed, not
   fixed).
+  Q15b answer (Juha): `src/doors/legend.h` renamed to `purse.h` with `git mv`; include, header comment and every doc reference updated; data files and function names unchanged. `pio run`, host tests and staging check pass.
 - [ ] **Q16 - Launch prep.** Brief: `docs/briefs/Q16-launch.md` (Claude
   Code, 13 Nov 2026). Docs truth pass before the repo goes public (README,
   content policy, notices, counted numbers in DEVPOST.md, secret check),

@@ -35,7 +35,7 @@ work.
 1. THE `DOORS` table SHALL contain VolaMUD and no Legend or Dice row.
 2. THE `[DOORS]` section of `SYSTEM.INI` SHALL name VolaMUD only.
 3. THE door menu SHALL list only doors that work.
-4. WHERE VolaMUD uses the shared purse in `legend.h`, THE code it needs
+4. WHERE VolaMUD uses the shared purse in `purse.h`, THE code it needs
    SHALL stay compiled.
 5. WHEN no reachable code uses the two Legend door art files in `ANSI/DOORS`, THE files SHALL be deleted.
 
@@ -54,7 +54,7 @@ work.
 
 ### 5. Code strings
 
-1. THE caller-visible strings in `volamud.h`, `legend.h`, `sysop.h` and
+1. THE caller-visible strings in `volamud.h`, `purse.h`, `sysop.h` and
    `user_editor.h` SHALL use neutral wording.
 2. THE built-in LCD splash SHALL not show the old name.
 3. THE help text of `tools/make-lcd-logo.py` SHALL not show the old name.

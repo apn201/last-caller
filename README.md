@@ -114,7 +114,7 @@ order, as one translation unit:
 | --- | --- |
 | `src/core` | Globals, helpers, the board clock, SD storage and INI reader, users, message store, message history from the card, sessions, paced output, the reader |
 | `src/bbs` | Settings, menus, file areas, ZIP reading, viewers, uploads, messages, SysOp tools and user editor, login, one `cmd_*.h` per command area, CP437 conversion |
-| `src/doors` | VolaMUD, the shared purse (`legend.h`), `doors.h`, the door table |
+| `src/doors` | VolaMUD, the shared purse (`purse.h`), `doors.h`, the door table |
 | `src/net` | Browser terminal and SysOp file manager pages (compiled into flash), HTTP and WebSocket routes, Telnet |
 | `src/hw` | Status LCD and the splash logo as DOS palette indexes |
 
@@ -260,7 +260,7 @@ and `SELL` cover the current small inventory: boots, blade, shield, rings,
 amulet and the Black Crown. Worn loot changes HP or combat. The Black Crown
 is a task item, held by seeded Lord Korja at `13,-8`.
 Gold and bank funds are a purse kept by the shared door code in
-`src/doors/legend.h` (all that is left of the Legend door). It is a playable vertical slice rather than a deep MUD:
+`src/doors/purse.h` (all that is left of the Legend door). It is a playable vertical slice rather than a deep MUD:
 there is no inventory UI, trading economy, party system, NPC memory or
 multi-stage quest engine yet. See [`docs/VOLA_MUD.md`](docs/VOLA_MUD.md).
 

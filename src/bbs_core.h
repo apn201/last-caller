@@ -37,7 +37,7 @@
 #include "bbs/accounts.h"
 #include "bbs/eggs.h"
 #include "doors/volamud.h"
-#include "doors/legend.h"
+#include "doors/purse.h"
 #include "doors/ship.h"
 #include "doors/diag.h"
 #include "doors/shell.h"

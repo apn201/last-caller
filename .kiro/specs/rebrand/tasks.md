@@ -10,7 +10,7 @@
   - [x] 2.2 Delete the two Legend door art files if unused (R2.5)
 - [x] 3. Code
   - [x] 3.1 Remove Legend and Dice rows from `doors.h` (R2)
-  - [x] 3.2 Neutral wording in `volamud.h`, `legend.h`, `sysop.h`, `user_editor.h`, `WORLD.TXT` (R5)
+  - [x] 3.2 Neutral wording in `volamud.h`, `purse.h`, `sysop.h`, `user_editor.h`, `WORLD.TXT` (R5)
   - [x] 3.3 Neutral LCD splash in `scene_logo.h` (R5)
   - [x] 3.4 Fix `make-lcd-logo.py` help text (R5)
   - [x] 3.5 Run `pio run` (R5, R7)

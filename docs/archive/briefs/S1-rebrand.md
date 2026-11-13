@@ -41,10 +41,10 @@ Card (`sd/BBS/`):
 
 Code (small edits only, both builds must still compile):
 - `src/doors/doors.h`: remove the Legend and Dice rows from `DOORS`. The
-  shared purse in `legend.h` is also used by VolaMUD, so keep what VolaMUD
+  shared purse in `purse.h` is also used by VolaMUD, so keep what VolaMUD
   needs compiled; only the door entries go.
 - Old place names in caller-visible strings in `src/doors/volamud.h`,
-  `src/doors/legend.h`, `src/bbs/sysop.h`, `src/bbs/user_editor.h`: neutral
+  `src/doors/purse.h`, `src/bbs/sysop.h`, `src/bbs/user_editor.h`: neutral
   wording (for example "Black Crown", "the Bank"). No new story content.
 - `src/hw/scene_logo.h`: the built-in splash says the old name. Replace it
   with a neutral splash, or make the LCD fall back to the card logo.

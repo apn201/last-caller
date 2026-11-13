@@ -96,7 +96,7 @@ content removed. Everything after it should be visibly Kiro work.
   name replaced and the colours drained (greys, one dark red).
 - Door names: keep VolaMUD (becomes the explorable "deck plan" or "house" later),
   drop Legend and Dice unless the story wants them. Code strings in
-  `src/doors/doors.h`, `dice.h`, `legend.h`, `src/bbs/sysop.h`,
+  `src/doors/doors.h`, `dice.h`, `purse.h`, `src/bbs/sysop.h`,
   `user_editor.h`, `src/hw/scene_logo.h`.
 - README rewritten for Last Caller. `docs/CONTENT_POLICY.md` replaces the old
   curation policy: everything is original, listed with source.

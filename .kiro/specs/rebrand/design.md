@@ -17,17 +17,17 @@ features, no new story.
   (31) accent. Menu option areas are left alone, so `MENUS.INI` row/col
   stays valid. The script is run once and not committed.
 - The two Legend door art files in `ANSI/DOORS` are deleted after `git grep` shows
-  only `legend.h` reaches them. Because `legend.h` stays compiled for the
+  only `purse.h` reaches them. Because `purse.h` stays compiled for the
   purse, its `art()` call is reachable only through the removed door row;
   the call is kept harmless or removed if the build needs it.
 
 ## Code
 
-- `src/doors/doors.h`: remove the `LK` and `D` rows. `legend.h` and
+- `src/doors/doors.h`: remove the `LK` and `D` rows. `purse.h` and
   `dice.h` stay included so shared purse functions compile. Check that
   nothing else refers to the removed rows (state enum, sysop door
   settings).
-- Strings: Old place names in `volamud.h`, `legend.h`, `sysop.h`,
+- Strings: Old place names in `volamud.h`, `purse.h`, `sysop.h`,
   `user_editor.h` become neutral ("Black Crown", "the Bank", "the Hall").
   `WORLD.TXT` on the card gets the same treatment.
 - `scene_logo.h`: replace the pixel data with a neutral splash by making
