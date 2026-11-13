@@ -143,7 +143,7 @@ Rules for every item:
   host is fine), and the `playtester` agent must actually finish the game
   through it; record a transcript summary in `docs/PLAYTEST.md`. Check
   the current Kiro formats for agents, hooks and MCP config; do not guess.
-- [ ] **Q12b - Playtest fixes.** Fix open items 1 to 5 in
+- [x] **Q12b - Playtest fixes.** (done, 6b2e3b8..HEAD of the Q12b commits plus the tick; `pio run` passes, host tests pass with `zig c++` (new `wrap_logic_test`), story lint clean with the new open-sources check, staging check PASS on 048bbcc: server build, ctest, smoke, e2e 55 passed, 0 failed, 0 skipped, event log clean. Run 4c finished the game from a brand-new caller (ending 1) over two agent sessions on one account, about 210 tool calls; run 4 reached the ending scene in about 245 calls, which the agent put at 90 minutes of reading, inside the 60 to 120 minute goal (an agent estimate, not a timed human). No dead end; the display oddities left are in `docs/PLAYTEST.md`. The card texts were rewrapped to 78 columns. All new caller-visible lines are drafts.) Fix open items 1 to 5 in
   `docs/PLAYTEST.md`: a wrong login name at the brownout prompt gets one
   in-world hint line; ELIZA's last blank gets a visible in-world source
   for a fresh account (an ELIZA line or the notebook pointing at where the
