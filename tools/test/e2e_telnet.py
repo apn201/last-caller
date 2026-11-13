@@ -214,9 +214,14 @@ def pick_area(c, name):
 
 
 def open_file(c, num, marker):
-    """File command? -> open file `num`, see `marker`, q back to the list."""
+    """File command? -> open file `num`, see `marker`, q back to the list. A plain-text
+    view of an ANSI picture may wrap a row, so the marker is looked for with line breaks removed."""
     c.send(str(num))
-    c.expect(marker, timeout=15)
+    end = time.time() + 15
+    while marker.lower() not in c.buf.replace("\n", "").lower():
+        if time.time() > end:
+            raise TimeoutError("timed out waiting for %r; last text: %r" % (marker, c.buf[-300:]))
+        c._pump()
     c.expect("N/P file", timeout=10)
     time.sleep(0.4)
     key(c, "q")

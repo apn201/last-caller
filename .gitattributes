@@ -3,3 +3,9 @@
 
 *.sh text eol=lf
 *.py text eol=lf
+
+# ANSI art is CRLF on the card (a bare LF only moves down a row): keep the bytes as they are
+*.ANS -text
+*.ans -text
+*.ASC -text
+
