@@ -1,6 +1,6 @@
 # Design - HALCYON story bible
 
-Current version of the story. Draft history: `docs/STORY_BIBLE_DRAFT.md`.
+Current version of the story. Draft history: `docs/archive/STORY_BIBLE_DRAFT.md`.
 All caller-visible wording that comes from this file is a draft until the
 author's final edit.
 

@@ -35,5 +35,5 @@ caller-visible text is a draft until the author's final edit.
 
 ## Group 3 - Close
 
-- [x] 10. `docs/SLICES.md` S5 status, `docs/MENU_AUDIT.md` (crew Goodbye),
+- [x] 10. `docs/archive/SLICES.md` S5 status, `docs/MENU_AUDIT.md` (crew Goodbye),
   tick Q2 in `docs/briefs/QUEUE.md`

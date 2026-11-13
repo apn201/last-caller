@@ -2,8 +2,8 @@
 
 Q5b (Nov 13) made power per caller; R1, R4, R5 and R6 below are the current
 rules. Brief:
-`docs/briefs/S3b-power-prologue.md`. Story: `.kiro/specs/story-bible/`.
-Slice: S4 in `docs/SLICES.md`. All caller-visible wording here is a draft
+`docs/archive/briefs/S3b-power-prologue.md`. Story: `.kiro/specs/story-bible/`.
+Slice: S4 in `docs/archive/SLICES.md`. All caller-visible wording here is a draft
 until the author's final edit.
 
 ## Glossary

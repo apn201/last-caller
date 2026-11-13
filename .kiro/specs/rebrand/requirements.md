@@ -1,6 +1,6 @@
 # Requirements: Rebrand to HALCYON BBS (S1)
 
-Source: `docs/briefs/S1-rebrand.md`.
+Source: `docs/archive/briefs/S1-rebrand.md`.
 
 ## Introduction
 
@@ -76,8 +76,8 @@ work.
 ### 7. Acceptance
 
 1. WHEN `git grep -i kouvo` runs, THE result SHALL be empty except
-   `THIRD_PARTY_NOTICES.md`, `docs/KIROWEEN_PLAN.md`,
-   `docs/KIRO_REPO_STEPS.md` and `docs/SLICES.md`.
+   `THIRD_PARTY_NOTICES.md`, `docs/archive/KIROWEEN_PLAN.md`,
+   `docs/archive/KIRO_REPO_STEPS.md` and `docs/archive/SLICES.md`.
 2. WHEN `pio run` runs, THE build SHALL succeed.
 3. WHEN a caller connects, THE board SHALL show only the new name.
 4. THE door menu SHALL list only doors that work.

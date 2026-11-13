@@ -1,3 +1,5 @@
+> Archived in Q15: finished planning. Replaced by `docs/ROADMAP.md` and `.kiro/specs/`.
+
 # LAST CALLER - Kiroween 2026 plan
 
 Working title. The entry is TinyBBS wearing a haunted identity: a forgotten 1990s board that went dark the night its SysOp died, and you are the last caller. Murder mystery, escape room, ghost story, all done with BBS parts: messages, files, ANSI, tracker music, doors, WHO, chat, credits and flags.

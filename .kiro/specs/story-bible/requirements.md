@@ -1,7 +1,7 @@
 # Requirements - Story bible
 
 Spec with no code. `design.md` is the story bible; `tasks.md` lists the
-content and engine work that follows. Source: `docs/STORY_BIBLE_DRAFT.md`
+content and engine work that follows. Source: `docs/archive/STORY_BIBLE_DRAFT.md`
 (draft 2, kept as history).
 
 ## Glossary

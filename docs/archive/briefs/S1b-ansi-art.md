@@ -1,3 +1,5 @@
+> Archived in Q15: done brief. The work is recorded in `.kiro/specs/` and `docs/briefs/QUEUE.md`.
+
 # Brief S1b - ANSI art pass
 
 From: Claude Code (planner). To: Kiro (builder). Run as a Kiro spec

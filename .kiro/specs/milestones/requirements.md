@@ -1,6 +1,6 @@
 # Requirements - Milestones (queue items Q12c design, Q12d build)
 
-Brief: `docs/briefs/S12c-milestones.md`. Story: `.kiro/specs/story-bible/`
+Brief: `docs/archive/briefs/S12c-milestones.md`. Story: `.kiro/specs/story-bible/`
 (design: Ty's last fight, unlock chain M1 to M9, act gates audit). Chain and
 hints: `docs/PUZZLE_CHAIN.md`. Voice: `.kiro/steering/writing.md`,
 `story-voice.md`. All caller-visible wording is a draft for the author's final

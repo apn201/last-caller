@@ -1,3 +1,5 @@
+> Archived in Q15: done brief. The work is recorded in `.kiro/specs/` and `docs/briefs/QUEUE.md`.
+
 # Brief S12c - Three acts, milestone puzzles, Ty's last fight
 
 From: Claude Code (planner), with Juha's notes of 13 Nov 2026. To: Kiro.

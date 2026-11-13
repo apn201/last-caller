@@ -1,7 +1,7 @@
 # Tasks - Power prologue (slice S4)
 
 Requirements: `requirements.md`. Design: `design.md`. Brief:
-`docs/briefs/S4-power-prologue-build.md`. Wording of all caller-visible text
+`docs/archive/briefs/S4-power-prologue-build.md`. Wording of all caller-visible text
 is a draft until the author's final edit.
 
 Decisions taken from the brief, where the design left a choice:
@@ -76,7 +76,7 @@ Decisions taken from the brief, where the design left a choice:
 - [x] 11. Host test of the power state machine and the drop window passes
 - [x] 12. Code-path walk-through for both transports (in the report)
 - [x] 13. `docs/TESTING.md`: manual prologue script for the board
-- [x] 14. Docs: `docs/SLICES.md` S4 status, `README.md` if it lists the card
+- [x] 14. Docs: `docs/archive/SLICES.md` S4 status, `README.md` if it lists the card
   files
 
 

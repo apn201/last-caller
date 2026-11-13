@@ -1,3 +1,5 @@
+> Archived in Q15: copied into `.kiro/steering/writing.md`, which is the live version.
+
 # Writing rules for HALCYON (for `.kiro/steering/writing.md`)
 
 From Claude Code, Nov 13, condensed from Juha's avoid-ai-writing rules and

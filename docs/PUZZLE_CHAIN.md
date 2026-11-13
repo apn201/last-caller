@@ -1,6 +1,6 @@
 # Puzzle chain - HALCYON
 
-Q12c, from `docs/briefs/S12c-milestones.md`. Canonical story:
+Q12c, from `docs/archive/briefs/S12c-milestones.md`. Canonical story:
 `.kiro/specs/story-bible/design.md`. Build: `.kiro/specs/milestones/`. Every
 caller-visible line named here is a draft for the author's final edit.
 

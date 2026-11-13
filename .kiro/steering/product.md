@@ -33,7 +33,7 @@ server build. It is built for a judge who has five minutes.
 2. The haunt: triggers, ghosts, glitches in the shared core.
 3. The voice: the SysOp talks back, scripted first.
 
-Scope and order are in `docs/SLICES.md`. If time runs out, ship the last
+Scope and order are in `docs/archive/SLICES.md`. If time runs out, ship the last
 green layer.
 ## The board's play (decided Nov 12)
 

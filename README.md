@@ -362,7 +362,7 @@ as a first response.
 | `/BBS/ANSI`, `/BBS/ASCII`, `/BBS/BULLETINS`, `/BBS/ASSETS` | Screens, art and modem audio |
 | `/BBS/CONFIG` | Board, conference, bulletin and network config |
 | `/BBS/FILES` | File areas, one folder each, with an optional `AREA.INI` |
-| `/BBS/MSGBASE` | Read-only message history, a folder per conference id, written by `tools/fidonet-seed.py` |
+| `/BBS/MSGBASE` | Read-only message history, a folder per conference id, the story's posts |
 | `/BBS/DATA` | Users, messages, door saves, indexes |
 | `/BBS/LOGS` | Caller and event logs |
 | `/BBS/TEMP`, `/BBS/UPLOADS` | Runtime temp and upload staging |
@@ -370,12 +370,9 @@ as a first response.
 Do not edit `DATA`, `LOGS` or `TEMP` by hand while the board is in use.
 Callers never see SD paths.
 
-The file archive itself is not in this repository. `sd/BBS/FILES` is ignored
-by git. Content rules are in [`docs/CONTENT_POLICY.md`](docs/CONTENT_POLICY.md).
-
-`sd/BBS/MSGBASE` is not in the repository either. Make it with
-`python tools/fidonet-seed.py`, which downloads the 150 MB source archive once
-into `tools/.cache`.
+`sd/BBS/FILES` and `sd/BBS/MSGBASE` hold the story's own files and posts and are
+tracked. Nothing from outside goes there. Content rules are in
+[`docs/CONTENT_POLICY.md`](docs/CONTENT_POLICY.md).
 
 ## SysOp
 
@@ -420,11 +417,14 @@ More in [`docs/ROADMAP.md`](docs/ROADMAP.md). The original 1.0 target is in
 
 | Path | Contents |
 | --- | --- |
-| `src/` | Firmware |
+| `src/` | Firmware and the shared BBS core |
+| `server/` | Linux build of the same core |
+| `shared/web/` | Browser pages, embedded into the firmware |
 | `sd/BBS/` | SD card content and config, including the music player |
-| `tools/` | SD preparation, content download scripts |
-| `docs/` | Hardware, roadmap, content policy, menu audit, VolaMUD notes, the 1.0 spec |
-| `art/` | Source images for the splash screen |
+| `tools/` | SD preparation, story lint, tests, ANSI art and content scripts |
+| `deploy/` | Install and reset scripts for the hosted board |
+| `docs/` | Hardware, roadmap, testing, deploy, content policy, menu audit; `archive/` holds finished plans |
+| `.kiro/` | Steering, specs, hooks and agents |
 
 ## Credits
 

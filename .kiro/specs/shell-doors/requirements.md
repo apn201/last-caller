@@ -1,6 +1,6 @@
 # Requirements - Diagnostics and shell doors
 
-Slices S4b and S6b in `docs/SLICES.md`, queue item Q5 in `docs/briefs/QUEUE.md`.
+Slices S4b and S6b in `docs/archive/SLICES.md`, queue item Q5 in `docs/briefs/QUEUE.md`.
 Story: `.kiro/specs/story-bible/` (R5 unlock chain: NOWHERE file system, final
 command). All caller-visible wording in `DIAG.INI` and `SHELL.INI` is a draft
 until the author's final edit.

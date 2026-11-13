@@ -1,6 +1,6 @@
 # Requirements - Triggers
 
-Slice S5 in `docs/SLICES.md`, queue item Q2 in `docs/briefs/QUEUE.md`.
+Slice S5 in `docs/archive/SLICES.md`, queue item Q2 in `docs/briefs/QUEUE.md`.
 Story: `.kiro/specs/story-bible/`. Prologue: `.kiro/specs/power-prologue/`
 (R8.4 is built here). All caller-visible wording in trigger files is a draft
 until the author's final edit.

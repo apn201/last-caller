@@ -1,3 +1,5 @@
+> Archived in Q15: draft history. Replaced by `.kiro/specs/story-bible/design.md`.
+
 > Superseded: the current version is `.kiro/specs/story-bible/design.md`.
 > This file is kept as spec history.
 

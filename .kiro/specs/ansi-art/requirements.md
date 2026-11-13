@@ -1,6 +1,6 @@
 # Requirements: ANSI art pass (S1b)
 
-Source: `docs/briefs/S1b-ansi-art.md`.
+Source: `docs/archive/briefs/S1b-ansi-art.md`.
 
 ## Introduction
 
@@ -72,13 +72,13 @@ code, so that art can be regenerated, tweaked and checked.
    error.
 2. EACH PNG has been looked at and alignment problems fixed.
 3. `git grep -i kouvo` is clean and `pio run` passes.
-4. `docs/SLICES.md` and the brief are committed with the spec.
+4. `docs/archive/SLICES.md` and the brief are committed with the spec.
 5. THE server build cannot run on this Windows PC and SHALL be reported as
    not run.
 
 ## Pass 2 (S1c): scene-style technique
 
-Source: `docs/briefs/S1c-ansi-polish.md`. Same screens, files and tools.
+Source: `docs/archive/briefs/S1c-ansi-polish.md`. Same screens, files and tools.
 
 ### 7. Technique
 

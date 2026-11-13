@@ -1,6 +1,6 @@
 # Design - Power prologue
 
-Requirements: `requirements.md`. Brief: `docs/briefs/S3b-power-prologue.md`.
+Requirements: `requirements.md`. Brief: `docs/archive/briefs/S3b-power-prologue.md`.
 Story: `.kiro/specs/story-bible/design.md` ("The module and the power").
 No code yet. All caller-visible wording is a draft until the author's final
 edit.
@@ -222,7 +222,7 @@ The `visited` set is lost when the connection drops. That is acceptable:
 the passwords are on the board and replayable, and a caller who has signed
 up gets the flags at once.
 
-## Mapping to slices (`docs/SLICES.md`)
+## Mapping to slices (`docs/archive/SLICES.md`)
 
 | Piece | Slice |
 | --- | --- |

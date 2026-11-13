@@ -1,3 +1,5 @@
+> Archived in Q15: done brief. The work is recorded in `.kiro/specs/` and `docs/briefs/QUEUE.md`.
+
 # Brief S1 - Rebrand spec
 
 From: Claude Code (planner). To: Kiro (builder). Run this as a Kiro spec:

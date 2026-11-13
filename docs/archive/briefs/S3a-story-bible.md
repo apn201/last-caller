@@ -1,3 +1,5 @@
+> Archived in Q15: done brief. The work is recorded in `.kiro/specs/` and `docs/briefs/QUEUE.md`.
+
 # Brief S3a - Story bible spec (no code)
 
 From: Claude Code (planner). To: Kiro (builder). Turn

@@ -1,3 +1,5 @@
+> Archived in Q15: done brief. The work is recorded in `.kiro/specs/` and `docs/briefs/QUEUE.md`.
+
 # Brief S3b - Power, the prologue, and story changes
 
 From: Claude Code (planner). To: Kiro (builder). Juha added story on

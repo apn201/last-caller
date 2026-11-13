@@ -4,7 +4,7 @@ description: Designs and checks the game's gates and evidence chains: every fact
 tools: ["read", "write", "shell"]
 includeMcpJson: false
 resources:
-  - file://./docs/SLICES.md
+  - file://./docs/archive/SLICES.md
   - file://./.kiro/specs/story-bible/requirements.md
   - file://./.kiro/specs/manifest/requirements.md
 ---

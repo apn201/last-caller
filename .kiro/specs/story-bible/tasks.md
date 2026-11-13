@@ -134,7 +134,7 @@ work. All wording is draft for the author.
   clues (the overpaint mechanic of E16). Q8, Q11.
 ## Group 4 - Milestones (S12c, queue items Q12c and Q12d)
 
-Brief: `docs/briefs/S12c-milestones.md`. Spec: `.kiro/specs/milestones/`. Chain:
+Brief: `docs/archive/briefs/S12c-milestones.md`. Spec: `.kiro/specs/milestones/`. Chain:
 `docs/PUZZLE_CHAIN.md`. Q12c is design only; the rest is Q12d.
 
 - [x] M-1. (Q12c) Ty's last fight, timeline, fates V-F and V-C, unlock chain

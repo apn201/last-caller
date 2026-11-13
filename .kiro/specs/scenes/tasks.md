@@ -28,5 +28,5 @@ caller-visible text is a draft until the author's final edit.
 
 ## Group 4 - Close
 
-- [x] 9. `docs/SLICES.md`, `docs/MENU_AUDIT.md` notes; tick Q3 in
+- [x] 9. `docs/archive/SLICES.md`, `docs/MENU_AUDIT.md` notes; tick Q3 in
   `docs/briefs/QUEUE.md`

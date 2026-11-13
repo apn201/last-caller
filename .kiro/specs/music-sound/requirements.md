@@ -1,7 +1,7 @@
 # Requirements - Music and sound
 
-Queue item Q10 in `docs/briefs/QUEUE.md`. Story: `docs/SLICES.md` S7,
-`docs/briefs/S3b-power-prologue.md` (Ty the demoscener). Voice:
+Queue item Q10 in `docs/briefs/QUEUE.md`. Story: `docs/archive/SLICES.md` S7,
+`docs/archive/briefs/S3b-power-prologue.md` (Ty the demoscener). Voice:
 `.kiro/steering/writing.md`. Every caller-visible line is a draft for the
 author's final edit.
 

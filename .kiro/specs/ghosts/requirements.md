@@ -1,6 +1,6 @@
 # Requirements - Ghosts and ELIZA's voice
 
-Slices S6 and S9 in `docs/SLICES.md`, queue item Q4 in `docs/briefs/QUEUE.md`.
+Slices S6 and S9 in `docs/archive/SLICES.md`, queue item Q4 in `docs/briefs/QUEUE.md`.
 Story: `.kiro/specs/story-bible/` (E03, E04, E34). Triggers:
 `.kiro/specs/triggers/`. Scenes: `.kiro/specs/scenes/`. All caller-visible
 wording in `GHOSTS.INI` and `SYSOP.INI` is a draft until the author's final

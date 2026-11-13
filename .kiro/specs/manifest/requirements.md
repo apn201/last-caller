@@ -1,6 +1,6 @@
 # Requirements - Manifest and endings
 
-Slice S8 in `docs/SLICES.md`, queue item Q6 in `docs/briefs/QUEUE.md`. Story:
+Slice S8 in `docs/archive/SLICES.md`, queue item Q6 in `docs/briefs/QUEUE.md`. Story:
 `.kiro/specs/story-bible/` (R1 manifest facts, R3 confirmation, R4 endings,
 R13 solo game). All caller-visible wording in `MANIFEST.INI`, the ending
 scenes and the ending art is a draft until the author's final edit.

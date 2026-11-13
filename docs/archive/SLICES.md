@@ -1,3 +1,5 @@
+> Archived in Q15: finished slice plan. Replaced by `docs/ROADMAP.md`, `docs/briefs/QUEUE.md` and `.kiro/specs/`.
+
 # LAST CALLER - slices
 
 Working document, Nov 12 2026. Rules, risks, judging and dates stay in

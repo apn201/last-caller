@@ -1,3 +1,5 @@
+> Archived in Q15: the repo set-up steps are done. Replaced by `AGENTS.md` and `.kiro/`.
+
 # LAST CALLER - step by step with Kiro
 
 Companion to `KIROWEEN_PLAN.md`. That one has the rules, risks, judging and the schedule. This one is the order of work, starting with the repo duplicate. Where they disagree on the order of the code slices, this file wins.

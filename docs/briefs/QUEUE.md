@@ -6,7 +6,7 @@ one prompt. The hosted board is the product; the stick is the collector's
 edition.
 
 Rules for every item:
-- Read `docs/SLICES.md`, `.kiro/specs/story-bible/`,
+- Read `docs/archive/SLICES.md`, `.kiro/specs/story-bible/`,
   `.kiro/specs/power-prologue/`, `docs/STORY_EXTRAS.md` and the steering.
 - Write or extend a Kiro spec for the item (requirements in EARS, design,
   tasks), commit it, then do the tasks in small commits.
@@ -16,7 +16,7 @@ Rules for every item:
 - Every new screen gets ANSI art made with `tools/ansi/` and checked as PNG.
 - All caller-visible text is a draft for Juha's final edit; keep it in
   card files, not in code. Follow `.kiro/steering/writing.md` (copy it
-  from `docs/briefs/WRITING_RULES.md` in the next run if it is missing).
+  from `docs/archive/briefs/WRITING_RULES.md` in the next run if it is missing).
   The plot must be good as literature, not just correct as a puzzle.
 - Game design (Juha, Nov 13): the game must be finishable, take a good
   amount of time (target 60 to 120 minutes for a first-time player), and
@@ -158,13 +158,13 @@ Rules for every item:
   `docs/PLAYTEST.md`. Done when run 4 finishes the game with no fault and
   the staging check passes; note its play time against the 60 to 120
   minute goal.
-- [x] **Q12c - Milestones, design.** (done, 05a1676 plus the tick; story lint clean on the current card (60 rules, 10 scenes), no engine or card change. Spec in `.kiro/specs/milestones/` (requirements, design, tasks, `content-drafts.md`), `docs/PUZZLE_CHAIN.md`, story bible updated: Ty's last fight with an hour table, V-F and V-C, M1 to M9, matrix E41 to E48, act gate audit. Decisions for the author: act gates are per post (`Needs:`) and per file (`NEEDS.BBS`); H-C loses its only open item, so a Day 21 note in the Mission Log (draft) gives it one; ELIZA's password in the draft checklist is `KESTREL4`; `SYSVW` bypasses story gates only, never the protected flags. All text is draft.) Read `docs/briefs/S12c-milestones.md`
+- [x] **Q12c - Milestones, design.** (done, 05a1676 plus the tick; story lint clean on the current card (60 rules, 10 scenes), no engine or card change. Spec in `.kiro/specs/milestones/` (requirements, design, tasks, `content-drafts.md`), `docs/PUZZLE_CHAIN.md`, story bible updated: Ty's last fight with an hour table, V-F and V-C, M1 to M9, matrix E41 to E48, act gate audit. Decisions for the author: act gates are per post (`Needs:`) and per file (`NEEDS.BBS`); H-C loses its only open item, so a Day 21 note in the Mission Log (draft) gives it one; ELIZA's password in the draft checklist is `KESTREL4`; `SYSVW` bypasses story gates only, never the protected flags. All text is draft.) Read `docs/archive/briefs/S12c-milestones.md`
   and do its Q12c part: story-bible update (Ty's last fight, timeline,
   fates, unlock chain M1 to M9, scenes), `docs/PUZZLE_CHAIN.md`, the spec
   `.kiro/specs/milestones/`, content drafts. No engine code. Done when the
   spec is committed and the story lint still passes on the current card.
 - [x] **Q12d - Milestones, build.** (done, 964a494..HEAD of the Q12d commits plus the tick; `pio run` passes, host tests pass with `zig c++` (new `overrun_logic_test`, `gatePass` and `then=` cases, property test P8 to P10), story lint clean and now checks the chain M1 to M9, its gates and dependencies and that the story grants no access flag; staging check PASS on 1b7850f: server build, ctest, smoke, e2e 63 passed, 0 failed, 0 skipped (the new chain from a fresh caller: act gates, the 254-zero near miss and the overrun, an early SYSOP request, the handbook, the grant, SYSOP view reading Engineering and Mail: ELIZA, ELIZA's login, the shell from her door, both endings from her account), event log clean. `playtester` run 5b finished from a brand-new caller (ending 1) over two sessions on one account, about 480 tool calls; the agent puts a first-time reader at 120 to 150 minutes, over the 60 to 120 goal (an estimate, not a timed human). Run 5 and session A of 5b stopped at the overrun: the editor cut lines to 200 and then 254 characters; a typed line with 255 zeros now overruns at once. New: main menu `L` (log in as another, keeps the line: the shell in ELIZA's menu reads the caller's own flags). `SYSVW` never opens a SysOp tool; the real `SYSOP` flag is never granted. Board test by hand still to do, `docs/TESTING.md` "Milestones". Open items in `docs/PLAYTEST.md`. All text is draft.) Build the Q12d part of
-  `docs/briefs/S12c-milestones.md` from `.kiro/specs/milestones/`. The
+  `docs/archive/briefs/S12c-milestones.md` from `.kiro/specs/milestones/`. The
   story never grants the real `SYSOP` access flag. Done when lint, the
   property test, `pio run` and the staging check pass, the e2e plays the
   new chain, and `playtester` run 5 finishes from a brand-new caller
@@ -209,3 +209,9 @@ Rules for every item:
   staging check pass with the e2e count unchanged, and the tick lists lines
   removed and added, RAM and flash before and after, what was archived, and
   any bugs found.
+- [ ] **Q16 - Launch prep.** Brief: `docs/briefs/Q16-launch.md` (Claude
+  Code, 13 Nov 2026). Docs truth pass before the repo goes public (README,
+  content policy, notices, counted numbers in DEVPOST.md, secret check),
+  press-kit screenshots from e2e captures (`tools/presskit.py`), a `?rec=1`
+  recording mode in the browser terminal, and one merged board test
+  checklist for the stick. No story or puzzle changes.
