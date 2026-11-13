@@ -169,7 +169,7 @@ Rules for every item:
   property test, `pio run` and the staging check pass, the e2e plays the
   new chain, and `playtester` run 5 finishes from a brand-new caller
   (recorded in `docs/PLAYTEST.md` with play time).
-- [ ] **Q12e - Shorter overrun.** The author's call: 255 zeros is
+- [x] **Q12e - Shorter overrun.** (done, 1d733c7 plus the tick; `pio run` passes, host tests pass with `zig c++` (`overrun_logic_test` now has 19/20 cases and `nearMiss`), story lint clean, staging check PASS on 1d733c7: server build, ctest, smoke, e2e 63 passed, 0 failed, 0 skipped, event log clean. The overrun is `RUN = 20`; 19 zeros post normally with one garbled ELIZA line (`OVERRUN_NEAR`, no flag), fewer do nothing. Numbers changed in COMMS.TXT, Ty's Lounge post, the Archive post, the milestones spec, the story bible, `PUZZLE_CHAIN.md`, `TESTING.md`. The commit also swept in the untracked `docs/DEVPOST.md` and `docs/briefs/OPENCLAW-halcyon.md` ("Commit before push" hook). The garbled line is in code, a draft; no handbook line gave the number. Board test by hand still to do, `docs/TESTING.md` "Milestones".) The author's call: 255 zeros is
   overkill. Make the overrun a run of 20 zeros (the nod is to an old SSH
   bug; keep it a nod, no real product or CVE named). Update the engine,
   every hint and handbook line that gives the number, the near-miss e2e
