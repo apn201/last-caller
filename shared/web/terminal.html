@@ -8,11 +8,14 @@ html,body{margin:0;background:#000;color:#aaa;font:14px monospace}
 button{background:#000;color:inherit;border:1px solid #066;font:inherit;min-height:32px}
    #carrier{flex:1;min-width:18ch}
 canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
-#screen{position:relative;width:min(100%,960px,max(160px,calc((var(--visible-height,100dvh) - 84px) * 1.6)));
+#screen{position:relative;width:min(100%,960px,max(160px,calc((var(--visible-height,100dvh) - var(--chrome,84px)) * 1.6)));
 touch-action:none}
 #capture{position:absolute;width:1.2ch;height:1em;overflow:hidden;color:transparent;
 caret-color:transparent;outline:none;white-space:pre;pointer-events:none}
 #links:empty{display:none} a{color:#5ff}
+/* Phones: the 640 px canvas is drawn smaller than it is, so smooth it (pixelated makes glyphs uneven at 0.6x); bigger tap targets. */
+@media (max-width:640px){canvas{image-rendering:auto}}
+@media (pointer:coarse){:root{--chrome:112px}button{min-height:44px;padding:0 12px}button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}}
 #viewer{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;z-index:10;cursor:pointer}
 #viewer[hidden]{display:none}
 #pic{flex:1;min-height:0;width:100%;object-fit:contain;image-rendering:pixelated;clip-path:inset(0 0 100% 0)}

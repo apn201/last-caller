@@ -263,3 +263,15 @@ Checks without a board: `python tools/story_lint.py` (the chain, its gates and
 dependencies, no story grant of an access flag), `python tools/run_host_tests.py`
 (`overrun_logic_test`, `gatePass` in `haunt_logic_test`, `then=` in
 `scene_logic_test`, P8 to P10 in `story_property_test`).
+## Polish (Q13)
+
+Art: `HALCYON` in profile at three stages of decay (`tools/ansi/screens/_profile.py`): bulletin 2 (2 Nov 1998, all lit), bulletin 4 (8 Dec 1998, dish dark), main menu (2026, dish and half the lower wing gone, one lit window). Ty's tag `.tyv.98.` is on his snake and his demo frames.
+
+Glitches (needs the board; the logic is covered by `python tools/run_host_tests.py glitch_logic_test`):
+
+1. For a quick look, copy the card and set `first_sec=5` and `gap_sec=60` in `STORY/GLITCH.INI`; `RELOAD` in the SysOp tools picks it up.
+2. Sign in as your own account (not `admin`, not a crew login). Stay at the main menu. After about 5 s one dim grey line appears under the menu (the browser may play HUM or STATIC; Telnet rings the bell). The next one comes no sooner than a minute later, and is a different one.
+3. Open a message, the reader or a door: nothing is printed while it is open. A glitch waits for the next menu prompt.
+4. Event log: `GLITCH <id> <handle> node <n>` lines. A broken section is named in `GLITCH_SKIP` (the staging check fails on it).
+
+Mobile (browser terminal, reviewed from the page's code and styles; no phone was at hand): the header wraps, the canvas scales to the width, and on a narrow screen it is smoothed instead of pixelated. On touch screens (`pointer:coarse`) the buttons are 44 px high. Still to check on a real phone: ENTER and BACKSPACE with the on-screen keyboard open, rotating to landscape, and how readable 80 columns are at 390 px wide.

@@ -222,6 +222,8 @@ The haunted-house layer, all driven by triggers so the card controls it:
   (`tools/mod/`), sample names carrying text, and his unfinished demo for
   the summer demo party.
 
+Built (Q13): `sd/BBS/STORY/GLITCH.INI` (draft lines), `src/core/glitch_logic.h` + `glitch.h`, host test `tools/test/glitch_logic_test.cpp`. Rare and timed: nothing in the first 180 s after sign-in, then one line every 240 s at most (never under 60), shown at a calm menu prompt to a caller on their own account. Kinds: a line said twice, a clock that jumps back to 04:15, a letter wrong in ELIZA's line (`garble=1`), a wrong crew count after act 2. Browser: the item's `sound=` cue; Telnet: a bell. No flag, no save, no gate. Not done: the "menu option that appears once and is gone" (it would show an option that does not work, which the menu rule forbids) and a screen-wide browser flicker.
+
 ### S8 - The manifest and the ending (Nov 22 to 24)
 
 `M` opens the crew manifest: one row per crew member, three blanks each
