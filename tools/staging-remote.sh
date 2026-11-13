@@ -55,6 +55,10 @@ else
   note FAIL "server build"; finish
 fi
 
+# 2b. Unit and property tests of the shared logic, and the story lint (CTest, see server/CMakeLists.txt).
+say "ctest"
+if ctest --test-dir server/build --output-on-failure 2>&1 | tail -30; [ "${PIPESTATUS[0]}" -eq 0 ]; then note PASS "ctest: host logic tests, property tests, story lint"; else note FAIL "ctest (output above)"; fi
+
 # 3. Fresh disposable card.
 say "card"
 case "$CARD" in "$HOME"/*) ;; *) echo "card path outside home"; exit 2;; esac
@@ -62,7 +66,8 @@ rm -rf "$CARD"; mkdir -p "$CARD"
 cp -r "$SRC/sd/BBS" "$CARD/BBS"
 for d in FILES/001_BBS_SOFTWARE UPLOADS/INCOMING DATA/INDEX; do mkdir -p "$CARD/BBS/$d"; done
 rm -rf "$CARD/BBS/DATA/STATE"
-sed -i "s/^timer_sec=.*/timer_sec=$TIMER/" "$CARD/BBS/STORY/POWER.INI"
+# SERVE=1 (tools/staging-playtest.ps1) keeps the card's own timer: a real player has two minutes.
+[ -n "${SERVE:-}" ] || sed -i "s/^timer_sec=.*/timer_sec=$TIMER/" "$CARD/BBS/STORY/POWER.INI"
 # The NOWHERE shell opens with the order code in Diagnostics, as for a caller: no edit here.
 
 # 4. Phase-1 smoke check (own throwaway copy: it creates runtime files).
@@ -95,6 +100,23 @@ for _ in $(seq 1 50); do
   sleep 0.2
 done
 if [ "$UP" -eq 1 ]; then note PASS "server started on 127.0.0.1:$HTTP_PORT (Telnet $TELNET_PORT)"; else note FAIL "server did not start"; tail -20 "$LOG"; finish; fi
+
+# 5b. SERVE=1: leave the server up for a playtest (a human or the playtester agent through the
+# bbs-caller tool, over an SSH tunnel). It stops when $STAGE/stop appears (touch it over SSH), when
+# the SSH session that started it ends, or after three hours.
+if [ -n "${SERVE:-}" ]; then
+  say "serving"
+  echo "SERVING: Telnet 127.0.0.1:$TELNET_PORT, HTTP 127.0.0.1:$HTTP_PORT, card $CARD. Stop: touch $STAGE/stop (or end this session)."
+  rm -f "$STAGE/stop"
+  while [ ! -e "$STAGE/stop" ] && [ "$SECONDS" -lt 10800 ] && kill -0 "$SERVER_PID" 2>/dev/null; do sleep 2; done
+  rm -f "$STAGE/stop"
+  note PASS "playtest server ran until stopped"
+  say "stop server"
+  kill "$SERVER_PID" 2>/dev/null
+  for _ in $(seq 1 50); do kill -0 "$SERVER_PID" 2>/dev/null || break; sleep 0.1; done
+  SERVER_PID=""
+  finish
+fi
 
 # 6. HTTP.
 say "http"
