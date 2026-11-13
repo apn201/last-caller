@@ -18,12 +18,12 @@ static uint32_t clockSystemAt = 0; // millis() of the last system-clock check
 // supports, so 2026 becomes 1998 without changing its weekday.
 static uint32_t clockEpochEra(uint32_t t) {
   int y, eraYear; unsigned m, d;
-  civilFromDays(t / 86400, y, m, d);
-  civilFromDays(parseClock(clockEpoch) / 86400, eraYear, m, d);
-  civilFromDays(t / 86400, y, m, d);
+  civilFromDays(t / SECS_PER_DAY, y, m, d);
+  civilFromDays(parseClock(clockEpoch) / SECS_PER_DAY, eraYear, m, d);
+  civilFromDays(t / SECS_PER_DAY, y, m, d);
   int shift = (int)lroundf((y - eraYear) / 28.0f) * 28;
   if (y - shift < 1970) return 0;
-  return (uint32_t)daysFromCivil(y - shift, m, d) * 86400UL + t % 86400;
+  return (uint32_t)daysFromCivil(y - shift, m, d) * 86400UL + t % SECS_PER_DAY;
 }
 
 static void saveClock() {
@@ -79,7 +79,7 @@ static void tickClock() {
   }
   uint32_t secs = (millis() - clockBaseMs) / 1000;
   clockBase += secs; clockBaseMs += secs * 1000;
-  if (millis() - clockSavedAt >= 60000) saveClock();
+  if (millis() - clockSavedAt >= MS_PER_MINUTE) saveClock();
 }
 // A browser caller's local time, "YYYY-MM-DD HH:MM:SS". It is moved back in
 // steps of 28 years, because the calendar repeats every 28 years: 2026 becomes

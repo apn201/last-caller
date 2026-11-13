@@ -246,8 +246,7 @@ description goes into that folder's `FILES.BBS`.
 
 ### Doors
 
-The door table lists only doors that work. The Legend and dice doors are
-removed from it.
+The door table lists only doors that work.
 
 **VolaMUD** is a native C++ MUD door with a fixed Vola City hub and an
 endless deterministic wilderness. City locals provide directions, trading,
@@ -261,7 +260,7 @@ and `SELL` cover the current small inventory: boots, blade, shield, rings,
 amulet and the Black Crown. Worn loot changes HP or combat. The Black Crown
 is a task item, held by seeded Lord Korja at `13,-8`.
 Gold and bank funds are a purse kept by the shared door code in
-`src/doors/legend.h`. It is a playable vertical slice rather than a deep MUD:
+`src/doors/legend.h` (all that is left of the Legend door). It is a playable vertical slice rather than a deep MUD:
 there is no inventory UI, trading economy, party system, NPC memory or
 multi-stage quest engine yet. See [`docs/VOLA_MUD.md`](docs/VOLA_MUD.md).
 

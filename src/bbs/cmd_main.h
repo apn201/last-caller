@@ -5,7 +5,6 @@
 // SysOp page: the SysOp answers with /A from any prompt, which pulls both
 // callers into node chat, or refuses with /R.
 static void enterChat(Session &s, const String &banner) {
-  if (s.duelNode) duelCancel(s, s.user.handle + " was called to chat");
   if (playingMud(s)) mudBroadcastRoom(s, s.user.handle + " is called away by the SysOp.");
   startChat(s, banner);
 }
@@ -100,7 +99,7 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
       say(s, "\r\n\x1b[0;37mSigned off. The line stays open.\x1b[0m");
       logoutToLogin(s);
     }
-    else if (cmd == "G") { s.state = GOODBYE; activity(s, "LOGOFF"); uint32_t mins = (millis() - s.connectedAt) / 60000; art(s, board.goodbye.c_str()); say(s, "Time online: " + String(mins) + " minutes");
+    else if (cmd == "G") { s.state = GOODBYE; activity(s, "LOGOFF"); uint32_t mins = (millis() - s.connectedAt) / MS_PER_MINUTE; art(s, board.goodbye.c_str()); say(s, "Time online: " + String(mins) + " minutes");
       manifestPartial(s);   // an unfinished manifest: ELIZA thanks the caller for their interest
       // A crew (read-only) login logs off to the login prompt, line kept: the
       // caller can sign in as themselves and keep what the visit found (core/haunt.h).

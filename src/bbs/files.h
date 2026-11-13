@@ -210,7 +210,7 @@ static void countDownload(const String &path) {
 static String fileDate(time_t t) {
   if (t < 315532800) return "--------";  // before 1980: no date
   int y; unsigned m, d;
-  civilFromDays((int32_t)(t / 86400), y, m, d);
+  civilFromDays((int32_t)(t / SECS_PER_DAY), y, m, d);
   char b[12];
   snprintf(b, sizeof(b), "%02u-%02u-%02d", m, d, y % 100);
   return b;

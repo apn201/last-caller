@@ -3,6 +3,8 @@
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
 
 // ---------- small, intentionally boring helpers --------------------------------
+static constexpr int SECS_PER_DAY = 86400;
+static constexpr int MS_PER_MINUTE = 60000;
 static void trace(const char *tag, const String &detail = "") {
   Serial.printf("[TINYBBS %08lu] %s", (unsigned long)millis(), tag);
   if (detail.length()) Serial.printf(" :: %s", detail.c_str());
@@ -44,13 +46,12 @@ static uint32_t parseClock(const String &text) {
   if (y < 1970 || y > 2099 || mo < 1 || mo > 12 || d < 1 || d > 31 || h < 0 || h > 23 || mi < 0 || mi > 59 || s < 0 || s > 59) return 0;
   return (uint32_t)daysFromCivil(y, mo, d) * 86400UL + h * 3600UL + mi * 60UL + s;
 }
-static uint32_t boardDay() { return boardNow() / 86400; }
 static String clockText(uint32_t t, bool weekday = false) {
   static const char *days[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
   int y; unsigned m, d;
-  civilFromDays(t / 86400, y, m, d);
+  civilFromDays(t / SECS_PER_DAY, y, m, d);
   char b[24];
-  snprintf(b, sizeof(b), "%s%s%04d-%02u-%02u %02lu:%02lu", weekday ? days[(t / 86400 + 4) % 7] : "", weekday ? " " : "",
+  snprintf(b, sizeof(b), "%s%s%04d-%02u-%02u %02lu:%02lu", weekday ? days[(t / SECS_PER_DAY + 4) % 7] : "", weekday ? " " : "",
            y, m, d, (unsigned long)(t / 3600 % 24), (unsigned long)(t / 60 % 60));
   return String(b);
 }

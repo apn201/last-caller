@@ -117,7 +117,7 @@ static time_t dosTime(uint32_t stamp) {
   int era = yy / 400;
   unsigned yoe = yy - era * 400, doy = (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + day - 1;
   long days = era * 146097L + (yoe * 365 + yoe / 4 - yoe / 100 + doy) - 719468;
-  return (time_t)(days * 86400 + (t >> 11) * 3600 + ((t >> 5) & 63) * 60);
+  return (time_t)(days * SECS_PER_DAY + (t >> 11) * 3600 + ((t >> 5) & 63) * 60);
 }
 // ZIP details for a listing page: the FILE_ID.DIZ where no description came
 // from the folder, and the archive's own date. Read once per ZIP and kept in

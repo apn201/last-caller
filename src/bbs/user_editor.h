@@ -190,13 +190,13 @@ static void fieldValue(Session &s, const String &line) {
     case 10: {  // the purse VolaMUD uses
       if (!readNumber(v, n) || n > 1000000) { say(s, "Gold is a number from 0 to 1000000."); break; }
       Session *live = nullptr;
-      for (auto &o : sessions) if (o.used && o.user.id == u.id && (playingQuest(o) || playingMud(o))) { live = &o; break; }
+      for (auto &o : sessions) if (o.used && o.user.id == u.id && playingMud(o)) { live = &o; break; }
       Quest q;
-      if (live && playingQuest(*live)) q = live->quest; else loadQuest(u.id, q);
+      loadQuest(u.id, q);
       if (live && playingMud(*live)) q.bank = live->wallet.bank;
       q.id = u.id; q.gold = n;
       if (saveQuest(q)) {
-        if (live) { live->quest.gold = n; live->wallet.gold = n; }
+        if (live) live->wallet.gold = n;
         event("SYSOP_GOLD", s.user.handle + " -> " + u.handle + " " + n);
         say(s, "\x1b[1;32mSaved.\x1b[0m");
       } else say(s, "Door storage could not be written.");
