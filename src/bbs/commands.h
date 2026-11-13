@@ -19,6 +19,7 @@ static void handleLine(Session &s, String line) {
     mainMenu(s);
     return;
   }
+  if (eggCommand(s, line, cmd)) return;   // modem commands and hidden words: bbs/eggs.h
   loginCommand(s, line, cmd) || mainCommand(s, line, cmd) || sysopCommand(s, line, cmd) || userEditorCommand(s, line, cmd) ||
     uploadCommand(s, line, cmd) || fileCommand(s, line, cmd) || messageCommand(s, line, cmd) || doorCommand(s, line, cmd);
 }

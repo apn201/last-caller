@@ -1,0 +1,18 @@
+;
+; NODELIST.044   week 44, 1998   fragment, as heard by the packet gateway
+; Filed by ELIZA. The gateway has heard these boards. It has not called them.
+;
+; Fields: type, node, station, location, sysop, phone, speed, flags
+; Phone numbers are as listed. The ship's modem has no line, so none of them
+; have been tried.
+;
+Zone,2,Fragment,Various,Nobody,-Unpublished-,300
+Host,1,Ground_Relay,Mission_Control,MCC,-Unpublished-,28800,CM,XA
+Node,2,Sublevel_2,Lowtown,lumen,555-0172,33600,MO,V34,XW
+Node,3,Cold_Storage,Saltmarsh,Dorrit_Penn,555-0119,14400,CM,V32B
+Node,4,The_Long_Pause,Pinecrest_Hollow,Bram,555-0133,28800,MO,V34
+Pvt,5,Back_Office,Lowtown,-Private-,-Unpublished-,28800,CM
+Node,6,Third_Shift,Eastbank,Wyn,555-0184,33600,CM,XA,V34
+Down,7,Static_Cling,Saltmarsh,Odo,555-0156,14400,CM
+;
+; end of fragment

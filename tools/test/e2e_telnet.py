@@ -861,10 +861,14 @@ def main():
         pos = pick_file_area(c, "Ty's Desktop")
         open_file(c, number_of(c, pos - 3000, "ORBIT_9.ANS"), "ORBIT 9")
         read_tune(c, number_of(c, pos - 3000, "HARBOUR.MOD"), "harbour (not done)", "bay 3 is so quiet")
+        open_file(c, number_of(c, pos - 3000, "TYDEMO.NFO"), "NOT DONE")     # Q11: starts Ty's demo scene
         c.send("Q")
         c.expect("File area?", timeout=10)
         c.send("Q")
-        c.expect("Main Board Command?", timeout=10)
+        advance(c, "tyv presents", timeout=60)                              # the scene waits for a calm prompt
+        advance(c, "it starts with the", timeout=90)                        # the crash is at the same place every time
+        c.send("")
+        advance(c, "Main Board Command?", timeout=60)
         c.send("G")
         c.expect("Login:", timeout=20)
         c.send(handle)
@@ -1273,6 +1277,124 @@ def main():
         c.send("Q")
         c.expect("Main Board Command?", timeout=15)
 
+    # ---- easter eggs (Q11): none of them touches the game ----
+    @step("eggs: modem commands answer at the main menu and Telnet gets no sound cue")
+    def egg_modem():
+        c = state["c"]
+        start = len(c.all)
+        for cmd, want in (("ATI", "28800"), ("+++", "OK"), ("ATZ", "OK"), ("ATFOO", "ERROR"), ("ATDT", "NO DIALTONE"),
+                          ("ATDT 555-0199", "BUSY"), ("ATDT 555-0188", "NO ANSWER")):
+            c.send(cmd)
+            c.expect(want, timeout=15)
+            c.expect("Main Board Command?", timeout=15)
+        c.send("ATDT 555-0172")                    # the hidden node, from NODELIST.TXT
+        c.expect("DIALING 5550172", timeout=15)
+        c.expect("your slot is saved", timeout=15)
+        c.expect("NO CARRIER", timeout=15)
+        c.expect("Main Board Command?", timeout=15)
+        if "SND" in c.all[start:]:
+            raise AssertionError("a Telnet caller was sent a sound cue")
+
+    @step("eggs: hidden words answer; a plain word still does not")
+    def egg_hidden():
+        c = state["c"]
+        c.send("XYZZY")
+        c.expect("Nothing happens", timeout=15)
+        c.expect("Main Board Command?", timeout=15)
+        start = len(c.all)
+        c.send("fortune")
+        c.expect("Main Board Command?", timeout=15)
+        if len(c.all[start:].strip()) < 60:
+            raise AssertionError("FORTUNE printed nothing: %r" % c.all[start:])
+        c.send("POST")
+        c.expect("Tern BIOS", timeout=15)
+        c.expect("waiting for a caller", timeout=15)
+        c.expect("Main Board Command?", timeout=15)
+        c.send("PLUGH")
+        c.expect("Unknown command", timeout=15)
+        c.expect("Main Board Command?", timeout=15)
+
+    @step("eggs: the brochure, the nodelist, the Y2K memo and the price list are ordinary files")
+    def egg_files():
+        c = state["c"]
+        pos = pick_file_area(c, "Library")
+        open_file(c, number_of(c, pos - 3000, "BROCHURE.TXT"), "waterslide")
+        open_file(c, number_of(c, pos - 3000, "NODELIST.TXT"), "Sublevel_2")
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+        pos = pick_file_area(c, "Records")
+        open_file(c, number_of(c, pos - 3000, "Y2K.MEM"), "YEAR 2000")
+        open_file(c, number_of(c, pos - 3000, "TARIFF.TXT"), "ORBIT CLUB")
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+
+    @step("eggs: ELIZA answers a famous request in chat without quoting it")
+    def egg_chat():
+        c = state["c"]
+        c.send("C")
+        c.expect("Multi-Node Chat", timeout=15)
+        c.send("open the pod bay doors")
+        c.expect("which door", timeout=30)
+        c.send("/Q")
+        c.expect("Main Board Command?", timeout=15)
+
+    @step("eggs: Ty's snake is in the door menu, plays, ends on a wall and shows the crew's table")
+    def egg_snake():
+        c = state["c"]
+        c.send("D")
+        c.expect("Snake (by tyv)", timeout=15)
+        c.expect("Door command?", timeout=15)
+        c.send("S")
+        c.expect("Moves (W A S D", timeout=15)
+        c.send("dddd")
+        c.expect("SCORE", timeout=15)
+        c.expect("Moves (W A S D", timeout=15)
+        c.send("d" * 40)                         # the rack at x = 21 ends it
+        c.expect("GAME OVER", timeout=15)
+        c.expect("HIGH SCORES", timeout=15)
+        c.expect("TYVANCE", timeout=15)
+        c.expect("ENTER plays again", timeout=15)
+        c.send("q")
+        c.expect("Door command?", timeout=15)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=15)
+
+    @step("eggs: ATH0 prints NO CARRIER and hangs up, at the login prompt too")
+    def egg_hangup():
+        c = state["c"]
+        c.send("ath0")
+        c.expect("NO CARRIER", timeout=15)
+        if not c.wait_closed(15):
+            raise AssertionError("ATH0 did not hang up")
+        c.close()
+        c = Conn(port)
+        c.expect("Login:", timeout=10)
+        c.send("AT")
+        c.expect("OK", timeout=10)
+        c.expect("Login:", timeout=10)
+        c.send("atlas")                         # a word that starts with AT is only a name
+        c.expect("Unknown caller", timeout=10)
+        c.expect("Login:", timeout=10)
+        c.send("ATH")
+        c.expect("NO CARRIER", timeout=10)
+        if not c.wait_closed(15):
+            raise AssertionError("ATH at the login prompt did not hang up")
+        c.close()
+        # the rest of the run needs a signed-in caller again
+        c = Conn(port)
+        state["c"] = c
+        c.expect("Login:", timeout=10)
+        c.send(handle)
+        c.expect("Password:")
+        c.send(password)
+        for _ in range(6):
+            if c.expect("Press ENTER", "Main Board Command?", timeout=30) == "Main Board Command?":
+                break
+            c.send("")
     @step("a registered caller skips the prologue and has no timer")
     def registered():
         c = Conn(port)
@@ -1324,7 +1446,7 @@ def main():
         c.expect("Press ENTER", "Main Board Command?", timeout=20)
         c.close()
 
-    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, diag, shell, doors_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, eero_mail, registered, second, bye, crew):
+    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, diag, shell, doors_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, eero_mail, egg_modem, egg_hidden, egg_files, egg_chat, egg_snake, egg_hangup, registered, second, bye, crew):
         ok = fn()
         if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, act1_crew_visit, act1_back, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full):
             results.append(("SKIP", "remaining steps", "stopped after a step they depend on failed"))

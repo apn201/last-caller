@@ -25,6 +25,8 @@ static const Door DOORS[] = {
   {"N", "NOWHERE shell", enterShell, ownsShell, handleShell, false, shellListed},
   // The crew manifest: reached by R from the main menu (when it works for the caller), never from this menu.
   {"", "Crew manifest", enterManifest, ownsManifest, handleManifest, false, manifestNever},
+  // Ty's snake (doors/snake.h): turn based, saves nothing, so every caller with power may play.
+  {"S", "Snake (by tyv)", enterSnake, ownsSnake, handleSnake, false, snakeListed},
   // Scenes (core/scene.h): started by a trigger rule (scene=NAME), never from the menu.
   {"", "Scene", sceneEnter, ownsScene, handleScene, false, sceneListed},
 };

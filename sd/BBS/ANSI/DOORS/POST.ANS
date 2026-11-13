@@ -1,0 +1,23 @@
+[0m[2J[H [1mTern BIOS v4.51PG                              [30m(C) 1993-97 Tern Systems Inc.
+ ──────────────────────────────────────────────────────────────────────────────
+ [0mBIOS date 06/14/94
+                                                      [1;30m┌─ [0mFRONT PANEL [1;30m────────┐
+ [0mCPU          : 486DX2 at 66 MHz                      [1;30m│  [0mTURBO   [1;30m[[36mON [30m]       │
+ [0mCoprocessor  : installed            [1;30m░                │  66 MHz              │
+ [0mMemory test  : [1;33m8200K [36mOK  [30m(8192K installed)           │  [36m■ ■ ■ [30m·  taped      │
+ [0mFixed disk 0 : 340MB                                 [1;30m└──────────────────────┘
+ [0mFixed disk 1 : none
+ Floppy A     : 1.44MB, no disk
+ COM1 3F8     : GPS relay
+ COM2 2F8     : modem, 28800, no line
+ LPT1 378     : none
+ Keyboard     : not detected
+
+ Press F1 to continue, DEL to enter setup
+
+ [1;30m──────────────────────────────────────────────────────────────────────────────
+ [0mBooting from C: ...
+ HALCYON BBS 486, node 1 of 1
+ [1;33mELIZA: waiting for a caller.
+                                                              [30m·halcyon·crew·98·
+[0m

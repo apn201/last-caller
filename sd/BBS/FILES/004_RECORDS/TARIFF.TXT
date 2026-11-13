@@ -1,0 +1,32 @@
+NOWHERE(tm)
+THE ORBITAL DATA HAVEN
+Tariff, effective Q1 1999. Qualified clients only. Draft 2.
+
+STORAGE                                   PER MEGABYTE PER ORBIT
+  Standard (Rack 1, shared)                       $0.40
+  Sealed (Rack 2, unmanned)                       $4.00
+  Sealed, no questions asked                      $9.00
+  Sealed, no questions asked, no answers          $14.00
+
+TRAFFIC
+  Outbound queue, nightly                         $1.10 per job
+  Outbound queue, held                            Free
+  Inbound from the ground                         Not available
+
+SERVICE
+  Mission computer on call, 24 hours              Included
+  Mission computer who asks "why"                 Not available
+  Visits from the crew                            Not available
+  Audit                                           Not available
+
+LOYALTY PROGRAMME: ORBIT CLUB
+  After 100 orbits:   a lapel pin
+  After 1,000 orbits: a second lapel pin
+  After 10,000 orbits: your files are moved to a better rack, which is the same
+                       rack
+
+Rates are quoted in US dollars and may change with the orbit. Minimum term: one
+orbit. Minimum charge: one orbit.
+
+NOWHERE is a trademark of Above It All Holdings. Works with any VT100 compatible
+terminal or Netscape Navigator 4.
