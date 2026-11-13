@@ -32,7 +32,7 @@ static std::vector<Kv> ini(const std::string &text) {
 }
 
 static const char *DEMO =
-    "[SHELL]\nhost=haven\nuser=guest\nfinal_cmd=Shut Down  Now\nfinal_has=SEEN_ALL\nfinal_set=ENDED\nfinal_text=Done.\n"
+    "[SHELL]\nhost=haven\nuser=guest\nfinal_cmd=Shut Down  Now\nfinal_has=SEEN_ALL\nfinal_set=ENDED\nfinal_text=Done.\nfinal_usage=usage: shut down NOW\n"
     "[/etc/motd]\ntext=Your data is NOWHERE.|Second line.\n"
     "[/orders]\ndir=1\n"
     "[/orders/001]\ntext=order one\n"
@@ -130,6 +130,10 @@ int main(int argc, char **argv) {
   CHECK(!o.final && o.out == "shut: command not found");      // lacks the flag: it does not exist
   o = exec(t, cwd, "SEEN_ALL", "SHUT   down NOW");
   CHECK(o.final && o.grant == "ENDED" && o.out == "Done.");
+  o = exec(t, cwd, "SEEN_ALL", "shut up");                      // the verb with other words: a usage line
+  CHECK(!o.final && o.out == "usage: shut down NOW");
+  o = exec(t, cwd, "", "shut up");                              // without the flag the verb does not exist
+  CHECK(o.out == "shut: command not found");
   o = exec(t, cwd, "", "");
   CHECK(o.out.empty() && !o.exit);
 
