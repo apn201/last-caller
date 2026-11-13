@@ -163,12 +163,20 @@ Rules for every item:
   fates, unlock chain M1 to M9, scenes), `docs/PUZZLE_CHAIN.md`, the spec
   `.kiro/specs/milestones/`, content drafts. No engine code. Done when the
   spec is committed and the story lint still passes on the current card.
-- [ ] **Q12d - Milestones, build.** Build the Q12d part of
+- [x] **Q12d - Milestones, build.** (done, 964a494..HEAD of the Q12d commits plus the tick; `pio run` passes, host tests pass with `zig c++` (new `overrun_logic_test`, `gatePass` and `then=` cases, property test P8 to P10), story lint clean and now checks the chain M1 to M9, its gates and dependencies and that the story grants no access flag; staging check PASS on 1b7850f: server build, ctest, smoke, e2e 63 passed, 0 failed, 0 skipped (the new chain from a fresh caller: act gates, the 254-zero near miss and the overrun, an early SYSOP request, the handbook, the grant, SYSOP view reading Engineering and Mail: ELIZA, ELIZA's login, the shell from her door, both endings from her account), event log clean. `playtester` run 5b finished from a brand-new caller (ending 1) over two sessions on one account, about 480 tool calls; the agent puts a first-time reader at 120 to 150 minutes, over the 60 to 120 goal (an estimate, not a timed human). Run 5 and session A of 5b stopped at the overrun: the editor cut lines to 200 and then 254 characters; a typed line with 255 zeros now overruns at once. New: main menu `L` (log in as another, keeps the line: the shell in ELIZA's menu reads the caller's own flags). `SYSVW` never opens a SysOp tool; the real `SYSOP` flag is never granted. Board test by hand still to do, `docs/TESTING.md` "Milestones". Open items in `docs/PLAYTEST.md`. All text is draft.) Build the Q12d part of
   `docs/briefs/S12c-milestones.md` from `.kiro/specs/milestones/`. The
   story never grants the real `SYSOP` access flag. Done when lint, the
   property test, `pio run` and the staging check pass, the e2e plays the
   new chain, and `playtester` run 5 finishes from a brand-new caller
   (recorded in `docs/PLAYTEST.md` with play time).
+- [ ] **Q12e - Shorter overrun.** The author's call: 255 zeros is
+  overkill. Make the overrun a run of 20 zeros (the nod is to an old SSH
+  bug; keep it a nod, no real product or CVE named). Update the engine,
+  every hint and handbook line that gives the number, the near-miss e2e
+  check (19 zeros gives a small glitch only: a flicker or one garbled
+  line from ELIZA, no flag, so a caller who miscounted knows they are on
+  the right track; fewer than 19 does nothing) and `docs/PUZZLE_CHAIN.md`. Done when lint,
+  host tests, `pio run` and the staging check pass.
 - [ ] **Q13 - Polish.** Art pass 3 (Ty's tag on his screens, a real
   spacecraft silhouette, decay over the timeline), glitches (S7), the
   1998 marketing copy in README and bulletins, mobile check of the
