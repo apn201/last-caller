@@ -699,6 +699,8 @@ def main():
                 pos = pick_file_area(c, "Ship Logs")
         c.send("Q")
         c.expect("File area?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
         pos = pick_file_area(c, "Records")
         open_file(c, number_of(c, pos - 3000, "BUDGET.MEM"), "RETURN CAPSULE: CUT")
         open_file(c, number_of(c, pos - 3000, "PROSPECT.TXT"), "YOUR DATA. OUR ORBIT")
@@ -757,7 +759,7 @@ def main():
         c.expect("Password:")
         c.send("HANAMI")
         advance(c, "Main Board Command?", timeout=60)
-        mailbox("Mail: GARDEN", "sensor", "Itte kimasu")
+        mailbox("Mail: GARDEN", "sensor", "Read it twice")
 
     @step("act 2: CHAOS opens with LADDER; the Archive conference and its files open")
     def act2_chaos():
