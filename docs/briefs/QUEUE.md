@@ -188,3 +188,16 @@ Rules for every item:
   one prompt another agent can follow to deploy on a fresh Rocky Linux
   host at a subdomain of helppox.com, alongside the existing board
   without touching it.
+- [x] **Q14b - Deploy fixes from the first real install.** (done, eb885be plus the tick; `bash -n` passes on all scripts, the module check ran 50 times against a fake `httpd` with a 6000-line list on staging with 0 failures (`tools/test/module_check_test.sh`, also covers a missing module and the certbot lock wait), staging check PASS on eb885be: server build, ctest, smoke, e2e 63 passed, 0 failed, 0 skipped. The same pipe in `port_busy` is fixed; `reset.sh` had none. certbot is retried while it reports its lock (15 s, 20 times), never touching the lock file. A re-run after a stopped SysOp step now verifies the login and records it instead of asking for hand work. NOT run: `install.sh` itself, no root on staging.) OpenClaw ran
+  `deploy/install.sh` on helppox (halcyon.helppox.com is live). Two faults:
+  (1) `httpd -M 2>/dev/null | grep -q "${m} "` (line 113) dies about one run
+  in ten under `set -o pipefail`: `grep -q` exits early and `httpd` gets
+  SIGPIPE. Capture `httpd -M` once into a variable and match against it;
+  check `reset.sh` and `lib.sh` for the same pattern. (2) The first run
+  stopped on a certbot lock and the re-run had to finish the TLS step; make
+  a re-run after any failed step finish the HTTP vhost, certificate and TLS
+  vhost without manual help (wait for or report the certbot lock, do not
+  delete it). Note both in `docs/DEPLOY.md`. Done when `bash -n` passes, the
+  module check is run 50 times in a loop on staging without a failure (no
+  root needed: a fake `httpd` script that prints a long module list), and
+  the staging check passes.
