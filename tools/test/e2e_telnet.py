@@ -139,6 +139,49 @@ def advance(c, marker, timeout=120.0):
             c.send("")
 
 
+def welcome_scene(c):
+    """M2 (Q12d): after ELIZA_WAKE the welcome scene plays at the next calm prompt; then the main menu."""
+    advance(c, "are on the crew list", timeout=90)
+    advance(c, "Main Board Command?", timeout=60)
+
+
+def choose(c, text, timeout=60):
+    """In a scene with numbered replies: wait until the reply `text` is listed, then pick its number.
+    Only what arrived since the call counts (an older list on screen is not used)."""
+    mark = len(c.all)
+    end = time.time() + timeout
+    pat = re.compile(r"(\d)\) " + re.escape(text))
+    while True:
+        found = list(pat.finditer(c.all[mark:]))
+        if found and c.all[mark:].rstrip().endswith(">"):
+            break
+        if c.eof:
+            raise Gone("connection closed while waiting for the reply %r" % text)
+        if time.time() > end:
+            raise TimeoutError("the reply %r was not offered; last text: %r" % (text, c.all[-500:]))
+        c._pump()
+    time.sleep(0.2)
+    c.buf = ""
+    c.send(found[-1].group(1))
+
+
+def login(c, who, pw):
+    """At Login: sign in and go on to the main menu (bulletins, scenes and pages on the way)."""
+    c.expect("Login:", timeout=20)
+    c.send(who)
+    c.expect("Password:")
+    c.send(pw)
+    advance(c, "Main Board Command?", timeout=150)
+
+
+def relog(c, who, pw):
+    """Q12d: L at the main menu signs off to Login: and keeps the line (the caller stays the caller)."""
+    sync(c)
+    c.send("L")
+    c.expect("The line stays open", timeout=15)
+    login(c, who, pw)
+
+
 def mfill(c, row, picks):
     """Open a manifest row and fill its three blanks with pick-list numbers."""
     c.send(str(row))
@@ -418,6 +461,9 @@ def main():
         c.expect("[Enter]", timeout=60)   # the scene waits for a key once the text has typed out
         c.send("")
         c.expect("Main Board Command?", timeout=30)
+        welcome_scene(c)                  # M2: ELIZA welcomes a guest (Q12d); one crew name is missing from it
+        if "Commander Halvorsen, Professor Achterberg and Dr. Tanabe" not in c.all:
+            raise AssertionError("the welcome scene did not play")
 
     # ---- act 1 (Q7): a fresh caller reads the open evidence, posts, and visits Ty's account ----
     @step("act 1: bulletins; the crew list names the crew and the manifest appears for the first time")
@@ -486,6 +532,19 @@ def main():
         c.expect(" 2:", timeout=10)
         c.send("/S")
         c.expect("posted", timeout=10)
+        c.expect("Message command?", timeout=10)
+        # Q12d, the act gates: posts after 22 Nov 13:52 do not exist yet for this caller.
+        start = len(c.all)
+        c.send("R")
+        c.expect("Read #", timeout=10)
+        seg = c.all[start:]
+        for hidden in ("Notice", "Module 3", "power bay", "from the seat"):
+            if hidden in seg:
+                raise AssertionError("an act 2 or act 3 post is listed before its gate: %r" % hidden)
+        for shown in ("saturday", "FWD: Re: OFFERING", "Re: brb", "e2e hello"):
+            if shown not in seg:
+                raise AssertionError("an open post is missing from the list: %r" % shown)
+        c.send("Q")
         c.expect("Message command?", timeout=10)
         # Mission Log is a story conference: read-only for everyone.
         c.send("A")
@@ -658,10 +717,11 @@ def main():
         c.expect("E = earlier", timeout=10)
         c.send("Q")
         c.expect("Message command?", timeout=10)
-        for n, marker in ((27, "HANDLES IT"), (32, "Tank 2 held forty percent"), (33, "inhibited it"),
-                          (37, "Commander M. Halvorsen died"), (39, "fourteen requests"),
-                          (42, "I will not make a joke"), (46, "my name is on it"),
-                          (47, "little knife")):
+        # numbers: Q12d put Ty's "brb" and ELIZA's reply on 6 Nov, two places before these
+        for n, marker in ((29, "HANDLES IT"), (34, "Tank 2 held forty percent"), (35, "inhibited it"),
+                          (39, "Commander M. Halvorsen died"), (41, "fourteen requests"),
+                          (44, "I will not make a joke"), (48, "my name is on it"),
+                          (49, "little knife")):
             read_msg(c, n, marker)
         pick_area(c, "Mission Log")
         read_msg(c, "Day 27", "Vance made coffee")
@@ -729,7 +789,7 @@ def main():
         pos = pick_file_area(c, "Ship Logs")
         listing = c.all[pos - 3000:]
         for t in ("SUIT1.LOG", "GARDEN.LOG", "AUDIT.LOG", "CAPSULE.LOG", "RACK.LOG", "DOWNLINK.CFG", "ANTENNA.RPT",
-                  "MODULE.LOG", "POWER.LOG", "11-27-98", "12-03-98"):
+                  "MODULE.LOG", "POWER.LOG", "BULKHEAD.LOG", "11-27-98", "12-03-98"):
             if t not in listing:
                 raise AssertionError("log listing lacks %r" % t)
         scenes = {"SUIT1.LOG": "I can count.", "GARDEN.LOG": "It is doing very well.", "CAPSULE.LOG": "I will keep it on.", "POWER.LOG": "Ty?"}
@@ -737,7 +797,8 @@ def main():
                              ("AUDIT.LOG", "CONFIRM Y"), ("CAPSULE.LOG", "SEPARATION: COMPLETE"),
                              ("RACK.LOG", "NOWHERE-1"), ("DOWNLINK.CFG", "enabled=0"),
                              ("ANTENNA.RPT", "VSWR"), ("MODULE.LOG", "INHIBITED BY MISSION COMPUTER"),
-                             ("POWER.LOG", "BATTERY BANK (28 CELLS)")):
+                             ("BULKHEAD.LOG", "TORQUE LIMIT EXCEEDED"),
+                             ("POWER.LOG", "COLLAR COMMS TYVANCE: OFF")):
             open_file(c, number_of(c, pos - 3000, name), marker)
             if name in scenes:
                 # the memory scene takes the screen at the first calm prompt, then the main menu is back
@@ -941,8 +1002,8 @@ def main():
         start = len(c.all)
         c.send("QUIT")
         c.expect("Door command?", timeout=10)
-        if "NOWHERE shell" not in c.all[start:]:
-            raise AssertionError("the door menu does not list the NOWHERE shell after the order code")
+        if "NOWHERE shell" in c.all[start:]:
+            raise AssertionError("the NOWHERE shell is listed on the caller's own account (it is in ELIZA's menu, Q12d)")
 
     @step("NOWHERE shell: ls, cat, cd, pwd, unknown command, exit")
     def shell():
@@ -993,6 +1054,13 @@ def main():
         c.send("cat ../../nothing")
         c.expect("No such file or directory")
         c.expect("$")
+        start = len(c.all)
+        c.send("cat /home/tyvance/typescript")     # Q12d (E46): Ty's near miss, never the working command
+        c.expect("SYSOP REQUIRED")
+        c.expect("Script done")
+        c.expect("$")
+        if "ground-1" in c.all[start:]:
+            raise AssertionError("the typescript gives the working destination away")
         c.send("rm -rf /")
         c.expect("command not found")
         c.expect("$")
@@ -1004,6 +1072,167 @@ def main():
         c = state["c"]
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
+
+    # ---- the milestone chain (Q12d): M5 the overrun, M6 SYSOP view, M7 ELIZA's account, M8 the shell ----
+    def post(c, subject, lines):
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        c.send("P")
+        c.expect("To (ENTER", timeout=10)
+        c.send("")
+        c.expect("Subject:")
+        c.send(subject)
+        for i, line in enumerate(lines, 1):
+            c.expect("%2d:" % i, timeout=10)
+            c.send(line)
+        c.expect("%2d:" % (len(lines) + 1), timeout=10)
+        c.send("/S")
+
+    @step("M5: 254 zeros post normally; 255 across two lines are swallowed, MESSAGE LOST, MEM_GLITCH plays")
+    def m5_overrun():
+        c = state["c"]
+        sync(c)
+        post(c, "e2e zeros 254", ["0" * 200, "0" * 54])
+        c.expect("posted", timeout=10)
+        c.expect("Message command?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+        post(c, "e2e zeros 255", ["0" * 200, "0" * 55])
+        c.expect("MESSAGE LOST", timeout=10)
+        advance(c, "lost my place", timeout=90)
+        advance(c, "Main Board Command?", timeout=60)
+        start = len(c.all)
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        c.send("R")
+        c.expect("Read #", timeout=10)
+        seg = c.all[start:]
+        if "e2e zeros 254" not in seg or "e2e zeros 255" in seg:
+            raise AssertionError("the near miss must be posted and the overrun swallowed: %r" % seg[-800:])
+        c.send("Q")
+        c.expect("Message command?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+
+    @step("M6 early: ELIZA's chat scene; she admits the gap, refuses SYSOP calmly, the typed chat is one reply away")
+    def m6_early():
+        c = state["c"]
+        sync(c)
+        c.send("C")
+        choose(c, "I can fix that. Give me SYSOP.")
+        if "cannot account for some minutes" not in c.all[-2000:]:
+            raise AssertionError("ELIZA does not mention the gap after the overrun")
+        if "Run the memory check" in c.all[-2000:]:
+            raise AssertionError("the memory check is offered before the handbook page was read")
+        choose(c, "Something else.")
+        if "not given to guests" not in c.all[-1500:]:
+            raise AssertionError("no calm refusal")
+        choose(c, "Say something else.")
+        c.expect("Multi-Node Chat", timeout=30)
+        c.send("/Q")
+        c.expect("Main Board Command?", timeout=15)
+
+    @step("M6 cure: L keeps the line; CMDR's desk holds the handbook page on the memory check")
+    def m6_cure():
+        c = state["c"]
+        relog(c, "CMDR", "ANDERS")
+        pos = pick_file_area(c, "Commander's Desk")
+        open_file(c, number_of(c, pos - 3000, "HANDBOOK.TXT"), "MEMCHK needs SYSOP mode")
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+        c.send("G")                                  # a crew login goes back to Login:
+        login(c, handle, password)
+        start = len(c.all)
+        c.send("F")
+        c.expect("File area?", timeout=15)
+        if "Commander's Desk" in c.all[start:] or "Engineering" in c.all[start:]:
+            raise AssertionError("the Commander's desk or Engineering is listed on the own account")
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+
+    @step("M6: the memory check; ELIZA grants SYSOP view for its duration; the grant is not offered again")
+    def m6_grant():
+        c = state["c"]
+        sync(c)
+        c.send("C")
+        choose(c, "Run the memory check. It needs SYSOP mode.")
+        advance(c, "Engineering is on the list now", timeout=120)
+        advance(c, "Main Board Command?", timeout=60)
+        if "SYSOP view is on" not in c.all[-3000:]:
+            raise AssertionError("the main menu does not say SYSOP view is on")
+        sync(c)
+        mark = len(c.all)
+        c.send("C")
+        choose(c, "Something else.")
+        choose(c, "Say something else.")
+        if "Run the memory check" in c.all[mark:] or "Give me SYSOP" in c.all[mark:]:
+            raise AssertionError("a SYSOP request is still offered after the grant")
+        c.expect("Multi-Node Chat", timeout=30)
+        c.send("/Q")
+        c.expect("Main Board Command?", timeout=15)
+
+    @step("SYSOP view reads: Engineering and the checklist, Mail: ELIZA before any visit; never the SysOp tools")
+    def sysvw_read():
+        c = state["c"]
+        sync(c)
+        pos = pick_file_area(c, "Engineering")
+        open_file(c, number_of(c, pos - 3000, "GOLIVE.TXT"), "KESTREL4")
+        open_file(c, number_of(c, pos - 3000, "STANDING.ORD"), "THE CREW ARE THE COST")
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+        c.send("Z")
+        c.expect("SysOp access requires", timeout=10)
+        c.expect("Main Board Command?", timeout=10)
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        start = len(c.all)
+        c.send("A")
+        c.expect("Area #", timeout=10)
+        if "SysOp Console" in c.all[start:]:
+            raise AssertionError("SYSOP view lists the real SysOp conference")
+        c.send(number_of(c, start, "Mail: ELIZA"))
+        c.expect("Message command?", timeout=10)
+        read_msg(c, "YOUR ORDERS", "I will not edit them")
+        pick_area(c, "Lounge")
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+
+    @step("M7: ELIZA's account opens with the checklist's password; her log; her door menu has the shell")
+    def m7_eliza():
+        c = state["c"]
+        sync(c)
+        c.send("L")
+        c.expect("Login:", timeout=15)
+        c.send("ELIZA")
+        c.expect("Password:")
+        c.send("ELIZA")
+        c.expect("Bad password")
+        login(c, "ELIZA", "KESTREL4")
+        if "I have not edited it" not in c.all[-4000:]:
+            advance(c, "I have not edited it", timeout=90)
+            advance(c, "Main Board Command?", timeout=60)
+        pos = pick_file_area(c, "Mission Computer")
+        open_file(c, number_of(c, pos - 3000, "OPSLOG.TXT"), "Standing order 5")
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+        c.send("D")
+        c.expect("Door command?", timeout=15)
+        if "NOWHERE shell" not in c.all[-1500:]:
+            raise AssertionError("ELIZA's door menu does not list the NOWHERE shell")
+
+    @step("leave ELIZA's account: Goodbye goes to Login:, sign in as yourself")
+    def eliza_leave():
+        c = state["c"]
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+        c.send("G")
+        login(c, handle, password)
 
     # ---- the manifest (S8): needs --evidence (and --shell-open for the endings) ----
     need = "SKIP the card has no E2E_EVIDENCE rule (pass --evidence)"
@@ -1155,6 +1384,7 @@ def main():
         if not (args.evidence and args.shell_open):
             return need + " and --shell-open"
         c = state["c"]
+        relog(c, "ELIZA", "KESTREL4")             # Q12d: the shell is in ELIZA's door menu
         c.send("D")
         c.expect("Door command?", timeout=15)
         c.send("N")
@@ -1190,8 +1420,11 @@ def main():
     def ending_who_crew():
         if not (args.evidence and args.shell_open):
             return need + " and --shell-open"
-        # The first caller says goodbye (finished: no partial ending), then a new caller walks in.
+        # The first caller leaves ELIZA's account, signs in as themselves (the ending is recorded for WHO)
+        # and says goodbye (finished: no partial ending), then a new caller walks in.
         c = state["c"]
+        c.send("G")
+        login(c, handle, password)
         c.send("G")
         if not c.wait_closed(15):
             raise AssertionError("connection stayed open after Goodbye")
@@ -1230,6 +1463,7 @@ def main():
             c2.expect("Where is the crew", timeout=60)     # the first scene starts at the first calm prompt
         c2.send("1")
         advance(c2, "Main Board Command?", timeout=150)   # the scene plays itself out
+        welcome_scene(c2)
         state["c2"] = c2
         start = len(c2.all)
         c2.send("W")
@@ -1254,6 +1488,7 @@ def main():
                 break
             c.send("")
         state["c"] = c
+        relog(c, "ELIZA", "KESTREL4")
         c.send("D")
         c.expect("Door command?", timeout=15)
         c.send("N")
@@ -1269,6 +1504,8 @@ def main():
         advance(c, "The light is on.")
         c.send("")
         advance(c, "Main Board Command?")
+        c.send("G")                                 # back to the own account: bulletin 5 is the caller's
+        login(c, handle, password)
         # bulletin 5 now exists for this caller, and it names no one
         start = len(c.all)
         c.send("B")
@@ -1374,7 +1611,9 @@ def main():
     def egg_chat():
         c = state["c"]
         c.send("C")
-        c.expect("Multi-Node Chat", timeout=15)
+        choose(c, "Something else.")                     # Q12d: the chat opens as ELIZA's scene first
+        choose(c, "Say something else.")
+        c.expect("Multi-Node Chat", timeout=30)
         c.send("open the pod bay doors")
         c.expect("which door", timeout=30)
         c.send("/Q")
@@ -1484,9 +1723,9 @@ def main():
         c.expect("Press ENTER", "Main Board Command?", timeout=20)
         c.close()
 
-    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, diag, shell, doors_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, eero_mail, egg_modem, egg_hidden, egg_files, egg_chat, egg_snake, egg_hangup, registered, second, bye, crew):
+    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, diag, doors_leave, m5_overrun, m6_early, m6_cure, m6_grant, sysvw_read, m7_eliza, shell, eliza_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, eero_mail, egg_modem, egg_hidden, egg_files, egg_chat, egg_snake, egg_hangup, registered, second, bye, crew):
         ok = fn()
-        if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, act1_crew_visit, act1_back, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full):
+        if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, act1_crew_visit, act1_back, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, m5_overrun, m6_cure, m6_grant, m7_eliza, eliza_leave, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full):
             results.append(("SKIP", "remaining steps", "stopped after a step they depend on failed"))
             break
 

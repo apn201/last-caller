@@ -93,6 +93,13 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
     else if (cmd == "RELOAD" && isSysop(s)) { say(s, "Settings reloaded: " + loadSettings() + "."); say(s, "Network settings take effect after a restart."); prompt(s, "Main Board Command? "); }
     else if (cmd == "USER" && isSysop(s)) { sysopUsers(s); }
     else if (cmd == "Z" || cmd == "USER") { say(s, "SysOp access requires level 255 and the SYSOP flag."); prompt(s, "Main Board Command? "); }
+    else if (cmd == "L" && !s.readOnly && s.user.id) {
+      // Sign off to Login: on the same line. The caller stays the caller (Session.ownUserId), so a
+      // crew account signed in next carries its finds here and reads this account's flags.
+      event("LOGOFF", s.user.handle + " node " + s.node + ", to the login prompt");
+      say(s, "\r\n\x1b[0;37mSigned off. The line stays open.\x1b[0m");
+      logoutToLogin(s);
+    }
     else if (cmd == "G") { s.state = GOODBYE; activity(s, "LOGOFF"); uint32_t mins = (millis() - s.connectedAt) / 60000; art(s, board.goodbye.c_str()); say(s, "Time online: " + String(mins) + " minutes");
       manifestPartial(s);   // an unfinished manifest: ELIZA thanks the caller for their interest
       // A crew (read-only) login logs off to the login prompt, line kept: the
