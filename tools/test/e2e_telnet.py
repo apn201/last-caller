@@ -941,6 +941,7 @@ def main():
         sync(c)
         c.send("M")
         c.expect("Message command?", timeout=15)
+        pick_area(c, "Lounge")
         for n, marker in ((44, "I will not make a joke"), (48, "my name is on it"), (49, "little knife")):
             read_msg(c, n, marker)
         c.send("Q")
