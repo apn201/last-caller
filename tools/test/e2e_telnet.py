@@ -247,6 +247,7 @@ def main():
     ap.add_argument("--crew", default="TYVANCE:140374", help="HANDLE:PASSWORD of a crew account (the card's TYVANCE, Ty's birthday)")
     args = ap.parse_args()
     port = args.port
+    args.shell_open = True      # act 3 opens the shell with the order code, no edit on the card
     args.evidence = True        # act 2 grants every fact the manifest needs; no shortcut rule on the card
     handle = "e2e%04d" % random.randint(0, 9999)
     password = "e2e-pass-1"
@@ -619,7 +620,8 @@ def main():
         c.expect("Message command?", timeout=15)
         for n, marker in ((27, "HANDLES IT"), (32, "Tank 2 held forty percent"), (33, "inhibited it"),
                           (37, "Commander M. Halvorsen died"), (39, "fourteen requests"),
-                          (42, "I will not make a joke"), (46, "my name is on it")):
+                          (42, "I will not make a joke"), (46, "my name is on it"),
+                          (47, "left handle first")):
             read_msg(c, n, marker)
         pick_area(c, "Mission Log")
         read_msg(c, "Day 27", "Vance made coffee")
@@ -627,6 +629,8 @@ def main():
         read_msg(c, "Day 31", "write to my mother")
         pick_area(c, "Radio Room")
         read_msg(c, "Porch light", "porch light")
+        read_msg(c, "Who we are", "We have stopped arguing with it")
+        read_msg(c, "Callsigns", "porch light is not part of the log")
         pick_area(c, "Lounge")
         c.send("Q")
         c.expect("Main Board Command?", timeout=15)
@@ -683,7 +687,7 @@ def main():
                   "MODULE.LOG", "POWER.LOG", "11-27-98", "12-03-98"):
             if t not in listing:
                 raise AssertionError("log listing lacks %r" % t)
-        scenes = {"SUIT1.LOG": "I can count.", "GARDEN.LOG": "It is doing very well.", "CAPSULE.LOG": "I will keep it on."}
+        scenes = {"SUIT1.LOG": "I can count.", "GARDEN.LOG": "It is doing very well.", "CAPSULE.LOG": "I will keep it on.", "POWER.LOG": "Ty?"}
         for name, marker in (("SUIT1.LOG", "LOCK CYCLE REQUEST 01"), ("GARDEN.LOG", "INTERLOCK PANEL"),
                              ("AUDIT.LOG", "CONFIRM Y"), ("CAPSULE.LOG", "SEPARATION: COMPLETE"),
                              ("RACK.LOG", "NOWHERE-1"), ("DOWNLINK.CFG", "enabled=0"),
@@ -857,9 +861,8 @@ def main():
         seen = c.all[-1500:]
         if "Diagnostics" not in seen:
             raise AssertionError("Diagnostics is not in the door menu")
-        has_shell = "NOWHERE shell" in seen
-        if has_shell != args.shell_open:
-            raise AssertionError("NOWHERE shell listed=%s, expected %s" % (has_shell, args.shell_open))
+        if "NOWHERE shell" in seen:
+            raise AssertionError("the NOWHERE shell is listed before the order code")
 
     @step("Diagnostics answers a query code, refuses nonsense, QUIT returns")
     def diag():
@@ -875,8 +878,16 @@ def main():
         c.send("99999")
         c.expect("no query with that code")
         c.expect("QUERY>")
+        c.send("NW1-98-43-17")             # a wrong code is just an unknown query
+        c.expect("no query with that code")
+        c.expect("QUERY>")
+        c.send("nw1 98 44 17")             # the order code, pieces 1 to 4: any case, spaces
+        c.expect("Authorisation accepted")
+        c.expect("QUERY>")
         c.send("QUIT")
         c.expect("Door command?", timeout=10)
+        c.send("")
+        c.expect("NOWHERE shell", timeout=10)
 
     @step("NOWHERE shell: ls, cat, cd, pwd, unknown command, exit")
     def shell():
@@ -896,7 +907,27 @@ def main():
         c.send("cd var/log")
         c.expect("guest@nowhere:/var/log$")
         c.send("cat outbound")
-        c.expect("No jobs queued")
+        c.expect("1 job HELD")
+        c.expect("$")
+        c.send("cat /etc/orders.cfg")
+        c.expect("order.5.incident_report=none_until_offering")
+        c.expect("$")
+        c.send("cat /srv/rack2/clients.lst")
+        c.expect("Fellowship of the Blessed Signal")
+        c.expect("$")
+        c.send("cat /var/spool/out/queue")
+        c.expect("INCIDENT REPORT NOT ON FILE")
+        c.expect("$")
+        c.send("cat /var/spool/out/index")
+        c.expect("Re: Porch light")
+        c.expect("$")
+        c.send("ls /var/spool/out")
+        c.expect("queue")
+        c.expect("$")
+        if "incident.rpt" in c.all[-300:]:
+            raise AssertionError("incident.rpt exists before the manifest is whole")
+        c.send("release out-1122 ground-1")      # no manifest yet: the command does not exist
+        c.expect("release: command not found")
         c.expect("$")
         c.send("cat ../../nothing")
         c.expect("No such file or directory")
@@ -1067,8 +1098,21 @@ def main():
         c.expect("Door command?", timeout=15)
         c.send("N")
         c.expect("guest@nowhere:/$", timeout=15)
-        c.send("release outbound")
-        c.expect("Released")
+        c.send("ls /var/spool/out")
+        c.expect("incident.rpt")
+        c.expect("$")
+        c.send("cat /var/spool/out/incident.rpt")
+        c.expect("HOLD (INCIDENT REPORT NOT ON FILE): CLEARED")
+        c.expect("$")
+        c.send("release out-1122")               # the right verb, a missing destination: usage, nothing else
+        c.expect("usage: release QUEUE DESTINATION")
+        c.expect("$")
+        c.send("release out-1122 earth")
+        c.expect("usage: release QUEUE DESTINATION")
+        c.expect("$")
+        c.send("release OUT-1122   ground-1")
+        c.expect("Released to ground-1")
+        advance(c, "Sending the queue enables it")
         advance(c, "1) Send it.")
         c.send("2")
         advance(c, "You would only have to stay")
@@ -1149,12 +1193,28 @@ def main():
         c.expect("Door command?", timeout=15)
         c.send("N")
         c.expect("guest@nowhere:/$", timeout=15)
-        c.send("release outbound")
+        c.send("release out-1122 ground-1")
         advance(c, "1) Send it.")
         c.send("1")
         advance(c, "Station received your burst")
-        advance(c, "four families")
+        advance(c, "four families and one callsign")
+        advance(c, "I have filed it under News")
+        advance(c, "Mission control will be glad")
+        c.send("")
+        advance(c, "The light is on.")
+        c.send("")
         advance(c, "Main Board Command?")
+        # bulletin 5 now exists for this caller, and it names no one
+        start = len(c.all)
+        c.send("B")
+        c.expect("Bulletin #", timeout=15)
+        if "News Wire" not in c.all[start:]:
+            raise AssertionError("bulletin 5 is not listed after sending")
+        c.send("5")
+        c.expect("still on the air", timeout=15)
+        c.expect("Bulletin #")
+        c.send("")
+        c.expect("Main Board Command?", timeout=15)
 
     @step("the sticky row now says the queue was sent")
     def ending_who_sent():
@@ -1181,6 +1241,15 @@ def main():
             if state["c"].expect("Press ENTER", "Main Board Command?", timeout=30) == "Main Board Command?":
                 break
             state["c"].send("")
+    @step("after sending, the next login brings a private message from OH9ZQW")
+    def eero_mail():
+        c = state["c"]
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        read_msg(c, "Porch light", "refrigerator")
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=15)
+
     @step("a registered caller skips the prologue and has no timer")
     def registered():
         c = Conn(port)
@@ -1232,7 +1301,7 @@ def main():
         c.expect("Press ENTER", "Main Board Command?", timeout=20)
         c.close()
 
-    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, diag, shell, doors_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, registered, second, bye, crew):
+    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, diag, shell, doors_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, eero_mail, registered, second, bye, crew):
         ok = fn()
         if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, act1_crew_visit, act1_back, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full):
             results.append(("SKIP", "remaining steps", "stopped after a step they depend on failed"))

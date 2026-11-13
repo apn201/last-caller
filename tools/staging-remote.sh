@@ -63,8 +63,7 @@ cp -r "$SRC/sd/BBS" "$CARD/BBS"
 for d in FILES/001_BBS_SOFTWARE UPLOADS/INCOMING DATA/INDEX; do mkdir -p "$CARD/BBS/$d"; done
 rm -rf "$CARD/BBS/DATA/STATE"
 sed -i "s/^timer_sec=.*/timer_sec=$TIMER/" "$CARD/BBS/STORY/POWER.INI"
-# Open the NOWHERE shell gate on the disposable card so the test can walk it.
-sed -i "s/^needs=.*/needs=/" "$CARD/BBS/STORY/SHELL.INI"
+# The NOWHERE shell opens with the order code in Diagnostics, as for a caller: no edit here.
 
 # 4. Phase-1 smoke check (own throwaway copy: it creates runtime files).
 say "phase-1 smoke"
@@ -108,7 +107,7 @@ rm -f "$STAGE/page.html"
 
 # 7. End-to-end over Telnet.
 say "end-to-end"
-python3 "$SRC/tools/test/e2e_telnet.py" --port "$TELNET_PORT" --timer "$TIMER" --shell-open --evidence ${CREW:+--crew "$CREW"} | tee "$STAGE/e2e.out"
+python3 "$SRC/tools/test/e2e_telnet.py" --port "$TELNET_PORT" --timer "$TIMER" --evidence ${CREW:+--crew "$CREW"} | tee "$STAGE/e2e.out"
 if [ "${PIPESTATUS[0]}" -eq 0 ]; then note PASS "end-to-end Telnet test ($(tail -1 "$STAGE/e2e.out"))"; else note FAIL "end-to-end Telnet test ($(tail -1 "$STAGE/e2e.out"))"; fi
 
 # 7b. The event log must hold no failure: flags that did not fit or were not saved, broken story files.

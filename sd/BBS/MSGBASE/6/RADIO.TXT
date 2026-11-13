@@ -1,5 +1,7 @@
 ; Radio Room: the packet gateway, Nov 1998. DRAFT. Side story A (Keiko and the
-; amateur in Finland). His last message of 22 Nov and the club of 2026 come later.
+; amateur in Finland). His last message is the one of 22 Nov. The last two posts are the club of 2026
+; (act 3): they post through the gateway with the board's frozen clock, 8 Dec 1998 04:2x.
+; Eero's answer to Keiko is not here: it is the end of the game (scene ENDING, mail).
 ; The callsign is invented.
 #MSG
 From: ELIZA
@@ -140,3 +142,46 @@ what a light looks like from down here. It is a bulb. It is yellow and has a mot
 in it.
 
 Eero
+#MSG
+From: OH9XKA
+To: ALL
+Subject: Who we are, and what this is
+Date: 1998-12-08 04:22
+
+To whoever reads this after us. The board clock says 8 December 1998. It says that
+every time. We have stopped arguing with it.
+
+We are a packet group in northern Finland, eleven members, ages 31 to 79. At 0258
+UTC on Wednesday 11 November 2026 one of us heard a data carrier on a frequency
+nobody has used since the nineties. It comes up for a minute or two, goes away and
+comes back. It sends one callsign, HALCYON, and then nothing, as if it were waiting
+to be asked.
+
+The gateway takes our posts and shows us this conference. It does not give us a
+login. The rest of the board is yours, if you are reading this.
+
+Nothing has come down since we began to listen. The board says it forwards its mail
+to the ground on the hour. We have a receiver on every hour of every night. Nothing
+arrives.
+
+If you can make it send, we are on frequency until it does. Members on tonight:
+OH9XKA (the club), OH9NTK, OH9RMB, OH9LVT, OH9ZQW.
+
+OH9XKA
+#MSG
+From: OH9NTK
+To: ALL
+Subject: Callsigns
+Date: 1998-12-08 04:31
+Reply: 11
+
+For the log. OH9ZQW at the bottom of the list is Eero. He is 63 and has held the
+call since 1989. We went through the old posts in this conference with him. The
+last message in it is his, from 22 November 1998.
+
+He asked that nothing more be written here about it. He also asked us to say that
+the porch light is not part of the log. So it is not.
+
+He listens on the hour with the rest of us. He has brought a kettle.
+
+OH9NTK

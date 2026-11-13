@@ -50,3 +50,15 @@ Rev. 3, 28 Oct 1998. For crew use. Filed by ELIZA.
    fifty-nine.
 
    There is no code for the weather. Please ask the Commander.
+
+6. MISSION OPERATIONS (NOT FOR CREW USE)
+
+   Authorisation codes issued by the Office of the Founder are entered as
+   queries, in the same way as the codes above. A code opens the host it names.
+
+   Outbound queues on the payload host are held until released. Syntax:
+
+        release QUEUE DESTINATION
+
+   A queue is named in its header. The destination is the link it is
+   addressed to. A held queue is released when its hold condition is cleared.
