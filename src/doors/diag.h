@@ -6,6 +6,7 @@
 // ANSI/DOORS/DIAG.ANS. The door works only while the ship has power (she is
 // awake), and the same on Telnet and in the browser.
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
+#include "../core/wrap_logic.h"
 
 static constexpr const char *DIAG_INI = "/BBS/STORY/DIAG.INI";
 static Ini diagIni;
@@ -27,7 +28,21 @@ static String diagCode(const String &typed) {
   }
   return out;
 }
-static String diagLines(String text) { text.replace("|", "\r\n"); return text; }
+// "|" breaks a line; a line longer than a screen wraps on a word (core/wrap_logic.h).
+static String diagLines(const String &text) {
+  String out;
+  size_t start = 0;
+  while (start <= text.length()) {
+    int bar = text.indexOf('|', start);
+    size_t end = bar < 0 ? text.length() : (size_t)bar;
+    for (const std::string &row : wrap::rows(std::string(text.substring(start, end).c_str()), 79)) {
+      if (out.length()) out += "\r\n";
+      out += String(row.c_str());
+    }
+    start = end + 1;
+  }
+  return out;
+}
 static void diagSay(Session &s, const String &text) { if (text.length()) say(s, "\x1b[0;33m" + diagLines(text) + "\x1b[0m"); }
 static void diagPrompt(Session &s) { prompt(s, "\x1b[1;36m" + iniGet(diagIni, "DIAG", "prompt", "QUERY>") + " \x1b[0m"); }
 
@@ -53,6 +68,10 @@ static void handleDiag(Session &s, String &line, const String &cmd) {
     event("DIAG", s.user.handle + " node " + s.node + " left diagnostics");
     doorMenu(s);
     return;
+  }
+  if (cmd == "HELP" || cmd == "?") {
+    String help = iniGet(diagIni, "DIAG", "help", "");
+    if (help.length()) { diagSay(s, help); diagPrompt(s); return; }
   }
   String code = diagCode(line);
   if (!code.length()) { diagSay(s, iniGet(diagIni, "DIAG", "nocode", "Please enter a query code.")); diagPrompt(s); return; }

@@ -32,7 +32,7 @@ static std::vector<Kv> ini(const std::string &text) {
 }
 
 static const char *DEMO =
-    "[SHELL]\nhost=haven\nuser=guest\nfinal_cmd=Shut Down  Now\nfinal_has=SEEN_ALL\nfinal_set=ENDED\nfinal_text=Done.\nfinal_usage=usage: shut down NOW\n"
+    "[SHELL]\nhost=haven\nuser=guest\nfinal_cmd=Shut Down  Now\nfinal_has=SEEN_ALL\nfinal_set=ENDED\nfinal_text=Done.\nfinal_usage=usage: shut down NOW\nhelp=ls  cat|Held things are in /orders.\nhelp_final=shut down NOW  ends it\n"
     "[/etc/motd]\ntext=Your data is NOWHERE.|Second line.\n"
     "[/orders]\ndir=1\n"
     "[/orders/001]\ntext=order one\n"
@@ -136,6 +136,12 @@ int main(int argc, char **argv) {
   CHECK(o.out == "shut: command not found");
   o = exec(t, cwd, "", "");
   CHECK(o.out.empty() && !o.exit);
+
+  // help: the final command is listed only for a caller it works for
+  o = exec(t, cwd, "", "help");
+  CHECK(o.out == "ls  cat\nHeld things are in /orders.");
+  o = exec(t, cwd, "SEEN_ALL", "help");
+  CHECK(o.out == "ls  cat\nHeld things are in /orders.\nshut down NOW  ends it");
 
   // limits
   std::string many = "[SHELL]\n";

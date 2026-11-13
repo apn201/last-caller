@@ -277,6 +277,7 @@ def main():
         c.expect("Login:")
         c.send("bob")
         c.expect("Unknown caller")
+        c.expect("service label")           # Q12b: one in-world hint line for a wrong name
         c.expect("Login:")
         if "(N)ew" in c.all:
             raise AssertionError("the front page offers New")
@@ -634,6 +635,25 @@ def main():
         sync(c)
         c.send("M")
         c.expect("Message command?", timeout=15)
+        # Q12b: the header list shows the newest 20 and pages back to message 1 and forward again
+        def list_numbers(text):
+            return [int(n) for n in re.findall(r"^[\s*]*(\d+)\s+\S", text, re.M)]
+        start = len(c.all)
+        c.send("R")
+        c.expect("E = earlier", timeout=10)
+        newest = list_numbers(c.all[start:])
+        if "L = later" in c.all[start:]:
+            raise AssertionError("L = later is offered on the newest page")
+        start = len(c.all)
+        c.send("E")
+        c.expect("L = later", timeout=10)
+        earlier = list_numbers(c.all[start:])
+        if not newest or not earlier or max(earlier) >= min(newest):
+            raise AssertionError("E did not list the messages before the newest page: %r %r" % (newest, earlier))
+        c.send("L")
+        c.expect("E = earlier", timeout=10)
+        c.send("Q")
+        c.expect("Message command?", timeout=10)
         for n, marker in ((27, "HANDLES IT"), (32, "Tank 2 held forty percent"), (33, "inhibited it"),
                           (37, "Commander M. Halvorsen died"), (39, "fourteen requests"),
                           (42, "I will not make a joke"), (46, "my name is on it"),
@@ -904,6 +924,10 @@ def main():
         c.send("99999")
         c.expect("no query with that code")
         c.expect("QUERY>")
+        c.send("HELP")                      # Q12b: where the codes are, and that operator codes exist
+        c.expect("comms manual")
+        c.expect("Office of the Founder")
+        c.expect("QUERY>")
         c.send("NW1-98-43-17")             # a wrong code is just an unknown query
         c.expect("no query with that code")
         c.expect("QUERY>")
@@ -956,6 +980,12 @@ def main():
         c.send("release out-1122 ground-1")      # no manifest yet: the command does not exist
         c.expect("release: command not found")
         c.expect("$")
+        start = len(c.all)
+        c.send("help")                           # Q12b: help points at the queues, not yet at release
+        c.expect("/var/spool/out")
+        c.expect("$")
+        if "release QUEUE" in c.all[start:]:
+            raise AssertionError("help lists release before the manifest is whole")
         c.send("cat ../../nothing")
         c.expect("No such file or directory")
         c.expect("$")
@@ -1130,6 +1160,10 @@ def main():
         c.expect("$")
         c.send("cat /var/spool/out/incident.rpt")
         c.expect("HOLD (INCIDENT REPORT NOT ON FILE): CLEARED")
+        c.expect("$")
+        start = len(c.all)
+        c.send("help")                           # Q12b: now help lists the command
+        c.expect("release QUEUE DESTINATION")
         c.expect("$")
         c.send("release out-1122")               # the right verb, a missing destination: usage, nothing else
         c.expect("usage: release QUEUE DESTINATION")

@@ -29,6 +29,8 @@ struct Table {
   std::string needs;        // flags that put the door in the menu (empty = everyone)
   std::string motd;
   std::string unknown = "{cmd}: command not found";
+  std::string help = "ls [-la] [dir]  cat file  cd [dir]  pwd  whoami  uname  exit";   // "|" breaks a line
+  std::string helpFinal;    // added to help for a caller who may use the final command
   std::string date = "Oct 31  1998", owner = "root";
   std::string finalCmd, finalHas, finalSet, finalText, finalScene, finalUsage;   // finalScene: a scene (STORY/SCENES) the door starts after the final text
   std::vector<Node> nodes;
@@ -165,7 +167,7 @@ inline void parse(const std::vector<Kv> &kv, Table &t) {
   t = Table();
   auto set = [&](const char *key, std::string &dst) { std::string v = get(kv, "SHELL", key); if (!v.empty()) dst = haunt::capText(v, 160); };
   set("host", t.host); set("user", t.user); set("prompt", t.prompt); set("unknown", t.unknown);
-  set("date", t.date); set("owner", t.owner);
+  set("date", t.date); set("owner", t.owner); set("help", t.help); set("help_final", t.helpFinal);
   t.needs = haunt::flagsClean(get(kv, "SHELL", "needs"));
   t.motd = haunt::capText(get(kv, "SHELL", "motd"), MAX_TEXT);
   t.finalCmd = squash(get(kv, "SHELL", "final_cmd"));
@@ -229,7 +231,12 @@ inline Result exec(const Table &t, std::string &cwd, const std::string &flags, c
   if (cmd == "whoami") { r.out = t.user; return r; }
   if (cmd == "hostname") { r.out = t.host; return r; }
   if (cmd == "uname") { r.out = "NOWHERE 4.1.3 #1 " + t.date; return r; }
-  if (cmd == "help" || cmd == "?") { r.out = "ls [-la] [dir]  cat file  cd [dir]  pwd  whoami  uname  exit"; return r; }
+  if (cmd == "help" || cmd == "?") {
+    r.out = expand(t.help);
+    // The final command is listed only for a caller it works for (it is "not found" for the rest).
+    if (!t.helpFinal.empty() && !t.finalCmd.empty() && (t.finalHas.empty() || haunt::flagsHasAll(flags, t.finalHas))) r.out += "\n" + expand(t.helpFinal);
+    return r;
+  }
   if (cmd == "cd") {
     std::string to;
     if (w.size() > 2) { r.out = "cd: too many arguments"; return r; }

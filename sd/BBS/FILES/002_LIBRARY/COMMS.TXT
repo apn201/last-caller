@@ -15,6 +15,8 @@ Rev. 3, 28 Oct 1998. For crew use. Filed by ELIZA.
 
    She answers what is asked. Please ask exactly.
 
+   A code that opens another host is entered the same way. See section 6.
+
 3. QUERY CODES
 
    1xx  POWER AND ATTITUDE
