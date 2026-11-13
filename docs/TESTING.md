@@ -99,6 +99,19 @@ Wording is draft. After act 1, as the same caller, over Telnet and the browser:
 5. Log in as yourself: Mail: CMDR, Mail: GARDEN and Archive are listed. Reading "Bay 3" in the Archive plays `MEM_REC`. `F`, Archive: four pieces of the order; read in piece order their codes give `NW1-98-44-17` (for act 3).
 6. `TYVANCE` again: Ty's Desktop with `ORBIT_9.ANS`, unfinished. As yourself it is not listed.
 7. `R`: every crew row and the ELIZA row can now be filled from what was read. No shortcut rule is on the staging card any more.
+## Act 3 (Q9)
+
+Wording is draft. After act 2, as the same caller, over Telnet and the browser:
+
+1. `M`, Lounge: the last post is Ty's, "power bay", 8 Dec 04:13. Radio Room ends with two posts from the club of 2026 (stamped 8 Dec 1998 04:22 and 04:31); Eero's "Porch light" of 22 Nov is the last 1998 post.
+2. `F`, Ship Logs, `POWER.LOG`: the `MEM_BAY` scene plays at the next menu prompt and stops on "Ty?".
+3. `D`: the doors menu lists Diagnostics, not the NOWHERE shell. `I`, type `NW1-98-44-17` (any case, spaces or none): ELIZA accepts it. Back in the doors menu the shell (`N`) is listed. A wrong code is "no query with that code".
+4. `N`: `ls`, `cat /etc/orders.cfg` (order 5), `cat /srv/rack2/clients.lst`, `cat /var/spool/out/queue` (hold: incident report not on file), `cat /var/spool/out/index`. `release out-1122 ground-1` now: "command not found". `incident.rpt` is not there.
+5. Finish the manifest (`R`). In the shell `ls /var/spool/out` now lists `incident.rpt`. `release out-1122` and `release out-1122 earth` print only the usage line. `release out-1122 ground-1` starts the `ENDING` scene.
+6. Leave it queued: the crew list. Run it again and send: the club station, ELIZA files the wire, Eero's last line "The light is on." Then `B`: bulletin 5, News Wire, in ANSI and (ANSI off) plain. Sign in again: a private message from OH9ZQW in the Lounge, once.
+7. Without ANSI the same screens show their plain twins. A caller who never sent has no bulletin 5.
+
+Host test of the shell logic (usage line): `zig c++ -std=c++17 -Wall -Wextra -I src/core tools/test/shell_logic_test.cpp -o shell_logic_test`, then `./shell_logic_test sd/BBS/STORY/SHELL.INI`.
 ## Server build and end-to-end check (second build, from Q1)
 
 The server cannot be built on this Windows PC. The staging host builds and

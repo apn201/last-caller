@@ -18,5 +18,5 @@ Requirements: `requirements.md`. Design: `design.md`.
   listed, the shell is not. Query `200`, `q 2-01`, nonsense, QUIT. Give the
   account the flag `NOWHERE_OPEN` (SysOp user editor): `N` appears; try `ls`,
   `cd etc`, `cat motd`, `exit`. Repeat in the browser.
-- [ ] 9. Act 1 and act 3 content (Q7, Q9): the comms manual with the query codes,
+- [x] 9. (Q9 done) Act 1 and act 3 content (Q7, Q9): the comms manual with the query codes,
   the haven tree, the final command, and whatever grants `NOWHERE_OPEN`

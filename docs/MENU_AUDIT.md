@@ -90,14 +90,14 @@ are allowed: they never appear on screen.
 | A row | 1 2 3, Q | A locked row offers no blank. |
 | Pick list | option number, 0, Q | Only options the caller has evidence for. |
 | Notebook | Q | Notes the caller has earned. |
-| NOWHERE shell | final command | `release outbound` needs the full manifest; otherwise it is `command not found`. The `ENDING` scene follows. |
+| NOWHERE shell | final command | `release out-1122 ground-1` needs the full manifest (`M_Z`); otherwise it is `command not found`. With `M_Z` the verb with other arguments prints the usage line only, and `incident.rpt` exists. The door itself is listed only for a caller holding `NOWHERE_OPEN`, which the order code in Diagnostics grants (Q9). The `ENDING` scene follows. |
 
 ## Message areas (Q7)
 
 | Key | Shown when | Notes |
 | --- | --- | --- |
 | P (post), R (reply) | the caller can save and the conference is not `read_only=1` (the SysOp may post anywhere) | Q7. Mission Log, Garden Notes and the mailboxes are read-only; Lounge, Spoilers, No Spoilers and Radio Room take posts. |
-| B | a bulletin is visible; a `.ANS` bulletin shows its `.ASC` twin under `ASCII/` to a caller without ANSI | Q7. |
+| B | a bulletin is visible; a `.ANS` bulletin shows its `.ASC` twin under `ASCII/` to a caller without ANSI | Q7. Bulletin 5 (News Wire) needs `END1`: listed only after the queue was sent (Q9). |
 | U | always | Shows the last call of each account (`1998-12-08 03:47` as `08 Dec 03:47`). |
 
 ## Act 2 areas (Q8)
