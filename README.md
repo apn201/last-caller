@@ -121,7 +121,7 @@ order, as one translation unit:
 The browser pages are plain files in `shared/web/`; a pre-build step embeds
 them in the firmware. The core talks to the hardware only through
 `src/platform/`, so the same code can run as a server behind Apache later
-(`docs/APACHE_PORT.md`).
+(`docs/APACHE_PORT.md`). The hosted board is installed with `deploy/install.sh`; see `docs/DEPLOY.md`.
 
 The music player is not in the firmware. It is `player.js` plus libopenmpt
 and jsSID in `/BBS/ASSETS/PLAYER` on the card, and the board only serves the

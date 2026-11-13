@@ -275,3 +275,8 @@ Glitches (needs the board; the logic is covered by `python tools/run_host_tests.
 4. Event log: `GLITCH <id> <handle> node <n>` lines. A broken section is named in `GLITCH_SKIP` (the staging check fails on it).
 
 Mobile (browser terminal, reviewed from the page's code and styles; no phone was at hand): the header wraps, the canvas scales to the width, and on a narrow screen it is smoothed instead of pixelated. On touch screens (`pointer:coarse`) the buttons are 44 px high. Still to check on a real phone: ENTER and BACKSPACE with the on-screen keyboard open, rotating to landscape, and how readable 80 columns are at 390 px wide.
+
+## Deploy (Q14)
+
+The hosted install is in `docs/DEPLOY.md`; `deploy/AGENT_PROMPT.md` is the prompt for an agent. Checks that can run without root: `bash -n deploy/*.sh`; render `deploy/apache-*.conf.in` and run `httpd -t -f` on a throwaway config on the staging host; run `deploy/bootstrap-sysop.py --port N` against a disposable server card (exit 0, a second run exits 3). The install, the reset, the unit and certbot need root on a real host: the first run there is the test. Chat cap: in the chat, type a line of 300 characters; the others see 240.
+
