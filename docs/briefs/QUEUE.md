@@ -134,11 +134,15 @@ Rules for every item:
 - [x] **Q11 - Easter eggs and nerd stuff.** (done, cf6e35a..HEAD of the Q11 commits plus the tick; `pio run` passes, host test `egg_logic_test` passes with `zig c++`, staging check PASS: server build, smoke, e2e 55 passed, 0 failed, 0 skipped (the whole game, then the eggs: modem commands, hidden words, files, ELIZA in chat, Ty's demo scene, snake, `ATH0`), event log clean; board test still to do, `docs/TESTING.md` "Easter eggs". `MODEM.WAV` plays when a browser caller dials. No egg sets a flag; the demo leaves only the scene's own markers. Not done: the arrow-key cheat code, ROT13 lounge posts, hex dump, excuse generator, the demo does not play Ty's MOD (its line points to SUNSIDE in the gallery). Door menu slots raised to 5. The hidden node is Ty's group board (number in `NODELIST.TXT`). All text is draft.) From STORY_EXTRAS: modem
   commands, hidden commands, POST screen, Y2K memo, brochure, price list,
   Ty's demo (ANSI animation with his MOD), Ty's snake door, fortunes.
-- [ ] **Q12 - Verification.** `story-lint` (every fact reachable, no
+- [x] **Q12 - Verification.** (done, b950bc0..HEAD of the Q12 commits plus the tick; `pio run` passes, host tests pass with `zig c++` (`tools/run_host_tests.py`), staging check PASS: server build, `ctest` (host logic tests, the new story property test, story lint), smoke, e2e 55 passed, 0 failed, 0 skipped, event log clean; board test not needed beyond `docs/TESTING.md` "Verification". The `playtester` agent finished the game through the `bbs-caller` MCP server on the staging board in run 3 (ending 1; runs 1 and 2 stopped at faults, see `docs/PLAYTEST.md`). Fixed from the playtest: the short boot banner had no service label and the label read `PASSWORD DEFAULT` (it is `admin`). Open items for the author are listed in `docs/PLAYTEST.md`: ELIZA's last blank has no visible source on a fresh account, `release` and the order-code query are in no help list, fate option wording is for one person. Endings 2 and 3 were played by the e2e, not the agent. Formats checked in the Kiro docs: hooks v1, `.kiro/agents/*.md`, `.kiro/settings/mcp.json`.) `story-lint` (every fact reachable, no
   softlock, every ending reachable), property tests in the server build,
   the `bbs-caller` MCP server and a `playtester` agent that finishes the
   game; hooks for lint and tests; custom agents (`ghostwriter`,
-  `puzzle-smith`, `firmware-guard`, `playtester`).
+  `puzzle-smith`, `firmware-guard`, `playtester`). The `bbs-caller` MCP
+  server connects to the staging board (an SSH tunnel to 127.0.0.1 on the
+  host is fine), and the `playtester` agent must actually finish the game
+  through it; record a transcript summary in `docs/PLAYTEST.md`. Check
+  the current Kiro formats for agents, hooks and MCP config; do not guess.
 - [ ] **Q13 - Polish.** Art pass 3 (Ty's tag on his screens, a real
   spacecraft silhouette, decay over the timeline), glitches (S7), the
   1998 marketing copy in README and bulletins, mobile check of the
