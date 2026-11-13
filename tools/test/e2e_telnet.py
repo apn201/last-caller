@@ -170,6 +170,16 @@ def number_of(c, start, name):
     return m.group(1)
 
 
+def sync(c):
+    """At a main menu: drop whatever text is still queued, then see a fresh prompt."""
+    end = time.time() + 0.8
+    while time.time() < end:
+        c._pump()
+    c.buf = ""
+    c.send("")
+    c.expect("Main Board Command?", timeout=15)
+
+
 def read_msg(c, n, marker):
     """Message command? -> read message n, see `marker`, back to Message command?."""
     c.send("R")
@@ -586,6 +596,7 @@ def main():
     @step("act 2: the Lounge, Mission Log, Garden Notes and Radio Room carry day 22 onward")
     def act2_posts():
         c = state["c"]
+        sync(c)
         c.send("M")
         c.expect("Message command?", timeout=15)
         for n, marker in ((27, "HANDLES IT"), (32, "Tank 2 held forty percent"), (33, "inhibited it"),
@@ -605,6 +616,7 @@ def main():
     @step("act 2: Ty's gallery and journal 2; Orbit 5 and 6 carry two passwords' hints")
     def act2_gallery():
         c = state["c"]
+        sync(c)
         pos = pick_file_area(c, "Ty's Gallery")
         seg = c.all[pos - 3000:]
         for t in ("JOURNAL2.TXT", "ORBIT_3.ANS", "ORBIT_8.ANS", "12-07-98", "11-28-98"):
@@ -645,6 +657,7 @@ def main():
     @step("act 2: Ship Logs and Records open with the crew visit; the logs hold the facts and play their memory scenes; Ty's desktop stays shut")
     def act2_logs():
         c = state["c"]
+        sync(c)
         pos = pick_file_area(c, "Ship Logs")
         listing = c.all[pos - 3000:]
         for t in ("SUIT1.LOG", "GARDEN.LOG", "AUDIT.LOG", "CAPSULE.LOG", "RACK.LOG", "DOWNLINK.CFG", "ANTENNA.RPT",
@@ -679,6 +692,7 @@ def main():
     def crew_session(who, pw, wrong, marker):
         """Leave the current session, sign in to a crew account (a wrong guess first) and read its mailbox."""
         c = state["c"]
+        sync(c)
         c.send("G")
         if not c.wait_closed(20):
             raise AssertionError("connection stayed open after Goodbye")
