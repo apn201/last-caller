@@ -97,6 +97,7 @@ struct Session {
   uint8_t pageNode = 0;   // SysOp only: node of a caller waiting for an answer
   uint32_t pageUser = 0;  // and that caller's user id
   uint32_t msgId = 0, replyTo = 0;  // message being read; message being answered
+  uint32_t listFrom = 0, listShown = 0, listTotal = 0;  // the header list: first row shown (0-based), rows shown, rows in the area
   uint32_t msgEdit = 0;  // message being edited, 0 = writing a new one
   String draft; uint8_t draftLines = 0; bool pendingPrivate = false;  // line editor
   // Paced output: write() -> pending (or the last job's `after`) -> output at

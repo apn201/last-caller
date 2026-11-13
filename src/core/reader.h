@@ -228,6 +228,7 @@ static String readerRow(const Reader &r, uint32_t row) {
   if (f) f.close();
   return out;
 }
+static String readerBar(const Reader &r, const String &note);
 static void showPage(Session &s, const String &note = "") {
   Reader &r = s.reader;
   uint32_t total = readerCount(r);
@@ -244,6 +245,11 @@ static void showPage(Session &s, const String &note = "") {
   } else {
     for (uint32_t i = 0; i < PAGE_LINES; ++i) out += readerRow(r, r.top + i) + "\r\n";
   }
+  write(s, out + readerBar(r, note));
+}
+// The status bar under a page (from the page that starts at r.top).
+static String readerBar(const Reader &r, const String &note) {
+  uint32_t total = readerCount(r);
   uint32_t last = min(r.top + PAGE_LINES, total);
   String where = total ? String(r.top + 1) + "-" + last + "/" + total + (last >= total ? " END" : "  " + String(last * 100 / total) + "%") : String("empty");
   String status = " " + r.title + "  " + where + "  " + (note.length() ? note : r.hint);
@@ -255,7 +261,7 @@ static void showPage(Session &s, const String &note = "") {
     if ((c & 0xc0) != 0x80) width++;
   }
   while (width++ < 79) bar += ' ';
-  write(s, out + "\x1b[0;30;46m" + bar + "\x1b[0m");
+  return "\x1b[0;30;46m" + bar + "\x1b[0m";
 }
 // Open the reader on what the caller filled into s.reader. ANSI pictures
 // play at once when the caller has a modem speed; everything else pages.
@@ -286,7 +292,10 @@ static void readerStopped(Session &s) {
   bool ended = r.playRow >= readerCount(r);
   r.playing = false;
   r.top = r.playRow > PAGE_LINES ? r.playRow - PAGE_LINES : 0;
-  showPage(s, ended ? "" : "Stopped. S plays on from here");
+  // Played to the end: the picture is already on the screen, so only the bar goes under it
+  // (a full page would draw it a second time).
+  if (ended) { write(s, readerBar(r, "")); return; }
+  showPage(s, "Stopped. S plays on from here");
 }
 static void closeReader(Session &s) {
   Reader &r = s.reader;

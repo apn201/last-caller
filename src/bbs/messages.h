@@ -3,6 +3,7 @@
 // message at a time with next/previous, reply into a linked thread, and see
 // a whole thread on one screen. Messages are written with a line editor.
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
+#include "../core/wrap_logic.h"
 
 static constexpr uint8_t DRAFT_LINES = 100;
 static constexpr uint16_t DRAFT_CHARS = 8000;
@@ -170,17 +171,31 @@ static void messageArea(Session &s) {
   say(s, "\x1b[1;36mArea: " + confName(s.conference) + "\x1b[0m  " + total + " messages, " + fresh + " new");
   prompt(s, "Message command? ");
 }
-// The last 20 headers of the area, new ones marked.
-static void listMessages(Session &s) {
+// 20 headers of the area, new ones marked: the newest at first (what = 0), then E for the
+// 20 before the ones shown, L for the 20 after.
+static constexpr uint32_t LIST_ROWS = 20;
+static String listPrompt(const Session &s) {
+  return String("Read # (ENTER = first new, ") + (s.listFrom > 0 ? "E = earlier, " : "") +
+         (s.listFrom + s.listShown < s.listTotal ? "L = later, " : "") + "Q = back): ";
+}
+static void listMessages(Session &s, char what = 0) {
   struct Row { uint32_t id; String when, from, to, subject; bool fresh; };
   std::vector<Row> rows;
   uint32_t mark = lastReadIn(s, s.conference);
+  uint32_t total = 0, fresh = 0;
+  areaCounts(s, s.conference, total, fresh);
+  uint32_t from = total > LIST_ROWS ? total - LIST_ROWS : 0;
+  if (what == 'E') from = s.listFrom > LIST_ROWS ? s.listFrom - LIST_ROWS : 0;
+  else if (what == 'L') from = min(s.listFrom + LIST_ROWS, from);
+  uint32_t at = 0;
   eachMessage([&](const Message &m) {
     if (m.conference != s.conference || !canRead(s, m)) return true;
-    rows.push_back({m.id, m.when, m.from, m.to.length() ? m.to : String("All"), m.subject, !m.history && msgOrder(m.id) > msgOrder(mark)});
-    if (rows.size() > 20) rows.erase(rows.begin());
-    return true;
+    if (at >= from && at < from + LIST_ROWS)
+      rows.push_back({m.id, m.when, m.from, m.to.length() ? m.to : String("All"), m.subject, !m.history && msgOrder(m.id) > msgOrder(mark)});
+    at++;
+    return at < from + LIST_ROWS;
   });
+  s.listFrom = from; s.listShown = rows.size(); s.listTotal = total;
   char head[100];
   snprintf(head, sizeof(head), "  %-5s %-16s %-14s %-12s %s", "#", "Date", "From", "To", "Subject");
   say(s, "\r\n\x1b[1;36m" + String(head) + "\x1b[0m");
@@ -192,7 +207,7 @@ static void listMessages(Session &s) {
   }
   if (rows.empty()) say(s, "No messages in this area yet.");
   s.state = MSG_READ;
-  prompt(s, "Read # (ENTER = first new, Q = back): ");
+  prompt(s, listPrompt(s));
 }
 
 // ---------- the reader ----------------------------------------------------------
@@ -209,20 +224,13 @@ static String messageKeys(Session &s, bool reader) {
          (history ? String(y) + "[H]" + n + "istory " : String()) + y + "[Q]" + n + "uit (ENTER = next): ";
 }
 static void readerPrompt(Session &s) { prompt(s, messageKeys(s, false)); }
-// Message text as screen rows, wrapped at 79 columns (UTF-8 aware).
+// Message text as screen rows, wrapped at 79 columns on word breaks (UTF-8 aware; core/wrap_logic.h).
 static void bodyRows(std::vector<String> &rows, const String &body) {
   int start = 0;
   while (start <= (int)body.length()) {
     int nl = body.indexOf('\n', start);
     if (nl < 0) nl = body.length();
-    String line = body.substring(start, nl), row;
-    uint8_t cols = 0;
-    for (size_t i = 0; i < line.length(); ++i) {
-      uint8_t c = line[i];
-      if ((c & 0xc0) != 0x80) { if (cols == 79) { rows.push_back(row); row = ""; cols = 0; } cols++; }
-      row += (char)c;
-    }
-    rows.push_back(row);
+    for (const std::string &row : wrap::rows(std::string(body.substring(start, nl).c_str()), 79)) rows.push_back(String(row.c_str()));
     start = nl + 1;
   }
 }

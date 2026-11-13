@@ -26,13 +26,15 @@ static bool messageCommand(Session &s, String &line, const String &cmd) {
   if (s.state == MSG_READ) {
     uint32_t n;
     if (cmd == "Q") messageArea(s);
+    else if (cmd == "E" && s.listFrom > 0) listMessages(s, 'E');
+    else if (cmd == "L" && s.listFrom + s.listShown < s.listTotal) listMessages(s, 'L');
     else if (!line.length()) {
       uint32_t id = firstNew(s);
       if (!id) id = stepMessage(s, 0, true);
       if (id) showMessage(s, id); else messageArea(s);
     }
     else if (readNumber(line, n)) showMessage(s, msgFromNo(n));
-    else prompt(s, "Read # (ENTER = first new, Q = back): ");
+    else prompt(s, listPrompt(s));
     return true;
   }
   if (s.state == MSG_VIEW) {

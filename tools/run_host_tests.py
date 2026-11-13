@@ -20,6 +20,7 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 STORY = os.path.join(ROOT, "sd", "BBS", "STORY")
 TESTS = {   # name -> arguments (the card's own files)
     "egg_logic_test": [],
+    "wrap_logic_test": [],
     "power_logic_test": [],
     "modinfo_logic_test": [],
     "haunt_logic_test": [os.path.join(STORY, "TRIGGERS.INI")],
