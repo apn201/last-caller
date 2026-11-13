@@ -9,7 +9,7 @@ Rev. 3, 28 Oct 1998. For crew use. Filed by ELIZA.
    node. The ground reaches it through the account MCC.
 
    Limits. A message line holds 254 characters. Do not hold a key down in the
-   editor: a run of 255 of the same character overruns the line buffer and the
+   editor: a run of 20 of the same character overruns the line buffer and the
    board restarts. Nothing is lost but the post.
 
 2. THE DIAGNOSTICS DOOR

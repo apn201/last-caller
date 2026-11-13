@@ -135,7 +135,7 @@ Subject: brb
 Date: 1998-11-06 02:14
 
 ok so. the ansi editor on the big screen has a line tool and i held the key
-down. it filled the line with 255 zeros and the board went away. all of it. 3
+down. it filled the line with 20 zeros and the board went away. all of it. 3
 minutes. i counted on the clock over the galley door, 3 min 04.
 
 nobody was mad. marta said "again?" des said it was the first interesting thing

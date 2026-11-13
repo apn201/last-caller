@@ -60,9 +60,11 @@ list the trigger filter refuses), so `SYSVW` never opens a real SysOp area.
 - Where: the post path in `messages.h`, after the draft is saved and before it
   is stored. A pure function `overrunInBody(body)` in a new logic header
   (`core/overrun_logic.h`, no platform includes) returns true when the body,
-  with `\r` and `\n` removed, holds 255 `0` characters in a row. Host test:
-  254 no, 255 yes, 255 across three lines yes, 255 with one `O` (letter) in the
-  middle no, 1000 yes.
+  with `\r` and `\n` removed, holds 20 `0` characters in a row (Q12e: it was 255). Host test:
+  19 no, 20 yes, 20 across three lines yes, 20 with one `O` (letter) in the
+  middle no, 1000 yes. `nearMiss(body)` is true for a longest run of exactly 19:
+  one dim, garbled ELIZA line, the post goes through, no flag (event
+  `OVERRUN_NEAR`). Fewer than 19 does nothing.
 - Effect: the message is not stored; the caller sees `MESSAGE LOST` and a short
   glitch (the existing glitch helper, a few lines); `OVR` is set through the
   trigger path (so it is carried and logged like any flag); `MEM_GLITCH` starts

@@ -12,7 +12,7 @@ edit.
   1998 evidence and plays a scene.
 - Act 1, 2, 3: the evidence from 31 Oct to 22 Nov 13:51, from 22 Nov 13:52 to
   1 Dec, and from 2 Dec to 8 Dec. Act 2 opens with M3, act 3 with M4.
-- Overrun: a message body with at least 255 `0` characters in a row, line breaks
+- Overrun: a message body with at least 20 `0` characters in a row, line breaks
   ignored.
 - SYSOP view: the story flag `SYSVW`. It opens reading and nothing else.
 - Cure: the flag `CURE`, set by reading the memory-check page of the operations
@@ -69,8 +69,9 @@ edit.
    overrun, THE board SHALL NOT store it, SHALL show a "message lost" line and
    a short screen glitch, and SHALL set `OVR` on the caller. Nobody else SHALL
    see anything.
-2. THE count SHALL ignore line breaks, so lines of zeros joined add up. 254 SHALL
-   NOT trigger it.
+2. THE count SHALL ignore line breaks, so lines of zeros joined add up. 19 SHALL
+   NOT trigger it: it SHALL show one garbled ELIZA line, store the post and
+   set no flag. Fewer than 19 SHALL do nothing.
 3. WHEN `OVR` is set, THE scene `MEM_GLITCH` SHALL play once: fragments out of
    order, one of them a moment the caller has not read yet. Nothing on the
    board SHALL really be corrupted.
@@ -78,7 +79,7 @@ edit.
    with `has=OVR`). No line SHALL lose a clue the caller already had.
 5. THE hints SHALL be in the open Lounge post of 6 Nov (E41) and the Archive
    post of 2 Dec (E42), with ELIZA's reply under Ty's post. The exact rule
-   SHALL be written in the post (the number 255).
+   SHALL be written in the post (the number 20).
 
 ### R5 - M6: the SysOp chat and the grant
 
@@ -134,7 +135,7 @@ edit.
 2. A property test SHALL show that no rule, scene or line sets a flag outside
    the story set, and that story flags only grow (R3.2).
 3. THE e2e SHALL play the new chain from a fresh caller, M1 to M9, and the
-   branches that matter: the 254-zero near miss, an early SYSOP request, SYSOP
+   branches that matter: the 19-zero near miss, an early SYSOP request, SYSOP
    view reading a gated post, ELIZA login, shell from her door.
 4. `pio run` and the staging check SHALL pass. `playtester` run 5, from a
    brand-new caller, SHALL finish the game; play time SHALL be recorded in

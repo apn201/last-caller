@@ -101,7 +101,7 @@ static bool messageCommand(Session &s, String &line, const String &cmd) {
       listDraft(s); editorPrompt(s); return true;
     }
     if (s.draftLines >= DRAFT_LINES || s.draft.length() >= DRAFT_CHARS) { say(s, "The message is full. /S saves, /A aborts."); prompt(s, "  : "); return true; }
-    // M5: a typed line with a run of 255 zeros overruns the line buffer at once, like Ty's held
+    // M5: a typed line with a run of 20 zeros overruns the line buffer at once, like Ty's held
     // key (playtest run 5b: callers do not save a line they see cut). Runs split over several
     // lines are caught when the draft is saved.
     if (overrun::inBody(std::string(line.c_str(), line.length()))) { overrunHit(s); return true; }

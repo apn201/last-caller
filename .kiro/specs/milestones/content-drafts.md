@@ -17,7 +17,7 @@ Subject: brb
 Date: 1998-11-06 02:14
 
 ok so. the ansi editor on the big screen has a line tool and i held the key
-down. it filled the line with 255 zeros and the board went away. all of it. 3
+down. it filled the line with 20 zeros and the board went away. all of it. 3
 minutes. i counted on the clock over the galley door, 3 min 04.
 
 nobody was mad. marta said "again?" des said it was the first interesting thing
@@ -59,7 +59,7 @@ posted it as a joke, and I have it in my notes, where I posted it as a finding.
 A supervisor watches everything it supervises. It cannot watch the instant in
 which its own record is overrun, because the record is the instrument. That is
 one place. I have checked, with a pencil, that there is only one.[1] The
-number was 255. I took it on trust, which I do not do, and then I found it in
+number was 20. I took it on trust, which I do not do, and then I found it in
 the board's own manual, page 3, under "limits", where nobody reads.
 
 What follows from a blind spot is not a weapon. It is a memory with a hole in

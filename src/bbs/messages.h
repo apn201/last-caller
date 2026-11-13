@@ -508,7 +508,7 @@ static void startReply(Session &s) {
   say(s, "\r\nReplying to #" + String(msgNo(m.id)) + " by " + m.from + ": " + s.pendingSubject);
   startEditor(s);
 }
-// M5, the overrun: a body with a run of 255 zeros is the one thing ELIZA cannot watch. The board
+// M5, the overrun: a body with a run of 20 zeros is the one thing ELIZA cannot watch. The board
 // swallows the post (nobody else sees anything), glitches this caller's screen, and the caller
 // has damaged her memory (OVR). The scene MEM_GLITCH plays at the next calm prompt.
 static void overrunHit(Session &s) {
@@ -525,10 +525,18 @@ static void overrunHit(Session &s) {
   else if (s.hauntShows.size() < 8) { HauntShow h; h.scene = "MEM_GLITCH"; s.hauntShows.push_back(h); }
   messageArea(s);
 }
+// One zero short of the overrun: ELIZA drops half a line and picks it up again. No flag, the post
+// goes through. A caller who miscounted knows the way is right.
+static void nearMissGlitch(Session &s) {
+  event("OVERRUN_NEAR", s.user.handle + " node " + s.node);
+  if (s.ansi) say(s, "\x1b[0;90mELIZA: I am sorry, I did not cat\xe2\x96\x92\xe2\x96\x91\xe2\x96\x93 \xe2\x96\x91\xe2\x96\x93\xe2\x96\x92h that. Please go on.\x1b[0m");
+  else say(s, "ELIZA: I am sorry, I did not cat### h that. Please go on.");
+}
 static void saveDraft(Session &s) {
   if (!canPost(s) && !s.msgEdit) { s.draft = ""; readOnlyNotice(s); messageArea(s); return; }
   if (!canWrite(s)) { s.draft = ""; s.msgEdit = 0; readOnlyNotice(s); messageArea(s); return; }
   if (overrun::inBody(std::string(s.draft.c_str(), s.draft.length()))) { overrunHit(s); return; }
+  if (overrun::nearMiss(std::string(s.draft.c_str(), s.draft.length()))) nearMissGlitch(s);
   if (s.msgEdit) {  // an edit: the new text under the old id
     Message m;
     uint32_t id = s.msgEdit;

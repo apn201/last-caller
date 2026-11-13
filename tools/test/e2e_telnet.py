@@ -1106,16 +1106,17 @@ def main():
         c.expect("%2d:" % (len(lines) + 1), timeout=10)
         c.send("/S")
 
-    @step("M5: 254 zeros post normally; 255 across two lines are swallowed, MESSAGE LOST, MEM_GLITCH plays")
+    @step("M5: 19 zeros post with a small glitch only; 20 across two lines are swallowed, MESSAGE LOST, MEM_GLITCH plays")
     def m5_overrun():
         c = state["c"]
         sync(c)
-        post(c, "e2e zeros 254", ["0" * 200, "0" * 54])
+        post(c, "e2e zeros 19", ["0" * 10, "0" * 9])
+        c.expect("did not cat", timeout=10)            # the small glitch: one garbled ELIZA line
         c.expect("posted", timeout=10)
         c.expect("Message command?", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
-        post(c, "e2e zeros 255", ["0" * 200, "0" * 55])
+        post(c, "e2e zeros 20", ["0" * 10, "0" * 10])
         c.expect("MESSAGE LOST", timeout=10)
         advance(c, "lost my place", timeout=90)
         advance(c, "Main Board Command?", timeout=60)
@@ -1139,7 +1140,7 @@ def main():
         c.send("R")
         c.expect("Read #", timeout=10)
         seg = c.all[start:]
-        if "e2e zeros 254" not in seg or "e2e zeros 255" in seg or "e2e zeros long" in seg:
+        if "e2e zeros 19" not in seg or "e2e zeros 20" in seg or "e2e zeros long" in seg:
             raise AssertionError("the near miss must be posted and the overrun swallowed: %r" % seg[-800:])
         c.send("Q")
         c.expect("Message command?", timeout=10)

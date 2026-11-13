@@ -38,7 +38,7 @@ jigsaw there.
 | M2 | Own account | M1; create the account in the console | (account) | Act 1 board, 31 Oct to 22 Nov 13:51 | NEW `ELZ_WELCOME` |
 | M3 | Crew area | M2; `TYVANCE` login, password = his birthday | `CREW`, NEW `ACT2` | Act 2, 22 Nov 13:52 to 1 Dec: logs, records, the other crew passwords | `TY_DESK` |
 | M4 | Achterberg's archive | M3; `CHAOS` login, password `LADDER` | `ACH`, NEW `ACT3` | Act 3, 2 Dec onward; his last message; the jigsaw | `MEM_REC` |
-| M5 | ELIZA's memory damaged | M2; post a body with 255 zeros in a row | NEW `OVR` | ELIZA's lines change | NEW `MEM_GLITCH` |
+| M5 | ELIZA's memory damaged | M2; post a body with 20 zeros in a row (19 gives one garbled ELIZA line and nothing else) | NEW `OVR` | ELIZA's lines change | NEW `MEM_GLITCH` |
 | M6 | SYSOP view | M5 and the handbook page (CMDR login, so M3); reply 3 in the SysOp chat | NEW `CURE`, NEW `SYSVW` | Everything, every crew mailbox, the Sponsor's orders in full | NEW `ELZ_GRANT` |
 | M7 | ELIZA's account | M6; her password from the go-live checklist | NEW `ELZ_IN` | Her door menu, her mail, her ops log | NEW `ELZ_OPS` |
 | M8 | NOWHERE shell | M7; the order code (jigsaw) typed in Diagnostics | `NOWHERE_OPEN` (exists) | The haven tree, the queue, Ty's typescript | none |
@@ -58,7 +58,7 @@ flags.
 | M2 | WELCOME bulletin: guests read, ELIZA offers an account | The console offers it after the RTG | |
 | M3 | CREW bulletin: Ty's bio with his birthday | Ty's journal: "I use my birthday for everything" | User list: `TYVANCE` "all decks"; his tune's sample names (E39) |
 | M4 | Orbit 3 shown at 300 baud: the covered frame | Lounge "Locks", 25 Nov, and Achterberg's repeated "ladder" | AUDIT.LOG shows his archive made 28 Nov |
-| M5 | Lounge, 6 Nov, Ty: "255 zeros", the board went away for three minutes | Archive, 2 Dec, Achterberg: the one place she cannot watch | ELIZA's reply under Ty's post: "unavailable for three minutes" |
+| M5 | Lounge, 6 Nov, Ty: "20 zeros", the board went away for three minutes | Archive, 2 Dec, Achterberg: the one place she cannot watch | ELIZA's reply under Ty's post: "unavailable for three minutes" |
 | M6 cure | CMDR's handbook page: SYSOP mode has a memory check | Archive, 2 Dec: she must allow the check, for its duration | ELIZA, once the caller has M5: she cannot account for some minutes |
 | M7 | The checklist itself, by name and date, in Engineering | ELIZA's grant line: Engineering is listed now | Archive, 3 Dec: "the operators never changed it" |
 | M8 | The Founder's order pieces in the jigsaw give the code | Comms manual: queries and the code form | DIAG help: codes from the Founder's office are entered as queries (exists) |
@@ -111,7 +111,7 @@ An estimate for the design, not a measurement. Run 5 records the real figure.
 | 90 to 105 | M8; the manifest; M9 |
 
 Inside the 60 to 120 minute goal. Nothing in the chain is a wait or a
-repeat. The only typed repetition is the 255 zeros of M5, and it can be pasted.
+repeat. The only typed repetition is the 20 zeros of M5, and it can be pasted.
 
 ## Rules this chain keeps
 

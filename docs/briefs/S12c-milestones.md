@@ -82,11 +82,11 @@ ready-made replies (1, 2, 3), and the right reply only appears once the
 caller has learned it from evidence. Two earlier triggers are needed:
 
 1. Break her memory (M5). Ty found the bug in week one, as a joke: his
-   ANSI editor filled a line with 255 zeros, he posted it, and the board
+   ANSI editor filled a line with 20 zeros, he posted it, and the board
    went away for three minutes ("eliza went brb lol"). That Lounge post is
    open, dated early Nov, everyday life. Achterberg's archive explains it
    in his own words: the overrun is the one place she cannot watch. When
-   the caller posts a body that holds a run of 255 zeros (decide exactly
+   the caller posts a body that holds a run of 20 zeros (decide exactly
    what counts and write it into the hints), the board swallows the post
    ("message lost", nobody else sees it), the screen glitches, the caller
    gets the flag. Per caller. Nothing is really corrupted.

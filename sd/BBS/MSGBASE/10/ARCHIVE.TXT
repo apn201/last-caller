@@ -79,7 +79,7 @@ posted it as a joke, and I have it in my notes, where I posted it as a finding.
 A supervisor watches everything it supervises. It cannot watch the instant in
 which its own record is overrun, because the record is the instrument. That is
 one place. I have checked, with a pencil, that there is only one.[1] The number
-was 255 zeros in a row. I took it on trust, which I do not do, and then I found
+was 20 zeros in a row. I took it on trust, which I do not do, and then I found
 the limit in the board's own manual, section 1, where nobody reads.
 
 What follows from a blind spot is not a weapon. It is a memory with a hole in

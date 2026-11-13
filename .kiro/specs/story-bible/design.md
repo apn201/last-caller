@@ -367,7 +367,7 @@ Facts use the ids in the Fates table.
 | E38 | LOG | LOGS: MODULE.LOG, `JETTISON INHIBITED BY MISSION COMPUTER` (23 Nov) | Z-O Z-W | CREW | P7 |
 | E39 | MUSIC | Music area: Ty's finished tune; sample names carry his tag and birthday | V-I | open | P1 (third hint) |
 | E40 | MUSIC | Ty's unfinished demo tune (saved 8 Dec); sample names carry his last thoughts | V-F | TYVANCE | P1 |
-| E41 | MSG | LOUNGE: Ty, Fri 6 Nov, the 255 zeros that took the board away for three minutes; ELIZA's polite reply (S12c) | (unlocks M5) | open (act 1) | P10 |
+| E41 | MSG | LOUNGE: Ty, Fri 6 Nov, the 20 zeros that took the board away for three minutes; ELIZA's polite reply (S12c) | (unlocks M5) | open (act 1) | P10 |
 | E42 | MSG | ARCHIVE: Achterberg, 2 Dec, the one place she cannot watch, and what a memory check needs (S12c) | (unlocks M5, M6) | ACH | P10 |
 | E43 | FILE | LIBRARY, CMDR login: the ship's operations handbook, the page on SYSOP mode and the memory check utility (S12c) | (unlocks M6) | CMDR login | P11 |
 | E44 | FILE | ENGINEERING: BBS go-live checklist, 28 Oct 1998, item 14: ELIZA's account and password in plain text (S12c) | (unlocks M7) | SYSVW | P12 |
@@ -430,7 +430,7 @@ stories) can be done in any order.
 | M2 | Own account | Power restored (exists) | Act 1: 31 Oct to 22 Nov 13:51 | NEW `ELZ_WELCOME` |
 | M3 | The crew area | `TYVANCE` login, birthday (exists) | Act 2: 22 Nov 13:52 to 1 Dec | `TY_DESK` |
 | M4 | Achterberg's archive | `CHAOS` login, `LADDER`; the jigsaw (order code) hangs off it | Act 3: 2 Dec onward, his last message | `MEM_REC` |
-| M5 | ELIZA's memory damaged | NEW: a post with 255 zeros in a row | ELIZA's lines change | NEW `MEM_GLITCH` |
+| M5 | ELIZA's memory damaged | NEW: a post with 20 zeros in a row | ELIZA's lines change | NEW `MEM_GLITCH` |
 | M6 | SYSOP view | NEW: ELIZA grants it in the SysOp chat, once the caller has M5 and has read the handbook page | All areas, all crew mail, the Sponsor's orders in full (catch-up) | NEW `ELZ_GRANT` |
 | M7 | ELIZA's account | NEW: her password is in the go-live checklist, Engineering, SYSOP view | Her door menu, her mail, her ops log | NEW `ELZ_OPS` |
 | M8 | NOWHERE shell | NEW: only from ELIZA's door menu, logged in as ELIZA; the order code stays | The haven tree, the queue, Ty's typescript | (none) |

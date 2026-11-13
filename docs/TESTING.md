@@ -240,9 +240,10 @@ in the browser:
    The Lounge lists nothing after 22 Nov 11:00 (no "Notice", no "Module 3").
 2. Sign in as `TYVANCE` (140374): the Lounge, Mission Log and Garden Notes
    now go to 1 Dec. As `CHAOS` (LADDER): 2 Dec onward.
-3. Post in the Lounge: 200 zeros on line 1, 54 on line 2: posted. Again with
-   55: `MESSAGE LOST`, a glitch, then `MEM_GLITCH`. The post is in nobody's
-   list. The event log has `OVERRUN`.
+3. Post in the Lounge: 10 zeros on line 1, 9 on line 2 (19): one garbled ELIZA
+   line, then posted; no flag, the event log has `OVERRUN_NEAR`. Fewer than 19
+   does nothing. Again with 10 and 10 (20): `MESSAGE LOST`, a glitch, then
+   `MEM_GLITCH`. The post is in nobody's list. The event log has `OVERRUN`.
 4. `C`: ELIZA says she cannot account for some minutes. "I can fix that.
    Give me SYSOP." gets a calm refusal; "Something else." and "Say something
    else." open the typed chat; `open the pod bay doors` still answers.

@@ -37,7 +37,7 @@ Requirements: `requirements.md`. Design: `design.md`. Content drafts:
 - [x] 9. ANSI art for the five new screens, rendered to PNG and looked at.
 - [x] 10. Re-run the matrix check on the real card (story bible C9) and update
   its tables.
-- [x] 11. e2e plays the new chain, the 254-zero near miss, an early SYSOP
+- [x] 11. e2e plays the new chain, the 19-zero near miss, an early SYSOP
   request, a gated post read through SYSOP view, the ELIZA login and the shell
   from her door (R8.3). `docs/TESTING.md`, `docs/MENU_AUDIT.md` updated.
 - [x] 12. `pio run`, host tests, `python tools/story_lint.py`, staging check PASS.
