@@ -884,10 +884,11 @@ def main():
         c.send("nw1 98 44 17")             # the order code, pieces 1 to 4: any case, spaces
         c.expect("Authorisation accepted")
         c.expect("QUERY>")
+        start = len(c.all)
         c.send("QUIT")
         c.expect("Door command?", timeout=10)
-        c.send("")
-        c.expect("NOWHERE shell", timeout=10)
+        if "NOWHERE shell" not in c.all[start:]:
+            raise AssertionError("the door menu does not list the NOWHERE shell after the order code")
 
     @step("NOWHERE shell: ls, cat, cd, pwd, unknown command, exit")
     def shell():
