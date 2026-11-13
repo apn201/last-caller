@@ -107,6 +107,9 @@ int main(int argc, char **argv) {
   CHECK(fails("[SCENE]\n[START]\ntext=x\npause=abc\n", "bad pause"));
   CHECK(fails("[SCENE]\n[START]\ntext=x\npause=99999\n", "bad pause"));
   CHECK(fails("[SCENE]\n[START]\ntext=x\nart=../EVIL\n", "bad art"));
+  CHECK(sc && sc->sound.empty());
+  { auto snd = load("[SCENE]\nsound=hum\n[START]\ntext=x\n"); CHECK(snd && snd->sound == "HUM"); }
+  CHECK(fails("[SCENE]\nsound=../EVIL\n[START]\ntext=x\n", "bad sound"));
   CHECK(fails("[SCENE]\nspeed=2\n[START]\ntext=x\n", "speed"));
   CHECK(fails("[SCENE]\nspeed=900\n[START]\ntext=x\n", "speed"));
   CHECK(fails("[SCENE]\ntitle=a\n[START]\ntext=x\n[SCENE]\ntitle=b\n", "twice"));

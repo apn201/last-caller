@@ -22,6 +22,8 @@
 #include "core/power.h"
 #include "core/stream.h"
 #include "core/reader.h"
+#include "core/modinfo_logic.h"
+#include "core/sound.h"
 #include "bbs/settings.h"
 #include "core/haunt.h"
 #include "core/scene.h"

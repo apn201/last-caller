@@ -77,6 +77,40 @@ static void mediaKey(Session &s, const String &bytes, bool (*kind)(const String 
 static void imageKey(Session &s, const String &bytes) { mediaKey(s, bytes, imageName, openImage, "IMG"); }
 static void musicKey(Session &s, const String &bytes) { mediaKey(s, bytes, musicName, openMusic, "MOD"); }
 
+// ---------- a tune as text -------------------------------------------------------------------
+// Where the player cannot run (Telnet, or a browser with no player on the card)
+// a module's header is still worth reading: the title, the format and the
+// sample names, where trackers kept their messages. Only .MOD files have it.
+static bool modName(const String &name) { return up(name).endsWith(".MOD"); }
+// True when a tune of this name opens as text for this caller.
+static bool tuneAsText(const Session &s, const String &name) { return modName(name) && (!s.web || !playerReady(name)); }
+static bool openTuneText(Session &s, uint16_t number, const String &path, const String &name, size_t bytes) {
+  uint8_t head[modinfo::HEADER_BYTES];
+  File file = SD_MMC.open(path, FILE_READ);
+  if (!file) return false;
+  size_t got = file.read(head, sizeof(head));
+  file.close();
+  modinfo::Info info;
+  if (!modinfo::parse(head, got, info)) return false;
+  std::vector<String> rows;
+  rows.push_back("\x1b[1;36m" + clean(name, 40) + "\x1b[0m  " + sizeShort(bytes));
+  rows.push_back("");
+  rows.push_back("Title     " + clean(String(info.title.c_str()), 20));
+  rows.push_back(String("Format    ") + String(info.tag.c_str()) + ", " + String((unsigned)info.channels) + " channels");
+  rows.push_back(String("Length    ") + String((unsigned)info.orders) + " orders, " + String((unsigned)info.patterns) + " patterns");
+  rows.push_back("");
+  rows.push_back("Samples");
+  for (size_t i = 0; i < info.samples.size(); ++i) {
+    if (info.samples[i].name.empty()) continue;
+    char slot[8];
+    snprintf(slot, sizeof(slot), "%02u  ", (unsigned)(i + 1));
+    rows.push_back(String(slot) + clean(String(info.samples[i].name.c_str()), 22));
+  }
+  s.viewer.number = number;
+  activity(s, "LISTENING " + clean(name, 30));
+  openRows(s, rows, clean(name, 24), "SPACE page  B back  \x18\x19 line  N/P file  Q quit", fileReaderQuit, fileReaderKey);
+  return true;
+}
 // ---------- ZIP contents in the reader ---------------------------------------------------
 static bool openZipList(Session &s, uint16_t number, const String &path, const String &name, size_t bytes, bool quiet) {
   std::vector<String> rows;
@@ -97,6 +131,7 @@ static bool openFileViewerOnce(Session &s, uint16_t number, bool quiet) {
   if (zipName(name)) return openZipList(s, number, path, name, bytes, quiet);
   if (musicName(name)) {
     if (openMusic(s, number, name, bytes)) return true;
+    if (tuneAsText(s, name) && openTuneText(s, number, path, name, bytes)) return true;
     if (!quiet) prompt(s, s.web ? "The player for this tune is not on the card. File command? " : "Music plays in the browser terminal. File command? ");
     return false;
   }
@@ -168,7 +203,7 @@ static bool stepViewer(Session &s, bool forward) {
   auto list = folderEntries(s);
   int at = s.viewer.number;  // 1-based
   for (int i = forward ? at + 1 : at - 1; i >= 1 && i <= (int)list.size(); i += forward ? 1 : -1) {
-    if (list[i - 1].dir || !(viewableName(list[i - 1].name) || zipName(list[i - 1].name))) continue;
+    if (list[i - 1].dir || !(viewableName(list[i - 1].name) || zipName(list[i - 1].name) || tuneAsText(s, list[i - 1].name))) continue;
     if (openFileViewer(s, i, true)) return true;
   }
   return false;

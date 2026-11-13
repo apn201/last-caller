@@ -71,6 +71,7 @@ static void sunsideDrop(Session &s) {
   skipStream(s);
   s.hideInput = false;
   powerScreen(s, "SUNSIDE", "SUNSIDE ENDS - CARRIER LOST");
+  soundCue(s, "STATIC");
   say(s);
   event("POWER", String("sunside drop, node ") + s.node + (s.user.handle.length() ? " " + s.user.handle : String()));
   s.state = GOODBYE;
@@ -87,6 +88,7 @@ static void startPowerTimer(Session &s) {
 static void stopPowerTimer(Session &s) {
   s.powered = true;
   s.powerTimerOn = false;
+  soundCue(s, "CHIRP");
   event("POWER", String("RTG connected, node ") + s.node);
 }
 

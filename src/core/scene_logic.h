@@ -32,6 +32,7 @@ struct Scene {
   std::string title;            // for the event log only
   std::string start = "START";
   std::string has, lacks, set;
+  std::string sound;            // a cue (ASSETS/SFX/<NAME>.WAV) the browser plays when the scene starts
   uint32_t speed = 30;          // characters per second
   bool repeat = false;
   std::vector<Node> nodes;
@@ -139,6 +140,8 @@ inline bool parse(const std::string &sceneId, const std::vector<Kv> &entries, Sc
       sc.lacks = haunt::flagsClean(getKey(run, "lacks"));
       sc.set = haunt::flagsClean(getKey(run, "set"));
       sc.repeat = haunt::trim(getKey(run, "repeat")) == "1";
+      sc.sound = idText(getKey(run, "sound"));
+      if (!sc.sound.empty() && !haunt::idOk(sc.sound)) { why = "bad sound name"; return false; }
       continue;
     }
     if (sc.nodes.size() >= MAX_NODES) { why = "more than 64 nodes"; return false; }

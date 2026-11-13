@@ -89,6 +89,7 @@ static void sceneStart(Session &s, const String &raw) {
   s.hideInput = false;
   s.state = SCENE_PLAY;
   activity(s, "IN A SCENE");
+  soundCue(s, hauntStr(sc->sound));
   sceneWrite(s, s.sceneRun.start(sc, sceneFlagsOf(s), s.ansi, millis()));
 }
 

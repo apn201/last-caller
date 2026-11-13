@@ -245,6 +245,13 @@ static WebRouteResponse webRoute(const WebRouteRequest &request) {
     String u = up(name); const char *type = u.endsWith(".WASM") ? "application/wasm" : u.endsWith(".JS") ? "text/javascript" : "text/plain";
     return webCardFile(path, type, false, u == "LIBOPENMPT.WASM" || u == "LIBOPENMPT.JS" ? "max-age=86400" : "no-cache, no-store");
   }
+  if (request.method == "GET" && request.path.startsWith("/sfx/")) {   // cues: core/sound.h
+    String name = request.path.substring(5);
+    if (!name.length() || !up(name).endsWith(".WAV")) return webText(404, "text/plain", "Not found");
+    name = sfxName(name.substring(0, name.length() - 4));
+    if (!name.length() || !sfxExists(name)) return webText(404, "text/plain", "Not found");
+    return webCardFile(String(SFX_DIR) + name + ".WAV", "audio/wav", false, "public, max-age=86400");
+  }
   if (request.method == "GET" && request.path == "/modem.mp3") {
     if (!sdReady || !SD_MMC.exists(MODEM_AUDIO)) return webText(404, "text/plain", "Modem audio unavailable");
     return webCardFile(MODEM_AUDIO, "audio/mpeg", false, "public, max-age=86400");

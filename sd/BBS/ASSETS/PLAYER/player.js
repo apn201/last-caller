@@ -18,6 +18,7 @@
   let ctx = null, node = null, mod = 0, bufL = 0, bufR = 0, paused = false, ended = false;
   let sendKey = () => {}, raf = 0, title = '', file = '', size = '', desc = '', meta = {};
   let sid = null;  // jsSID.SIDPlayer while a SID plays
+  let names = [];  // the module's sample names that hold text: [{n, name}], read from the file's header
   let root = null, screen = null, bar = null, tap = null;
 
   // jsSID's scripts, in order. Its player expects pico.js for audio; this
@@ -44,6 +45,25 @@
       document.head.appendChild(s);
     });
     return loading;
+  }
+  // Trackers kept their messages in the 31 sample names. Only the plain 22-byte header of a
+  // ProTracker-style module is read here; anything else shows no list.
+  function sampleNames(data) {
+    const out = [];
+    if (data.length < 1084) return out;
+    const tag = String.fromCharCode(data[1080], data[1081], data[1082], data[1083]);
+    if (!/^(M\.K\.|M!K!|FLT[48]|[2-8]CHN|OCTA|CD81|[1-3][0-9]CH)$/.test(tag)) return out;
+    for (let i = 0; i < 31; i++) {
+      let s = '';
+      for (let k = 0; k < 22; k++) {
+        const c = data[20 + i * 30 + k];
+        if (!c) break;
+        s += c >= 32 && c < 127 ? String.fromCharCode(c) : '?';
+      }
+      s = s.replace(/\s+$/, '');
+      if (s) out.push({ n: i + 1, name: s });
+    }
+    return out;
   }
   function cstr(text) {  // a C string in the library's memory; caller frees
     const n = text.length * 3 + 1, p = lib._malloc(n);
@@ -146,7 +166,7 @@
     raf = requestAnimationFrame(draw);
     if (sid) { drawSid(); return; }
     if (!mod) return;
-    const cols = 80, rowsVisible = 15;
+    const cols = 80, rowsVisible = names.length ? 6 : 15;
     const channels = lib._openmpt_module_get_num_channels(mod);
     const order = lib._openmpt_module_get_current_order(mod), pattern = lib._openmpt_module_get_current_pattern(mod);
     const row = lib._openmpt_module_get_current_row(mod), rows = lib._openmpt_module_get_pattern_num_rows(mod, pattern);
@@ -170,13 +190,27 @@
     lines.push(vu);
     lines.push('');
     for (let i = 0; i < rowsVisible; i++) {
-      const r = row - 7 + i;
+      const r = row - Math.floor(rowsVisible / 2) + i;
       if (r < 0 || r >= rows) { lines.push(''); continue; }
       let text = String(r).padStart(2, '0') + '  ';
       for (let c = 0; c < shown; c++) text += take(lib._openmpt_module_format_pattern_row_channel(mod, pattern, r, c, width, 1)).padEnd(width).slice(0, width) + ' ';
       lines.push(r === row ? '<span class="cur">' + esc(text.padEnd(cols)) + '</span>' : esc(text));
     }
     if (shown < channels) lines.push('<span class="dim">    (' + (channels - shown) + ' more channels not shown)</span>');
+    if (names.length) {  // the sample names, three columns, in slot order
+      lines.push('<span class="hd">SAMPLES</span>');
+      const per = Math.ceil(names.length / 3);
+      for (let k = 0; k < per; k++) {
+        let ln = '';
+        for (let c = 0; c < 3; c++) {
+          const e = names[k + c * per];
+          if (!e) continue;
+          const cell = (String(e.n).padStart(2, '0') + ' ' + e.name).slice(0, 25).padEnd(26);
+          ln += /^[-\s]*$/.test(e.name) ? '<span class="dim">' + esc(cell) + '</span>' : esc(cell);
+        }
+        lines.push(ln);
+      }
+    }
     screen.innerHTML = lines.join('\n');
   }
 
@@ -212,7 +246,7 @@
     sendKey = keySender || sendKey;
     build();
     root.hidden = false;
-    file = name; size = bytes; desc = description || ''; paused = false; ended = false;
+    file = name; size = bytes; desc = description || ''; paused = false; ended = false; names = [];
     stopTune();
     screen.textContent = '\n  Loading ' + name + ' ...';
     hint(' TINYTRAX  ' + name + '  loading...');
@@ -224,6 +258,7 @@
       if (!res.ok) throw new Error('The board did not send the tune.');
       const data = new Uint8Array(await res.arrayBuffer());
       if (root.hidden || file !== name) return;  // closed or moved on meanwhile
+      names = sampleNames(data);
       const p = lib._malloc(data.length);
       window.HEAPU8.set(data, p);
       mod = lib._openmpt_module_create_from_memory2(p, data.length, 0, 0, 0, 0, 0, 0, 0);
