@@ -141,7 +141,7 @@ def advance(c, marker, timeout=120.0):
 
 def welcome_scene(c):
     """M2 (Q12d): after ELIZA_WAKE the welcome scene plays at the next calm prompt; then the main menu."""
-    advance(c, "are on the crew list", timeout=90)
+    advance(c, "I mention it because", timeout=90)
     advance(c, "Main Board Command?", timeout=60)
 
 
@@ -462,7 +462,7 @@ def main():
         c.send("")
         c.expect("Main Board Command?", timeout=30)
         welcome_scene(c)                  # M2: ELIZA welcomes a guest (Q12d); one crew name is missing from it
-        if "Commander Halvorsen, Professor Achterberg and Dr. Tanabe" not in c.all:
+        if "Commander Halvorsen, Professor Achterberg and Dr. Tanabe" not in " ".join(c.all.split()):
             raise AssertionError("the welcome scene did not play")
 
     # ---- act 1 (Q7): a fresh caller reads the open evidence, posts, and visits Ty's account ----
@@ -614,7 +614,7 @@ def main():
             if t not in seg:
                 raise AssertionError("library listing lacks %r" % t)
         c.send(number_of(c, len(c.all) - 1500, "COMMS.TXT"))
-        c.expect("QUERY CODES", timeout=15)
+        c.expect("THE DIAGNOSTICS DOOR", timeout=15)
         c.expect("N/P file", timeout=10)
         time.sleep(0.4)
         key(c, "q")
@@ -1120,7 +1120,7 @@ def main():
         sync(c)
         c.send("C")
         choose(c, "I can fix that. Give me SYSOP.")
-        if "cannot account for some minutes" not in c.all[-2000:]:
+        if "cannot account for some minutes" not in " ".join(c.all[-2000:].split()):
             raise AssertionError("ELIZA does not mention the gap after the overrun")
         if "Run the memory check" in c.all[-2000:]:
             raise AssertionError("the memory check is offered before the handbook page was read")
