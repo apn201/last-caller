@@ -1,11 +1,12 @@
 # Q18 loop state
 
 Current round: 1
-Step: agents written, round 1 not started
-Ada done: no
+Step: Ada done (84); Mara next on fresh board
+Ada done: yes, SCORE 84
 Mara done: no
-Commit played: -
+Commit played: 4d31155
 
 ## Rounds
 
 (none yet)
+
