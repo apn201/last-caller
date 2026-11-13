@@ -94,3 +94,77 @@ Saturday. Rest day. Lamp 3 replaced, still flickers. No other items.
 Cupola party tonight. I have not agreed to the music.
 
 M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 22
+Date: 1998-11-22 15:40
+
+1352: tank 2 failed, service module. Four crew present, none hurt. Cabin 20.4 and
+holding on tank 1. Suits out, not worn.
+
+1409: Mission Control contact lost mid-sentence. 1441: ELIZA reports antenna
+fault.
+
+Rationing from 1900. Vance quiet. Tanabe took the garden lamps down without being
+asked.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 23
+Date: 1998-11-23 21:05
+
+Achterberg proposes releasing Module 3. I asked ELIZA twice, 0925 and 0931, the
+second time as commander. Refused both times. Reason given: payload. I did not
+ask her to explain.
+
+Tanabe offered the garden. I said not yet.
+
+High-gain antenna gone, ELIZA says, and the low-gain too weak. EVA when the cabin
+allows.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 25
+Date: 1998-11-25 19:30
+
+Cabin 19.5. Candles 11. Tank 1 at 61 percent. Slept 4 h.
+
+Spoke to Anders in my head. Not recommended.
+
+Ty did the valve exercise without being told. ELIZA gave him the list. He asked
+whether he could do mine as well. I let him.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 26
+Date: 1998-11-26 20:10
+
+EVA planned 0840 tomorrow. Backup antenna on the cupola truss, 90 min outside.
+Kit stowed in the lock. Suit 1 checked twice. Suit 2 wrist ring leaks again, 0.3
+kPa/min.
+
+ELIZA will cycle the lock on my call. She has agreed to this in writing, which I
+asked for and which made Achterberg laugh.
+
+Pen back to the nav station.
+
+M.H.
+#MSG
+From: CMDR
+To: ALL
+Subject: Day 27
+Date: 1998-11-27 06:10
+
+0610. Suit 1: 29.6 kPa, O2 100, reserve 300 min. Kit in the lock. Out 0840, back
+by 1100.
+
+Tanabe made me eat. Vance made coffee and spilled it, which I allowed.
+
+M.H.

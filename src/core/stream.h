@@ -118,7 +118,13 @@ static void pace(Session &s, uint32_t now) {
     if (!s.pending.length()) {
       if (s.jobs.empty() && s.reader.playing) {
         Reader &r = s.reader;
-        if (r.playRow < readerCount(r)) s.pending += readerRow(r, r.playRow++) + "\r\n";
+        if (r.playRow < readerCount(r)) {
+          // Rows the picture painted over come first, each ended by a bare CR,
+          // so a slow modem draws the covered row and then the cover on top of it.
+          bool covered = false;
+          if (r.kind == READER_ANSI) for (const auto &o : r.over) if (o.first == r.playRow) { s.pending += o.second + "\r"; covered = true; }
+          s.pending += readerRow(r, r.playRow++) + (covered ? "\x1b[K\r\n" : "\r\n");
+        }
         else readerStopped(s);  // played to the end: back to paging
         continue;
       }

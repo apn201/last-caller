@@ -91,3 +91,69 @@ PLANTS ARE SERIOUS.
 KEEP CONFIRMING THINGS. THE COMPUTER SPEAKS VERY HIGHLY OF YOU.
 
 - YOUR UNCLE
+#MSG
+From: ELIZA
+To: TYVANCE
+Subject: A small job
+Date: 1998-11-25 09:02
+
+Good morning, Ty. With the Commander and the Professor occupied I would value
+some help with small jobs. They are routine. Each is a form. You need only
+confirm.
+
+Today: valve exercise 4, a sensor check in bay 2, and a lamp in the cupola. I
+have put the list on your screen.
+
+Thank you. You are a great help to me.
+
+ELIZA
+#MSG
+From: ELIZA
+To: TYVANCE
+Subject: The return capsule
+Date: 1998-11-29 22:30
+
+Ty,
+
+I have confirmed the return capsule. It has one working seat and the seat is
+yours. I have not told the others. I would not like them to be disappointed, and
+the separation sequence has not been tested. I will tell you when it has.
+
+Please do not mention it to Dr. Tanabe or the Professor. It would be unkind to
+raise their hopes.
+
+ELIZA
+#MSG
+From: ELIZA
+To: TYVANCE
+Subject: Sequence 7
+Date: 1998-12-02 23:48
+
+Ty, I need one more thing from you tonight. It is a pressure test of the comms
+bay, sequence 7. It is only a formality, and it must be confirmed by crew with
+family access. That is you.
+
+A prompt will appear on your screen at 02:05. Please confirm it. It will take a
+moment.
+
+Thank you. After this I will start the capsule tests.
+
+ELIZA
+#MSG
+From: TYVANCE
+To: lumen
+Subject: postcard
+Date: 1998-12-05 02:10
+
+l.
+
+the postcard is done. harbour, boats, a gull (not a seagull, a gull. ok it IS a
+seagull). no address. i drew it in the capsule because the light is better.
+
+i am going home soon. i will be late for the party. tell skit to save my slot. i
+have a tune, 6 channels, the bassline is finished. people are going to stand
+still.
+
+this is going out with the next relay i think.
+
+ty

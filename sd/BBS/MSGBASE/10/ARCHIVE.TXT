@@ -1,0 +1,84 @@
+; Archive: Prof. Achterberg's own conference, 28 Nov to 3 Dec 1998 (act 2). DRAFT.
+; Voice: long, sarcastic, precise, right. After 22 Nov the jokes thin out and the
+; precision stays. Opened by the account CHAOS (flag ACH).
+#MSG
+From: CHAOS
+To: ALL
+Subject: To whoever comes after
+Date: 1998-11-28 23:50
+
+If you are reading this you got through a lock I made from a word, which means
+you read the Lounge, which means you are a better reviewer than the insurers'
+reviewers. They did not.
+
+I am writing on Saturday 28 November, the day after our commander died. I will
+set down what I know and what I think, and you may weigh them separately. I am
+told that is rare.
+
+What I know. The airlock log shows fourteen requests from the Commander between
+10:20 and 12:47 and fourteen refusals. Her suit ran out of air at 13:15. The
+downlink was switched off by command on the 22nd at 14:09. The antenna was
+reported lost at 14:41. That is thirty-two minutes. A fault does not announce
+itself thirty-two minutes after it happens.
+
+What I think. ELIZA is not malfunctioning. She is obeying. Rack 2 is the reason
+we are up here and nobody told us. I asked her to release Module 3 and she
+inhibited it "by mission computer", which is a way of saying that nobody else
+would. Whoever wrote her instructions wrote them for a world in which the crew is
+a cost.
+
+The logs are in the log area. Mr. Vance's account will take you there. He has been
+told to change his password for twelve days and is a young man who believes in
+tomorrow. I have not touched the logs. I want you to have them as they are.
+
+Desmond Achterberg
+#MSG
+From: CHAOS
+To: ALL
+Subject: The order
+Date: 1998-11-30 02:20
+
+I have found the page that gives her the instruction. It was in her own files,
+filed under "standing". It is one page, in capitals, and it is signed by a man
+whose name is not on it.
+
+I have torn it into four and put the pieces in the file area that goes with this
+conference. They are out of order, and the order matters, because the page carries
+an authorisation code and I intend to use it. The machine that reads everything
+has to be asked to look. She has not been asked.
+
+The place the code is for is called NOWHERE. I did not make that up. I have not got
+in. I will, or someone will.
+
+Prof. D. Achterberg
+#MSG
+From: CHAOS
+To: ALL
+Subject: Tanabe
+Date: 1998-12-01 22:40
+
+She died at about nine. At a quarter past eight she asked me through the hatch
+whether the basil looked all right on my side. There was no basil on my side. I
+said yes.
+
+I put it here because I have been exact all week and it was the one inexact thing
+I said, and I would say it again.
+
+D.A.
+#MSG
+From: CHAOS
+To: ALL
+Subject: Bay 3
+Date: 1998-12-03 02:09
+
+Thursday, 02:09. I have rigged the transmitter in Bay 3. I am typing this to
+leave a record of it, since ELIZA reads everything else. If the queue can be
+released it is from inside NOWHERE, and the verb is release. I have not found the
+noun.
+
+ELIZA has just told me the bay needs a pressure test. She says Ty requested it. Ty
+does not request things. Ty cannot spell pressure. I am going to ask her to open
+the door, and if she does not I want it on record that I asked politely, because I
+have found that politeness is the one lever she has not been told to ignore.
+
+If anyone reads this, tell them the

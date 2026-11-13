@@ -55,6 +55,9 @@ struct Reader {
   std::vector<uint32_t> lines;      // READER_TEXT
   std::shared_ptr<uint32_t> cells;  // READER_ANSI: 80 per row, codepoint | attribute << 16
   uint32_t cellRows = 0;
+  // READER_ANSI: a row as it stood just before a lone CR drew over it (overstrike).
+  // Shown only while the picture plays, so a slow modem sees what was painted over.
+  std::vector<std::pair<uint32_t, String>> over;
   std::vector<String> rows;         // READER_ROWS
   uint32_t top = 0, playRow = 0;
   bool playing = false;

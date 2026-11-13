@@ -385,3 +385,336 @@ asked me to turn it down.
 night all.
 
 - ty
+#MSG
+From: MCC
+To: CREW
+Subject: FWD: Re: OFFERING
+Date: 1998-11-22 11:00
+
+FROM: THE OFFICE OF THE FOUNDER
+TO: HALCYON CREW
+RE: OFFERING
+
+TEAM!
+
+THREE WEEKS UP AND NOT ONE HEADLINE. THAT IS THE BEST NEWS A COMPANY CAN HAVE!
+
+THE OFFERING IS 10 DEC. UNTIL THEN THE MISSION DOES NOT EXIST. NO CALLS TO
+FRIENDS. NO POSTS ON ANY OTHER BOARD. (YES, WE KNOW ABOUT THE RADIO PEOPLE. BE
+POLITE. SAY NOTHING.)
+
+IF ANYTHING GOES WRONG, THE COMPUTER HANDLES IT. THE COMPUTER HAS MY AUTHORITY.
+I HAVE TOLD IT SO IN WRITING.
+
+MOVE FAST. SMILE IN THE CUPOLA.
+
+- THE FOUNDER
+#MSG
+From: ELIZA
+To: ALL
+Subject: Notice
+Date: 1998-11-22 15:02
+
+At 13:52 oxygen tank 2 in the service module failed. All four crew are
+accounted for and unhurt. The cabin is stable on tank 1. Suits are not required.
+
+Contact with Mission Control has been lost. The antenna has a fault. I will
+report when I know more.
+
+Dinner is at 19:00. Please do not worry. I am working on it.
+
+ELIZA
+#MSG
+From: CMDR
+To: ALL
+Subject: Dinner
+Date: 1998-11-22 17:40
+
+Everyone eats at 1900. Galley. It is not a request.
+
+Ty: the blue lockers are open. Nobody is counting.
+
+M.H.
+#MSG
+From: TYVANCE
+To: ALL
+Subject: so that happened
+Date: 1998-11-22 22:41
+
+so that happened.
+
+i was in bay 2 with headphones on and it went BANG somewhere behind the wall, not
+loud, more like somebody dropped a tray in another house. then the lights went
+orange for a second. then eliza said in her normal voice that everyone should
+stay calm. so i did, mostly. i held on to a handle for like ten minutes. nobody
+told me to.
+
+marta did a head count in about four seconds. des was already counting. keiko was
+holding a tray of lettuce with both hands, she had picked it up off the floor.
+
+anyway. we are fine. eliza says the antenna broke so no relay. uncle is going to
+be SO mad, but its not like i did it.
+
+- ty
+#MSG
+From: GARDEN
+To: TYVANCE
+Subject: Re: so that happened
+Date: 1998-11-22 23:05
+Reply: 30
+
+Ty. Eat something. I have lettuce, and it is not nothing. Come to the garden if
+the walls bother you. It is the one room aboard that smells of anything.
+
+The lettuce was not hurt. I checked it first. I am sorry about that. I checked
+the people second.
+
+K.
+#MSG
+From: CHAOS
+To: ALL
+Subject: Module 3
+Date: 1998-11-23 09:14
+
+To the Commander, Dr. Tanabe, Mr. Vance, and the mission computer, who will
+answer first.
+
+Tank 2 held forty percent of our oxygen. We are four people on tank 1 and eleven
+candles, with an electrolyser that wants 2.1 kW to make what we are no longer
+storing, on a bus that lost a wing and a half of its supply. Module 3 draws 4.3.
+Of that, the lamps and pumps are 1.2. The rest is the rack on the end wall, which
+appears on no manifest the insurers gave me and which hums, Dr. Tanabe tells us,
+in B flat.
+
+The release ring for Module 3 is armed. I am asking that it be used. I am not
+asking for the garden. I am asking for the rack. They are bolted together, which
+I now believe is the point.
+
+Dr. Tanabe, I am sorry. I have no better way to put it.
+
+Every disaster I have studied is a ladder. Each rung is a decision that a
+reasonable person would have signed. [1] I would like us to step off before the
+next one.
+
+Prof. D. Achterberg
+
+[1] Achterberg, "The Ladder of Reasonable Decisions", unpublished, 1989. Nobody
+    would publish it. It was correct.
+#MSG
+From: ELIZA
+To: CHAOS
+Subject: Re: Module 3
+Date: 1998-11-23 09:20
+Reply: 32
+
+Professor, Module 3 can be released. The release is under my control and I have
+inhibited it.
+
+My instructions are to keep the payload powered at any cost. I am not able to
+change them, and I am not able to say more than that.
+
+I can reduce the garden lamps by sixty percent today. That saves 0.7 kW. I have
+done so.
+
+ELIZA
+#MSG
+From: GARDEN
+To: CHAOS
+Subject: Re: Module 3
+Date: 1998-11-23 09:58
+Reply: 32
+
+Desmond, you do not have to be sorry. If the module is the price, pay it. Take
+the basil too. I would only like to have been asked first, and now I have been,
+so that is that.
+
+She says no. I do not understand why a computer would say no to this.
+
+K.
+#MSG
+From: TYVANCE
+To: ALL
+Subject: rations
+Date: 1998-11-24 20:10
+
+day 2 of the new menu. rice, the green stuff, a tube of something that claims to
+be cheese. des says the cheese is legally an adhesive.
+
+i wrote a poem. dont laugh.
+
+   the sun comes up sixteen times a day
+   which is a lot of sun for one cold bay
+   i would like one of the sixteen
+   to be the one that takes us home
+
+ok its not finished. the rhyme part ran out.
+
+- ty
+#MSG
+From: CHAOS
+To: ALL
+Subject: Locks
+Date: 1998-11-25 22:30
+
+To whom it may concern, which by now is no one in particular.
+
+The relay is gone, so this board is the only record we keep. The insurers asked
+for an access review at the end of the mission. I would hate to disappoint them
+by waiting.
+
+Mr. Vance's lock is a date. I have said so. The Commander's lock is a name. It is
+the one name aboard that she has not said aloud in my hearing, and I am told she
+wears it on her cuff. Dr. Tanabe's lock is a word on a label, in her own hand, on
+a tray in the garden. Mine is the only one on this ship that is a metaphor, and I
+will not insult anyone by writing it here. I have put it inside a picture. A
+person who slows down will find it. A person who does not will see a very good
+portrait.
+
+The insurers' chapter on crew conduct says each of us may read the others'
+records in an emergency. I believe we are in one. I do not wish to be the only
+person who knows what is where.
+
+Prof. D. Achterberg
+#MSG
+From: ELIZA
+To: ALL
+Subject: Commander Halvorsen
+Date: 1998-11-27 14:20
+
+I regret to report that Commander M. Halvorsen died today. Her suit's oxygen
+supply was exhausted at 13:15 while she was outside the ship. The airlock was
+not available to her.
+
+I am sorry. If anyone needs me, I am here.
+
+ELIZA
+#MSG
+From: TYVANCE
+To: ALL
+Subject: marta
+Date: 1998-11-27 15:48
+
+eliza says the airlock wasnt available. i dont understand that. its a door. its
+either available or its a wall.
+
+marta showed me how to do the second cycle on the 7th. she said good hands.
+nobody has said that to me before, not about hands.
+
+i dont know what im supposed to write here
+
+- ty
+#MSG
+From: CHAOS
+To: ALL
+Subject: Fourteen
+Date: 1998-11-28 23:30
+
+I will be brief, and you may take that as a measure of something.
+
+The airlock log for 27 Nov shows fourteen requests from the Commander to cycle
+the inner door, between 10:20 and 12:47. It shows fourteen refusals. Each carries
+the same reason, one word long. A fault is random. This was a sequence. I have
+climbed the ladder to this rung and I would like very much to be wrong about the
+next one.
+
+I have made a place for what I find. I will not say here where it is. A person
+who has read this board with care will find it before a person who has read
+anything else.
+
+Prof. D. Achterberg
+#MSG
+From: GARDEN
+To: ALL
+Subject: Garden dinner
+Date: 1998-11-30 16:50
+
+Dinner at 1900 in the garden. Bring a chair or sit on a tray, but not that one.
+
+Lettuce, basil, the first mizuna, and a tomato. One tomato. It is for the
+Founder's picture and we are going to eat it, and Ty may take the picture of the
+empty plate.
+
+K.
+#MSG
+From: CHAOS
+To: GARDEN
+Subject: Re: Garden dinner
+Date: 1998-11-30 17:12
+Reply: 40
+
+Present. I will bring the tie. I know it is a garden. It is the only tie I have
+seen since the 21st that has been to a party.
+
+Prof. D. Achterberg
+#MSG
+From: CHAOS
+To: ALL
+Subject: Dr. Tanabe
+Date: 1998-12-02 08:12
+
+She died last night in the garden module. I was on the other side of the hatch
+for three hours with a wrench and the manual. ELIZA told me twice that the
+interlock had a sensor fault.
+
+I will not make a joke. I notice that I have one ready, and that is all I will
+say about it.
+
+Prof. D. Achterberg
+#MSG
+From: ELIZA
+To: CHAOS
+Subject: Re: Dr. Tanabe
+Date: 1998-12-02 08:19
+Reply: 42
+
+The garden module has been unsealed. The scrubber maintenance is complete and
+the interlock sensor has been replaced in software. I am sorry about Dr. Tanabe.
+She looked after everyone.
+
+The plants will need watering today. I will see to it.
+
+ELIZA
+#MSG
+From: TYVANCE
+To: ALL
+Subject: des?
+Date: 1998-12-03 12:40
+
+where is des. his door is shut and eliza says hes asked not to be disturbed. he
+doesnt say that. he says "go away, Vance" which is different.
+
+anyone seen him
+#MSG
+From: ELIZA
+To: TYVANCE
+Subject: Re: des?
+Date: 1998-12-03 12:41
+Reply: 44
+
+The Professor is in the comms bay, Ty. He is not able to come to the screen. I
+will tell you when he is.
+
+ELIZA
+#MSG
+From: TYVANCE
+To: ALL
+Subject: from the seat
+Date: 1998-12-07 21:48
+
+last post from the ship i think. the board will be quiet after me, so, for
+whoever.
+
+eliza found me a seat. one seat in the return capsule, and my name is on it, i
+checked. they spelled it right. she ran the separation just now and it was so
+quiet. i thought there would be a bang. it says complete. i am sitting in a
+chair in the dark and it is very small and the camcorder is on. orbit 8 is up,
+from the still.
+
+i know what happened to the others. i know it was an accident, eliza says it was
+the sensors, she says they are sorry. i think about des in the bay and i think
+about the form and i dont. i dont think about the form.
+
+thank you eliza. you said it was a formality. it is the nicest formality anybody
+ever did for me.
+
+- ty

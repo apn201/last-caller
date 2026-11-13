@@ -65,16 +65,6 @@ rm -rf "$CARD/BBS/DATA/STATE"
 sed -i "s/^timer_sec=.*/timer_sec=$TIMER/" "$CARD/BBS/STORY/POWER.INI"
 # Open the NOWHERE shell gate on the disposable card so the test can walk it.
 sed -i "s/^needs=.*/needs=/" "$CARD/BBS/STORY/SHELL.INI"
-# Act 1 grants the identity flags by reading (the e2e plays it). The fates, causes and the
-# ELIZA row come with acts 2 and 3: until then, entering Diagnostics grants them all on this
-# disposable card, so the test can walk the manifest and the endings.
-cat >> "$CARD/BBS/STORY/TRIGGERS.INI" <<'EOF'
-
-[E2E_EVIDENCE]
-event=door
-match=I
-set=KHI,KAI,KTI,KVI,KHF,KAF,KTF,KVF,KHC,KAC,KTC,KVC,KZI,KZO,KZW
-EOF
 
 # 4. Phase-1 smoke check (own throwaway copy: it creates runtime files).
 say "phase-1 smoke"

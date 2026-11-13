@@ -1,0 +1,15 @@
+HALCYON ANTENNA REPORT
+WRITTEN 22 NOV 1998 14:41 BY MISSION COMPUTER
+------------------------------------------------------------------------------
+FINDING        ANTENNA LOST. HIGH-GAIN POINTING FAULT.
+ACTION         CREW NOTIFIED. REPAIR BY EVA WHEN POSSIBLE.
+
+SUPPORTING TELEMETRY, 14:40
+  ACTUATOR AZ         0.1 DEG    HOLD      OK
+  ACTUATOR EL         0.0 DEG    HOLD      OK
+  FEED TEMPERATURE    11 C                 OK
+  PA POWER FORWARD    40.1 W
+  PA POWER REFLECTED  0.3 W
+  VSWR                1.1                  OK
+  CARRIER             NONE
+------------------------------------------------------------------------------

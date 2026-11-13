@@ -8,7 +8,7 @@ static bool viewableName(const String &name) {
   int dot = u.lastIndexOf('.');
   if (dot < 0) return true;  // FAQ, SITELIST: old text files had no extension
   String ext = u.substring(dot + 1);
-  static const char *exts[] = {"ANS", "ANSI", "ASC", "NFO", "DIZ", "TXT", "ION", "SDI", "DOC", "ME", "1ST", "BAS", "LST", "C", "H", "PAS", "ASM", "BBS", "LOG", "FAQ", "LAW", "MAD", "MS", "OM"};
+  static const char *exts[] = {"ANS", "ANSI", "ASC", "NFO", "DIZ", "TXT", "ION", "SDI", "DOC", "ME", "1ST", "BAS", "LST", "C", "H", "PAS", "ASM", "BBS", "LOG", "FAQ", "LAW", "MAD", "MS", "OM", "CFG", "RPT", "MEM"};
   for (const char *e : exts) if (ext == e) return true;
   return false;
 }

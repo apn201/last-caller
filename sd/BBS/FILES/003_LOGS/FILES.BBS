@@ -1,0 +1,9 @@
+SUIT1.LOG  Suit 1 telemetry, EVA of 27 Nov. Commander Halvorsen.
+GARDEN.LOG  Garden module: scrubbers, CO2, hatch interlock. 30 Nov to 2 Dec.
+AUDIT.LOG  Command audit, admin actions. Who confirmed what.
+CAPSULE.LOG  Return vehicle log, 7 and 8 Dec.
+RACK.LOG  Rack 2, host NOWHERE-1. Daily power and sessions.
+DOWNLINK.CFG  S-band downlink configuration.
+ANTENNA.RPT  Antenna report, 22 Nov.
+MODULE.LOG  Module 3, release ring. Jettison requests.
+POWER.LOG  Power bus log. RTG, array, battery bank.

@@ -73,12 +73,15 @@ static void indexText(Reader &r) {
 // would draw it: cursor moves, colours, wrap at column 80. Each cell is a
 // codepoint plus ink (low 4 bits) and paper (high 4 bits) in bits 16-23.
 static constexpr uint32_t BLANK_CELL = ' ' | (7u << 16);
+static String ansiRow(const Reader &r, uint32_t row);
+static constexpr size_t MAX_OVERSTRIKES = 48;   // snapshots kept per picture
 static void renderAnsi(Reader &r) {
   uint32_t maxRows = ANSI_MAX_ROWS;
   uint32_t *cells = (uint32_t *)bigAlloc(maxRows * 80 * 4);
   if (!cells) { maxRows = 200; cells = (uint32_t *)malloc(maxRows * 80 * 4); }
   if (!cells) return;
   r.cells = std::shared_ptr<uint32_t>(cells, free);
+  r.over.clear();
   for (uint32_t i = 0; i < maxRows * 80; ++i) cells[i] = BLANK_CELL;
   File f = SD_MMC.open(r.path, FILE_READ);
   if (!f || !f.seek(r.start)) { if (f) f.close(); return; }
@@ -166,7 +169,12 @@ static void renderAnsi(Reader &r) {
       }
       continue;
     }
-    if (b == '\r') { x = 0; wrap = false; continue; }
+    if (b == '\r') {
+      // A lone CR (not CR LF) on a row that has something on it: the next bytes
+      // paint over it. Keep the row as it was, for the picture's play.
+      if ((x > 0 || wrap) && f.peek() != '\n' && f.peek() != '\r' && y < (int)maxRows && r.over.size() < MAX_OVERSTRIKES) r.over.push_back({(uint32_t)y, ansiRow(r, y)});
+      x = 0; wrap = false; continue;
+    }
     if (b == '\n') { y++; wrap = false; continue; }
     if (b == '\t') { x = min(79, (x / 8 + 1) * 8); continue; }
     if (b == 8) { if (x) x--; wrap = false; continue; }

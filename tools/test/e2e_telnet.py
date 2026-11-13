@@ -162,6 +162,54 @@ def mfile(c):
     at = answer.index("Rows confirmed:")
     return answer[:answer.index("\n", at)]     # the board's answer only, not the rows listed after it
 
+def number_of(c, start, name):
+    """The [n] a listing printed for `name` (file areas, files, message areas), searching text after `start`."""
+    m = re.search(r"\[\s*(\d+)\]\s+" + re.escape(name), c.all[start:])
+    if not m:
+        raise AssertionError("%r is not listed: %r" % (name, c.all[start:][-400:]))
+    return m.group(1)
+
+
+def read_msg(c, n, marker):
+    """Message command? -> read message n, see `marker`, back to Message command?."""
+    c.send("R")
+    c.expect("Read #", timeout=10)
+    c.send(str(n))
+    c.expect(marker, timeout=15)
+    time.sleep(0.4)
+    c.send("Q")
+    c.expect("Message command?", timeout=10)
+
+
+def pick_area(c, name):
+    """Message command? -> A -> the area called `name` (by its listed number)."""
+    start = len(c.all)
+    c.send("A")
+    c.expect("Area #", timeout=10)
+    c.send(number_of(c, start, name))
+    c.expect("Message command?", timeout=10)
+
+
+def open_file(c, num, marker):
+    """File command? -> open file `num`, see `marker`, q back to the list."""
+    c.send(str(num))
+    c.expect(marker, timeout=15)
+    c.expect("N/P file", timeout=10)
+    time.sleep(0.4)
+    key(c, "q")
+    c.expect("File command?", timeout=15)
+
+
+def pick_file_area(c, name):
+    """Main Board Command? -> F -> the area `name`, at File command?."""
+    start = len(c.all)
+    c.send("F")
+    c.expect("File area?", timeout=15)
+    c.send(number_of(c, start, name))
+    c.expect("File command?", timeout=15)
+    return len(c.all)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, required=True)
@@ -171,6 +219,7 @@ def main():
     ap.add_argument("--crew", default="TYVANCE:140374", help="HANDLE:PASSWORD of a crew account (the card's TYVANCE, Ty's birthday)")
     args = ap.parse_args()
     port = args.port
+    args.evidence = True        # act 2 grants every fact the manifest needs; no shortcut rule on the card
     handle = "e2e%04d" % random.randint(0, 9999)
     password = "e2e-pass-1"
     handle2 = "f2e%04d" % random.randint(0, 9999)
@@ -532,6 +581,244 @@ def main():
         c.expect("Message command?", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
+
+    # ---- act 2 (Q8): day 22 onward. The open posts, the logs, three more crew accounts, the archive ----
+    @step("act 2: the Lounge, Mission Log, Garden Notes and Radio Room carry day 22 onward")
+    def act2_posts():
+        c = state["c"]
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        for n, marker in ((27, "HANDLES IT"), (32, "Tank 2 held forty percent"), (33, "inhibited it"),
+                          (37, "Commander M. Halvorsen died"), (39, "fourteen requests"),
+                          (42, "I will not make a joke"), (46, "my name is on it")):
+            read_msg(c, n, marker)
+        pick_area(c, "Mission Log")
+        read_msg(c, 13, "Vance made coffee")
+        pick_area(c, "Garden Notes")
+        read_msg(c, 11, "write to my mother")
+        pick_area(c, "Radio Room")
+        read_msg(c, 10, "porch light")
+        pick_area(c, "Lounge")
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=15)
+
+    @step("act 2: Ty's gallery and journal 2; Orbit 5 and 6 carry two passwords' hints")
+    def act2_gallery():
+        c = state["c"]
+        pos = pick_file_area(c, "Ty's Gallery")
+        seg = c.all[pos - 3000:]
+        for t in ("JOURNAL2.TXT", "ORBIT_3.ANS", "ORBIT_8.ANS", "12-07-98", "11-28-98"):
+            if t not in seg:
+                raise AssertionError("gallery lacks %r" % t)
+        if "ORBIT_9" in seg:
+            raise AssertionError("Ty's desktop picture is in the public gallery")
+        open_file(c, number_of(c, pos - 3000, "JOURNAL2.TXT"), "SPACE JOURNAL 2")
+        open_file(c, number_of(c, pos - 3000, "ORBIT_5.ANS"), "ORBIT 5")
+        if "ANDERS" not in c.all[-1500:]:
+            raise AssertionError("Orbit 5 does not show the patch")
+        open_file(c, number_of(c, pos - 3000, "ORBIT_6.ANS"), "HANAMI")
+        for name in ("ORBIT_4.ANS", "ORBIT_7.ANS", "ORBIT_8.ANS"):
+            open_file(c, number_of(c, pos - 3000, name), name[:7].replace("_", " "))
+
+    @step("act 2: Orbit 3 shows a portrait; the covered row appears only while it plays")
+    def act2_overpaint():
+        c = state["c"]
+        pos = len(c.all)
+        c.send(number_of(c, len(c.all) - 6000, "ORBIT_3.ANS"))
+        c.expect("ORBIT 3", timeout=15)
+        c.expect("N/P file", timeout=10)
+        if "LADDER" in c.all[pos:]:
+            raise AssertionError("the password is in the still picture")
+        if "work in progress" not in c.all[pos:]:
+            raise AssertionError("the cover is missing")
+        key(c, "s")                       # play: the covered rows come first, each painted over
+        c.expect("LADDER", timeout=15)
+        c.expect("do not tell ty", timeout=10)
+        time.sleep(0.5)
+        key(c, "q")
+        c.expect("File command?", timeout=15)
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+
+    @step("act 2: Ship Logs and Records open with the crew visit; the logs hold the facts and play their memory scenes; Ty's desktop stays shut")
+    def act2_logs():
+        c = state["c"]
+        pos = pick_file_area(c, "Ship Logs")
+        listing = c.all[pos - 3000:]
+        for t in ("SUIT1.LOG", "GARDEN.LOG", "AUDIT.LOG", "CAPSULE.LOG", "RACK.LOG", "DOWNLINK.CFG", "ANTENNA.RPT",
+                  "MODULE.LOG", "POWER.LOG", "11-27-98", "12-03-98"):
+            if t not in listing:
+                raise AssertionError("log listing lacks %r" % t)
+        scenes = {"SUIT1.LOG": "I can count.", "GARDEN.LOG": "It is doing very well.", "CAPSULE.LOG": "I will keep it on."}
+        for name, marker in (("SUIT1.LOG", "LOCK CYCLE REQUEST 01"), ("GARDEN.LOG", "INTERLOCK PANEL"),
+                             ("AUDIT.LOG", "CONFIRM Y"), ("CAPSULE.LOG", "SEPARATION: COMPLETE"),
+                             ("RACK.LOG", "NOWHERE-1"), ("DOWNLINK.CFG", "enabled=0"),
+                             ("ANTENNA.RPT", "VSWR"), ("MODULE.LOG", "INHIBITED BY MISSION COMPUTER"),
+                             ("POWER.LOG", "BATTERY BANK (28 CELLS)")):
+            open_file(c, number_of(c, pos - 3000, name), marker)
+            if name in scenes:
+                # the memory scene takes the screen at the first calm prompt, then the main menu is back
+                advance(c, scenes[name], timeout=150)
+                time.sleep(0.3)
+                c.send("")
+                advance(c, "Main Board Command?", timeout=60)
+                pos = pick_file_area(c, "Ship Logs")
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        pos = pick_file_area(c, "Records")
+        open_file(c, number_of(c, pos - 3000, "BUDGET.MEM"), "RETURN CAPSULE: CUT")
+        open_file(c, number_of(c, pos - 3000, "PROSPECT.TXT"), "YOUR DATA. OUR ORBIT")
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        if "Ty's Desktop" in c.all[-1500:] or "Archive" in c.all[-1500:]:
+            raise AssertionError("a closed area is listed")
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+    def crew_session(who, pw, wrong, marker):
+        """Leave the current session, sign in to a crew account (a wrong guess first) and read its mailbox."""
+        c = state["c"]
+        c.send("G")
+        if not c.wait_closed(20):
+            raise AssertionError("connection stayed open after Goodbye")
+        c.close()
+        c = Conn(port)
+        state["c"] = c
+        c.expect("Login:", timeout=10)
+        c.send(who)
+        c.expect("Password:")
+        c.send(wrong)
+        c.expect("Bad password")
+        c.expect("Login:")
+        c.send(who)
+        c.expect("Password:")
+        c.send(pw)
+        advance(c, "Main Board Command?", timeout=60)
+
+    def mailbox(box, number, marker):
+        c = state["c"]
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        pick_area(c, box)
+        read_msg(c, number, marker)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=15)
+
+    @step("act 2: CMDR opens with ANDERS; her mailbox holds the last message from the airlock")
+    def act2_cmdr():
+        crew_session("CMDR", "ANDERS", "BETTY", "")
+        mailbox("Mail: CMDR", 4, "wrist unit")
+
+    @step("act 2: GARDEN opens with HANAMI; her mailbox holds the queued reply and the last letter")
+    def act2_garden():
+        c = state["c"]
+        c.send("G")
+        c.expect("Login:", timeout=20)
+        c.send("GARDEN")
+        c.expect("Password:")
+        c.send("SAKURA")
+        c.expect("Bad password")
+        c.expect("Login:")
+        c.send("GARDEN")
+        c.expect("Password:")
+        c.send("HANAMI")
+        advance(c, "Main Board Command?", timeout=60)
+        mailbox("Mail: GARDEN", 6, "Itte kimasu")
+
+    @step("act 2: CHAOS opens with LADDER; the Archive conference and its files open")
+    def act2_chaos():
+        c = state["c"]
+        c.send("G")
+        c.expect("Login:", timeout=20)
+        c.send("CHAOS")
+        c.expect("Password:")
+        c.send("RUNG")
+        c.expect("Bad password")
+        c.expect("Login:")
+        c.send("CHAOS")
+        c.expect("Password:")
+        c.send("LADDER")
+        advance(c, "Main Board Command?", timeout=60)
+        mailbox("Archive", 1, "got through a lock")
+
+    @step("act 2: back as yourself: the visits are carried; the Archive, its order in four pieces, and Bay 3")
+    def act2_archive():
+        c = state["c"]
+        c.send("G")
+        c.expect("Login:", timeout=20)
+        c.send(handle)
+        c.expect("Password:")
+        c.send(password)
+        for _ in range(8):
+            if c.expect("Press ENTER", "Main Board Command?", timeout=40) == "Main Board Command?":
+                break
+            c.send("")
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        pick_area(c, "Mail: GARDEN")
+        pick_area(c, "Mail: CMDR")
+        pick_area(c, "Archive")
+        read_msg(c, 2, "torn it into four")
+        c.send("R")
+        c.expect("Read #", timeout=10)
+        c.send("4")
+        c.expect("tell them the", timeout=15)
+        time.sleep(0.4)
+        c.send("Q")
+        c.expect("Message command?", timeout=10)
+        # the Bay 3 memory scene plays at the next calm prompt, then the main menu is back
+        advance(c, "tell them the", timeout=150)
+        time.sleep(0.3)
+        c.send("")
+        advance(c, "Main Board Command?", timeout=60)
+        # the four pieces, out of order by name: the code is read off them in piece order
+        pos = pick_file_area(c, "Archive")
+        parts = {}
+        for name in ("FRAG_D.ANS", "FRAG_K.ANS", "FRAG_Q.ANS", "FRAG_V.ANS"):
+            start = len(c.all)
+            open_file(c, number_of(c, pos - 3000, name), "PIECE")
+            m = re.search(r"AUTH (\d)/4: (\w+)", c.all[start:])
+            if not m:
+                raise AssertionError("%s carries no piece number and code" % name)
+            parts[int(m.group(1))] = m.group(2)
+        code = "-".join(parts[i] for i in (1, 2, 3, 4))
+        if code != "NW1-98-44-17":
+            raise AssertionError("the pieces give %r" % code)
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+
+    @step("act 2: Ty's own account sees Ty's Desktop and the unfinished Orbit 9; a visitor does not")
+    def act2_desktop():
+        c = state["c"]
+        c.send("G")
+        if not c.wait_closed(20):
+            raise AssertionError("connection stayed open after Goodbye")
+        c.close()
+        c = Conn(port)
+        state["c"] = c
+        c.expect("Login:", timeout=10)
+        c.send("TYVANCE")
+        c.expect("Password:")
+        c.send("140374")
+        advance(c, "Main Board Command?", timeout=150)
+        pos = pick_file_area(c, "Ty's Desktop")
+        open_file(c, number_of(c, pos - 3000, "ORBIT_9.ANS"), "ORBIT 9")
+        c.send("Q")
+        c.expect("File area?", timeout=10)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=10)
+        c.send("G")
+        c.expect("Login:", timeout=20)
+        c.send(handle)
+        c.expect("Password:")
+        c.send(password)
+        for _ in range(8):
+            if c.expect("Press ENTER", "Main Board Command?", timeout=40) == "Main Board Command?":
+                break
+            c.send("")
 
     @step("doors menu lists Diagnostics; the shell only when its gate is open")
     def doors_menu():
@@ -916,9 +1203,9 @@ def main():
         c.expect("Press ENTER", "Main Board Command?", timeout=20)
         c.close()
 
-    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, doors_menu, diag, shell, doors_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, registered, second, bye, crew):
+    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, diag, shell, doors_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, registered, second, bye, crew):
         ok = fn()
-        if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, act1_crew_visit, act1_back, doors_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full):
+        if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, act1_crew_visit, act1_back, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full):
             results.append(("SKIP", "remaining steps", "stopped after a step they depend on failed"))
             break
 
