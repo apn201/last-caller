@@ -9,3 +9,9 @@
 *.ans -text
 *.ASC -text
 
+
+# Tunes and sounds made by tools/mod: bytes as written
+*.MOD -text
+*.mod -text
+*.WAV -text
+*.wav -text
