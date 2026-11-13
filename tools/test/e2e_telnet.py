@@ -629,7 +629,7 @@ def main():
         read_msg(c, "Day 31", "write to my mother")
         pick_area(c, "Radio Room")
         read_msg(c, "Porch light", "porch light")
-        read_msg(c, "Who we are", "We have stopped arguing with it")
+        read_msg(c, "Who we are, and what this", "We have stopped arguing with it")
         read_msg(c, "Callsigns", "porch light is not part of the log")
         pick_area(c, "Lounge")
         c.send("Q")
