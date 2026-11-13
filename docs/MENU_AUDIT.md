@@ -43,7 +43,7 @@ are allowed: they never appear on screen.
 | --- | --- | --- |
 | File menu | area numbers, Q | |
 | File list | #, V #, Q; D # in the browser where downloads are on; U in the browser where uploads are on; N/P with more than one page | |
-| Text and ANSI reader | SPACE B arrows S N/P Q | S plays at full speed on Telnet. |
+| Text and ANSI reader | SPACE B arrows S N/P Q | S plays at full speed on Telnet. A picture that paints over a row (a bare CR, Q8: Orbit 3) shows the covered row only while it plays; at 300 baud in the browser it can be read. |
 | ZIP contents | SPACE B arrows N/P Q | |
 | Image viewer | N P ESC, arrows, taps | Browser only; Telnet is told pictures open in the browser. |
 | Music player | N P SPACE ESC, arrows, taps | Browser only, and only when the player is on the card; Telnet is told music plays in the browser. |
@@ -99,3 +99,13 @@ are allowed: they never appear on screen.
 | P (post), R (reply) | the caller can save and the conference is not `read_only=1` (the SysOp may post anywhere) | Q7. Mission Log, Garden Notes and the mailboxes are read-only; Lounge, Spoilers, No Spoilers and Radio Room take posts. |
 | B | a bulletin is visible; a `.ANS` bulletin shows its `.ASC` twin under `ASCII/` to a caller without ANSI | Q7. |
 | U | always | Shows the last call of each account (`1998-12-08 03:47` as `08 Dec 03:47`). |
+
+## Act 2 areas (Q8)
+
+| Area | Shown when | Notes |
+| --- | --- | --- |
+| Files: Ship Logs, Records | the caller holds `CREW` (Ty's account, or carried from it) | Read-only areas; `.LOG .CFG .RPT .MEM` open in the text reader. |
+| Files: Archive | `ACH` (the `CHAOS` account, or carried from it) | The four pieces of the order. |
+| Files: Ty's Desktop | `TY_HOME`: on the `TYVANCE` account only, never carried | Orbit 9. |
+| Messages: Mail: CMDR, Mail: GARDEN | `VISIT_CMDR`, `VISIT_GARDEN` (their logins, carried) | Read-only. |
+| Messages: Archive | `ACH` | Read-only. |

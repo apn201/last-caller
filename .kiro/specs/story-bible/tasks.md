@@ -15,7 +15,7 @@ Evidence ids (E01...) and fact ids are in `design.md`.
 - [ ] C2. Board epoch. Done in S3b: `epoch=1998-12-08 04:17`, `clock_sync=`
   (empty). Posts are all earlier, so nothing is future-dated. Check on the
   board that the clock reads 8 Dec and resumes after a reboot.
-- [ ] C3. Conferences and posts: LOUNGE (E06, E08, E36, E37), MISSION LOG
+- [x] C3. (Q7, Q8; CREW MAIL is one read-only conference per account, the ARCHIVE is conference 10, gated by `ACH`.) Conferences and posts: LOUNGE (E06, E08, E36, E37), MISSION LOG
   (E05), GARDEN NOTES (E07), CREW MAIL private per account (E23, E24, E25),
   ARCHIVE hidden (E26). Dated posts 2 Nov to 7 Dec 1998, weekdays checked.
   Normal life first, small wrong notes, then silence. Last post unfinished.
@@ -23,7 +23,7 @@ Evidence ids (E01...) and fact ids are in `design.md`.
 - [~] C4. (Q7: WELCOME, CREW, STATUS done; the rest is act 2.) Bulletins: WELCOME (ELIZA), CREW bios (E01), RULES, and the
   8 Dec 04:15 status line ("All crew are well. Thank you for your
   patience."), the last timestamp on the board.
-- [ ] C5. File areas with files and DIZ dates:
+- [~] C5. (Q8: LOGS as Ship Logs, LIBRARY memos as Records, ARCHIVE; MUSIC waits for Q10.) File areas with files and DIZ dates:
   - LOGS: SUIT1.LOG (E17), GARDEN.LOG (E18), AUDIT.LOG (E19),
     CAPSULE.LOG (E20, hatch opened from inside on 8 Dec), RACK.LOG (E21),
     DOWNLINK.CFG and ANTENNA.RPT (E22), POWER.LOG (E33: RTG and battery
@@ -39,7 +39,7 @@ Evidence ids (E01...) and fact ids are in `design.md`.
 - [ ] C6. Art per screen with `tools/ansi/`, rendered to PNG and looked at:
   welcome, menus, goodbye, crew area, diagnostics door, shell door, manifest
   and the three endings. No placeholder text screens.
-- [ ] C7. Ty's art as evidence. Plan and build the Orbit gallery series:
+- [x] C7. (Q8: Orbit 3 to 8 in the gallery, Orbit 9 on Ty's Desktop; Orbit 8 is the camcorder still, E15.) Ty's art as evidence. Plan and build the Orbit gallery series:
   1 crew portraits (E10), 2 Earth, 3 Professor overpainted (E16),
   4 ELIZA's ring (E11), 5 antenna (E12), 6 garden (E13), 7 comms bay (E14),
   8 the seat, 9 unfinished last piece (E35, on Ty's account: the power

@@ -121,7 +121,7 @@ Rules for every item:
   and story conferences, crew posts 2 to 21 Nov, Ty's journal and Orbit
   1 to 2, the open evidence (E01 to E15 and the new open items), first
   scenes. A fresh caller gets a lead in two minutes.
-- [ ] **Q8 - Content act 2.** Day 22 onward: logs, crew mail, the module
+- [x] **Q8 - Content act 2.** (done, 81c0647..HEAD of the Q8 commits plus the tick; `pio run` passes, staging check PASS: server build, smoke, e2e 48 passed, 0 failed, 0 skipped (acts 1 and 2 played as a fresh caller, then the manifest and both endings on the flags the content grants; the `E2E_EVIDENCE` shortcut is gone from the staging card), event log clean; host tests not re-run (no logic header changed); board test still to do, `docs/TESTING.md` "Act 2". Passwords: `CMDR` ANDERS, `GARDEN` HANAMI, `CHAOS` LADDER, each with three hints. The reader now plays overstruck rows (Orbit 3 at 300 baud). Found on the way: `.ANS` files were LF on Linux checkouts and drew as a staircase on the server; `.gitattributes` now keeps them byte for byte. The spec `.kiro/specs/act2/` was written after the content commit, not before. Left for Q9: the order code `NW1-98-44-17` (ORD1 to ORD4) and the shell gate, the 22 Nov radio message and the 2026 club, Ty's last post in the power bay.) Day 22 onward: logs, crew mail, the module
   jettison thread, telemetry, audit log, overpainted ANSI, jigsaw, memory
   scenes.
 - [ ] **Q9 - Content act 3.** NOWHERE file system, orders, client list,

@@ -88,6 +88,17 @@ Wording is draft. On the stick and on the server, over Telnet and the browser, a
 
 Host tests of the new logic (flags only grow through grants, carries and migration): `tools/test/haunt_logic_test.cpp`, same command as the other host tests.
 
+## Act 2 (Q8)
+
+Wording is draft. After act 1, as the same caller, over Telnet and the browser:
+
+1. `M` in the Lounge: posts go on from 22 Nov (the Founder's memo, ELIZA's notice, the module thread of 23 Nov and her refusal, Locks, Fourteen, the deaths, Ty's last post from the seat on 7 Dec). Mission Log ends on 27 Nov 06:10, Garden Notes on 1 Dec mid-sentence, Radio Room on Eero's porch light (22 Nov). None take posts.
+2. `F`, Ty's Gallery: Orbit 3 to 8 and `JOURNAL2.TXT`, dated 18 Nov to 7 Dec. Orbit 5 shows ANDERS on the cuff, Orbit 6 the tray labelled HANAMI. Orbit 3 shows a covered board. In the browser set SPEED to 300 and press S in the reader: the covered row (LADDER) draws first, then the cover over it. Over Telnet it flashes past; the still page never shows it.
+3. `F`, Ship Logs and Records are listed (they need `CREW`). Opening `SUIT1.LOG`, `GARDEN.LOG` and `CAPSULE.LOG` each plays a memory scene at the next menu prompt (`MEM_EVA`, `MEM_GARDEN`, `MEM_CAPSULE`). Archive and Ty's Desktop are not listed.
+4. Goodbye, `CMDR` / `ANDERS`: Mail: CMDR, her message from the wrist unit (27 Nov 11:52). `GARDEN` / `HANAMI`: Mail: GARDEN, her last letter (1 Dec 18:20). `CHAOS` / `LADDER`: the Archive conference. Wrong guesses are refused.
+5. Log in as yourself: Mail: CMDR, Mail: GARDEN and Archive are listed. Reading "Bay 3" in the Archive plays `MEM_REC`. `F`, Archive: four pieces of the order; read in piece order their codes give `NW1-98-44-17` (for act 3).
+6. `TYVANCE` again: Ty's Desktop with `ORBIT_9.ANS`, unfinished. As yourself it is not listed.
+7. `R`: every crew row and the ELIZA row can now be filled from what was read. No shortcut rule is on the staging card any more.
 ## Server build and end-to-end check (second build, from Q1)
 
 The server cannot be built on this Windows PC. The staging host builds and
