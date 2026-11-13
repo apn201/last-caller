@@ -96,6 +96,7 @@ class Lint:
         self.errors = []
         self.warnings = []
         self.story = os.path.join(card, "STORY")
+        self.scene_thens = []
 
     def err(self, where, msg):
         self.errors.append("%s: %s" % (where, msg))
@@ -139,6 +140,50 @@ class Lint:
                                 self.subject_conf.setdefault(subj, set()).add(os.path.basename(root))
                 except OSError:
                     pass
+        # Gates (Q12d): every story post and file, with what a caller needs to see it.
+        self.access = {"SYSOP", "READONLY", "BACKROOM", "VAULT"}
+        self.conf_flag = {}
+        cp = os.path.join(self.card, "CONFIG", "CONFERENCES.INI")
+        if os.path.isfile(cp):
+            for name, kv, _ in Ini(cp).sections:
+                self.conf_flag[name] = flags(kv.get("required_flag"))
+        self.subject_gates = {}     # subject -> [gate flags of each post with it]
+        self.hidden_subjects = set()  # subjects of posts behind a Needs: line
+        for root, _, names in os.walk(base):
+            conf = os.path.basename(root)
+            for n in names:
+                if not n.upper().endswith(".TXT"):
+                    continue
+                with open(os.path.join(root, n), encoding="utf-8", errors="replace") as f:
+                    text = f.read().replace("\r\n", "\n")
+                for part in text.split("#MSG\n")[1:]:
+                    hdr = part.split("\n\n", 1)[0]
+                    subj, need = "", []
+                    for line in hdr.split("\n"):
+                        if line.lower().startswith("subject:"):
+                            subj = line.split(":", 1)[1].strip().upper()[:39]
+                        elif line.lower().startswith("needs:"):
+                            need = flags(line.split(":", 1)[1])
+                    if need:
+                        self.hidden_subjects.add(subj)
+                    self.subject_gates.setdefault(subj, []).append(self.conf_flag.get(conf, []) + need)
+        self.file_gates = {}        # upper case file name -> [gate flags of each copy]
+        fbase = os.path.join(self.card, "FILES")
+        if os.path.isdir(fbase):
+            for area in os.listdir(fbase):
+                adir = os.path.join(fbase, area)
+                ini = os.path.join(adir, "AREA.INI")
+                area_flag = flags(Ini(ini).get("AREA", "required_flag")) if os.path.isfile(ini) else []
+                for root, _, names in os.walk(adir):
+                    extra = {}
+                    np = os.path.join(root, "NEEDS.BBS")
+                    if os.path.isfile(np):
+                        for line in open(np, encoding="utf-8", errors="replace"):
+                            bits = line.strip().rsplit(" ", 1)
+                            if len(bits) == 2 and not line.startswith(";"):
+                                extra[bits[0].strip().upper()] = flags(bits[1])
+                    for n in names:
+                        self.file_gates.setdefault(n.upper(), []).append(area_flag + extra.get(n.upper(), []))
         self.bulletins = set()
         b = Ini(os.path.join(self.card, "CONFIG", "BULLETINS.INI")) if os.path.isfile(os.path.join(self.card, "CONFIG", "BULLETINS.INI")) else None
         if b:
@@ -188,12 +233,14 @@ class Lint:
             self.check_trigger_target("TRIGGERS.INI [%s]" % name, ev, kv, acc, scenes)
             needs = flags(kv.get("has"))
             gr = flags(kv.get("set"))
+            self.check_protected("TRIGGERS.INI [%s]" % name, gr)
             visible = any(kv.get(k) for k in ("page", "mail_body", "post_body", "art", "scene"))
             if visible:
                 gr.append("T_" + name)
             sc = kv.get("scene", "").upper()
             lab = "rule " + name
-            units.append((lab, needs, gr))
+            for gate in self.gates_of(ev, kv.get("match", "")):
+                units.append((lab, needs + gate, gr))
             if kv.get("lacks"):
                 lacking[lab] = flags(kv["lacks"])
             for f in needs:
@@ -216,6 +263,7 @@ class Lint:
                         units.append(("DIAG door open", [], []))
                     continue
                 lab = "diag " + name
+                self.check_protected("DIAG.INI [%s]" % name, flags(kv.get("set")))
                 units.append((lab, flags(kv.get("has")), flags(kv.get("set"))))
                 for f in flags(kv.get("has")):
                     required.append((lab, f))
@@ -227,6 +275,11 @@ class Lint:
         if shell:
             sh = shell.named().get("SHELL", {})
             door_needs = flags(sh.get("needs"))
+            if sh.get("account"):
+                door_needs = door_needs + ["LOGIN_" + sh["account"].strip().upper()]
+                if acc and sh["account"].strip().upper() not in {n for n, _, _ in acc.sections}:
+                    self.err("SHELL.INI", "account=%s is not in ACCOUNTS.INI" % sh["account"])
+            self.check_protected("SHELL.INI final_set", flags(sh.get("final_set")))
             for f in door_needs:
                 required.append(("SHELL door", f))
             units.append(("SHELL door", door_needs, ["DOOR_SHELL"]))
@@ -249,6 +302,7 @@ class Lint:
             for name, kv, _ in sysop.sections:
                 if kv.get("trigger") and kv["trigger"].upper() not in {n for n, _ in rules}:
                     self.err("SYSOP.INI [%s]" % name, "trigger=%s is not a rule in TRIGGERS.INI" % kv["trigger"])
+                self.check_protected("SYSOP.INI [%s]" % name, flags(kv.get("set")))
                 units.append(("sysop " + name, flags(kv.get("has")), flags(kv.get("set"))))
                 for f in flags(kv.get("has")):
                     required.append(("sysop " + name, f))
@@ -256,6 +310,7 @@ class Lint:
             for name, kv, _ in ghosts.sections:
                 for f in flags(kv.get("has")):
                     required.append(("ghost " + name, f))
+                self.check_protected("GHOSTS.INI [%s]" % name, flags(kv.get("set")))
                 units.append(("ghost " + name, flags(kv.get("has")), flags(kv.get("set"))))
 
         # accounts
@@ -264,6 +319,18 @@ class Lint:
             for name, kv, _ in acc.sections:
                 if kv.get("password"):
                     crew_logins.add(name)
+                    # learned_by= (lint only): the flag a caller holds once the password can be found.
+                    own = [f for f in flags(kv.get("flags")) if f not in self.access]
+                    units.append(("login " + name, flags(kv.get("learned_by")), ["LOGIN_" + name] + own))
+                    for f in flags(kv.get("learned_by")):
+                        required.append(("ACCOUNTS.INI [%s] learned_by" % name, f))
+        # The board's own grants: the overrun in the post path (M5) sets OVR for any own account.
+        units.append(("post path overrun", [], ["OVR"]))
+        if "MEM_GLITCH" in scenes:
+            units.append(("post path overrun scene", ["OVR"], ["SC_ENTER_MEM_GLITCH"]))
+        # Node chat (C) opens the SysOp chat scene first (bbs/cmd_main.h chatEntry).
+        if "ELZ_TALK" in scenes:
+            units.append(("node chat", [], ["SC_ENTER_ELZ_TALK"]))
         for name, kv in rules:
             if kv.get("event", "").lower() == "crew_login":
                 who = kv.get("match", "").upper()
@@ -277,6 +344,9 @@ class Lint:
         granted = set()
         for _, _, g in units:
             granted.update(g)
+        for where, nxt in self.scene_thens:
+            if nxt not in scenes:
+                self.err(where, "then=%s has no file in STORY/SCENES" % nxt)
         engine = lambda f: f.startswith("T_") or f.startswith("SC_") or f.startswith("E_") or f.startswith("G_")
         for where, f in required:
             if f not in granted and not engine(f):
@@ -287,6 +357,7 @@ class Lint:
         opt = self.fixpoint(units, {}, set())
         pess = self.fixpoint(units, lacking, opt)
         self.check_reach(man, opt, pess, units)
+        self.check_chain(units, opt, pess, lacking)
 
         # ---- redundancy of evidence
         self.check_redundancy(man, units)
@@ -311,6 +382,40 @@ class Lint:
                 self.warn("POWER.INI", "timer_sec=%s: a first-time player cannot finish the prologue in that time" % pn["timer_sec"])
 
     # -------- parts
+    def check_protected(self, where, granted):
+        """R3.2: the story never grants an access flag (the real SYSOP above all)."""
+        for f in granted:
+            if f in self.access:
+                self.err(where, "grants the access flag %s; the story may never set it" % f)
+
+    def gate_alternatives(self, gate):
+        """A gate as the board checks it: held, or SYSOP view for every flag that is not an access flag."""
+        if not gate:
+            return [[]]
+        out = [gate]
+        if not any(f in self.access for f in gate):
+            out.append(["SYSVW"])
+        return out
+
+    def gates_of(self, ev, match):
+        """The flag sets that let a caller see what a rule matches (any one of them is enough)."""
+        if ev == "read" and match.startswith("~"):
+            gates = self.subject_gates.get(match[1:].strip().upper()[:39], [[]])
+        elif ev in ("file", "art"):
+            gates = self.file_gates.get(match.upper(), [[]])
+        elif ev == "crew_login":
+            gates = [["LOGIN_" + match.upper()]]
+        else:
+            gates = [[]]
+        if any(not g for g in gates):
+            return [[]]
+        out = []
+        for g in gates:
+            for alt in self.gate_alternatives(g):
+                if alt not in out:
+                    out.append(alt)
+        return out
+
     def art_exists(self, name):
         n = name.upper()
         return any((n + ext) in self.files for ext in ("", ".ANS", ".ASC"))
@@ -327,7 +432,7 @@ class Lint:
             if m.upper().startswith("BULLETIN "):
                 if m.upper()[9:].strip() not in self.bulletins:
                     self.err(where, "no bulletin titled '%s'" % m[9:])
-            elif m.upper() != "USERS":
+            elif m.upper() not in ("USERS", "WHO"):
                 self.err(where, "unknown screen '%s'" % m)
         elif ev == "crew_login" and acc and m.upper() not in {n for n, _, _ in acc.sections}:
             self.err(where, "no account '%s' in ACCOUNTS.INI" % m)
@@ -401,7 +506,33 @@ class Lint:
         for n in reach:
             if n not in can_end:
                 self.err(where, "[%s] cannot reach END: the caller would be stuck in the scene" % n)
-        # grants: a choice's flag is granted when the scene is played (any choice is possible)
+        # The flags a caller needs to reach each node: a choice with hasN= on the way adds them.
+        # (if_has jumps and lacks are taken as possible; a few alternative sets per node.)
+        conds = {"START": [frozenset()]}
+        queue = ["START"]
+        while queue:
+            n = queue.pop()
+            kv = nodes.get(n)
+            if kv is None:
+                continue
+            for cset in list(conds.get(n, [])):
+                outs = []
+                for k in ("go", "if_go"):
+                    if kv.get(k):
+                        outs.append((kv[k].upper(), cset | (frozenset(flags(kv.get("if_has"))) if k == "if_go" else frozenset())))
+                for k, v in kv.items():
+                    m = re.fullmatch(r"go(\d)", k)
+                    if m:
+                        outs.append((v.upper(), cset | frozenset(flags(kv.get("has" + m.group(1))))))
+                for t, s in outs:
+                    if t == "END" or t not in nodes:
+                        continue
+                    have = conds.setdefault(t, [])
+                    if any(h <= s for h in have) or len(have) >= 6:
+                        continue
+                    have[:] = [h for h in have if not s <= h] + [s]
+                    queue.append(t)
+        # grants: a node's flags (and its choices') are granted when the node can be reached
         for n, kv in nodes.items():
             if n not in reach:
                 continue
@@ -409,8 +540,15 @@ class Lint:
             for k, v in kv.items():
                 if re.fullmatch(r"set\d", k):
                     g += flags(v)
-            if g:
-                units.append(("scene %s [%s]" % (sid, n), gate + ["SC_ENTER_" + sid], g))
+            self.check_protected(where + " [%s]" % n, g)
+            nxt = kv.get("then", "").upper()   # then= (Q12d): hand over to another scene at the end
+            if nxt and nxt != "CHAT":
+                self.scene_thens.append((where + " [%s]" % n, nxt))
+            for cset in conds.get(n, [frozenset()]):
+                if g:
+                    units.append(("scene %s [%s]" % (sid, n), gate + ["SC_ENTER_" + sid] + sorted(cset), g))
+                if nxt and nxt != "CHAT":
+                    units.append(("scene %s [%s] then" % (sid, n), gate + ["SC_ENTER_" + sid] + sorted(cset), ["SC_ENTER_" + nxt]))
             for k, v in kv.items():
                 if re.fullmatch(r"has\d", k):
                     for f in flags(v):
@@ -418,6 +556,7 @@ class Lint:
             for k in ("art",):
                 if kv.get(k) and not self.art_exists(kv[k]) and not self.art_exists(kv[k].replace("STORY/", "")):
                     self.err(where, "[%s] art '%s' is not on the card" % (n, kv[k]))
+        self.check_protected(where + " [SCENE]", flags(head.get("set")))
         for f in flags(head.get("set")):
             units.append(("scene %s [SCENE] set" % sid, gate + ["SC_ENTER_" + sid], [f]))
 
@@ -543,6 +682,26 @@ class Lint:
         for f in sorted((opt - pess) & needed):
             self.err("softlock", "flag %s is lost to a caller who already holds a flag a 'lacks' rule refuses" % f)
 
+    # The milestone chain (docs/PUZZLE_CHAIN.md): the flag each milestone leaves, and the hard
+    # dependencies the design names. Every milestone is reached in the best and the worst order,
+    # and every named dependency is a real gate (without it, the later milestone is not reached).
+    CHAIN = [("M1 power", "MET_ELIZA"), ("M3 crew area", "ACT2"), ("M4 archive", "ACT3"), ("M5 overrun", "OVR"),
+             ("M6 cure", "CURE"), ("M6 SYSOP view", "SYSVW"), ("M7 ELIZA", "ELZ_IN"), ("M8 shell", "DOOR_SHELL"),
+             ("M9 ending", "END1")]
+    DEPENDS = [("SYSVW", "OVR"), ("SYSVW", "CURE"), ("ELZ_IN", "SYSVW"), ("DOOR_SHELL", "SYSVW"),
+               ("DOOR_SHELL", "NOWHERE_OPEN"), ("END1", "DOOR_SHELL"), ("END1", "M_Z"), ("CURE", "CREW"), ("ACT3", "CREW")]
+
+    def check_chain(self, units, opt, pess, lacking):
+        for name, f in self.CHAIN:
+            if f not in opt:
+                self.err("chain", "%s (%s) is never reached" % (name, f))
+            elif f not in pess:
+                self.err("chain", "%s (%s) is lost in the worst order of play" % (name, f))
+        for later, earlier in self.DEPENDS:
+            cut = [(lab, needs, [g for g in grants if g != earlier]) for lab, needs, grants in units]
+            if later in self.fixpoint(cut, {}, set()):
+                self.err("chain", "%s is reached without %s: the gate does not hold" % (later, earlier))
+
     def check_redundancy(self, man, units):
         sources = {}
         for lab, needs, grants in units:
@@ -597,8 +756,8 @@ class Lint:
             if ev == "crew_login":
                 is_open = False
             elif ev == "read" and m.startswith("~"):
-                confs = self.subject_conf.get(m[1:].strip().upper()[:39], set())
-                is_open = bool(confs - gated_conf)
+                subj = m[1:].strip().upper()[:39]
+                is_open = any(not g for g in self.subject_gates.get(subj, []))
             elif ev in ("file", "art"):
                 is_open = m.upper() not in gated_file
             if is_open:

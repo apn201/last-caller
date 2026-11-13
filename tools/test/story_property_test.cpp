@@ -12,6 +12,10 @@
 //   P5  filing the right picks confirms every row, two crew rows at a time, ELIZA's row last
 //   P6  random picks never confirm a row that is wrong, and confirmed rows stay confirmed
 //   P7  no rule that only sets flags depends on a flag only it can set (no deadlock)
+//   P8  the story never grants an access flag (SYSOP above all): no rule, and no set= in any
+//       other story file named after the first two (scenes, SYSOP.INI, DIAG.INI, SHELL.INI)
+//   P9  SYSOP view (SYSVW) passes every story gate and never an access flag, on random flag sets
+//   P10 the act gates hold: no rule can give ACT3 or SYSVW to a caller without the visits they need
 #include "haunt_logic.h"
 #include "manifest_logic.h"
 #include <algorithm>
@@ -190,6 +194,48 @@ int main(int argc, char **argv) {
       for (const auto &w : haunt::flagWords(r.has))
         CHECKF(reach.count(w) || w == "END1" || w == "END2" || w.compare(0, 2, "M_") == 0 || w.compare(0, 3, "SC_") == 0 || w.compare(0, 2, "T_") == 0,
                "P7 rule %s needs %s which no rule can give", r.id.c_str(), w.c_str());
+  }
+
+  // P8: no grant of an access flag, in the rules or in any other story file given.
+  for (const auto &r : tr.rules)
+    for (const auto &w : haunt::flagWords(haunt::flagsOf(r))) CHECKF(!haunt::accessFlag(w), "P8 rule %s grants %s", r.id.c_str(), w.c_str());
+  for (int i = 3; i < argc; ++i) {
+    std::string text;
+    if (!slurp(argv[i], text)) { CHECKF(false, "P8 cannot read %s", argv[i]); continue; }
+    for (const auto &kv : iniText(text)) {
+      std::string k = kv.key;
+      bool isSet = k == "set" || k == "final_set" || (k.size() == 4 && k.compare(0, 3, "set") == 0 && k[3] >= '1' && k[3] <= '9');
+      if (!isSet) continue;
+      for (const auto &w : haunt::flagWords(kv.value)) CHECKF(!haunt::accessFlag(w), "P8 %s [%s] %s grants %s", argv[i], kv.section.c_str(), k.c_str(), w.c_str());
+    }
+  }
+
+  // P9: the SYSOP view bypass, on random flag sets.
+  {
+    const char *words[] = {"ACT2", "ACT3", "CREW", "VISIT_CMDR", "ELZ_HOME", "OVR", "CURE", "SYSVW", "SYSOP", "READONLY", "BACKROOM", "VAULT"};
+    const size_t nw = sizeof(words) / sizeof(*words);
+    for (int n = 0; n < 2000; ++n) {
+      std::string have, need;
+      for (size_t i = 0; i < nw; ++i) { if (rnd() % 3 == 0) have = haunt::flagsAdd(have, words[i]); if (rnd() % 4 == 0) need = haunt::flagsAdd(need, words[i]); }
+      bool pass = haunt::gatePass(have, need);
+      bool view = haunt::flagsHas(have, "SYSVW");
+      bool expect = true;
+      for (const auto &w : haunt::flagWords(need))
+        if (!haunt::flagsHas(have, w) && (!view || haunt::accessFlag(w))) expect = false;
+      CHECKF(pass == expect, "P9 gatePass(%s, %s)", have.c_str(), need.c_str());
+      if (pass && !haunt::flagsHas(have, "SYSOP")) CHECK(!haunt::flagsHas(need, "SYSOP"));
+      // more flags never close a gate
+      CHECK(!pass || haunt::gatePass(haunt::flagsAdd(have, words[rnd() % nw]), need));
+    }
+  }
+
+  // P10: flags only the rules give: ACT2 and ACT3 come only from their crew visits.
+  for (const auto &r : tr.rules) {
+    std::string g = haunt::flagsOf(r);
+    if (haunt::flagsHas(g, "ACT2")) CHECKF(r.ev == haunt::EV_CREW_LOGIN && haunt::upper(r.match) == "TYVANCE", "P10 rule %s gives ACT2", r.id.c_str());
+    if (haunt::flagsHas(g, "ACT3")) CHECKF(r.ev == haunt::EV_CREW_LOGIN && haunt::upper(r.match) == "CHAOS", "P10 rule %s gives ACT3", r.id.c_str());
+    CHECKF(!haunt::flagsHas(g, "SYSVW"), "P10 rule %s gives SYSVW (only the scene ELZ_GRANT may)", r.id.c_str());
+    CHECKF(!haunt::flagsHas(g, "OVR"), "P10 rule %s gives OVR (only the post path may)", r.id.c_str());
   }
 
   if (failures) { printf("story_property_test: %d FAILED\n", failures); return 1; }
