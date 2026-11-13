@@ -45,6 +45,10 @@ console and a native door.
 - Tracker music (MOD, S3M, XM, IT) plays with `V` in the browser: a
   tracker-style screen with the live pattern and channel meters, played by
   libopenmpt from the card. Fifty modules from The Mod Archive to start with.
+- Ty's three tunes (`SUNSIDE`, `THERMO`, `HARBOUR`) are original modules made by `tools/mod/`.
+  Their sample names carry his messages: the player lists them, and Telnet gets a text view of
+  the module header. Short original sound effects (hum, relay, chirp, static) play as cues in
+  the browser terminal.
 - C64 SID tunes play the same way with jsSID, on a C64-style screen with the
   three voices live. Thirty HVSC classics to start with. The player shows each
   tune's description.

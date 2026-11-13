@@ -46,7 +46,9 @@ are allowed: they never appear on screen.
 | Text and ANSI reader | SPACE B arrows S N/P Q | S plays at full speed on Telnet. A picture that paints over a row (a bare CR, Q8: Orbit 3) shows the covered row only while it plays; at 300 baud in the browser it can be read. |
 | ZIP contents | SPACE B arrows N/P Q | |
 | Image viewer | N P ESC, arrows, taps | Browser only; Telnet is told pictures open in the browser. |
-| Music player | N P SPACE ESC, arrows, taps | Browser only, and only when the player is on the card; Telnet is told music plays in the browser. |
+| Music player | N P SPACE ESC, arrows, taps | Browser only, and only when the player is on the card. It lists the module's sample names that hold text. |
+| Tune as text (`.MOD`) | SPACE B arrows N/P Q | Where the player cannot run (Telnet, or a browser with no player on the card): title, format, channels, orders, patterns and the sample names, in the reader. Other tune types (S3M, XM, IT, SID) still tell Telnet that music plays in the browser. |
+| Sound cues | none | Browser only, sent by the board at the RTG switch (`CHIRP`), the brownout drop (`STATIC`) and a scene's `sound=` key. No menu option; Telnet gets nothing. |
 | Files that cannot be viewed | | Browser: "D #". Telnet: "from the browser terminal". |
 | Upload | description, CHOOSE FILE | Browser only. |
 

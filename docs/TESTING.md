@@ -112,6 +112,19 @@ Wording is draft. After act 2, as the same caller, over Telnet and the browser:
 7. Without ANSI the same screens show their plain twins. A caller who never sent has no bulletin 5.
 
 Host test of the shell logic (usage line): `zig c++ -std=c++17 -Wall -Wextra -I src/core tools/test/shell_logic_test.cpp -o shell_logic_test`, then `./shell_logic_test sd/BBS/STORY/SHELL.INI`.
+## Music and sound (Q10)
+
+Wording is draft. The tunes and sounds come from `tools/mod/` (`python tools/mod/gen_mods.py`, `python tools/mod/gen_sfx.py`; the same bytes every run). Check the modules in the card's own libopenmpt build with `node tools/mod/openmpt_check.js <files>` (channels, orders, length, peak level).
+
+1. Browser, signed in as a caller: `F`, Ty's Gallery. `SUNSIDE.MOD` (9 Nov) and `THERMO.MOD` (5 Nov) are listed after the journals. Open `SUNSIDE.MOD`: the player plays it and lists the sample names under the pattern view in three columns (stops at 0100, greets, the poem, "eliza says nice tune"). `N` goes to `THERMO.MOD`. Tap or `ESC` back to the list.
+2. Telnet: the same file opens as a text view (title, `M.K.`, 4 channels, orders, patterns, the sample names), `SPACE` pages, `N`/`P` step to the next tune, `Q` back to the list. No raw bytes reach the terminal.
+3. Ty's own account (`TYVANCE`, `140374`): Ty's Desktop holds `HARBOUR.MOD` (5 Dec), six channels. The bassline runs, the rest is sketched, the lead stops mid-phrase, the song ends on a break. A visitor does not see the area.
+4. Delete the player from the card (`ASSETS/PLAYER/player.js`): the browser opens the same text view instead of an error.
+5. Cues, browser only, volume up: a new caller switches the ship to the RTG in the console: the reboot chirp. Let a maintenance session run out its two minutes: a burst of static with the carrier lost screen. The first login of a new account: a low hum as ELIZA wakes. Opening `POWER.LOG`: a relay click as the memory scene starts. None of them repeat. Telnet hears nothing and sees no escape text. Remove `ASSETS/SFX`: no error, no sound.
+6. `/sfx/CHIRP.WAV` in the address bar downloads a WAV; `/sfx/NOPE.WAV` is 404.
+
+Host test: `zig c++ -std=c++17 -Wall -Wextra -I src/core tools/test/modinfo_logic_test.cpp -o modinfo_logic_test`, then `./modinfo_logic_test sd/BBS/FILES/001_ANSI_GALLERY/SUNSIDE.MOD sd/BBS/FILES/001_ANSI_GALLERY/THERMO.MOD sd/BBS/FILES/006_TY_DESKTOP/HARBOUR.MOD`. The scene test covers the `sound=` key.
+
 ## Server build and end-to-end check (second build, from Q1)
 
 The server cannot be built on this Windows PC. The staging host builds and

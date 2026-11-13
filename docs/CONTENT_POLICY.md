@@ -22,6 +22,8 @@ Rules:
 | `ANSI/`, `ASCII/`, `BULLETINS/` screens and art | Original to this project, MIT. First pass, to be redrawn by the author |
 | `CONFIG/*.INI`, `DOORS/VOLAMUD/` | Original to this project, MIT |
 | `ASSETS/DIALUP.MP3` | Source to be confirmed by the author |
+| `ASSETS/SFX/*.WAV` (hum, relay, chirp, static, modem) | Original: made by `tools/mod/gen_sfx.py` from arithmetic, MIT |
+| `FILES/001_ANSI_GALLERY/SUNSIDE.MOD`, `THERMO.MOD`, `FILES/006_TY_DESKTOP/HARBOUR.MOD` | Original compositions and instruments: made by `tools/mod/gen_mods.py`, no samples, no copied notes, MIT. Sample names are story text (drafts) |
 | `ASSETS/PLAYER/` (libopenmpt, jsSID, `player.js`, `stream.js`) | Third party libraries and project glue code; licences in `THIRD_PARTY_NOTICES.md` |
 
 ## Made by scripts, not in the repository

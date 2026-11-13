@@ -8,9 +8,9 @@
 - `gen_mods.py`: the three tunes. Writes into `sd/BBS/FILES/...`.
 - `gen_sfx.py`: the five WAVs (8-bit mono, 11025 Hz, under a second except
   the hum). Writes into `sd/BBS/ASSETS/SFX/`.
-- `check_mods.py`: reads the written modules back (sizes, tags, order list)
-  and, when `node` is present, loads them in the card's own libopenmpt build
-  to print the duration. Not part of the staging check.
+- `openmpt_check.js`: loads the written modules in the card's own libopenmpt
+  build (needs `node`) and prints channels, orders, length and peak level; exits
+  1 if one does not load, is under ten seconds or clips. Not part of the staging check.
 
 Pattern notation: one token per row. `C-2/3` plays note C-2 with sample 3,
 `-` is an empty row, `^` cuts the note, `+C20` appends an effect (hex).
