@@ -124,6 +124,7 @@ class Lint:
                 for n in names:
                     self.files.add(n.upper())
         self.subjects = set()   # message subjects as the board matches them: upper case, 39 characters
+        self.subject_conf = {}  # subject -> conference ids that hold it
         base = os.path.join(self.card, "MSGBASE")
         for root, _, names in os.walk(base):
             for n in names:
@@ -133,7 +134,9 @@ class Lint:
                     with open(os.path.join(root, n), encoding="utf-8", errors="replace") as f:
                         for line in f:
                             if line.lower().startswith("subject:"):
-                                self.subjects.add(line.split(":", 1)[1].strip().upper()[:39])
+                                subj = line.split(":", 1)[1].strip().upper()[:39]
+                                self.subjects.add(subj)
+                                self.subject_conf.setdefault(subj, set()).add(os.path.basename(root))
                 except OSError:
                     pass
         self.bulletins = set()
@@ -287,6 +290,7 @@ class Lint:
 
         # ---- redundancy of evidence
         self.check_redundancy(man, units)
+        self.check_open_sources(rules, units)
 
         # ---- flag budget: the story record holds 4000 characters
         names = {g for _, _, gr in units for g in gr if not g.startswith(("SC_ENTER_", "ROWSHOWN_", "ROWRIGHT_", "DOOR_"))}
@@ -555,6 +559,61 @@ class Lint:
                     n = len(sources.get(f, ()))
                     if n == 1:
                         self.warn("evidence", "%s (answer %d of %s) has one source only: %s" % (f, i, rid, next(iter(sources[f]))))
+
+    def gated_conferences(self):
+        """Conference ids that need a flag (a crew visit opens them)."""
+        p = os.path.join(self.card, "CONFIG", "CONFERENCES.INI")
+        out = set()
+        if os.path.isfile(p):
+            for name, kv, _ in Ini(p).sections:
+                if kv.get("required_flag"):
+                    out.add(name)
+        return out
+
+    def gated_files(self):
+        """Upper case file names in a file area that needs a flag."""
+        out = set()
+        base = os.path.join(self.card, "FILES")
+        if not os.path.isdir(base):
+            return out
+        for area in os.listdir(base):
+            ini = os.path.join(base, area, "AREA.INI")
+            if os.path.isfile(ini) and any(kv.get("required_flag") for _, kv, _ in Ini(ini).sections):
+                for root, _, names in os.walk(os.path.join(base, area)):
+                    out.update(n.upper() for n in names)
+        return out
+
+    def check_open_sources(self, rules, units):
+        """A caller can lose what a crew visit gave: carried flags live in the connection until an own
+        account signs in. So every fact a right answer needs must also have a source that needs no
+        crew visit (an open conference, an open file area, a bulletin, a scene, the SysOp)."""
+        gated_conf = self.gated_conferences()
+        gated_file = self.gated_files()
+        open_flags = set()
+        for name, kv in rules:
+            ev = kv.get("event", "").lower()
+            m = kv.get("match", "")
+            is_open = True
+            if ev == "crew_login":
+                is_open = False
+            elif ev == "read" and m.startswith("~"):
+                confs = self.subject_conf.get(m[1:].strip().upper()[:39], set())
+                is_open = bool(confs - gated_conf)
+            elif ev in ("file", "art"):
+                is_open = m.upper() not in gated_file
+            if is_open:
+                open_flags.update(flags(kv.get("set")))
+        for lab, _, grants in units:
+            if not lab.startswith("rule ") and not lab.startswith("row ") and not lab.startswith("manifest"):
+                open_flags.update(grants)
+        for rid, kv in self.manifest_rows:
+            for i in (1, 2, 3):
+                o = self.manifest_opts.get(kv.get("a%d" % i, "").upper())
+                if not o:
+                    continue
+                for f in flags(o.get("has")):
+                    if f not in open_flags:
+                        self.err("open sources", "%s (answer %d of %s) can only be earned on a crew visit; a caller who loses the visit is stuck" % (f, i, rid))
 
     BANNED = ["delve", "tapestry", "testament", "realm", "beacon", "embark", "symphony", "paradigm shift",
               "game-changer", "unleash", "multifaceted", "ever-evolving", "nestled", "bustling", "indelible",

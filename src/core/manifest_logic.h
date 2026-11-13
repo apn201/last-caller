@@ -24,6 +24,7 @@ struct Option {
 
 struct Row {
   std::string id, handle, needs, needsAny, done;   // done: the flag a confirmed row leaves
+  std::string his = "their";                       // what {his} in an option reads as on this row
   bool last = false;                               // the ELIZA row: confirmed alone, shown last
   std::string answer[SLOTS];                       // option ids
 };
@@ -34,6 +35,7 @@ struct Table {
   std::string title = "CREW MANIFEST";
   std::string slot[SLOTS] = {"Who they were", "What happened to them", "Who or what is responsible"};
   std::string lastSlot[SLOTS] = {"What she is", "Who gave her orders", "Why she is still running"};
+  std::string hint[SLOTS], lastHint[SLOTS];   // shown under an empty pick list, in the caller's own voice
   std::string intro, fullScene;
   std::string count = "Rows confirmed: {n} of {total}.";
   std::string filed = "Confirmed and locked: {names}.";
@@ -76,6 +78,10 @@ inline void parse(const std::vector<Kv> &kv, Table &t) {
   for (int i = 0; i < SLOTS; ++i) {
     set(("slot" + std::to_string(i + 1)).c_str(), t.slot[i], 40);
     set(("last_slot" + std::to_string(i + 1)).c_str(), t.lastSlot[i], 40);
+  }
+  for (int i = 0; i < SLOTS; ++i) {
+    set(("hint" + std::to_string(i + 1)).c_str(), t.hint[i], 200);
+    set(("last_hint" + std::to_string(i + 1)).c_str(), t.lastHint[i], 200);
   }
   t.fullScene = haunt::upper(haunt::trim(kget(kv, "MANIFEST", "full_scene")));
   t.partial = haunt::capText(kget(kv, "PARTIAL", "text"), 600);
@@ -132,6 +138,8 @@ inline void parse(const std::vector<Kv> &kv, Table &t) {
     std::string kind = haunt::lower(haunt::trim(kget(kv, sec, "kind", "crew")));
     if (kind != "crew" && kind != "last") { t.problem(sec, "kind must be crew or last"); continue; }
     r.last = kind == "last";
+    r.his = haunt::lower(haunt::capText(kget(kv, sec, "his", "their"), 8));
+    if (r.his.empty()) r.his = "their";
     r.needs = haunt::flagsClean(kget(kv, sec, "needs"));
     r.needsAny = haunt::flagsClean(kget(kv, sec, "needs_any"));
     r.done = haunt::flagsClean(kget(kv, sec, "done"));
@@ -177,6 +185,12 @@ inline std::vector<const Option *> choices(const Table &t, const Row &r, int slo
   for (const auto &o : t.options) if (o.slot == slot + 1 && o.last == r.last && optionShown(o, flags)) out.push_back(&o);
   return out;
 }
+
+// An option as one row shows it: {his} reads as the row's own word (her, his, their).
+inline std::string optionText(const Option &o, const Row &r) { return subst(o.text, "{his}", r.his); }
+
+// What the board says under a pick list with nothing in it (empty = nothing).
+inline const std::string &emptyHint(const Table &t, const Row &r, int slot) { return r.last ? t.lastHint[slot] : t.hint[slot]; }
 
 inline const std::string &slotLabel(const Table &t, const Row &r, int slot) { return r.last ? t.lastSlot[slot] : t.slot[slot]; }
 

@@ -11,6 +11,7 @@
 // browser; no card path is ever shown.
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
 #include "../core/manifest_logic.h"
+#include "../core/wrap_logic.h"
 
 static constexpr const char *MANIFEST_INI = "/BBS/STORY/MANIFEST.INI";
 static constexpr const char *MAN_DAT = "/BBS/DATA/STATE/MAN.DAT";    // id|picks
@@ -110,7 +111,7 @@ static std::vector<const manifest::Row *> manRows(const Session &s) { return man
 static String manOptionText(const manifest::Row &r, int slot, const String &picks) {
   manifest::Picks3 p = manifest::picksOf(hauntStd(picks), r.id);
   const manifest::Option *o = p[slot].empty() ? nullptr : manifest::findOption(manTable, p[slot]);
-  return o ? hauntStr(o->text) : String();
+  return o ? hauntStr(manifest::optionText(*o, r)) : String();
 }
 static void manPrompt(Session &s) { prompt(s, "\x1b[1;36mMANIFEST> \x1b[0m"); }
 static void manSay(Session &s, const String &text) { say(s, "\x1b[0;37m" + text + "\x1b[0m"); }
@@ -166,9 +167,19 @@ static void manPickView(Session &s) {
   say(s, "\x1b[1;36m  " + hauntStr(r.handle) + ": " + hauntStr(manifest::slotLabel(manTable, r, s.manSlot)) + "\x1b[0m");
   for (size_t i = 0; i < opts.size(); ++i) {
     bool mine = p[s.manSlot] == opts[i]->id;
-    say(s, "  \x1b[1;33m[" + String((unsigned)(i + 1)) + "]\x1b[0m " + (mine ? "\x1b[1;37m" : "\x1b[0;37m") + hauntStr(opts[i]->text) + (mine ? " (picked)" : "") + "\x1b[0m");
+    say(s, "  \x1b[1;33m[" + String((unsigned)(i + 1)) + "]\x1b[0m " + (mine ? "\x1b[1;37m" : "\x1b[0;37m") + hauntStr(manifest::optionText(*opts[i], r)) + (mine ? " (picked)" : "") + "\x1b[0m");
   }
-  if (!opts.size()) say(s, "  Nothing to choose from yet.");
+  if (!opts.size()) {
+    say(s, "  Nothing to choose from yet.");
+    const std::string &hint = manifest::emptyHint(manTable, r, s.manSlot);
+    if (!hint.empty()) {
+      bool first = true;
+      for (const std::string &row : wrap::rows(hint, 66)) {
+        say(s, first ? "  \x1b[0;33mNotebook:\x1b[0;37m " + String(row.c_str()) + "\x1b[0m" : "            \x1b[0;37m" + String(row.c_str()) + "\x1b[0m");
+        first = false;
+      }
+    }
+  }
   say(s, "  \x1b[1;33m[0]\x1b[0m Clear this blank   \x1b[1;33m[Q]\x1b[0m Back");
   manPrompt(s);
 }
