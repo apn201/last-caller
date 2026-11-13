@@ -158,7 +158,7 @@ Rules for every item:
   `docs/PLAYTEST.md`. Done when run 4 finishes the game with no fault and
   the staging check passes; note its play time against the 60 to 120
   minute goal.
-- [ ] **Q12c - Milestones, design.** Read `docs/briefs/S12c-milestones.md`
+- [x] **Q12c - Milestones, design.** (done, 05a1676 plus the tick; story lint clean on the current card (60 rules, 10 scenes), no engine or card change. Spec in `.kiro/specs/milestones/` (requirements, design, tasks, `content-drafts.md`), `docs/PUZZLE_CHAIN.md`, story bible updated: Ty's last fight with an hour table, V-F and V-C, M1 to M9, matrix E41 to E48, act gate audit. Decisions for the author: act gates are per post (`Needs:`) and per file (`NEEDS.BBS`); H-C loses its only open item, so a Day 21 note in the Mission Log (draft) gives it one; ELIZA's password in the draft checklist is `KESTREL4`; `SYSVW` bypasses story gates only, never the protected flags. All text is draft.) Read `docs/briefs/S12c-milestones.md`
   and do its Q12c part: story-bible update (Ty's last fight, timeline,
   fates, unlock chain M1 to M9, scenes), `docs/PUZZLE_CHAIN.md`, the spec
   `.kiro/specs/milestones/`, content drafts. No engine code. Done when the
