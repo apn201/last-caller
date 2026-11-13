@@ -494,9 +494,28 @@ breaks it, leave it and list it):
 If the new Day 20 note is refused by the author, leave "Locks" (25 Nov) open
 instead and list it here. Nothing else breaks the matrix.
 
+Q12d result, on the real card (`python tools/story_lint.py`, open sources and
+the chain): the moves above are made with `Needs:` lines (Lounge 30 to 43 and
+Mission Log Day 22 to 27, Garden Notes Day 22 to 31 behind `ACT2`; Lounge 44
+to 49 behind `ACT3`). Each fact keeps an open item with a trigger:
+
+| Fact | Open item kept (rule) |
+| --- | --- |
+| H-C | Mission Log Day 21, the lock cycle and "Priority." (`EV_DAY_21`) |
+| T-C | Garden Notes Day 17, the interlock panel (`EV_DAY_17`) |
+| V-F | WHO, `TYVANCE` in the power bay (E34, `EV_WHO`, event `screen` `WHO`) |
+| Z-W | Lounge 19 Nov "Rack 2" (E06b, `EV_RACK2`) |
+
+No post had to stay open against the plan. Lounge numbers moved by two (E41
+"brb" and ELIZA's reply, 6 Nov). The standing orders are `STANDING.TXT` (a
+`.ORD` file only downloads). The manual's limit is in section 1 of
+`COMMS.TXT`, not "page 3"; E42 says so.
+
 Small wrong notes wanted in act 1 (a time that does not fit, a greeting with
 a name missing). Already on the card: the 22 Nov 11:00 forward arrives three
 hours before the tank. Drafts for more are in `.kiro/specs/milestones/content-drafts.md`.
+Q12d added: ELIZA's welcome names three of the four (Ty is missing), and her
+reply to "brb" says she corrected the cause (she did not).
 ## Early game (R7)
 
 - Before the clock starts: the prologue (step 0) takes a few minutes and ends

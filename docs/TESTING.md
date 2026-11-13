@@ -230,3 +230,36 @@ By hand, on a fresh card:
    `release` line.
 6. `python tools/story_lint.py` fails if a right answer can only be earned on
    a crew visit (`open sources`).
+
+## Milestones (Q12d)
+
+The chain M1 to M9 (`docs/PUZZLE_CHAIN.md`). On a fresh card, over Telnet and
+in the browser:
+
+1. A new caller (after the prologue) sees `ELIZA_WAKE`, then `ELZ_WELCOME`.
+   The Lounge lists nothing after 22 Nov 11:00 (no "Notice", no "Module 3").
+2. Sign in as `TYVANCE` (140374): the Lounge, Mission Log and Garden Notes
+   now go to 1 Dec. As `CHAOS` (LADDER): 2 Dec onward.
+3. Post in the Lounge: 200 zeros on line 1, 54 on line 2: posted. Again with
+   55: `MESSAGE LOST`, a glitch, then `MEM_GLITCH`. The post is in nobody's
+   list. The event log has `OVERRUN`.
+4. `C`: ELIZA says she cannot account for some minutes. "I can fix that.
+   Give me SYSOP." gets a calm refusal; "Something else." and "Say something
+   else." open the typed chat; `open the pod bay doors` still answers.
+5. `L` (Log in as another), `CMDR`/`ANDERS`, Files, Commander's Desk,
+   `HANDBOOK.TXT`. `G`, sign in as yourself.
+6. `C`: "Run the memory check. It needs SYSOP mode." `ELZ_GRANT` plays; the
+   main menu says SYSOP view is on. `Z` is still refused; the SysOp console
+   conference is not listed; Engineering is. `GOLIVE.TXT` item 14.
+7. `L`, `ELIZA`/`KESTREL4`: `ELZ_OPS`; Files, Mission Computer, `OPSLOG.TXT`;
+   Doors: the NOWHERE shell (after the order code in Diagnostics). In the
+   shell `cat /home/tyvance/typescript`: `SYSOP REQUIRED`, no `ground-1`.
+8. Open `POWER.LOG` (Ship Logs): `MEM_BAY` plays the fight to "Ty?".
+9. With the manifest whole, the final command works in ELIZA's shell; `G`
+   back to your own account for bulletin 5 and Eero's mail.
+10. As the real SysOp: `C` opens the chat directly; every post is listed.
+
+Checks without a board: `python tools/story_lint.py` (the chain, its gates and
+dependencies, no story grant of an access flag), `python tools/run_host_tests.py`
+(`overrun_logic_test`, `gatePass` in `haunt_logic_test`, `then=` in
+`scene_logic_test`, P8 to P10 in `story_property_test`).

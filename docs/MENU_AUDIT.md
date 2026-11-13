@@ -26,6 +26,9 @@ are allowed: they never appear on screen.
 | P | a SysOp is online | |
 | R | the caller can save (not a crew login, not `admin`) and holds evidence about at least one crew row (`STORY/MANIFEST.INI`) | Q6. G with an unfinished manifest shows ELIZA's thanks (partial ending). |
 | Z | SysOp only | Hidden for the SysOp: `USER`, `RELOAD`. |
+| L | an own account (not a crew login, not `admin`) | Q12d: "Log in as another". Signs off to `Login:` and keeps the line, so a crew login after it reads the caller's own flags (the shell in ELIZA's menu needs `NOWHERE_OPEN` and `M_Z` from the own account). |
+| C | always | Q12d: for a caller (not the SysOp) node chat opens as the scene `ELZ_TALK`: numbered replies, the memory-check reply only with `OVR` and `CURE`; "Say something else." opens the typed chat (keywords, eggs). A card without the scene opens the chat directly. |
+| (marker line) | the caller holds `SYSVW` | Q12d: "SYSOP view is on: every area is open to read." No command comes with it. |
 
 ## Messages
 
@@ -120,3 +123,15 @@ are allowed: they never appear on screen.
 | Files: Ty's Desktop | `TY_HOME`: on the `TYVANCE` account only, never carried | Orbit 9. |
 | Messages: Mail: CMDR, Mail: GARDEN | `VISIT_CMDR`, `VISIT_GARDEN` (their logins, carried) | Read-only. |
 | Messages: Archive | `ACH` | Read-only. |
+
+## Milestones (Q12d)
+
+| Area | Shown when | Notes |
+| --- | --- | --- |
+| Posts with `Needs: ACT2` / `Needs: ACT3` | the caller holds the flag (Ty's and Achterberg's visits) or `SYSVW` | Not listed, counted, scanned or shown in a thread before; a real SysOp sees them. |
+| Files: Engineering | `SYSVW` | `GOLIVE.TXT` (ELIZA's password, item 14), `STANDING.TXT`. |
+| Files: Commander's Desk | `CMDR_HOME`: the `CMDR` account only (or `SYSVW`) | `HANDBOOK.TXT`, chapter 9: reading it sets `CURE`. |
+| Files: Mission Computer | `ELZ_HOME`: the `ELIZA` account only (or `SYSVW`) | `OPSLOG.TXT`. |
+| Messages: Mail: ELIZA | `VISIT_ELIZA` (her login, carried) or `SYSVW` | Read-only. |
+| Door: NOWHERE shell | the `ELIZA` account (`SHELL.INI` `account=`) and the caller's own `NOWHERE_OPEN` | Gone from every other menu. |
+| SYSOP view | never | `SYSVW` opens no SysOp tool: `Z`, `USER`, `RELOAD`, the SysOp console conference, the SysOp page and every `SYSOP`, `READONLY`, `BACKROOM`, `VAULT` gate stay shut. |
