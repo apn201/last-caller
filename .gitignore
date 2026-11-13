@@ -17,3 +17,6 @@ __pycache__/
 
 # Rendered previews of the ANSI art (tools/ansi/render.py).
 docs/art-preview/
+
+# Press-kit renders and generated art (tools/presskit.py, Kling).
+docs/presskit/

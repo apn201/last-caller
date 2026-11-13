@@ -239,3 +239,9 @@ Rules for every item:
   recording mode in the browser terminal, judge savegame accounts
   (`tools/make-savegame.py`), and one merged board test
   checklist for the stick. No story or puzzle changes.
+- [ ] **Q17 - ELIZA's eye on the stick.** Brief: `docs/briefs/Q17-eliza-lcd.md`
+  (Claude Code, 13 Nov 2026, Juha's idea). The LCD shows ELIZA's segmented
+  eye and a VFD-style status line, driven by board state (boot, asleep,
+  brownout, listening, speaking, page); `lcd_mode=` on the card and a
+  stick-only SysOp switch bring back the old panel (the BOOT button is broken off). Plus a parametric OpenSCAD PLA sleeve for the
+  Deluxe Edition stick, with board measurements left for Juha.

@@ -268,12 +268,15 @@ and `APN201`.
   polite and empty (sets the tone, gives nothing away).
 - Nothing that carries a puzzle answer.
 
-**Collector's Edition.** Gold sticker on the shrink wrap:
-`COLLECTOR'S EDITION - CONTAINS THE SHIP'S NODE`. Inside, black foam with
-a cutout: the Pocket-Dongle-S3 with the HALCYON card in it, a USB-C
-cable, and a small card: "Plug it in. Join HALCYON. It has been waiting."
-Plus a printed ELIZA eye (the 3D print from `docs/ELIZA_EYE.md`) if it
-is ready.
+**Deluxe Edition.** Gold sticker on the shrink wrap:
+`DELUXE EDITION - CONTAINS THE SHIP'S NODE`. Inside, black foam with a
+cutout: the Pocket-Dongle-S3 with the HALCYON card in it, dressed in a
+PLA sleeve that makes it a tiny crew interface unit. Its LCD shows
+ELIZA's eye, and the eye follows the board: asleep, waking, listening,
+speaking (Q17, `docs/briefs/Q17-eliza-lcd.md`). A USB-C cable, and a
+small card: "Plug it in. Join HALCYON. It has been waiting." The front
+render in `docs/presskit/kling/` still says Collector's Edition; fix the
+sticker text in the final art.
 
 **Making the art.** Image tools for the eye and the hull, everything else
 from real screens and real photos. Prompt for the front background:
