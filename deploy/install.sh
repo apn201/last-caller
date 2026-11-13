@@ -73,7 +73,7 @@ if [ -r "$HAL_ENV" ]; then
   else bad "$HAL_ENV belongs to an install with other settings ($OLD_DOMAIN, ports $OLD_HTTP/$OLD_TELNET)"; fi
 fi
 
-port_busy() { ss -ltnH "sport = :$1" 2>/dev/null | grep -q .; }
+port_busy() { [ -n "$(ss -ltnH "sport = :$1" 2>/dev/null || true)" ]; }
 for p in "$HTTP_PORT" "$TELNET_PORT"; do
   if port_busy "$p"; then
     if [ "$OURS" -eq 1 ] && systemctl is-active --quiet halcyon-bbs; then ok "port $p is held by halcyon-bbs"; else bad "port $p is already in use: choose another"; fi
@@ -108,10 +108,9 @@ say "packages"
 dnf -y -q install epel-release
 dnf -y -q install gcc-c++ cmake make git python3 curl openssl civetweb-devel mbedtls-devel \
   httpd mod_ssl httpd-tools certbot policycoreutils
-for m in proxy_module proxy_http_module proxy_wstunnel_module rewrite_module headers_module auth_basic_module \
-         authn_file_module authz_user_module reqtimeout_module ssl_module; do
-  httpd -M 2>/dev/null | grep -q "${m} " || die "Apache module $m is not loaded (see /etc/httpd/conf.modules.d). Not changing the host's module set."
-done
+MISSING="$(apache_modules_missing proxy_module proxy_http_module proxy_wstunnel_module rewrite_module headers_module \
+  auth_basic_module authn_file_module authz_user_module reqtimeout_module ssl_module)" \
+  || die "Apache module(s) not loaded: $(echo $MISSING) (see /etc/httpd/conf.modules.d). Not changing the host's module set."
 note "build tools and Apache modules present"
 
 # ---------------------------------------------------------------- build
@@ -173,8 +172,13 @@ systemctl restart halcyon-bbs
 wait_for_board || { journalctl -u halcyon-bbs -n 20 --no-pager; die "the board did not answer on 127.0.0.1:$HTTP_PORT"; }
 note "board answers on 127.0.0.1:$HTTP_PORT"
 if [ ! -e "$HAL_SYSOP_DONE" ]; then
-  [ "$NEW_CARD" -eq 1 ] || die "the card exists but no SysOp was ever created by this script. Create SYSOP by hand over the loopback Telnet port $TELNET_PORT, then 'touch $HAL_SYSOP_DONE'."
-  bootstrap_sysop "$HERE"
+  if [ "$NEW_CARD" -eq 1 ]; then
+    bootstrap_sysop "$HERE"
+  elif SYSOP_PASSWORD="$(cat "$HAL_SYSOP_PASS" 2>/dev/null)" python3 "$HERE/bootstrap-sysop.py" --port "$TELNET_PORT" --verify; then
+    : > "$HAL_SYSOP_DONE"; note "SYSOP account found (an earlier run stopped before it was recorded)"
+  else
+    die "the card exists but SYSOP does not log in with $HAL_SYSOP_PASS. Create SYSOP by hand over the loopback Telnet port $TELNET_PORT, then 'touch $HAL_SYSOP_DONE'."
+  fi
 fi
 
 # ---------------------------------------------------------------- Apache
@@ -199,8 +203,8 @@ else
   if [ "$NO_TLS" -eq 0 ]; then
     say "certificate"
     MAIL=(--register-unsafely-without-email); [ -z "$EMAIL" ] || MAIL=(--email "$EMAIL")
-    certbot certonly --webroot -w "$HAL_ACME" -d "$DOMAIN" --non-interactive --agree-tos "${MAIL[@]}" \
-      --deploy-hook "systemctl reload httpd" || die "certbot failed. The board runs on HTTP only (redirects to HTTPS will fail). Fix DNS or ports and run this script again."
+    run_certbot certonly --webroot -w "$HAL_ACME" -d "$DOMAIN" --non-interactive --agree-tos "${MAIL[@]}" \
+      --deploy-hook "systemctl reload httpd" || die "certbot failed. The board runs on HTTP only. Fix the cause (DNS, ports, a running certbot) and run this script again: it picks up at the certificate and the TLS vhost."
     put_conf "$HERE/apache-tls.conf.in"; systemctl reload httpd; note "vhost with TLS"
   fi
 fi

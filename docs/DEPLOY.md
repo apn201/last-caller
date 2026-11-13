@@ -47,6 +47,27 @@ to 32), `--sysop-password`, `--skip-dns-check` (NAT), `--no-tls`.
 Running it again updates the binary, pages and Apache file. It never touches
 the card or the passwords.
 
+### Running it again after a failure
+
+A re-run after any failed step finishes the job without manual help. It
+picks up where the earlier run stopped: the HTTP vhost, the certificate, the
+TLS vhost (if the certificate is already there it goes straight to the TLS
+vhost), and the SysOp account (if an earlier run stopped before it was
+recorded, the script logs in with the stored password and records it).
+
+Two faults found in the first real install (Q14b):
+
+- The Apache module check piped `httpd -M` into `grep -q`. `grep -q` exits at
+  the first match, `httpd` then dies of SIGPIPE, and under `set -o pipefail`
+  that failed the check about one run in ten. The list is now captured once
+  into a variable and matched in the shell (`apache_modules_missing` in
+  `deploy/lib.sh`). The port check used the same pipe and is fixed too.
+  `tools/test/module_check_test.sh` runs the check 50 times against a fake
+  `httpd`.
+- certbot stopped on its lock because another certbot was running. The script
+  now waits (15 seconds, up to 20 times) when certbot reports the lock, then
+  stops and says to run it again. It never deletes or edits the lock file.
+
 ## Layout
 
 | Path | What |

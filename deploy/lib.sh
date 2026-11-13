@@ -48,6 +48,44 @@ apply_card_settings() {
   grep -q '^upload_max=0$' "$ini" || die "could not set upload_max=0 in $ini"
 }
 
+# Apache modules the vhosts need. $HAL_HTTPD names the binary (tests put a fake
+# one there). The list is captured once and matched in the shell: a pipe into
+# "grep -q" makes httpd die of SIGPIPE under pipefail when grep exits early.
+# Prints the missing module names, one per line; returns 1 if any is missing.
+apache_modules_missing() {
+  local httpd="${HAL_HTTPD:-httpd}" list m miss=0
+  list="$("$httpd" -M 2>&1)" || { echo "(httpd -M failed)"; return 1; }
+  for m in "$@"; do
+    case "$list" in *" $m "*) ;; *) echo "$m"; miss=1;; esac
+  done
+  return "$miss"
+}
+
+# certbot certonly with the host's existing lock respected: if another certbot
+# holds it, wait and try again; never touch the lock file. Gives up after
+# about five minutes with a clear message (the install can simply be run again).
+# $@ = arguments for certbot.
+run_certbot() {
+  local out rc tries=0 max=20
+  while :; do
+    rc=0
+    out="$(certbot "$@" 2>&1)" || rc=$?
+    printf '%s\n' "$out"
+    [ "$rc" -eq 0 ] && return 0
+    case "$out" in
+      *"Another instance of Certbot is already running"*|*".certbot.lock"*)
+        tries=$((tries + 1))
+        if [ "$tries" -ge "$max" ]; then
+          echo "certbot is still locked by another process. The lock was not touched."
+          return 2
+        fi
+        echo "certbot is locked by another process: waiting 15 s ($tries/$max)"
+        sleep 15;;
+      *) return "$rc";;
+    esac
+  done
+}
+
 wait_for_board() {
   local i
   for i in $(seq 1 60); do

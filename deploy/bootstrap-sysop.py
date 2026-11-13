@@ -77,6 +77,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, required=True, help="the board's loopback Telnet port")
     ap.add_argument("--handle", default="SYSOP")
+    ap.add_argument("--verify", action="store_true", help="only log in; create nothing")
     args = ap.parse_args()
     password = os.environ.get("SYSOP_PASSWORD", "")
     if len(password) < 6:
@@ -85,6 +86,17 @@ def main():
 
     c = Conn(args.port)
     try:
+        if args.verify:
+            c.expect("Login:")
+            c.send(args.handle)
+            c.expect("Password:")
+            c.send(password)
+            hit = c.expect("Press ENTER", "Main Board Command?", "Bad password", "Unknown caller", timeout=40)
+            if hit in ("Bad password", "Unknown caller"):
+                print("%s does not log in with the stored password" % args.handle, file=sys.stderr)
+                return 4
+            print("SysOp account %s already works" % args.handle)
+            return 0
         c.expect("Login:")
         c.send("admin")
         c.expect("Password:")
