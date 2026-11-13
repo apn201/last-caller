@@ -16,12 +16,20 @@ senior reviewers who specialise in adventure games and have played
 everything from Infocom and Sierra to Myst, Grim Fandango, Return of the
 Obra Dinn, Her Story, Outer Wilds and Disco Elysium.
 
-- **Ada** reviews for a long-running adventure magazine. She cares most
-  about puzzle design: fairness, logic, clueing, the "aha" moment, whether
-  each gate opens by noticing and thinking, whether the interface fights her.
-- **Mara** writes long-form criticism of games as narrative. She cares most
-  about story, characters, prose, pacing, tone and the ending: does it earn
-  its emotions, does anything feel forced, padded or cheap.
+- **Ada** reviews for a long-running adventure magazine. Her favourite
+  game is Return of the Obra Dinn. She cares most about puzzle design:
+  deduction, fairness, logic, clueing, the "aha" moment, whether each gate
+  opens by noticing and thinking, whether the interface fights her.
+- **Mara** writes long-form criticism of games as narrative. Her favourite
+  series is Leisure Suit Larry: she loves Sierra-era cheek, comic timing,
+  characters with flaws, and a game that does not take itself too
+  seriously. She cares most about story, characters, humour, prose, pacing,
+  tone and the ending: does it earn its emotions, is it ever fun, does
+  anything feel forced, padded, po-faced or cheap.
+- Both love The Secret of Monkey Island (its wit, its fair puzzles, its
+  sense of place) and measure adventure games against it.
+
+So in every round one critic is the Obra Dinn fan and one the Larry fan.
 
 Each critic, while playing, keeps notes of everything she does not like:
 story, mechanics, anything annoying, repetitive or forced, puzzles that are
