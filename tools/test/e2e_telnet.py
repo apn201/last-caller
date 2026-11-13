@@ -719,10 +719,16 @@ def main():
         c.expect("Message command?", timeout=10)
         # numbers: Q12d put Ty's "brb" and ELIZA's reply on 6 Nov, two places before these
         for n, marker in ((29, "HANDLES IT"), (34, "Tank 2 held forty percent"), (35, "inhibited it"),
-                          (39, "Commander M. Halvorsen died"), (41, "fourteen requests"),
-                          (44, "I will not make a joke"), (48, "my name is on it"),
-                          (49, "little knife")):
+                          (39, "Commander M. Halvorsen died"), (41, "fourteen requests")):
             read_msg(c, n, marker)
+        # act 3 (2 Dec onward) waits for Achterberg's account (Q12d)
+        start = len(c.all)
+        c.send("R")
+        c.expect("Read #", timeout=10)
+        if "Dr. Tanabe" in c.all[start:] or "from the seat" in c.all[start:]:
+            raise AssertionError("an act 3 post is listed before the CHAOS visit")
+        c.send("Q")
+        c.expect("Message command?", timeout=10)
         pick_area(c, "Mission Log")
         read_msg(c, "Day 27", "Vance made coffee")
         pick_area(c, "Garden Notes")
@@ -928,6 +934,17 @@ def main():
         c.expect("File area?", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
+
+    @step("act 3: the CHAOS visit opens the Lounge from 2 Dec: Tanabe, the seat, the power bay")
+    def act3_posts():
+        c = state["c"]
+        sync(c)
+        c.send("M")
+        c.expect("Message command?", timeout=15)
+        for n, marker in ((44, "I will not make a joke"), (48, "my name is on it"), (49, "little knife")):
+            read_msg(c, n, marker)
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=15)
 
     @step("act 2: Ty's own account sees Ty's Desktop and the unfinished Orbit 9; a visitor does not")
     def act2_desktop():
@@ -1137,7 +1154,7 @@ def main():
         c = state["c"]
         relog(c, "CMDR", "ANDERS")
         pos = pick_file_area(c, "Commander's Desk")
-        open_file(c, number_of(c, pos - 3000, "HANDBOOK.TXT"), "MEMCHK needs SYSOP mode")
+        open_file(c, number_of(c, pos - 3000, "HANDBOOK.TXT"), "MEMORY CHECK (MEMCHK)")
         c.send("Q")
         c.expect("File area?", timeout=10)
         c.send("Q")
@@ -1723,7 +1740,7 @@ def main():
         c.expect("Press ENTER", "Main Board Command?", timeout=20)
         c.close()
 
-    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, diag, doors_leave, m5_overrun, m6_early, m6_cure, m6_grant, sysvw_read, m7_eliza, shell, eliza_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, eero_mail, egg_modem, egg_hidden, egg_files, egg_chat, egg_snake, egg_hangup, registered, second, bye, crew):
+    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act3_posts, act2_desktop, doors_menu, diag, doors_leave, m5_overrun, m6_early, m6_cure, m6_grant, sysvw_read, m7_eliza, shell, eliza_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, eero_mail, egg_modem, egg_hidden, egg_files, egg_chat, egg_snake, egg_hangup, registered, second, bye, crew):
         ok = fn()
         if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, act1_crew_visit, act1_back, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, m5_overrun, m6_cure, m6_grant, m7_eliza, eliza_leave, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full):
             results.append(("SKIP", "remaining steps", "stopped after a step they depend on failed"))
