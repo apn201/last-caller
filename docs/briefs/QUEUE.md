@@ -143,6 +143,21 @@ Rules for every item:
   host is fine), and the `playtester` agent must actually finish the game
   through it; record a transcript summary in `docs/PLAYTEST.md`. Check
   the current Kiro formats for agents, hooks and MCP config; do not guess.
+- [ ] **Q12b - Playtest fixes.** Fix open items 1 to 5 in
+  `docs/PLAYTEST.md`: a wrong login name at the brownout prompt gets one
+  in-world hint line; ELIZA's last blank gets a visible in-world source
+  for a fresh account (an ELIZA line or the notebook pointing at where the
+  evidence is, without giving the answer), and if crew-visit evidence can
+  be earned in a way that does not reach the caller's own account, fix
+  that so it cannot softlock; `release` and the order-code query appear
+  in the in-world help (ELIZA may be cagey, but a careful reader must be
+  able to find them); fate and responsibility options get wording per
+  row; check and fix mid-word wrapping at 79 columns, the pager redraw and
+  the Lounge list start. Then run the `playtester` agent again from a
+  brand new caller with no hints from earlier runs and record run 4 in
+  `docs/PLAYTEST.md`. Done when run 4 finishes the game with no fault and
+  the staging check passes; note its play time against the 60 to 120
+  minute goal.
 - [ ] **Q13 - Polish.** Art pass 3 (Ty's tag on his screens, a real
   spacecraft silhouette, decay over the timeline), glitches (S7), the
   1998 marketing copy in README and bulletins, mobile check of the
