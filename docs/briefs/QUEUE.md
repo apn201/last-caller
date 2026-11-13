@@ -177,7 +177,7 @@ Rules for every item:
   line from ELIZA, no flag, so a caller who miscounted knows they are on
   the right track; fewer than 19 does nothing) and `docs/PUZZLE_CHAIN.md`. Done when lint,
   host tests, `pio run` and the staging check pass.
-- [ ] **Q13 - Polish.** Art pass 3 (Ty's tag on his screens, a real
+- [x] **Q13 - Polish.** (done, e2dc20d..HEAD of the Q13 commits plus the tick; `pio run` passes, host tests pass with `zig c++` (new `glitch_logic_test`), story lint clean, staging check PASS: server build, ctest, smoke, e2e 63 passed, 0 failed, 0 skipped, event log clean; board test still to do, `docs/TESTING.md` "Polish (Q13)". Art: the ship in profile at three stages of decay (bulletins 2 and 4, main menu), Ty's tag on his snake and demo. Glitches: `STORY/GLITCH.INI`, one dim line every 4 minutes at most after the first 3, no flag; the 'menu option that appears once' is not built (it would break the menu rule). Marketing: the 1998 copy is at the top of the README; no new bulletin, because the bulletin numbers are fixed in the e2e and the story. Mobile: no phone and headless Edge hung, so it is a code review plus two CSS changes (smoothing, 44 px buttons), not a device test. All text is draft.) Art pass 3 (Ty's tag on his screens, a real
   spacecraft silhouette, decay over the timeline), glitches (S7), the
   1998 marketing copy in README and bulletins, mobile check of the
   browser terminal.
