@@ -7,5 +7,5 @@ Requirements: `requirements.md`. Design: `design.md`.
 - [x] 3. Diagnostics HELP, shell help, comms manual (R3)
 - [x] 4. Word wrap, pager redraw, message list paging (R5)
 - [x] 5. Host tests, e2e additions, `pio run`
-- [ ] 6. Staging check PASS
-- [ ] 7. Playtest run 4, `docs/PLAYTEST.md` (R6)
+- [x] 6. Staging check PASS
+- [x] 7. Playtest run 4, `docs/PLAYTEST.md` (R6)

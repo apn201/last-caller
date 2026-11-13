@@ -204,3 +204,29 @@ Playing it with the `playtester` agent:
 3. Stop the board: `ssh lastcaller@helppox.com "touch ~/lastcaller-staging/stop"`.
 
 Record in `docs/PLAYTEST.md`. The run of 13 Nov is there.
+
+A first-time game takes the agent about 200 to 250 tool calls, more than one
+agent session holds. Play it as one caller over two sessions: session A makes
+the account and appends its notes (handle, password, what it read, leads);
+session B reads only that section and finishes (run 4c, Q12b).
+
+## Playtest fixes (Q12b)
+
+By hand, on a fresh card:
+
+1. At `Login:` type a wrong name: "Unknown caller." and one line pointing at
+   the service label (`POWER.INI` `[TEXT] unknown_hint`). `ADMIN`/`ADMIN` in
+   capitals works too.
+2. Read a long Lounge post: no word is cut at the edge and no single word is
+   left alone on a line. Typing a number in the pager then ENTER goes there.
+3. Lounge, `R`: the newest 20 and `E = earlier`; `E` lists the 20 before,
+   `L` goes back. Play `ORBIT_3` with `S` to its end: the picture is not drawn
+   a second time.
+4. Manifest, the ELIZA row, a blank with nothing in it: "Nothing to choose
+   from yet." and a `Notebook:` line saying where to read. The fate "Died on
+   a spacewalk" reads "his" on the men's rows.
+5. Diagnostics `HELP`: the manual, operator codes as queries, release on the
+   payload host. Shell `help`: `/var/spool/out`; after the manifest also the
+   `release` line.
+6. `python tools/story_lint.py` fails if a right answer can only be earned on
+   a crew visit (`open sources`).
