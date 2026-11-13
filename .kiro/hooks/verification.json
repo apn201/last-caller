@@ -1,0 +1,27 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Story Lint",
+      "trigger": "PostFileSave",
+      "description": "Check the story for unreachable facts, softlocks, lost endings and broken scenes when card story files are saved",
+      "matcher": "sd/BBS/(STORY|MSGBASE|BULLETINS|CONFIG|FILES)/.*",
+      "action": {
+        "type": "command",
+        "command": "python tools/story_lint.py --quiet"
+      },
+      "timeout": 60
+    },
+    {
+      "name": "Host Logic And Property Tests",
+      "trigger": "PostFileSave",
+      "description": "Build and run the host tests of the shared logic (incl. the story property test) when the core or a test is saved. The server build runs the same tests through CTest.",
+      "matcher": "(src/core/[a-z_]*_logic\\.h|src/core/haunt\\.h|tools/test/[a-z_]*\\.cpp)$",
+      "action": {
+        "type": "command",
+        "command": "python tools/run_host_tests.py"
+      },
+      "timeout": 300
+    }
+  ]
+}

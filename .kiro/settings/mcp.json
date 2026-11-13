@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "bbs-caller": {
+      "command": "python",
+      "args": ["tools/mcp/bbs_caller.py"],
+      "env": {
+        "BBS_HOST": "127.0.0.1",
+        "BBS_PORT": "12323"
+      },
+      "disabled": false,
+      "autoApprove": ["bbs_connect", "bbs_send", "bbs_read", "bbs_disconnect"]
+    }
+  }
+}
