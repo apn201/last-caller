@@ -11,6 +11,7 @@ DRAFT text: every line is a draft. The author makes the final edit.
 """
 import math
 from _common import *
+from act1 import TY_TAG
 
 
 def ascii_screen(path, rows):
@@ -97,7 +98,7 @@ def snake():
         c.put(x, y, "\u2593" if n % 3 else "\u2592", CYAN if n > 2 else LCYAN)
     c.put(56, 1, "@", WHITE)
     c.put(60, 1, "*", YELLOW)
-    c.text(62, 5, TAG, DGREY)
+    c.text(62, 5, TY_TAG, DGREY)
     c.put(70, 2, "\u2591", DGREY)
     return [c.save("ANSI/DOORS/SNAKE.ANS"), ascii_screen("ASCII/DOORS/SNAKE.ASC", [
         "  SSSS  N   N  AAA  K  K EEEEE                   oooo@",
@@ -154,7 +155,7 @@ def demo1():
         c.box(x0, y0, w, h, "single", colour)
     c.text_center(5, " TY'S DEMO ", WHITE, x0=0, x1=80)
     c.text(2, 11, "NOT FINISHED", DGREY)
-    c.text(62, 11, TAG, DGREY)
+    c.text(62, 11, TY_TAG, DGREY)
     return [c.save("ANSI/STORY/TY_DEMO_1.ANS"), ascii_screen("ASCII/STORY/TY_DEMO_1.ASC", [
         "+" + "-" * 76 + "+",
         "|   +" + "-" * 66 + "+   |",
@@ -181,7 +182,7 @@ def demo2():
             ch, fg, bg = ramp(ramp_cols[:4], v)
             c.put(x, y, ch, fg, bg)
     c.text(2, 11, "FRAME 2   SUNSIDE.MOD", GREY)
-    c.text(62, 11, TAG, DGREY)
+    c.text(62, 11, TY_TAG, DGREY)
     return [c.save("ANSI/STORY/TY_DEMO_2.ANS"), ascii_screen("ASCII/STORY/TY_DEMO_2.ASC", [
         ".:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*",
         ":+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#",
@@ -214,7 +215,7 @@ def demo3():
     c.text(2, 8, "FAULT 0D AT 0042:1F3C", LRED)
     c.text(2, 9, "RETURN ADDRESS 0042:1F31", DGREY)
     c.text(2, 11, "FRAME 3", GREY)
-    c.text(62, 11, TAG, DGREY)
+    c.text(62, 11, TY_TAG, DGREY)
     return [c.save("ANSI/STORY/TY_DEMO_3.ANS"), ascii_screen("ASCII/STORY/TY_DEMO_3.ASC", [
         ".:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*",
         ":+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#*+:.   .:+*#",

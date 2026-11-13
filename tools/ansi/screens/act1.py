@@ -16,6 +16,7 @@ DRAFT text: every line is a draft. The author makes the final edit.
 import random
 
 from _common import *
+from _profile import profile
 
 TY_TAG = "\u00b7tyv\u00b798\u00b7"
 
@@ -57,6 +58,9 @@ def welcome():
     ring = PixelLayer(8, 8)
     eliza_ring(ring, 3.5, 3.5, r_out=3.9, r_in=2.2, segs=8, dim=(3,))
     ring.flush(c, 68, 1)
+    pf = PixelLayer(22, 8)               # the ship, 2 Nov 1998: all lit
+    profile(pf, 0, 0, 0)
+    pf.flush(c, 46, 1)
     sep(c, 5, ticks=True)
     for n, (line, col) in enumerate(WELCOME):
         c.text(5, 7 + n, line, col)
@@ -137,6 +141,9 @@ def status():
     ring = PixelLayer(22, 22)
     eliza_ring(ring, 10.5, 10.5, r_out=10.4, r_in=6.8, segs=16)
     ring.flush(c, 52, 6)
+    pf = PixelLayer(22, 8)               # 8 Dec 1998: the dish is dark
+    profile(pf, 0, 0, 1)
+    pf.flush(c, 46, 1)
     foot(c)
     out = [c.save("BULLETINS/004_STATUS.ANS")]
     rows_ = ["-- HALCYON // SHIP STATUS " + "-" * 53, "", "  S T A T U S", "",

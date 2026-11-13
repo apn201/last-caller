@@ -5,6 +5,7 @@ rows 12-16 (1-based), x 4..78: the empty band between the COMMANDS divider
 and the lower divider. DRAFT text: the readout lines are drafts.
 """
 from _common import *
+from _profile import profile
 
 
 def build():
@@ -20,7 +21,7 @@ def build():
     # centrepiece: the ship and its readout
     c.stars(1, 5, 28, 5, seed=8, density=0.07)
     sp = PixelLayer(22, 10)
-    ship_mini(sp, 0, 0)
+    profile(sp, 0, 1, 2)                  # the ship in 2026
     sp.flush(c, 4, 5)
     rows = [
         ("ORBIT", "LOW EARTH", GREY),
