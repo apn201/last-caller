@@ -197,8 +197,12 @@ static bool hasFlag(const User &u, const String &flag) {
   const String want = "," + up(flag) + ",";
   return ("," + up(u.flags) + ",").indexOf(want) >= 0 || ("," + up(u.story) + ",").indexOf(want) >= 0;
 }
+// SYSOP view (the story flag SYSVW) passes every flag gate but the access flags (haunt::gatePass).
+static bool passFlag(const User &u, const String &flag) {
+  return !flag.length() || haunt::gatePass(std::string(u.flags.c_str()) + "," + std::string(u.story.c_str()), std::string(flag.c_str()));
+}
 static bool canSee(const User &u, uint8_t level, const String &flag) {
-  return u.level >= level && (!flag.length() || hasFlag(u, flag));
+  return u.level >= level && passFlag(u, flag);
 }
 static const Conference *findConference(uint8_t id) {
   for (const auto &c : board.conferences) if (c.id == id) return &c;

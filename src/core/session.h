@@ -125,6 +125,9 @@ struct Session {
   // account before any own account signed in. Shows wait for a calm prompt.
   uint32_t ownUserId = 0;
   String carriedFlags;
+  // Gates (haunt.h gateFlags): a read-only login reads the own account behind it now and then, not on every message.
+  mutable String gateOwn;
+  mutable uint32_t gateAt = 0;
   std::vector<HauntShow> hauntShows;
   String shellCwd = "/";  // doors/shell.h: the NOWHERE shell's working directory (state SHELL_PROMPT)
   // doors/manifest.h (state MANIFEST_PROMPT): screen (0 rows, 1 a row, 2 a pick list, 3 notebook), row, blank, picks.

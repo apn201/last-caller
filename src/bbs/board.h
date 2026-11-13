@@ -31,6 +31,8 @@ static void mainMenu(Session &s) {
   items.push_back({"G", "Goodbye"});
   if (isSysop(s)) items.push_back({"Z", "SysOp console", "\x1b[1;35m"});
   showMenu(s, "MAIN", items, board.name + " // MAIN BOARD");
+  // SYSOP view (milestone M6) opens reading and nothing else: one line tells the caller what changed.
+  if (hasFlag(s.user, "SYSVW")) say(s, s.ansi ? "\x1b[0;33mSYSOP view is on: every area is open to read.\x1b[0m" : "SYSOP view is on: every area is open to read.");
   prompt(s, "\x1b[1;33mMain Board Command? \x1b[0m");
 }
 // The gallery's G browses the first file area whose folder name has ANSI in it.

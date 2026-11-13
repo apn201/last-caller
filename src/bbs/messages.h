@@ -4,6 +4,7 @@
 // a whole thread on one screen. Messages are written with a line editor.
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
 #include "../core/wrap_logic.h"
+#include "../core/overrun_logic.h"
 
 static constexpr uint8_t DRAFT_LINES = 100;
 static constexpr uint16_t DRAFT_CHARS = 8000;
@@ -25,6 +26,9 @@ static bool canPost(const Session &s) {
   return !c || !c->readOnly || isSysop(s);
 }
 static bool canRead(const Session &s, const Message &m) {
+  // The act gates (Q12d): a message that needs a flag does not exist for a caller without it, in a
+  // list, a count, a new-message scan or a thread. SYSOP view passes; a real SysOp sees everything.
+  if (m.needs.length() && !isSysop(s) && !gatePassFor(s, m.needs)) return false;
   if (!m.priv) return true;
   String me = up(s.user.handle);
   return up(m.to) == me || up(m.from) == me || isSysop(s);
@@ -41,7 +45,7 @@ template <typename F> static void eachMessage(F fn, bool withDeleted = false) {
     const HistoryMsg &h = historyMsgs[i];
     Message m;
     m.id = HISTORY_BASE + i; m.conference = h.conference; m.replyTo = h.replyTo; m.history = true;
-    historyHeader(h, m.from, m.to, m.subject, m.when);
+    historyHeader(h, m.from, m.to, m.subject, m.when, &m.needs);
     if (!fn(m)) return;
   }
   File f = SD_MMC.open(MSG_FILE, FILE_READ);
@@ -503,9 +507,27 @@ static void startReply(Session &s) {
   say(s, "\r\nReplying to #" + String(msgNo(m.id)) + " by " + m.from + ": " + s.pendingSubject);
   startEditor(s);
 }
+// M5, the overrun: a body with a run of 255 zeros is the one thing ELIZA cannot watch. The board
+// swallows the post (nobody else sees anything), glitches this caller's screen, and the caller
+// has damaged her memory (OVR). The scene MEM_GLITCH plays at the next calm prompt.
+static void overrunHit(Session &s) {
+  s.draft = ""; s.draftLines = 0; s.msgEdit = 0;
+  event("OVERRUN", s.user.handle + " node " + s.node);
+  say(s, "");
+  if (s.ansi) {
+    say(s, "\x1b[0;90m\xe2\x96\x91\xe2\x96\x92\xe2\x96\x93\xe2\x96\x92\xe2\x96\x91 \xe2\x96\x93\xe2\x96\x91\xe2\x96\x92\xe2\x96\x91\xe2\x96\x93\xe2\x96\x93\xe2\x96\x92 \xe2\x96\x91\xe2\x96\x91\xe2\x96\x93\xe2\x96\x92\xe2\x96\x91\x1b[0m");
+    say(s, "\x1b[1;31mMESSAGE LOST\x1b[0m");
+    say(s, "\x1b[0;90m\xe2\x96\x92\xe2\x96\x91\xe2\x96\x93 \xe2\x96\x91\xe2\x96\x92\xe2\x96\x93\xe2\x96\x93\xe2\x96\x91\xe2\x96\x92 \xe2\x96\x93\xe2\x96\x91\xe2\x96\x92\xe2\x96\x91\xe2\x96\x93\x1b[0m");
+  } else say(s, "MESSAGE LOST");
+  soundCue(s, "STATIC");
+  if (!sceneGrant(s, "OVR")) event("OVERRUN_FAIL", s.user.handle + ": flag not saved");
+  else if (s.hauntShows.size() < 8) { HauntShow h; h.scene = "MEM_GLITCH"; s.hauntShows.push_back(h); }
+  messageArea(s);
+}
 static void saveDraft(Session &s) {
   if (!canPost(s) && !s.msgEdit) { s.draft = ""; readOnlyNotice(s); messageArea(s); return; }
   if (!canWrite(s)) { s.draft = ""; s.msgEdit = 0; readOnlyNotice(s); messageArea(s); return; }
+  if (overrun::inBody(std::string(s.draft.c_str(), s.draft.length()))) { overrunHit(s); return; }
   if (s.msgEdit) {  // an edit: the new text under the old id
     Message m;
     uint32_t id = s.msgEdit;

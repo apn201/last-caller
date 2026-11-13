@@ -19,11 +19,12 @@ static std::vector<FileArea> fileAreas;
 
 static void fileMenu(Session &s);
 static void doorMenu(Session &s);
+static bool isSysop(const Session &s);  // bbs/sysop.h
 static String shortName(const String &path) { int slash = path.lastIndexOf('/'); return slash >= 0 ? path.substring(slash + 1) : path; }
 // Names a caller never sees in a listing: hidden entries and description files.
 static bool hiddenEntry(const String &name) {
   String u = up(name);
-  return !name.length() || name[0] == '_' || name[0] == '.' || u == "FILES.BBS" || u == "DESCRIPT.ION" || u == "AREA.INI" || u == "DATES.BBS";
+  return !name.length() || name[0] == '_' || name[0] == '.' || u == "FILES.BBS" || u == "DESCRIPT.ION" || u == "AREA.INI" || u == "DATES.BBS" || u == "NEEDS.BBS";
 }
 // "014_BACKROOM_IMAGES" -> "Backroom Images".
 static String areaTitle(const String &folder) {
@@ -116,7 +117,7 @@ static String loadFileAreas() {
 static bool canUseArea(const Session &s, uint8_t area) {
   if (area >= fileAreas.size()) return false;
   const FileArea &a = fileAreas[area];
-  return s.user.level >= a.level && (!a.flag.length() || hasFlag(s.user, a.flag));
+  return s.user.level >= a.level && passFlag(s.user, a.flag);
 }
 // Areas listed in the file menu: ones this caller may enter that have files.
 // An empty area that takes uploads is listed for browser callers, who can fill it.
@@ -130,16 +131,39 @@ static String areaDir(const Session &s) {
 
 // ---------- one folder ------------------------------------------------------------
 struct FileEntry { String name; uint32_t size = 0; bool dir = false; time_t when = 0; };
+// NEEDS.BBS in a folder: "NAME FLAG[,FLAG]" per line, the flags a caller needs to see that file or
+// sub-folder (Q12d, the act gates). Names are matched without case.
+static std::vector<std::pair<String, String>> folderNeeds(const String &dir) {
+  std::vector<std::pair<String, String>> out;
+  File f = SD_MMC.open(dir + "/NEEDS.BBS", FILE_READ);
+  while (f && f.available()) {
+    String line = f.readStringUntil('\n');
+    line.trim();
+    int sp = line.lastIndexOf(' ');
+    if (sp < 1 || line[0] == ';') continue;
+    String name = line.substring(0, sp), flags = line.substring(sp + 1);
+    name.trim(); flags.trim();
+    if (name.length() && flags.length()) out.push_back({name, flags});
+  }
+  if (f) f.close();
+  return out;
+}
 // The folder's entries in listing order: sub-folders first, then files, by name.
 static std::vector<FileEntry> folderEntries(const Session &s) {
   std::vector<FileEntry> list;
   if (!sdReady || !canUseArea(s, s.fileArea)) return list;
-  File dir = SD_MMC.open(areaDir(s));
+  const String where = areaDir(s);
+  std::vector<std::pair<String, String>> gates = folderNeeds(where);
+  File dir = SD_MMC.open(where);
   File e;
   while (dir && dir.isDirectory() && (e = dir.openNextFile())) {
     FileEntry f; f.name = e.name(); f.dir = e.isDirectory(); f.size = f.dir ? 0 : e.size(); f.when = e.getLastWrite();
     e.close();
-    if (!hiddenEntry(f.name)) list.push_back(f);
+    if (hiddenEntry(f.name)) continue;
+    // NEEDS.BBS: a file that needs a flag is neither listed nor opened without it (a real SysOp sees all).
+    bool open = true;
+    for (const auto &g : gates) if (up(g.first) == up(f.name) && !isSysop(s) && !gatePassFor(s, g.second)) open = false;
+    if (open) list.push_back(f);
   }
   if (dir) dir.close();
   std::sort(list.begin(), list.end(), [](const FileEntry &a, const FileEntry &b) {

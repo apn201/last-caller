@@ -14,6 +14,7 @@ static constexpr const char *SCENE_DIR = "/BBS/STORY/SCENES/";
 static constexpr size_t SCENE_MAX_BYTES = 24 * 1024;
 
 static void mainMenu(Session &s);  // bbs/board.h
+static void startChat(Session &s, const String &banner);  // bbs/chat.h
 static void endingRecord(Session &s);  // doors/manifest.h
 
 // "ELIZA_WAKE" -> a checked, upper-case name; "" if it is not a plain name.
@@ -54,10 +55,19 @@ static bool sceneGrant(Session &s, const std::string &add) {
   return hauntGrant(s, have ? &own : nullptr, add);
 }
 
-static void sceneEnd(Session &s) {
+// `then` is where a node sent the caller on (then= in the scene file): node chat, or another scene.
+// Anything else, or a scene that will not start, ends at the main menu.
+static void sceneEnd(Session &s, const String &then = String()) {
   s.sceneRun = scene::Player();
   s.hideInput = false;
   endingRecord(s);   // a finished caller stays in WHO
+  String next = then; next.toUpperCase();
+  if (next == "CHAT") { startChat(s, "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk.\x1b[0m"); return; }
+  if (next.length()) {
+    s.state = MAIN;
+    sceneStart(s, next);
+    if (s.state == SCENE_PLAY) return;
+  }
   mainMenu(s);
 }
 
@@ -70,7 +80,7 @@ static void sceneWrite(Session &s, const scene::Out &o) {
     else plainArt(s, ("/BBS/ASCII/STORY/" + file + ".ASC").c_str());
   }
   if (o.grant.size() && !sceneGrant(s, o.grant)) event("SCENE_FAIL", s.user.handle + ": flags not saved: " + hauntStr(o.grant));
-  if (o.finished) { event("SCENE", s.user.handle + " node " + s.node + " finished a scene"); sceneEnd(s); }
+  if (o.finished) { event("SCENE", s.user.handle + " node " + s.node + " finished a scene"); sceneEnd(s, hauntStr(o.then)); }
 }
 
 static void sceneStart(Session &s, const String &raw) {

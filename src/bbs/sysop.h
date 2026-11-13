@@ -9,6 +9,7 @@ static void who(Session &s) {
   for (auto &n : sessions) if (n.used && n.state != DEAD) rows.push_back({n.node, n.user.handle.length() ? n.user.handle : String("(logging in)"), String(ghost::idleText((now - n.lastAt) / 1000).c_str()), n.activity});
   ghostWhoRows(s, rows);  // the ghosts this caller can see, in node order
   for (const auto &r : rows) { char row[110]; snprintf(row, sizeof(row), "%-5u %-16s %-8s %s", (unsigned)r.node, r.handle.c_str(), r.idle.c_str(), r.activity.c_str()); say(s, row); }
+  hauntEvent(s, haunt::EV_SCREEN, "WHO");   // triggers: event=screen, match=WHO (the ghosts are evidence, E34)
 }
 static bool isSysop(const Session &s) { return s.authenticated && !s.user.locked && s.user.level == 255 && hasFlag(s.user, "SYSOP"); }
 static void refreshLiveUser(const User &changed) {

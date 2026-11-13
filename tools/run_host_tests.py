@@ -21,6 +21,7 @@ STORY = os.path.join(ROOT, "sd", "BBS", "STORY")
 TESTS = {   # name -> arguments (the card's own files)
     "egg_logic_test": [],
     "wrap_logic_test": [],
+    "overrun_logic_test": [],
     "power_logic_test": [],
     "modinfo_logic_test": [],
     "haunt_logic_test": [os.path.join(STORY, "TRIGGERS.INI")],
@@ -28,7 +29,9 @@ TESTS = {   # name -> arguments (the card's own files)
     "ghost_logic_test": [os.path.join(STORY, "GHOSTS.INI"), os.path.join(STORY, "SYSOP.INI")],
     "scene_logic_test": sorted(glob.glob(os.path.join(STORY, "SCENES", "*.INI"))),
     "shell_logic_test": [os.path.join(STORY, "SHELL.INI")],
-    "story_property_test": [os.path.join(STORY, "TRIGGERS.INI"), os.path.join(STORY, "MANIFEST.INI")],
+    "story_property_test": [os.path.join(STORY, "TRIGGERS.INI"), os.path.join(STORY, "MANIFEST.INI"),
+                            os.path.join(STORY, "SYSOP.INI"), os.path.join(STORY, "DIAG.INI"), os.path.join(STORY, "SHELL.INI"),
+                            os.path.join(STORY, "GHOSTS.INI")] + sorted(glob.glob(os.path.join(STORY, "SCENES", "*.INI"))),
 }
 
 

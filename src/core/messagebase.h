@@ -15,6 +15,7 @@ struct Message {
   bool priv = false;     // only sender, recipient and SysOp may read it
   bool deleted = false;  // killed by its author or the SysOp
   String editedAt, editedBy;  // last edit or kill
+  String needs;          // flags the caller needs to see it (history only: the Needs: header, core/history.h)
   uint8_t versions = 1;  // lines in the file for this id
   bool history = false;  // from /BBS/MSGBASE on the card: read-only (core/history.h)
 };

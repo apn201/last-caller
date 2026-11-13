@@ -22,6 +22,7 @@ struct Choice { std::string text, go, set, has, lacks; };
 
 struct Node {
   std::string id, speaker, text, art, color, set, go, ifHas, ifLacks, ifGo;
+  std::string then;   // follow-up when the scene ends by this node: CHAT (node chat) or another scene's name
   uint32_t pauseMs = 700;
   bool key = false;
   std::vector<Choice> choices;
@@ -81,6 +82,8 @@ inline bool buildNode(const std::string &id, const std::vector<Kv> &kv, Node &n,
   n.ifHas = haunt::flagsClean(getKey(kv, "if_has"));
   n.ifLacks = haunt::flagsClean(getKey(kv, "if_lacks"));
   n.ifGo = idText(getKey(kv, "if_go"));
+  n.then = idText(getKey(kv, "then"));
+  if (!n.then.empty() && !haunt::idOk(n.then)) { why = "bad then"; return false; }
   bool f = false;
   std::string pause = haunt::trim(getKey(kv, "pause", &f)), key = haunt::trim(getKey(kv, "key"));
   if (f) { uint32_t v = 0; if (!haunt::parseUint(pause, 10000, v)) { why = "bad pause"; return false; } n.pauseMs = v; }
@@ -234,6 +237,7 @@ struct Part { bool isArt = false; std::string s; };   // text to write, or the n
 struct Out {
   std::vector<Part> parts;
   std::string grant;      // flags to save to the caller now
+  std::string then;       // with finished: where the caller goes next (CHAT, or a scene name); empty = the main menu
   bool finished = false;  // the scene is over
   std::string text() const { std::string t; for (const auto &p : parts) if (!p.isArt) t += p.s; return t; }
   void addText(const std::string &s) { if (!s.empty()) parts.push_back({false, s}); }
@@ -254,7 +258,7 @@ class Player {
   bool wantsEcho() const { return ph_ == P_CHOICE; }
 
   Out start(std::shared_ptr<const Scene> sc, const std::string &flags, bool ansi, uint32_t now) {
-    sc_ = std::move(sc); flags_ = flags; ansi_ = ansi; steps_ = 0; ph_ = P_IDLE; node_.clear();
+    sc_ = std::move(sc); flags_ = flags; ansi_ = ansi; steps_ = 0; ph_ = P_IDLE; node_.clear(); then_.clear();
     Out out;
     if (!sc_) { out.finished = true; return out; }
     enter(sc_->start, now, out);
@@ -282,7 +286,7 @@ class Player {
 
  private:
   std::shared_ptr<const Scene> sc_;
-  std::string flags_, node_;
+  std::string flags_, node_, then_;
   bool ansi_ = true;
   unsigned steps_ = 0;
   Phase ph_ = P_IDLE;
@@ -303,7 +307,7 @@ class Player {
   void finish(Out &out) {
     if (ph_ == P_END) return;
     grant(sc_->set, out);
-    ph_ = P_END; out.finished = true;
+    ph_ = P_END; out.finished = true; out.then = then_;
   }
   // Typing output and the step to the next phase when the text is out.
   void pump(uint32_t now, Out &out) {
@@ -325,6 +329,7 @@ class Player {
     node_ = id;
     const Node &n = cur();
     grant(n.set, out);
+    if (!n.then.empty()) then_ = n.then;
     if (!n.art.empty()) out.parts.push_back({true, n.art});
     if (n.text.empty()) { afterText(now, out); return; }
     std::string head, body, tail, speaker = n.speaker;

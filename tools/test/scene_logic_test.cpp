@@ -58,11 +58,11 @@ static const char *DEMO =
   "[OUT_LIED]\ntext=Goodbye, friend.\nkey=1\n";
 
 // Drive a player to its end the way a caller would. Time passes in 50 ms ticks.
-struct Run { std::string text, grant; unsigned ticks = 0; bool finished = false; std::vector<std::string> art; };
+struct Run { std::string text, grant, then; unsigned ticks = 0; bool finished = false; std::vector<std::string> art; };
 static void take(Run &r, const Out &o) {
   for (const auto &p : o.parts) { if (p.isArt) r.art.push_back(p.s); else r.text += p.s; }
   r.grant = haunt::flagsAdd(r.grant, o.grant);
-  if (o.finished) r.finished = true;
+  if (o.finished) { r.finished = true; r.then = o.then; }
 }
 static Run play(const std::shared_ptr<Scene> &sc, const std::string &flags, const std::vector<std::string> &answers, bool ansi = true) {
   Run r; Player p; uint32_t now = 1000;
@@ -357,6 +357,25 @@ int main(int argc, char **argv) {
       CHECK(p.flags().compare(0, flags.size(), flags) == 0);
       if (failures > 20) break;
     }
+  }
+
+  // ---- then= (Q12d): a node names where the caller goes when the scene ends there ----
+  {
+    auto sc = load("[START]\ntext=hub\nchoice1=Chat\ngo1=C\nchoice2=Grant\ngo2=G\nhas2=OVR\nchoice3=Leave\ngo3=END\n"
+                   "[C]\ntext=go on\npause=10\nthen=CHAT\ngo=END\n[G]\nthen=ELZ_GRANT\ngo=END\n");
+    CHECK(sc != nullptr);
+    if (sc) {
+      Run a = play(sc, "", {"1"});
+      CHECK(a.finished && a.then == "CHAT");
+      Run b = play(sc, "OVR", {"2"});
+      CHECK(b.finished && b.then == "ELZ_GRANT");
+      Run c = play(sc, "", {"2"});            // Grant hidden: 2 is Leave
+      CHECK(c.finished && c.then.empty());
+      Run d = play(sc, "", {"2", "1"});
+      CHECK(d.finished && d.then.empty());
+    }
+    std::string why;
+    CHECK(!load("[START]\ntext=x\nthen=a b\n", &why));
   }
 
   // ---- the card's own scenes ----

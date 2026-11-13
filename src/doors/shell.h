@@ -3,7 +3,8 @@
 // file system. The file tree, the final command and the door's gate are in
 // STORY/SHELL.INI (read each time the door opens); the commands are
 // core/shell_logic.h, which a host test covers. The door is in the menu only
-// for callers who hold the flags SHELL.INI names (needs=), and the maintenance
+// for callers who hold the flags SHELL.INI names (needs=), signed in to the account it
+// names (account=, if any), and the maintenance
 // login never reaches it. Same on Telnet and in the browser; the file tree is
 // the card's, no card paths are ever shown.
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
@@ -31,6 +32,11 @@ static void shellPrompt(Session &s) {
 static bool ownsShell(const Session &s) { return s.state == SHELL_PROMPT; }
 static bool shellListed(const Session &s) {
   if (isMaintenance(s.user)) return false;
+  // account=: the door is only in that account's menu (Q12d: ELIZA's, milestone M8). The flags are the
+  // caller's own (a crew login reads the own account behind it, core/haunt.h hauntOwner).
+  String only = config(SHELL_INI, "SHELL", "account", "");
+  only.trim();
+  if (only.length() && up(only) != s.user.normalized) return false;
   return haunt::flagsHasAll(doorFlagsOf(s), haunt::flagsClean(hauntStd(config(SHELL_INI, "SHELL", "needs", ""))));
 }
 

@@ -341,6 +341,21 @@ int main(int argc, char **argv) {
       }
     }
   }
+  // Gates (Q12d): a held flag passes; SYSOP view passes every gate but the access flags.
+  CHECK(gatePass("", ""));
+  CHECK(gatePass("ACT2", "ACT2"));
+  CHECK(!gatePass("", "ACT2"));
+  CHECK(!gatePass("ACT3", "ACT2"));
+  CHECK(gatePass("ACT2,ACT3", "ACT2,ACT3"));
+  CHECK(!gatePass("ACT2", "ACT2,ACT3"));
+  CHECK(gatePass("SYSVW", "ACT2,ACT3,VISIT_CMDR"));
+  CHECK(gatePass("sysvw", "act3"));
+  for (const char *a : {"SYSOP", "READONLY", "BACKROOM", "VAULT"}) {
+    CHECK(!gatePass("SYSVW", a));
+    CHECK(!gatePass("SYSVW,ACT2", std::string("ACT2,") + a));
+    CHECK(gatePass(std::string("SYSVW,") + a, a));
+  }
+
   printf(failures ? "%d FAILED\n" : "all passed\n", failures);
   return failures ? 1 : 0;
 }

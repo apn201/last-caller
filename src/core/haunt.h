@@ -58,6 +58,29 @@ static bool hauntOwner(const Session &s, User &own) {
   return true;
 }
 
+// The flags a gate (a `Needs:` line, NEEDS.BBS) checks for this session. An own account: its
+// flag field and story record. A read-only crew login: its own, what was earned on it and not
+// yet carried, and the flags of the own account signed in earlier on this connection (read
+// at most once a second and a half: a list checks one message after another).
+static std::string gateFlags(const Session &s) {
+  std::string f = userFlagList(s.user);
+  if (!s.readOnly) return f;
+  f = haunt::flagsAdd(f, hauntStd(s.carriedFlags));
+  if (s.ownUserId) {
+    uint32_t now = millis();
+    if (!s.gateAt || now - s.gateAt > 1500) {
+      User own;
+      s.gateOwn = hauntOwner(s, own) ? hauntStr(userFlagList(own)) : String();
+      s.gateAt = now ? now : 1;
+    }
+    f = haunt::flagsAdd(f, hauntStd(s.gateOwn));
+  }
+  return f;
+}
+static bool gatePassFor(const Session &s, const String &needs) {
+  return !needs.length() || haunt::gatePass(gateFlags(s), hauntStd(needs));
+}
+
 // Add flags to the caller's story record (core/story.h). Saved before anything
 // is shown; false = not saved.
 static bool hauntGrant(Session &s, User *own, const std::string &add) {

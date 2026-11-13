@@ -125,6 +125,18 @@ inline Split splitFlags(const std::string &list) {
   }
   return s;
 }
+// A gate (a `Needs:` line, NEEDS.BBS, a required_flag): every word must be held.
+// SYSOP view (the story flag SYSVW, milestone M6) passes every gate except the
+// access flags, so it never opens a real SysOp area (SYSOP, READONLY, BACKROOM, VAULT).
+inline bool gatePass(const std::string &have, const std::string &needs) {
+  const bool view = flagsHas(have, "SYSVW");
+  for (const auto &w : flagWords(needs)) {
+    if (flagsHas(have, w)) continue;
+    if (view && !accessFlag(w)) continue;
+    return false;
+  }
+  return true;
+}
 inline std::string markerFor(const std::string &ruleId) { return "T_" + upper(ruleId); }
 
 // ---------- parsing ------------------------------------------------------------------------

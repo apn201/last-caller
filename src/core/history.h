@@ -10,6 +10,8 @@
 //   Subject: text
 //   Date: 1998-03-13 03:31
 //   Reply: 12        (optional: the message in the same file it answers)
+//   Needs: ACT2      (optional: flags the caller needs to see it; SYSOP view passes, see
+//                     haunt::gatePass. A hidden message is not listed, counted or found.)
 //   <blank line>
 //   body ... up to the next #MSG line
 //
@@ -56,18 +58,18 @@ static bool historyGrowText(uint32_t need) {
   historyText = p; historyTextCap = cap;
   return true;
 }
-static bool historyAdd(const HistoryMsg &m, const String &from, const String &to, const String &subject, const String &when) {
+static bool historyAdd(const HistoryMsg &m, const String &from, const String &to, const String &subject, const String &when, const String &needs) {
   if (historyCount == historyCap) {
     uint32_t cap = historyCap ? historyCap * 2 : 512;
     HistoryMsg *p = (HistoryMsg *)bigRealloc(historyMsgs, cap * sizeof(HistoryMsg));
     if (!p) return false;
     historyMsgs = p; historyCap = cap;
   }
-  uint32_t need = from.length() + to.length() + subject.length() + when.length() + 4;
+  uint32_t need = from.length() + to.length() + subject.length() + when.length() + needs.length() + 5;
   if (!historyGrowText(need)) return false;
   HistoryMsg h = m;
   h.text = historyTextLen;
-  for (const String *s : {&from, &to, &subject, &when}) {
+  for (const String *s : {&from, &to, &subject, &when, &needs}) {
     memcpy(historyText + historyTextLen, s->c_str(), s->length() + 1);
     historyTextLen += s->length() + 1;
   }
@@ -75,12 +77,13 @@ static bool historyAdd(const HistoryMsg &m, const String &from, const String &to
   return true;
 }
 // The four header strings of a history message.
-static void historyHeader(const HistoryMsg &h, String &from, String &to, String &subject, String &when) {
+static void historyHeader(const HistoryMsg &h, String &from, String &to, String &subject, String &when, String *needs = nullptr) {
   const char *p = historyText + h.text;
   from = p; p += strlen(p) + 1;
   to = p; p += strlen(p) + 1;
   subject = p; p += strlen(p) + 1;
   when = p;
+  if (needs) { p += strlen(p) + 1; *needs = p; }
 }
 
 // One file: scanned in 2 KB blocks, a line at a time.
@@ -95,7 +98,7 @@ static void indexHistoryFile(const String &path, uint8_t conference, uint16_t fi
   uint32_t lineAt = 0;
   bool inHead = false, have = false;
   HistoryMsg cur{};
-  String from, to, subject, when;
+  String from, to, subject, when, needs;
   uint32_t reply = 0;
   auto finish = [&](uint32_t endAt) {
     if (!have) return;
@@ -103,7 +106,7 @@ static void indexHistoryFile(const String &path, uint8_t conference, uint16_t fi
     cur.replyTo = reply && reply <= historyCount - first + 1 ? HISTORY_BASE + first + reply - 1 : 0;
     cur.file = fileNo; cur.conference = conference;
     historyAdd(cur, from.length() ? from : String("Unknown"), to.length() ? to : String("All"),
-               subject.length() ? subject : String("(no subject)"), when);
+               subject.length() ? subject : String("(no subject)"), when, needs);
     have = false;
   };
   while (true) {
@@ -119,7 +122,7 @@ static void indexHistoryFile(const String &path, uint8_t conference, uint16_t fi
     if (line.startsWith("#MSG")) {
       finish(lineAt);
       have = true; inHead = true;
-      from = to = subject = when = ""; reply = 0;
+      from = to = subject = when = needs = ""; reply = 0;
       cur = HistoryMsg{};
     } else if (have && inHead) {
       if (!line.length()) { inHead = false; cur.bodyAt = nextAt; }
@@ -128,6 +131,7 @@ static void indexHistoryFile(const String &path, uint8_t conference, uint16_t fi
       else if (line.startsWith("Subject:")) { subject = line.substring(8); subject.trim(); subject = subject.substring(0, 60); }
       else if (line.startsWith("Date:")) { when = line.substring(5); when.trim(); when = when.substring(0, 16); }
       else if (line.startsWith("Reply:")) reply = strtoul(line.substring(6).c_str(), nullptr, 10);
+      else if (line.startsWith("Needs:")) { needs = line.substring(6); needs.trim(); needs.toUpperCase(); needs = needs.substring(0, 40); }
     }
     line = "";
     lineAt = nextAt;
