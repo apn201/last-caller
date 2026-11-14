@@ -295,4 +295,6 @@ Rules for every item:
 - [ ] **Q21 - The notebook keeps everything.** Brief: `docs/briefs/Q21-notebook.md`
   (Claude Code, 15 Nov 2026, Juha's request). Builds Q20 Additions 7 and 8:
   every hint collected when shown, scenes and pages replay from the
-  notebook, story lint `check_notes`, one critic play-through.
+  notebook, story lint `check_notes`; then Addition 1 (every open game
+  item in `ACTION_PLAN.md` area 2, Kiro's recommendations) and two critics
+  to 83. Re-read the brief before ticking: do not tick with Addition 1 undone.
