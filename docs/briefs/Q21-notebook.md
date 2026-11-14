@@ -45,3 +45,32 @@ All of the above is built and checked, and the tick in
 by source), what replays, the critic's score and comments on the
 notebook, RAM and flash, the staging result, and the commit range. The
 tick ends with the commit Juha can give OpenClaw to deploy.
+
+## Addition 1 (Juha, 15 Nov 2026) - finish the game items, go for gold
+
+Juha's decision: take every recommendation in `docs/ACTION_PLAN.md`. Do
+all of area 2 (game) that is still open or marked "new item" for Kiro,
+in this item, after the notebook:
+
+- Manifest: option B, the notebook records evidence ("suit log: 14
+  refusals"), not conclusions; filing must take thinking again.
+- Front page: option A, keep it as it is.
+- Idle limit: a warning line at 90 s, and 10 minutes for callers.
+- Boot banner: a second banner for a powered caller (no more ELIZA NOT
+  RESPONDING and SOLAR BUS ONLY after the RTG), via `tools/ansi/`.
+- Timeline mismatches (bulletin 4 date, Diagnostics 300 vs DOWNLINK.CFG,
+  Anders's mark, 8 MB vs 16384K, mail #115 while the ground line is
+  down): check each against `docs/PUZZLE_CHAIN.md` and the story bible;
+  fix every one that is not a clue, leave clues alone and say why.
+- The other area-2 honesty fixes in the schedule (Diagnostics line,
+  filed-report feedback, scripted ELIZA reply, row status line, News
+  Wire) and any area-2 row owned by Kiro that is not done yet.
+
+Story or canon changes go in the story bible and `docs/PUZZLE_CHAIN.md`;
+mark each row done in `ACTION_PLAN.md` with its commit. The critic
+play-through in step 5 comes after these, so it plays the finished game:
+run both critics (Ada and Mara, one at a time, fresh boards) instead of
+one, recorded as the next round in `docs/reviews/LOOP.md`. Goal: average
+83 or more without making the game easier. If it falls short, fix what
+both hit and run one more round (at most two rounds in this item).
+Then the checks, push, and the tick with the deploy commit.
