@@ -1512,11 +1512,11 @@ def main():
         state["c2"] = c2
         start = len(c2.all)
         c2.send("W")
-        c2.expect("Press any key", timeout=15)
+        c2.expect("Q back", timeout=15)
         seg = c2.all[start:]
         if handle not in seg or "On the crew list" not in seg or "28y" not in seg:
             raise AssertionError("no sticky row for %s: %r" % (handle, seg[-300:]))
-        c2.send("")
+        key(c2, "q")   # WHO is in the pager (Q20 UX)
         c2.expect("Main Board Command?", timeout=15)
 
     @step("ending: the first caller returns and sends the queue; return traffic, families")
@@ -1574,7 +1574,7 @@ def main():
         c2 = state["c2"]
         start = len(c2.all)
         c2.send("W")
-        c2.expect("Press any key", timeout=15)
+        c2.expect("Q back", timeout=15)
         seg = c2.all[start:]
         if handle not in seg or "Downlink open" not in seg:
             raise AssertionError("sticky row not updated: %r" % seg[-300:])
