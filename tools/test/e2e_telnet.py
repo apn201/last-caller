@@ -667,7 +667,7 @@ def main():
         c.expect("Area #", timeout=10)
         if "Mail: TYVANCE" not in c.all[start:]:
             raise AssertionError("the visit was not carried to the own account: Ty's mailbox is closed")
-        c.send("")
+        c.send("Q")
         c.expect("Message command?", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
