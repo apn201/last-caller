@@ -409,14 +409,10 @@ def main():
         c.expect("Location:")
         c.send("Localhost")
         c.expect("the power is yours")
-        c.expect("Login:")
 
-    @step("log in with the new account and reach the main menu")
+    @step("the new account is logged in at once (no second Login:) and reaches the main menu")
     def signup():
         c = state["c"]
-        c.send(handle)
-        c.expect("Password:")
-        c.send(password)
         # Bulletins, then the main menu; the first scene may take the screen.
         for _ in range(6):
             hit = c.expect("Press any key", "Main Board Command?", "not on the crew list", timeout=30)
