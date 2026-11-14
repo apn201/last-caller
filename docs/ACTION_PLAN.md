@@ -17,7 +17,16 @@ total 36 to 37.
 
 ### D1. The opening paragraph: "feasibility study" and "product"
 
-The panel wants both words out because both judges could not tell which one
+**DECIDED by Juha, 14 Nov 2026 (replaces the options below):** frame it
+clearly as a game, on the Resurrection theme: "We resurrected BBS technology
+to study its feasibility as a game engine." Other uses worth studying (a
+LoRa/Meshtastic text interface, FidoNet-style sync over a mesh, and so on)
+are named as possible directions that were out of scope for this hackathon.
+The first paragraph leads with the game; the mesh is one honest "what's
+next" line, not a second product. The wording below is superseded; write
+the new "In short" to this framing when the Devpost item runs.
+
+The panel wanted both words out because both judges could not tell which one
 they were judging. Juha's framing keeps both: the game is a real product, the
 project is a feasibility study for rich text on slow links.
 
