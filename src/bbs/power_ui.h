@@ -46,6 +46,9 @@ static void powerScreen(Session &s, const char *name, const String &fallback = "
 static void brownoutLogin(Session &s) {
   powerScreen(s, powerBannerPlayed ? "REBOOT" : "BOOT");
   powerBannerPlayed = true;
+  // Q20: the front page says what this is, and after CREW that the account is made. After the art, which clears the screen.
+  if (powerCfg.frontHint.length()) { String h = powerCfg.frontHint; h.replace("|", "\r\n"); say(s, s.ansi ? "\x1b[0;33m" + h + "\x1b[0m" : h); }
+  if (s.loginNote.length()) { String n = s.loginNote; n.replace("|", "\r\n"); say(s, s.ansi ? "\x1b[1;32m" + n + "\x1b[0m" : n); s.loginNote = ""; }
   s.state = LOGIN_HANDLE;
   prompt(s, "Login: ");
 }
@@ -114,6 +117,6 @@ static void crewAccountCancel(Session &s) {
   shipPrompt(s);
 }
 static void crewAccountDone(Session &s) {
-  say(s, "\r\nAccount created. Log in with it.");
-  logoutToLogin(s);
+  s.loginNote = powerCfg.accountDone.length() ? powerCfg.accountDone : String("Account created. Log in with it.");
+  logoutToLogin(s);   // the front page: its art clears the screen, so the note is printed after it (brownoutLogin)
 }

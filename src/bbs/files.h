@@ -345,7 +345,7 @@ static void listArea(Session &s) {
   if (list.empty()) say(s, "This cabinet is empty tonight.");
   else say(s, "\x1b[0;36m" + String(s.fileOffset + 1) + "-" + String(s.fileOffset + want.size()) + " of " + list.size() + "\x1b[0m");
   bool dl = s.web && a.downloads;
-  String keys = "[#] Open (number, ENTER)  [V] View  ";
+  String keys = "[#] Open (number, ENTER)  ";
   if (dl) { keys += "[D] Download  "; say(s, "\x1b[0;36mDownload credit: " + creditText(s.user) + "\x1b[0m"); }
   if (s.web && a.uploads && board.uploadMax) keys += "[U] Upload  ";
   if (list.size() > FILES_PER_PAGE) keys += "[N/P] Page  ";

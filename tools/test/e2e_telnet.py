@@ -408,7 +408,7 @@ def main():
         c.send("E2E Tester")
         c.expect("Location:")
         c.send("Localhost")
-        c.expect("Log in with it")
+        c.expect("the power is yours")
         c.expect("Login:")
 
     @step("log in with the new account and reach the main menu")

@@ -556,6 +556,5 @@ static void saveDraft(Session &s) {
            (board.creditsPerMessage ? "  +" + sizeText(board.creditsPerMessage) + " download credit." : String()));
   } else say(s, "Message not posted: the message base could not be written.");
   s.draft = "";
-  if (s.replyTo) { s.state = MSG_VIEW; readerPrompt(s); }
-  else messageArea(s);
+  messageArea(s);   // a reply and a new post end the same way (Q20 UX round 1)
 }

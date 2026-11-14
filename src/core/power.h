@@ -17,6 +17,7 @@ struct PowerConfig {
   String maintAccount = "admin", maintPassword = "admin";  // the ship's maintenance login
   String confirmKey = "K";                                  // the key the RTG warning asks for
   String unknownHint;                                       // one line after "Unknown caller." (Q12b)
+  String frontHint, accountDone;                            // Q20: under the front page (what this is, the first task); after CREW
 };
 static PowerConfig powerCfg;
 static bool powerEnabled = false;       // POWER.INI exists
@@ -36,6 +37,8 @@ static void loadPower() {
     if (key.length()) c.confirmKey = key.substring(0, 1);
     c.confirmKey.toUpperCase();
     c.unknownHint = clean(iniGet(ini, "TEXT", "unknown_hint", ""), 78);
+    c.frontHint = iniGet(ini, "TEXT", "front_hint", "");
+    c.accountDone = iniGet(ini, "TEXT", "account_done", "");
   }
   powerCfg = c;
 }

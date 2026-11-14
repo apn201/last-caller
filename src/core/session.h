@@ -121,6 +121,7 @@ struct Session {
   bool sceneHold = false;  // a scene just played: the next waits until the caller has typed a command (core/haunt.h)
   String typeAhead;        // keys typed while a scene types out: played back when it ends (contract C7)
   bool digitHot = false;   // MANIFEST_PROMPT: a digit is a key too (the list has 9 entries or fewer)
+  String loginNote;        // shown under the front page once, after the art (an account just made)
   char askKey = 0;        // FILE_ASK: the key (V or D) that wants a file number
   State helpBack = MAIN;  // the screen ? was pressed on (bbs/help.h)
   char hotKey = 0; uint32_t hotAt = 0;  // a letter typed at a menu waits a moment: more keys after it make a typed word (bbs/commands.h)

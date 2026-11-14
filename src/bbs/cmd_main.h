@@ -19,8 +19,8 @@ static void answerPage(Session &op, bool accept) {
     return;
   }
   event("SYSOP_CHAT", op.user.handle + " answered " + caller->user.handle);
-  enterChat(*caller, "\r\n\x1b[1;33m*** The SysOp breaks in: you are in chat with " + op.user.handle + ". /Q returns to the board. ***\x1b[0m");
-  enterChat(op, "\r\n\x1b[1;33m*** Chat with " + caller->user.handle + " (node " + caller->node + "). /Q returns to the board. ***\x1b[0m");
+  enterChat(*caller, "\r\n\x1b[1;33m*** The SysOp breaks in: you are in chat with " + op.user.handle + ". Q returns to the board. ***\x1b[0m");
+  enterChat(op, "\r\n\x1b[1;33m*** Chat with " + caller->user.handle + " (node " + caller->node + "). Q returns to the board. ***\x1b[0m");
 }
 
 // Bulletins from BULLETINS.INI that this caller may read, numbered from 1.
@@ -81,7 +81,7 @@ static void bulletinMenu(Session &s) {
 // its reply "Say something else" opens the typed chat (then=CHAT). A card without the scene, a
 // SysOp, or a scene that will not start (no power for this caller) opens the chat directly.
 static void chatEntry(Session &s) {
-  const char *banner = "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk. /Q leaves.\x1b[0m";
+  const char *banner = "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk. Q leaves.\x1b[0m";
   if (!isSysop(s) && SD_MMC.exists("/BBS/STORY/SCENES/ELZ_TALK.INI")) {
     sceneStart(s, "ELZ_TALK");
     if (s.state == SCENE_PLAY) return;
