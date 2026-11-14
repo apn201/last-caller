@@ -3,6 +3,18 @@
 Draft in Juha's voice from his notes of 13 Nov 2026. `[fill: ...]` marks a
 fact only he can give.
 
+## In short
+
+Last Caller is a working 1990s bulletin board system (BBS) for today's
+low-bandwidth, offline text links, and a game that runs on it. The BBS
+engine, TinyBBS, runs on a $10 ESP32 USB stick and on a Linux server. The
+game is a horror mystery you play by calling the BBS of a dead spaceship.
+It is for anyone who likes a good puzzle story, and for people who build on
+slow radio links such as Meshtastic and want to see how rich and friendly a
+text-only system can be. The game is a real product you can play now, on the
+hosted board or on the stick. It is also a feasibility study: does BBS
+technology still work on today's low-data links? The game is the proof that
+it can.
 ## Inspiration
 
 I decided to resurrect BBS technology to see how relevant it is now, 30
@@ -24,6 +36,25 @@ rich experience on very simple devices. A screen of ANSI is a few kilobytes.
 
 So this is a study of how BBS techniques work today.
 
+There is a practical problem behind it. Text-mode communication over slow,
+high-latency or offline links is hard to use and joyless. Meshtastic and
+other LoRa mesh networks today offer little more than a public chat line.
+The BBS solved exactly this problem 30 years ago. A BBS could hold message
+boards that were copied slowly from machine to machine, the way FidoNet did,
+and it had chat between the people connected to one node. TinyBBS could run
+on small ESP-based Meshtastic devices and work the same way: message boards
+that sync slowly between devices over the mesh, using private channels, and
+node chat like the public chat of Meshtastic today. So the retro has a
+function. It is a way to learn from old systems how to make text-based
+systems intuitive and fun. The demo game is entertaining, which is worth
+something in itself, and it shows what a few kilobytes of ANSI can carry.
+
+What exists and what does not: the mesh sync is a direction, not built. It
+does not run on Meshtastic today. What exists is the part that makes it
+possible. The BBS core does not know how bytes reach it. Telnet and the
+browser are two transports into the same core, and a mesh link would be a
+third.
+
 ## What it does
 
 The core of the project is TinyBBS (fully built within the hackathon
@@ -38,11 +69,14 @@ It works on Telnet. For easier testing and some convenience features
 are just transports into the same BBS, so a Telnet caller and a browser
 caller see each other in WHO and can chat.
 
-For the technical demo I decided to use it as a game engine, for a horror
+For the demo I decided to use it as a game engine, for a horror
 puzzle adventure in the style of Return of the Obra Dinn. The player dials
 into the BBS of a dead spaceship and has to hack it to find out what
 happened to the crew. Could had been anything, but a dead board with a dead
 crew felt like the right story for a resurrected technology.
+The unusual part is that the game engine is a real, working BBS. The story
+is not a game engine dressed up as a BBS. It is told through the things a BBS
+has: message bases, file areas, door games, node chat and logins.
 
 The story: HALCYON was a secret private spaceflight in 1998, crew of four.
 The ship had a BBS on a 486 so the crew could write home, and the mission
@@ -138,6 +172,12 @@ Arduino GFX Library, ESPAsyncWebServer, AsyncTCP and the ESP32 Arduino core
 on the stick. The dial-up sound is recorded from a real modem. No Mod
 Archive or HVSC tunes ship with the game. Story, art, music for Ty, crew
 posts and code are original.
+Public resources, honestly: the game uses no dataset. Its story, art, music
+and posts are original. The third-party parts are the libraries listed
+below. The engine's early slices had optional scripts that filled the board
+with archived FidoNet messages and tracker tunes. They are not part of the
+game, because the story needs its own voices. I did not want to bolt on a
+dataset only to have one.
 
 ## How Kiro was used
 
@@ -219,6 +259,12 @@ gave the wrong hint. Humans would have got stuck too.
 [fill: anything else you want to mention, e.g. the ESP32 memory limits]
 
 ## What's next
+
+The first step is the mesh. I want to run TinyBBS on a small ESP-based
+Meshtastic device, with message boards that sync slowly between devices over
+private channels, like FidoNet, and node chat next to them. The core is
+already transport independent, so this is a new transport and a sync rule,
+not a rewrite. [fill: what you have tried so far, if anything]
 
 I'm planning to port it to the Pimoroni Tufty 2350 Badgeware as a handheld
 console. [fill: one line on what the Tufty port needs]

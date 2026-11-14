@@ -31,6 +31,18 @@ lost contact, and 28 years later radio amateurs found the ship's signal again.
 You are dialling into that BBS, and you work out what happened to the crew
 from its messages, files, logs and ghosts.
 
+## Why a BBS, today
+
+Text-mode communication over slow, high-latency or offline links, such as
+Meshtastic and other LoRa mesh networks, is hard to use and joyless. Today
+it mostly offers a public chat line. The BBS solved this 30 years ago:
+message boards that sync slowly between machines, as FidoNet did, plus chat
+on the node. TinyBBS could run on small ESP-based Meshtastic devices the same
+way. That is a direction, not built: nothing here runs on Meshtastic today.
+What exists is a core that does not care how bytes arrive. Telnet and the
+browser are two transports into one BBS, and a mesh link would be a third.
+HALCYON is the demo: a real game people can play, and the proof that a
+few kilobytes of ANSI can carry a rich, intuitive and fun text system.
 ## What it is
 
 TinyBBS is the engine. Last Caller is the content and story on top of it.
