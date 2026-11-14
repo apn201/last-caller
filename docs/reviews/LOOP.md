@@ -1,8 +1,8 @@
 # Q18 loop state
 
 Current round: 3
-Step: round 3, Ada playing on a fresh board
-Ada done: no (round 3)
+Step: round 3, Ada done (85); Mara next on a fresh board
+Ada done: yes (round 3), SCORE 85
 Mara done: no (round 3)
 Commit played: 69e0cd4
 
@@ -18,4 +18,5 @@ Round 2 log:
 - Ada, second run: SCORE 66, unfinished after about 110 calls. Closed the round instead of replaying it on newer code.
 
 Fixes: docs/reviews/CHANGES.md.
+
 
