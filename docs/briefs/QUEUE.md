@@ -292,3 +292,7 @@ Rules for every item:
   across the engine, write one interaction contract, build it, and test with
   two fresh no-BBS usability testers until SUS 80 (max 4 rounds). Part C:
   the port list for `../TinyBBS` in `docs/PLATFORM_UX.md` (no edits there).
+- [ ] **Q21 - The notebook keeps everything.** Brief: `docs/briefs/Q21-notebook.md`
+  (Claude Code, 15 Nov 2026, Juha's request). Builds Q20 Additions 7 and 8:
+  every hint collected when shown, scenes and pages replay from the
+  notebook, story lint `check_notes`, one critic play-through.
