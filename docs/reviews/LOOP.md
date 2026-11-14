@@ -1,10 +1,11 @@
 # Q18 loop state
 
-Current round: 3
-Step: round 3, Mara first session cut off at the manifest (notes-mara.md kept); second session on the same board and account
-Ada done: yes (round 3), SCORE 85
-Mara done: no (round 3)
-Commit played: 69e0cd4
+Current round: 4 (Q20: does the usability work keep the fun?)
+Step: round 4, Ada first, then Mara, one at a time, fresh boards
+Ada done: no (round 4)
+Mara done: no (round 4)
+Commit played: 2cba380
+Round 3 closed: Ada 85, Mara 80, average 82.5 (Q18 tick)
 
 ## Rounds
 
