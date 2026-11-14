@@ -254,3 +254,13 @@ Rules for every item:
   one round averages 83 or more (stop after round 6). Anything may change
   with a good reason; every change goes in `docs/reviews/CHANGES.md`.
   Loop state in `docs/reviews/LOOP.md` so later runs resume.
+  PAUSED by Juha, 14 Nov 2026, after round 3 (Ada 85, Mara 80, average 82.5); round-3 fixes in `bb94e79`, staging check cut off (rerun in Q19). Do not resume until Juha says so.
+- [ ] **Q19 - Judges' panel, then the critics' plan.** Brief:
+  `docs/briefs/Q19-judges.md` (Claude Code, 14 Nov 2026, Juha's request).
+  Rerun the staging check on `bb94e79`; add the mesh/FidoNet use case to
+  `docs/DEVPOST.md` and `README.md`; two invented judges with no BBS
+  background (Hans, ex-PlayStation; Anna, finance) read the Devpost text,
+  play about 40 minutes through `bbs-caller`, look at the repo and `.kiro/`,
+  and agree scores on the five Kiroween criteria (`docs/reviews/JUDGES-1.md`);
+  then Ada and Mara turn that into a ranked action list that keeps the
+  game's soul (`docs/reviews/PANEL-1.md`). No game changes in this item.
