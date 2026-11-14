@@ -41,7 +41,7 @@ connect -> banner -> Login:
         timer runs out -> SUNSIDE screen, session ends
         SOURCE RTG + key -> session powered, timer stops, ELIZA wakes,
                             console gains CREW
-        CREW -> handle, password, real name, location -> "Log in with it"
+        CREW -> handle, password, real name, location -> "you are logged in" (Q20: no second Login:)
              -> Login: -> own account -> ELIZA_WAKE scene -> main menu
 ```
 

@@ -27,9 +27,9 @@ quick set `timer_sec=20` in `STORY/POWER.INI`.
    in amber, "CREW REGISTRATION ENABLED". Wait past `timer_sec`: no drop.
    `HELP` now lists `CREW`.
 9. `CREW`, then ENTER at the handle: back at `SHIP>`, `No account made.`
-   `CREW` again: handle, password, real name, location. `Account created. Log
-   in with it.` and `Login:`.
-10. Log in with the new account. The `ELIZA_WAKE` scene plays, then the main
+   `CREW` again: handle, password, real name, location. `Your account is made
+   and the power is yours. You are logged in.`
+10. No second `Login:`: the new account is logged in at once. The `ELIZA_WAKE` scene plays, then the main
     menu. The Doors menu shows VolaMUD and Diagnostics, not SHIP.
 11. Open a second connection at any point (a second tab or Telnet) and play
     the prologue in it: its timer is its own. Switching to the RTG in one

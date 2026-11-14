@@ -117,6 +117,11 @@ static void crewAccountCancel(Session &s) {
   shipPrompt(s);
 }
 static void crewAccountDone(Session &s) {
-  s.loginNote = powerCfg.accountDone.length() ? powerCfg.accountDone : String("Account created. Log in with it.");
-  logoutToLogin(s);   // the front page: its art clears the screen, so the note is printed after it (brownoutLogin)
+  // Q20 (Addition 4): the new account is logged in at once, no second Login:. Note first, then what a fresh login does.
+  String n = powerCfg.accountDone.length() ? powerCfg.accountDone : String("Account created.");
+  n.replace("|", "\r\n");
+  s.makingCrew = false; s.hideInput = false; s.pendingHandle = ""; s.pendingPass = "";
+  say(s, "\r\n" + (s.ansi ? "\x1b[1;32m" + n + "\x1b[0m" : n));
+  claimAccount(s);
+  finishLogin(s);
 }
