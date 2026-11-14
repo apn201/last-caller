@@ -1,10 +1,10 @@
 # Q18 loop state
 
 Current round: 3
-Step: round 2 closed incomplete; round 2 fixes committed; pio build then round 3 (Ada first, fresh board)
+Step: round 3, Ada playing on a fresh board
 Ada done: no (round 3)
 Mara done: no (round 3)
-Commit played: -
+Commit played: 69e0cd4
 
 ## Rounds
 
@@ -18,3 +18,4 @@ Round 2 log:
 - Ada, second run: SCORE 66, unfinished after about 110 calls. Closed the round instead of replaying it on newer code.
 
 Fixes: docs/reviews/CHANGES.md.
+
