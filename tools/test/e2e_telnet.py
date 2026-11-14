@@ -437,7 +437,7 @@ def main():
         c.expect("Where is the crew", timeout=60)
         c.send("1")
         c.expect("Please make yourself at home", timeout=90)
-        c.expect("[Enter]", timeout=60)   # the scene waits for a key once the text has typed out
+        c.expect("[any key]", timeout=60)   # the scene waits for a key once the text has typed out
         c.send("")
         c.expect("Main Board Command?", timeout=30)
         welcome_scene(c)                  # M2: ELIZA welcomes a guest (Q12d); one crew name is missing from it

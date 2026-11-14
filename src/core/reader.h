@@ -251,7 +251,7 @@ static void showPage(Session &s, const String &note = "") {
 static String readerBar(const Reader &r, const String &note) {
   uint32_t total = readerCount(r);
   uint32_t last = min(r.top + PAGE_LINES, total);
-  String where = total ? String(r.top + 1) + "-" + last + "/" + total + (last >= total ? " END" : "  " + String(last * 100 / total) + "%") : String("empty");
+  String where = (total && total <= PAGE_LINES) ? String() : total ? String(r.top + 1) + "-" + last + "/" + total + (last >= total ? " END" : "  " + String(last * 100 / total) + "%") : String("empty");
   String status = " " + r.title + "  " + where + "  " + (note.length() ? note : r.hint);
   String bar;
   size_t width = 0;

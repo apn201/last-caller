@@ -221,7 +221,7 @@ static String messageKeys(Session &s, bool = true) {
   Message m;
   bool known = getMessage(s.msgId, m);
   bool mine = known && canModify(s, m), history = known && m.versions > 1;
-  return String("SPACE next  N/P msg  ") + (canPost(s) ? "R reply  " : "") + "T thread  " + (mine ? "K kill  E edit  " : "") + (history ? "H hist  " : "") + "Q back  X main";
+  return String("SPACE next  N/P msg  ") + (canPost(s) ? "R reply  " : "") + "T thread  Q back  X main" + (mine ? "  K kill  E edit" : "") + (history ? "  H hist" : "");
 }
 // After a notice in the reader's place: any key shows the message again (contract C4, C6).
 static void readerPrompt(Session &s) { s.state = MSG_VIEW; prompt(s, "Press any key: "); }

@@ -59,7 +59,7 @@ static void input(Session &s, const String &bytes) {
     if (quiet) {
       if (c == '\r') { s.input = ""; s.ignoreNextLf = true; handleLine(s, ""); }
       else if (c == '\n') { if (s.ignoreNextLf) { s.ignoreNextLf = false; continue; } s.input = ""; handleLine(s, ""); }
-      else if ((uint8_t)c >= 32 && s.typeAhead.length() < 24) s.typeAhead += c;   // not echoed now, not lost: played back after the scene
+      else if ((uint8_t)c >= 32 && s.sceneRun.phase() == scene::P_KEY) { s.input = \   // not echoed now, not lost: played back after the scene
       continue;
     }
     // Q20 UX, contract C1: a letter at a menu acts at once. It waits hotkeyTick's moment first: a
@@ -70,7 +70,8 @@ static void input(Session &s, const String &bytes) {
       s.input += h;
     } else if (!s.input.length() && hotkeyState(s)) {
       if (c == ' ' && s.state != BULLETIN && s.state != MSG_VIEW) continue;   // a tap or a stray space is not the start of a word
-      if (isalpha((unsigned char)c) || c == '?' || (s.state == MANIFEST_PROMPT && s.digitHot && isdigit((unsigned char)c)) || ((s.state == BULLETIN || s.state == MSG_VIEW) && c > ' ')) { s.hotKey = c; s.hotAt = millis(); continue; }
+      if (s.state == SCENE_PLAY) { if ((c >= '1' && c <= '9') || c == 'q' || c == 'Q') { s.hotKey = c; s.hotAt = millis(); continue; } }
+      else if (isalpha((unsigned char)c) || c == '?' || (s.state == MANIFEST_PROMPT && s.digitHot && isdigit((unsigned char)c)) || ((s.state == BULLETIN || s.state == MSG_VIEW) && c > ' ')) { s.hotKey = c; s.hotAt = millis(); continue; }
     }
     // CRLF is one Enter key.  Without this guard the LF becomes a phantom
     // handle/command in Telnet clients such as PuTTY.

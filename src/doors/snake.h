@@ -93,7 +93,11 @@ static void snakeOver(Session &s) {
 }
 
 static void handleSnake(Session &s, String &, const String &cmd) {
-  if (cmd == "Q" || cmd == "QUIT" || cmd == "X") { event("SNAKE", s.user.handle + " node " + s.node + " left snake, score " + String(s.snake.score)); doorMenu(s); return; }
+  if (cmd == "Q" || cmd == "QUIT" || cmd == "X") {   // Q goes up to the door menu, X to the main menu (contract C2)
+    event("SNAKE", s.user.handle + " node " + s.node + " left snake, score " + String(s.snake.score));
+    if (cmd == "X") mainMenu(s); else doorMenu(s);
+    return;
+  }
   if (s.snake.dead) { snakeNewGame(s); return; }
   uint8_t steps = 0;
   bool moved = false;

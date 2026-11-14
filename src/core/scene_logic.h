@@ -278,6 +278,8 @@ class Player {
   // the text types, pauses or waits for Enter a key would land in the middle
   // of a sentence, so it is dropped (Enter still skips: see input()).
   bool wantsEcho() const { return ph_ == P_CHOICE; }
+  // Numbered replies of nine or fewer, and Q: single keys (contract C1), no ENTER.
+  bool choiceKeys() const { return (ph_ == P_CHOICE && shown_.size() <= 9) || ph_ == P_KEY; }   // a [any key] wait takes any key
 
   Out start(std::shared_ptr<const Scene> sc, const std::string &flags, bool ansi, uint32_t now) {
     sc_ = std::move(sc); flags_ = flags; ansi_ = ansi; steps_ = 0; ph_ = P_IDLE; node_.clear(); then_.clear();
@@ -380,10 +382,13 @@ class Player {
       for (size_t k = 0; k < shown_.size(); ++k)
         out.addText(std::string(ansi_ ? "  \x1b[1;36m" : "  ") + std::to_string(k + 1) + (ansi_ ? "\x1b[0;37m) " : ") ") +
                     n.choices[shown_[k]].text + (ansi_ ? "\x1b[0m" : "") + "\r\n");
+      bool q = false;
+      for (const auto &ty : n.typed) for (const auto &w : ty.words) if (w == "q") q = true;
+      if (q) out.addText(std::string(ansi_ ? "\x1b[0;90m" : "") + "  Q leaves." + (ansi_ ? "\x1b[0m" : "") + "\r\n");   // contract C8: say how to leave
       out.addText(ansi_ ? "\r\n\x1b[1;36m> \x1b[0m" : "\r\n> ");
       ph_ = P_CHOICE;
     } else if (n.key) {
-      out.addText(ansi_ ? "\x1b[0;90m  [Enter]\x1b[0m" : "  [Enter]");
+      out.addText(ansi_ ? "\x1b[0;90m  [any key]\x1b[0m" : "  [any key]");
       ph_ = P_KEY;
     } else if (n.go.empty()) {
       finish(out);
