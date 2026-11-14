@@ -89,8 +89,49 @@ static void chatEntry(Session &s) {
   startChat(s, banner);
 }
 
+// L on the own account (Q12d): sign off to Login: on the same line. The caller stays the caller
+// (Session.ownUserId), so a crew account signed in next carries its finds here and reads this
+// account's flags.
+static void logOffKeepLine(Session &s) {
+  event("LOGOFF", s.user.handle + " node " + s.node + ", to the login prompt");
+  say(s, "\r\n\x1b[0;37mSigned off. The line stays open.\x1b[0m");
+  logoutToLogin(s);
+}
+// Q20 (Addition 6): L lists the crew accounts this caller has already opened. A number logs in to
+// one without the password; A asks for any handle and password at Login:, as before.
+static void crewPick(Session &s) {
+  std::vector<User> known = crewKnown(s);
+  if (known.empty()) { logOffKeepLine(s); return; }
+  s.state = CREW_PICK;
+  say(s, "\r\n\x1b[1;36mLOG IN AS ANOTHER\x1b[0m");
+  for (size_t i = 0; i < known.size(); ++i) {
+    char row[100];
+    snprintf(row, sizeof(row), "  \x1b[1;33m[%u]\x1b[0m %-16s \x1b[0;37m%s\x1b[0m", (unsigned)(i + 1), known[i].handle.c_str(), known[i].realName.c_str());
+    say(s, row);
+  }
+  say(s, "  \x1b[1;33m[A]\x1b[0m Another account (handle and password)");
+  say(s, "  \x1b[1;33m[Q]\x1b[0m Back");
+  prompt(s, "Press a number or a letter, no ENTER: ");
+}
+static void crewSwitch(Session &s, const User &crew) {
+  event("LOGOFF", s.user.handle + " node " + s.node + ", to " + crew.handle + " (known)");
+  s.authenticated = false; s.readOnly = false; s.input = ""; s.hideInput = false; s.conference = 0; s.reader = Reader();
+  s.user = crew; s.pendingHandle = crew.handle;
+  claimAccount(s); finishLogin(s);
+}
+
 static bool mainCommand(Session &s, String &line, const String &cmd) {
   if (s.state == BULLETIN) { mainMenu(s); return true; }
+  if (s.state == CREW_PICK) {
+    if (cmd == "Q" || cmd == "X" || !cmd.length()) { mainMenu(s); return true; }
+    if (cmd == "?") { keysHelp(s); return true; }
+    if (cmd == "A") { logOffKeepLine(s); return true; }
+    std::vector<User> known = crewKnown(s);
+    long n = cmd.toInt();
+    if (n >= 1 && (size_t)n <= known.size()) { crewSwitch(s, known[n - 1]); return true; }
+    prompt(s, "A number from the list, A or Q: ");
+    return true;
+  }
   if (s.state == MAIN) {
     if (cmd == "B") { bulletinMenu(s); }
     else if (cmd == "W" && isSysop(s)) { nodeMonitor(s, MAIN); }
@@ -143,13 +184,7 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
       s.user = own; s.pendingHandle = own.handle;
       claimAccount(s); finishLogin(s);
     }
-    else if (cmd == "L" && s.user.id) {
-      // Sign off to Login: on the same line. The caller stays the caller (Session.ownUserId), so a
-      // crew account signed in next carries its finds here and reads this account's flags.
-      event("LOGOFF", s.user.handle + " node " + s.node + ", to the login prompt");
-      say(s, "\r\n\x1b[0;37mSigned off. The line stays open.\x1b[0m");
-      logoutToLogin(s);
-    }
+    else if (cmd == "L" && s.user.id && !s.readOnly && !isMaintenance(s.user)) { crewPick(s); }
     else if (cmd == "G") { s.state = GOODBYE; activity(s, "LOGOFF"); uint32_t mins = (millis() - s.connectedAt) / MS_PER_MINUTE; art(s, board.goodbye.c_str()); say(s, "Time online: " + String(mins) + " minutes");
       manifestPartial(s);   // an unfinished manifest: ELIZA thanks the caller for their interest
       // A crew (read-only) login logs off to the login prompt, line kept: the

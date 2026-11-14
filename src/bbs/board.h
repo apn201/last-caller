@@ -31,10 +31,12 @@ static void mainMenu(Session &s) {
   items.push_back({"?", "Help"});
   // L (Q12d): an own account signs off to the login prompt and keeps the line, so a crew login
   // after it reads this caller's own flags (the shell in ELIZA's menu needs that, core/haunt.h).
-  if (s.user.id && !isMaintenance(s.user)) items.push_back({"L", "Log in as another"});
+  // Q20 (Addition 6): L lists the crew accounts already opened. A crew account has no L: it is
+  // shared by every caller, so its way back is G (to Login:) or Y (to the own account on this line).
+  if (s.user.id && !isMaintenance(s.user) && !s.readOnly) items.push_back({"L", "Log in as another"});
   // Q18: a crew account goes back to the caller's own account on this line without the login again.
   if (s.readOnly && s.ownUserId && s.ownHandle.length()) items.push_back({"Y", "Back to " + s.ownHandle});
-  items.push_back({"G", "Goodbye"});
+  items.push_back({"G", s.readOnly ? "Goodbye (back to Login:)" : "Goodbye"});
   if (isSysop(s)) items.push_back({"Z", "SysOp console", "\x1b[1;35m"});
   showMenu(s, "MAIN", items, board.name + " // MAIN BOARD");
   // SYSOP view (milestone M6) opens reading and nothing else: one line tells the caller what changed.
@@ -143,6 +145,14 @@ static void finishLogin(Session &s) {
   for (const auto &b : board.bulletins)
     if (b.mandatory && (!s.readOnly && s.user.calls <= 1) && canSee(s.user, b.level, b.flag)) { showBulletin(s, b); shown = true; }
   if (!shown) say(s, "Welcome to " + board.name + ".");
+  // Q20 (Addition 5 and 6): a crew login says once how it is left and where the manifest is.
+  if (s.readOnly && !isMaintenance(s.user)) {
+    crewKnownGrant(s);
+    String note = "This is a crew account, read-only. G goes back to Login: for your own account.";
+    if (s.ownUserId && s.ownHandle.length()) note += "\r\nY goes straight back to " + s.ownHandle + ".";
+    if (manTable.rows.size()) note += "\r\nYour crew manifest is on your own account.";
+    say(s, s.ansi ? "\x1b[0;36m" + note + "\x1b[0m" : note);
+  }
   // Triggers: an own login, or a visit to a crew account. Pages wait for the prompt below.
   if (s.readOnly) hauntEvent(s, haunt::EV_CREW_LOGIN, s.user.handle);
   else hauntEvent(s, haunt::EV_LOGIN, "");

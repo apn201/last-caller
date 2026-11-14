@@ -58,3 +58,50 @@ static void ensureStoryAccounts() {
     else event("ACCOUNT_FAIL", u.handle + ": not created");
   }
 }
+
+// Q20 (Addition 6): the crew accounts this caller has opened. The first crew login that works
+// puts KNOWN_<HANDLE> on the caller's own account (or carries it to the next own login on this
+// line). L on the own account lists them and logs in without the password; the manifest notebook
+// writes the password down. The knowledge is the caller's, never the crew account's.
+static String crewKnownFlag(const String &normalized) {
+  String f = "KNOWN_";
+  for (uint16_t i = 0; i < normalized.length(); ++i) { char c = normalized[i]; f += isalnum((unsigned char)c) ? c : '_'; }
+  return f;
+}
+static void crewKnownGrant(Session &s) {
+  if (!s.readOnly || isMaintenance(s.user) || hasFlag(s.user, "SYSOP")) return;
+  User own;
+  bool have = hauntOwner(s, own);
+  if (!hauntGrant(s, have ? &own : nullptr, hauntStd(crewKnownFlag(s.user.normalized))))
+    event("TRIGGER_FAIL", "KNOWN " + s.user.handle + ": not saved");
+}
+// The known crew accounts of the own account signed in on `s`, in ACCOUNTS.INI order. Only
+// read-only story accounts that are not locked and below the SysOp; at most nine (one key each).
+static std::vector<User> crewKnown(const Session &s) {
+  std::vector<User> out;
+  if (!s.authenticated || s.readOnly || !sdReady) return out;
+  std::string flags = userFlagList(s.user);
+  if (flags.find("KNOWN_") == std::string::npos) return out;
+  Ini ini;
+  if (!iniLoad(ACCOUNTS_INI, ini)) return out;
+  for (const String &sec : iniSections(ini)) {
+    String n = up(clean(sec, 16, true));
+    User u;
+    if (!haunt::flagsHas(flags, hauntStd(crewKnownFlag(n)))) continue;
+    if (!findUser(n, u) || u.locked || !hasFlag(u, "READONLY") || hasFlag(u, "SYSOP") || u.level >= 255) continue;
+    out.push_back(u);
+    if (out.size() >= 9) break;
+  }
+  return out;
+}
+// The password the notebook writes down: the card's, and only while it still opens the account.
+static String crewKnownPassword(const User &u) {
+  Ini ini;
+  if (!iniLoad(ACCOUNTS_INI, ini)) return "";
+  for (const String &sec : iniSections(ini)) {
+    if (up(clean(sec, 16, true)) != u.normalized) continue;
+    String pw = iniGet(ini, sec, "password");
+    return pw.length() && sha256hex(u.salt + ":" + pw) == u.hash ? pw : String();
+  }
+  return "";
+}

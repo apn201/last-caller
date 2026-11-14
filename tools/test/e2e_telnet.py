@@ -157,10 +157,22 @@ def login(c, who, pw):
 
 
 def relog(c, who, pw):
-    """Q12d: L at the main menu signs off to Login: and keeps the line (the caller stays the caller)."""
+    """Q12d: L at the main menu signs off to Login: and keeps the line (the caller stays the caller).
+    Q20 (Addition 6): once a crew account has worked, L lists it; its number logs in without the
+    password. A goes to Login: for any other handle."""
     sync(c)
+    start = len(c.all)
     c.send("L")
-    c.expect("The line stays open", timeout=15)
+    hit = c.expect("The line stays open", "LOG IN AS ANOTHER", timeout=15)
+    if hit == "LOG IN AS ANOTHER":
+        c.expect("no ENTER", timeout=10)
+        m = re.search(r"\[(\d)\] +%s\b" % re.escape(who.upper()), c.all[start:])
+        if m:
+            key(c, m.group(1))
+            advance(c, "Main Board Command?", timeout=150)
+            return
+        key(c, "A")
+        c.expect("The line stays open", timeout=15)
     login(c, who, pw)
 
 
@@ -622,6 +634,11 @@ def main():
         advance(c, "Main Board Command?", timeout=150)
         if "you are not ty" not in c.all.lower():
             raise AssertionError("Ty's desk scene did not play")
+        # Q20 (Addition 5 and 6): a crew account has no L; G says it goes back to Login:.
+        if "This is a crew account" not in c.all or "Goodbye (back to Login:)" not in c.all:
+            raise AssertionError("the crew login does not say how it is left")
+        if "Log in as another" in c.all[c.all.find("This is a crew account"):]:
+            raise AssertionError("a crew account offers L")
         start = len(c.all)
         c.send("M")
         c.expect("Message command?", timeout=15)
@@ -1313,6 +1330,8 @@ def main():
         c.expect("NOTEBOOK")
         c.expect("The commander")
         c.expect("MANIFEST>")
+        if "Logged in with 140374" not in c.all[start:]:
+            raise AssertionError("the notebook does not keep the crew password that worked (TYVANCE)")
         c.send("Q")
         c.expect("MANIFEST>")
 

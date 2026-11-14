@@ -188,12 +188,20 @@ static void manPickView(Session &s) {
 static void manNotebook(Session &s) {
   s.manMode = 3; s.digitHot = false;
   auto notes = manifest::notebook(manTable, doorFlagsOf(s));
+  std::vector<User> known = crewKnown(s);   // Q20 (Addition 6): logins that worked, with their passwords
   say(s, "");
   say(s, "\x1b[1;36m  NOTEBOOK\x1b[0m");
-  if (notes.empty()) say(s, "  \x1b[0;90mNothing written down yet.\x1b[0m");
+  if (notes.empty() && known.empty()) say(s, "  \x1b[0;90mNothing written down yet.\x1b[0m");
   for (const auto *n : notes) {
     char row[160];
     snprintf(row, sizeof(row), "  \x1b[1;33m%-9s\x1b[0m %s", n->about.c_str(), n->text.c_str());
+    say(s, row);
+  }
+  for (const User &u : known) {
+    String pw = crewKnownPassword(u);
+    char row[160];
+    snprintf(row, sizeof(row), "  \x1b[1;33m%-9s\x1b[0m %s", u.handle.c_str(),
+             pw.length() ? ("Logged in with " + pw + ". L on the main menu opens it.").c_str() : "Logged in once. L on the main menu opens it.");
     say(s, row);
   }
   say(s, "  \x1b[1;33m[Q]\x1b[0m Back");
