@@ -181,11 +181,12 @@ static void hauntOwnLogin(Session &s) {
 }
 
 // A menu prompt with nothing streaming and nothing typed: a page will not
-// break a picture, the reader or a half-typed line.
+// break a picture, the reader or a half-typed line. Q20 UX round 3: never a
+// number prompt (bulletin, area or file area #): a scene there hid the question.
 static bool hauntCalm(const Session &s) {
   switch (s.state) {
-    case MAIN: case MSG_MENU: case FILE_MENU: case FILE_LIST: case DOOR_MENU: case ANSI_GALLERY:
-    case BULLETIN: case BULLETIN_LIST: case JOIN_CONF: break;
+    case MAIN: case MSG_MENU: case FILE_LIST: case DOOR_MENU: case ANSI_GALLERY:
+    case BULLETIN: break;
     default: return false;
   }
   return !streaming(s) && !s.input.length() && !s.hotKey && !s.hideInput;

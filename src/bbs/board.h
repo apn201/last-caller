@@ -21,7 +21,7 @@ static void mainMenu(Session &s) {
   items.push_back({"A", "ANSI gallery"});
   if (anyDoorOpen(s)) items.push_back({"D", "Doors & games"});
   if (manifestListed(s)) items.push_back({"R", "Crew manifest"});
-  items.push_back({"C", "Chat: SysOp, callers"});
+  items.push_back({"C", isSysop(s) ? "Node chat" : "Chat with the SysOp"});   // a caller meets ELIZA first (cmd_main.h)
   if (bulletins) items.push_back({"B", "Bulletins"});
   if (severalAreas(s.user)) items.push_back({"J", "Conferences"});
   items.push_back({"W", "Who is online"});

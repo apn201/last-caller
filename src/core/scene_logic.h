@@ -384,7 +384,8 @@ class Player {
                     n.choices[shown_[k]].text + (ansi_ ? "\x1b[0m" : "") + "\r\n");
       bool q = false;
       for (const auto &ty : n.typed) for (const auto &w : ty.words) if (w == "q") q = true;
-      if (q) out.addText(std::string(ansi_ ? "\x1b[0;90m" : "") + "  Q leaves." + (ansi_ ? "\x1b[0m" : "") + "\r\n");   // contract C8: say how to leave
+      // contract C8: say how to answer and how to leave (Q20 UX round 3: "no ENTER" on the screen)
+      out.addText(std::string(ansi_ ? "\x1b[0;90m" : "") + "  Press a number, no ENTER." + (q ? " Q leaves." : "") + (ansi_ ? "\x1b[0m" : "") + "\r\n");
       out.addText(ansi_ ? "\r\n\x1b[1;36m> \x1b[0m" : "\r\n> ");
       ph_ = P_CHOICE;
     } else if (n.key) {

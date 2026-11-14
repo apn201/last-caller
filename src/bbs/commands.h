@@ -79,8 +79,8 @@ static void input(Session &s, const String &bytes) {
     // handle/command in Telnet clients such as PuTTY.
     if (c == '\r') { if (!s.hideInput) say(s); String line = s.input; s.input = ""; s.ignoreNextLf = true; handleLine(s, line); }
     else if (c == '\n') { if (s.ignoreNextLf) { s.ignoreNextLf = false; continue; } if (!s.hideInput) say(s); String line = s.input; s.input = ""; handleLine(s, line); }
-    else if (c == 8 || c == 127) { if (s.input.length()) { s.input.remove(s.input.length() - 1); if (!s.hideInput) write(s, "\b \b"); } }
-    else if ((uint8_t)c >= 32 && s.input.length() < 900) { s.input += c; if (!s.hideInput) write(s, String(c)); }
+    else if (c == 8 || c == 127) { if (s.input.length()) { s.input.remove(s.input.length() - 1); write(s, "\b \b"); } }
+    else if ((uint8_t)c >= 32 && s.input.length() < 900) { s.input += c; write(s, s.hideInput ? String("*") : String(c)); }   // Q20 UX: a password shows a star per key
   }
 }
 // bbsTick: a letter that nobody followed within HOTKEY_MS is a hotkey. It is echoed and run as the

@@ -356,7 +356,7 @@ def render(grid, rows):
 # bright yellow. A SysOp sees the longest lists, so these are the full ones.
 SAMPLE_ITEMS = {
     "MAIN": [("M", "Message bases"), ("N", "New scan"), ("F", "File cabinets"), ("A", "ANSI gallery"),
-             ("D", "Doors & games"), ("C", "Chat: SysOp, callers"), ("B", "Bulletins"), ("J", "Conferences"),
+             ("D", "Doors & games"), ("C", "Chat with the SysOp"), ("B", "Bulletins"), ("J", "Conferences"),
              ("W", "Who is online"), ("O", "Page SysOp"), ("U", "User list"), ("S", "System info"),
              ("?", "Help"), ("G", "Goodbye"), ("Z", "SysOp console")],
     "MESSAGES": [("R", "Read / list"), ("N", "Read new"), ("P", "Post a message"), ("A", "Change area"),
