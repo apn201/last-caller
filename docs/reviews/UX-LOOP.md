@@ -64,3 +64,17 @@ Found, and what was done for round 3 (commit c51eb3c):
 Checks after the fixes (c51eb3c): `pio run` passed (RAM 62148 bytes, flash
 1646879 bytes), host tests 12 of 12, story lint 0 errors, staging check PASS
 (server build, ctest, e2e 63 passed of 63).
+
+## Round 3, first attempt (void)
+
+Reports: `UX-r3void-ulf.md` (SUS 10), `UX-r3void-ines.md` (SUS 32.5). Not
+counted. Both testers ran at the same time, and the `bbs-caller` MCP server
+holds one Telnet connection per process: the two sub-agents typed into the
+same session and each `bbs_connect` dropped the other's line. Their
+"replies out of step", "ACK works half the time" and "account made but
+unknown" are that, not the board. Rule from now on: one tester at a time.
+
+Two real findings came out of it and were fixed (191660b): X did not leave
+the Diagnostics door (`QUERY>`), and the pager bar cut the message keys at
+the right edge when the title was long (the keys now always fit; the title
+gives way, then the row counter).
