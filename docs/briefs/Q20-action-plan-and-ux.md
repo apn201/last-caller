@@ -155,3 +155,23 @@ DECIDED) and in the UX-LOOP round 2 fixes.
   make it, with its commits and files, not only at the end. Update the list
   after every round, so nothing found in testing is lost for `../TinyBBS`.
   Still do not edit `../TinyBBS` in this item.
+
+## Addition 3 (Juha, 14 Nov 2026) - keep the puzzles hard, then the gamers again
+
+- Ulf and Ines are deliberately impatient. They are the right test for
+  the platform: keys, prompts, pager, leaving things. They are the wrong
+  judges of the puzzles. When they are stuck on a puzzle (the prologue,
+  a clue, a gate), that is the game working. Fix the friction around a
+  puzzle (a key that does nothing, an unclear prompt, no way out), never
+  the puzzle itself: no hint that names the answer, no shortcut past a
+  gate. Juha's front-page rule stands: say it is a puzzle and where to
+  start, not how to solve it.
+- When the UX loop is done (SUS 80 or round 4), run one more round of the
+  Q18 critics, Ada and Mara, before ticking Q20: the agent files and
+  rubric unchanged, fresh boards, one critic at a time, recorded in
+  `docs/reviews/LOOP.md` as round 4. The point is to check the usability
+  work did not take the fun out. Round 3 averaged 82.5. If the average
+  drops, or either critic says the game got easier, more hand-held or
+  more explained, find which Q20 change did it and undo or soften that
+  change, then run the critics again (at most two critic rounds here).
+  Put both critic scores in the Q20 tick.
