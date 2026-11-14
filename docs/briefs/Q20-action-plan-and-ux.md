@@ -131,3 +131,14 @@ has the audit, the contract and the port section; and the tick in
 `docs/briefs/QUEUE.md` gives: the top decisions for Juha, the UX rounds and
 scores, keys that moved, RAM and flash before and after, and the commit
 range.
+
+## Addition (Juha, 14 Nov 2026) - do this before UX round 2
+
+The UX testers could not get past `Login:` (no way to register is shown).
+Juha's decision: the login screen (front page) says somewhere, in the
+board's voice and art, that this is a puzzle game and the first task is to
+work out how to fix the power and create an account. Keep the prologue a
+puzzle: do not name the RTG, the switch or the command. Card text only
+(`sd/BBS/`), ANSI via `tools/ansi/` if the art changes; story lint and the
+e2e must still pass. Note it in `docs/ACTION_PLAN.md` area 2 (already marked
+DECIDED) and in the UX-LOOP round 2 fixes.
