@@ -22,7 +22,8 @@ are allowed: they never appear on screen.
 | Keys | Who | Notes |
 | --- | --- | --- |
 | (Login: only) | everyone | Q5b: the front page is the brownout banner and `Login:`; there is no New and no Goodbye. `admin`/`admin` opens the ship console with a power timer; registered callers go straight to the board. A card without `POWER.INI` keeps the old N, L, G prompt. |
-| CREW | ship console, after the RTG | The only place an account is made (handle, password, real name, location). ENTER at the handle or password returns to the console. Not in HELP and an unknown command before the RTG. |
+| CREW | ship console, after the RTG | The only place an account is made (handle, password, real name, location). ENTER at the handle or password returns to the console. Not in HELP and an unknown command before the RTG. Q20: the new account is logged in at once (no second `Login:`). |
+| ACK> (SOURCE RTG) | ship console | Q20: one key, no ENTER (contract C5). The confirm key from `POWER.INI` switches; any other key aborts. |
 
 ## Main board
 

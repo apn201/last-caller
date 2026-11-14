@@ -96,7 +96,7 @@ static void handleShip(Session &s, String &line, const String &cmd) {
     if (s.powered) { shipSay(s, iniGet(shipIni, sec, "text_powered", "RTG ALREADY ON THE BUS")); shipPrompt(s); return; }
     // The warning names the confirming key, so a caller who reads it can find it.
     powerScreen(s, "WARNING");
-    String ask = iniGet(shipIni, sec, "confirm_text", "REARM REQUIRES OPERATOR ACK.|TYPE {KEY} AND PRESS ENTER TO ACKNOWLEDGE.|ANY OTHER ENTRY ABORTS.");
+    String ask = iniGet(shipIni, sec, "confirm_text", "REARM REQUIRES OPERATOR ACK.|PRESS {KEY} TO ACKNOWLEDGE. NO ENTER.|ANY OTHER ENTRY ABORTS.");
     ask.replace("{KEY}", "[" + powerCfg.confirmKey + "]");
     shipSay(s, ask);
     s.state = SHIP_CONFIRM;
