@@ -18,6 +18,7 @@ inconsistency, or after round 4.
 | 1 | 14 Nov 2026 | cbb892f | 47.5 | 50 | 48.75 | none in keys; one S in both: no way to register on the front page (game, not platform) |
 | 2 | 14 Nov 2026 | 8a4c5f3 (Ulf), 395f0f5 (Ines) | 67.5 | 62.5 | 65 | none |
 | 3 | 14 Nov 2026 | 4cacb98 | 60 | 62.5 | 61.25 | none (Ulf rated one S: a dropped line at C, not reproduced) |
+| 4 | 14 Nov 2026 | 2bdbc28 | 72.5 | 70 | 71.25 | none (no S rated by either tester) |
 
 ## Round 1
 
@@ -112,3 +113,25 @@ Checks after the fixes (7e8ff0f): `pio run` passed (RAM 62148 bytes, flash
 Checks after the fixes (d1e33c3): `pio run` passed (RAM 62148 bytes, flash
 1647919 bytes), host tests 12 of 12, story lint 0 errors, staging check PASS
 (server build, ctest, e2e 63 of 63).
+
+## Round 4 (last round)
+
+Reports: `UX-r4-ulf.md`, `UX-r4-ines.md`, one tester at a time, each on a
+fresh board. All 11 tasks done by both, no S rated. The ACK as one key and the
+direct login after CREW were noticed ("PRESS [K]. NO ENTER. was clear"); the
+dropped line at C from round 3 did not come back.
+
+The loop ends here: round 4 is the limit, and the average is 71.25, not 80.
+What is still in the way:
+
+| Finding | Who | Kind | Why it stays |
+| --- | --- | --- | --- |
+| Login: no plain sign-up; the way in is the service label, SOURCE RTG, K, CREW | both, M | the prologue puzzle | Addition 3: the puzzle stays; the front page says it is a puzzle and where to start. Impatient testers score the whole visit by it |
+| "Node chat" is behind ELIZA's choice 1; no visible way to talk to another caller | both, M | game (ELIZA's scene in front of chat) and platform label | Chat with other callers works (choice 1); the scene is HALCYON. A separate "C callers" entry would show an option ELIZA is meant to stand in front of: Juha's call, in `docs/ACTION_PLAN.md` area 2 |
+| Snake prompt does not say moves need no ENTER | Ines, M | platform | Small: add "no ENTER" to the Snake prompt. Not done after the last round, so it is untested; on the port list (P30) |
+| "Bulletin #, then ENTER" next to "no ENTER" menus: two rules on one screen | Ines, M | platform contract C1 | The contract: numbers need ENTER, letters do not; the prompts say which. Kept |
+| An ELIZA scene over the main menu after Q; menu drawn twice | both, L | haunt timing | Harmless; a key goes on |
+| Main menu gains `[R] Crew manifest` later and the layout moves | both, L | game (menu grows with the story) | Kept: the menu growing is a story beat |
+| Chat line echo after ELIZA's reply looks out of order | Ulf, L | platform | Low; on the port list (P31) |
+
+SUS by round: 48.75, 65, 61.25, 71.25.
