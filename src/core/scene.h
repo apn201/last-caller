@@ -16,6 +16,7 @@ static constexpr size_t SCENE_MAX_BYTES = 24 * 1024;
 static void mainMenu(Session &s);  // bbs/board.h
 static void startChat(Session &s, const String &banner);  // bbs/chat.h
 static void endingRecord(Session &s);  // doors/manifest.h
+static void keysHelpBack(Session &s);  // bbs/help.h: draws the screen s.helpBack again
 
 // "ELIZA_WAKE" -> a checked, upper-case name; "" if it is not a plain name.
 static String sceneName(const String &raw) {
@@ -64,11 +65,11 @@ static void sceneEnd(Session &s, const String &then = String()) {
   String next = then; next.toUpperCase();
   if (next == "CHAT") { startChat(s, "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk.\x1b[0m"); return; }
   if (next.length()) {
-    s.state = MAIN;
+    s.state = s.helpBack;
     sceneStart(s, next);
     if (s.state == SCENE_PLAY) return;
   }
-  mainMenu(s);
+  keysHelpBack(s);   // contract C7: back to the screen the scene interrupted, not always the top
 }
 
 // What the player says goes to the caller; what it grants goes to the account.
@@ -97,6 +98,7 @@ static void sceneStart(Session &s, const String &raw) {
   }
   event("SCENE", s.user.handle + " node " + s.node + " starts " + name);
   s.hideInput = false;
+  s.helpBack = s.state;   // sceneEnd draws this screen again
   s.state = SCENE_PLAY;
   activity(s, "IN A SCENE");
   soundCue(s, hauntStr(sc->sound));

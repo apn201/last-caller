@@ -2,15 +2,17 @@
 // WHO, user list and SysOp menus.
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
 
-static void who(Session &s) {
-  say(s, "\x1b[1;36mNode  User             Idle     Activity\x1b[0m");
+// The WHO table as screen rows (the pager for a caller, say() for the SysOp monitor).
+static void whoRows(Session &s, std::vector<String> &out) {
+  out.push_back("\x1b[1;36mNode  User             Idle     Activity\x1b[0m");
   uint32_t now = millis();
   std::vector<WhoRow> rows;
   for (auto &n : sessions) if (n.used && n.state != DEAD) rows.push_back({n.node, n.user.handle.length() ? n.user.handle : String("(logging in)"), String(ghost::idleText((now - n.lastAt) / 1000).c_str()), n.activity});
   ghostWhoRows(s, rows);  // the ghosts this caller can see, in node order
-  for (const auto &r : rows) { char row[110]; snprintf(row, sizeof(row), "%-5u %-16s %-8s %s", (unsigned)r.node, r.handle.c_str(), r.idle.c_str(), r.activity.c_str()); say(s, row); }
+  for (const auto &r : rows) { char row[110]; snprintf(row, sizeof(row), "%-5u %-16s %-8s %s", (unsigned)r.node, r.handle.c_str(), r.idle.c_str(), r.activity.c_str()); out.push_back(row); }
   hauntEvent(s, haunt::EV_SCREEN, "WHO");   // triggers: event=screen, match=WHO (the ghosts are evidence, E34)
 }
+static void who(Session &s) { std::vector<String> rows; whoRows(s, rows); for (const auto &r : rows) say(s, r); }
 static bool isSysop(const Session &s) { return s.authenticated && !s.user.locked && s.user.level == 255 && hasFlag(s.user, "SYSOP"); }
 static void refreshLiveUser(const User &changed) {
   for (auto &n : sessions) if (n.used && n.user.id == changed.id) { String story = n.user.story; n.user = changed; n.user.story = story; }   // the story record is not in `changed`
@@ -68,7 +70,7 @@ static void userList(Session &s) {
   s.state = USER_LIST; activity(s, "USER LIST"); uint16_t pages = showUserList(s);
   hauntEvent(s, haunt::EV_SCREEN, "USERS");
   if (isSysop(s)) say(s, "[Z] User editor: levels, flags, limits and passwords");
-  prompt(s, pages > 1 ? "ENTER next, P previous, Q board: " : "Q returns to board: ");
+  prompt(s, pages > 1 ? "N next, P previous, Q board: " : "Q returns to board: ");
 }
 static void sysopMenu(Session &s) {
   s.state = SYSOP_MENU; activity(s, "SYSOP CONSOLE");

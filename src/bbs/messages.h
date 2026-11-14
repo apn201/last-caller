@@ -159,14 +159,14 @@ static void areaList(Session &s) {
            (fresh ? ", \x1b[1;32m" + String(fresh) + " new\x1b[0m" : String()) + ")" +
            (c.description.length() ? "  " + c.description : String()));
   }
-  prompt(s, "Area # (ENTER = stay in " + confName(s.conference) + "): ");
+  prompt(s, "Area #, then ENTER (Q = back, now in " + confName(s.conference) + "): ");
 }
 static void messageArea(Session &s) {
   s.state = MSG_MENU; activity(s, "MESSAGES");
   std::vector<MenuItem> items;
-  items.push_back({"R", "Read / list"});
+  items.push_back({"L", "List messages"});
   items.push_back({"N", "Read new"});
-  if (canPost(s)) items.push_back({"P", "Post a message"});
+  if (canPost(s)) items.push_back({"W", "Write a message"});
   if (severalAreas(s.user)) items.push_back({"A", "Change area"});
   items.push_back({"Q", "Main Board"});
   showMenu(s, "MESSAGES", items, "MESSAGE BASES");
@@ -179,8 +179,8 @@ static void messageArea(Session &s) {
 // 20 before the ones shown, L for the 20 after.
 static constexpr uint32_t LIST_ROWS = 20;
 static String listPrompt(const Session &s) {
-  return String("Read # (ENTER = first new, ") + (s.listFrom > 0 ? "E = earlier, " : "") +
-         (s.listFrom + s.listShown < s.listTotal ? "L = later, " : "") + "Q = back): ";
+  return String("Message #, then ENTER (ENTER = first new, ") + (s.listFrom > 0 ? "P = earlier, " : "") +
+         (s.listFrom + s.listShown < s.listTotal ? "N = later, " : "") + "Q = back): ";
 }
 static void listMessages(Session &s, char what = 0) {
   struct Row { uint32_t id; String when, from, to, subject; bool fresh; };
@@ -217,17 +217,14 @@ static void listMessages(Session &s, char what = 0) {
 // ---------- the reader ----------------------------------------------------------
 // The keys for the current message: Kill and Edit for its author and the
 // SysOp, History once it has been edited.
-static String messageKeys(Session &s, bool reader) {
+static String messageKeys(Session &s, bool = true) {
   Message m;
   bool known = getMessage(s.msgId, m);
   bool mine = known && canModify(s, m), history = known && m.versions > 1;
-  if (reader) return String("SPACE page  N/P msg  ") + (canPost(s) ? "R reply  " : "") + "T thread  " + (mine ? "K kill  E edit  " : "") + (history ? "H hist  " : "") + "Q quit";
-  const char *y = "\x1b[1;33m", *n = "\x1b[0m";
-  return String(y) + "[N]" + n + "ext " + y + "[P]" + n + "rev " + (canPost(s) ? String(y) + "[R]" + n + "eply " : String()) + y + "[T]" + n + "hread " +
-         (mine ? String(y) + "[K]" + n + "ill " + y + "[E]" + n + "dit " : String()) +
-         (history ? String(y) + "[H]" + n + "istory " : String()) + y + "[Q]" + n + "uit (ENTER = next): ";
+  return String("SPACE next  N/P msg  ") + (canPost(s) ? "R reply  " : "") + "T thread  " + (mine ? "K kill  E edit  " : "") + (history ? "H hist  " : "") + "Q back  X main";
 }
-static void readerPrompt(Session &s) { prompt(s, messageKeys(s, false)); }
+// After a notice in the reader's place: any key shows the message again (contract C4, C6).
+static void readerPrompt(Session &s) { s.state = MSG_VIEW; prompt(s, "Press any key: "); }
 // Message text as screen rows, wrapped at 79 columns on word breaks (UTF-8 aware; core/wrap_logic.h).
 static void bodyRows(std::vector<String> &rows, const String &body) {
   int start = 0;
@@ -243,19 +240,13 @@ static void msgReaderQuit(Session &s) { messageArea(s); }
 // Rows that fit on one screen are printed with the reader prompt below them;
 // longer ones open in the reader.
 static void showRows(Session &s, std::vector<String> &rows, const String &title) {
-  if (rows.size() <= 20) {
-    for (auto &r : rows) say(s, r);
-    s.state = MSG_VIEW;
-    readerPrompt(s);
-    return;
-  }
   openRows(s, rows, title, messageKeys(s, true), msgReaderQuit, msgReaderKey);
 }
 static void showMessage(Session &s, uint32_t id) {
   Message m;
   if (!getMessage(id, m) || m.conference != s.conference || !canRead(s, m)) {
     say(s, "No such message in this area.");
-    if (s.state == MSG_VIEW) readerPrompt(s); else messageArea(s);
+    messageArea(s);
     return;
   }
   String replies;
@@ -480,7 +471,7 @@ static void startKill(Session &s) {
   Message m;
   if (!getMessage(s.msgId, m) || !canModify(s, m)) { say(s, "You can only kill your own messages."); readerPrompt(s); return; }
   s.state = MSG_KILL;
-  prompt(s, "\x1b[1;31mKill message #" + String(msgNo(m.id)) + " (" + m.subject + ")? [y/N]: \x1b[0m");
+  prompt(s, "\x1b[1;31mKill message #" + String(msgNo(m.id)) + " (" + m.subject + ")? [Y/N]: \x1b[0m");
 }
 static void killMessage(Session &s, bool yes) {
   Message m;

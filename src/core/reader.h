@@ -269,7 +269,7 @@ static String readerBar(const Reader &r, const String &note) {
 static void openReader(Session &s, bool play, bool atEnd = false) {
   Reader &r = s.reader;
   r.top = atEnd ? readerMaxTop(r) : 0; r.keyEsc = ""; r.playing = false;
-  if (!r.hint.length()) r.hint = "SPACE page  B back  \x18\x19 line  S slow  Q quit";
+  if (!r.hint.length()) r.hint = r.kind == READER_ANSI ? "SPACE next  B back  S slow  Q back  X main  ? keys" : "SPACE next  B back  Q back  X main  ? keys";   // contract C4: one footer
   s.state = READER;
   if (play && s.cps && readerCount(r)) {
     write(s, "\x1b[0m\x1b[2J\x1b[H");
@@ -305,6 +305,7 @@ static void closeReader(Session &s) {
   write(s, "\x1b[0m\x1b[2J\x1b[H");
   if (quit) quit(s);
 }
+static void mainMenu(Session &s);  // bbs/board.h
 static bool readerAtEnd(const Session &s) { return s.reader.top >= readerMaxTop(s.reader); }
 // One key in the reader: a character, or a cursor key's escape sequence.
 static void readerKey(Session &s, const String &k) {
@@ -327,6 +328,13 @@ static void readerKey(Session &s, const String &k) {
     return;
   }
   else if (k == "q" || k == "Q") { closeReader(s); return; }
+  else if (k == "x" || k == "X") {   // contract C2: X is the main menu from anywhere
+    s.reader = Reader();
+    write(s, "\x1b[0m\x1b[2J\x1b[H");
+    mainMenu(s);
+    return;
+  }
+  else if (k == "?") { showPage(s, String("SPACE or ENTER next  B back  \x18\x19 line  G top") + (r.kind == READER_ANSI ? "  S slow" : "") + "  Q back  X main"); return; }
   else { showPage(s); return; }
   r.top = constrain(top, (int32_t)0, maxTop);
   showPage(s);

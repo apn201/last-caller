@@ -29,18 +29,54 @@ static const Bulletin *visibleBulletin(const Session &s, uint32_t wanted) {
   for (const auto &b : board.bulletins) if (canSee(s.user, b.level, b.flag) && ++n == wanted) return &b;
   return nullptr;
 }
+static uint32_t bulletinCount(const Session &s) {
+  uint32_t n = 0;
+  for (const auto &b : board.bulletins) if (canSee(s.user, b.level, b.flag)) n++;
+  return n;
+}
+static void bulletinMenu(Session &s);
+static void bulletinBack(Session &s) { if (bulletinCount(s) > 1) bulletinMenu(s); else mainMenu(s); }
+// Contract C4: a bulletin is read in the pager, like every text. An art file is drawn into the pager's
+// screen; a card that has no file for it (or a caller without ANSI and no .ASC twin) gets the text.
+static void openBulletin(Session &s, const Bulletin &b) {
+  Reader &r = s.reader;
+  r = Reader();
+  r.title = clean(b.title, 24); r.onQuit = bulletinBack; r.utf8 = true;
+  String path = b.path;
+  bool ansiFile = path.length() && s.ansi;
+  if (path.length() && !s.ansi) {
+    path.replace("/BBS/", "/BBS/ASCII/");
+    if (up(path).endsWith(".ANS")) path = path.substring(0, path.length() - 4) + ".ASC";
+  }
+  File f;
+  if (path.length() && sdReady) f = SD_MMC.open(path, FILE_READ);
+  if (f && !f.isDirectory() && f.size()) {
+    r.path = path; r.start = 0; r.end = f.size();
+    f.close();
+    if (ansiFile) { r.kind = READER_ANSI; renderAnsi(r); }
+    else { r.kind = READER_TEXT; r.crop = true; indexText(r); }
+  } else {
+    if (f) f.close();
+    r.kind = READER_ROWS;
+    r.rows.push_back("");
+    r.rows.push_back("\x1b[1;36m" + b.title + "\x1b[0m");
+    String text = b.text; text.replace("|", "\n");
+    bodyRows(r.rows, text);
+  }
+  activity(s, "BULLETINS");
+  openReader(s, false);
+  hauntScreen(s, "BULLETIN " + up(b.title));
+}
 static void bulletinMenu(Session &s) {
   activity(s, "BULLETINS");
-  uint32_t count = 0;
-  for (const auto &b : board.bulletins) if (canSee(s.user, b.level, b.flag)) count++;
-  if (!count) { say(s, "No bulletins tonight."); s.state = BULLETIN; prompt(s, "Press ENTER: "); return; }
-  if (count == 1) { const Bulletin *b = visibleBulletin(s, 1); showBulletin(s, *b); s.state = BULLETIN; prompt(s, "Press ENTER: "); return; }
+  uint32_t count = bulletinCount(s);
+  if (!count) { say(s, "No bulletins tonight."); s.state = BULLETIN; prompt(s, "Press any key: "); return; }
+  if (count == 1) { openBulletin(s, *visibleBulletin(s, 1)); return; }
   say(s, "\r\n\x1b[1;36mBULLETINS\x1b[0m");
   for (uint32_t i = 1; i <= count; ++i) say(s, "\x1b[1;33m[" + String(i) + "]\x1b[0m " + visibleBulletin(s, i)->title);
   s.state = BULLETIN_LIST;
-  prompt(s, "Bulletin # (ENTER = back): ");
+  prompt(s, "Bulletin #, then ENTER (Q = back): ");
 }
-
 // C: node chat. A caller first meets ELIZA in the scene ELZ_TALK (numbered replies, STORY/SCENES);
 // its reply "Say something else" opens the typed chat (then=CHAT). A card without the scene, a
 // SysOp, or a scene that will not start (no power for this caller) opens the chat directly.
@@ -58,13 +94,13 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
   if (s.state == MAIN) {
     if (cmd == "B") { bulletinMenu(s); }
     else if (cmd == "W" && isSysop(s)) { nodeMonitor(s, MAIN); }
-    else if (cmd == "W") { who(s); prompt(s, "Press ENTER: "); s.state = BULLETIN; }
+    else if (cmd == "W") { std::vector<String> rows; rows.push_back(""); whoRows(s, rows); rows.push_back(""); openRows(s, rows, "Who is online", "", mainMenu); }
     else if (cmd == "U") { s.userPage = 0; userList(s); }
     else if (cmd == "M") { messageArea(s); }
     else if (cmd == "N") { readNew(s); }
     else if (cmd == "C") { chatEntry(s); }
     else if (cmd == "J") { areaList(s); }
-    else if (cmd == "P") {
+    else if (cmd == "O") {
       bool sent = false;
       for (auto &n : sessions) {
         if (!n.used || &n == &s || !isSysop(n)) continue;
@@ -73,21 +109,27 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
         n.paged = true; n.pageNode = s.node; n.pageUser = s.user.id; sent = true;
       }
       say(s, sent ? "Paging the SysOp... stay on the line." : "The SysOp is not online.");
-      s.state = BULLETIN; prompt(s, "Press ENTER: ");
+      s.state = BULLETIN; prompt(s, "Press any key: ");
     }
     else if (cmd == "S") {
-      say(s, "System: " + board.name + (board.location.length() ? " // " + board.location : String()) + " // " + clockText(boardNow(), true));
-      say(s, "SysOp: " + board.sysop + "  Nodes: " + String(board.maxNodes) + "  Messages: " + String((unsigned long)historyCount + nextMessageId - 1));
-      say(s, "\r\n\x1b[1;36mYour stats\x1b[0m  Calls " + String(s.user.calls) + "  Messages " + s.user.messages +
+      std::vector<String> rows;
+      rows.push_back("");
+      rows.push_back("System: " + board.name + (board.location.length() ? " // " + board.location : String()) + " // " + clockText(boardNow(), true));
+      rows.push_back("SysOp: " + board.sysop + "  Nodes: " + String(board.maxNodes) + "  Messages: " + String((unsigned long)historyCount + nextMessageId - 1));
+      rows.push_back("");
+      rows.push_back("\x1b[1;36mYour stats\x1b[0m  Calls " + String(s.user.calls) + "  Messages " + s.user.messages +
              "  Uploaded " + sizeText(s.user.uploadBytes) + "  Downloaded " + sizeText(s.user.downloadBytes) + " (" + s.user.downloads + " files)");
-      say(s, "Download credit: " + creditText(s.user) + (board.creditsPerMessage ? "  Each message posted earns " + sizeText(board.creditsPerMessage) + "." : String()));
-      s.state = BULLETIN; prompt(s, "Press ENTER: ");
+      rows.push_back("Download credit: " + creditText(s.user) + (board.creditsPerMessage ? "  Each message posted earns " + sizeText(board.creditsPerMessage) + "." : String()));
+      rows.push_back("");
+      openRows(s, rows, "System info", "", mainMenu);
     }
     else if (cmd == "A") { ansiGallery(s); }
     else if (cmd == "F") { s.galleryCabinet = false; fileMenu(s); }
     else if (cmd == "D" && anyDoorOpen(s)) { doorMenu(s); }
     else if (cmd == "R" && manifestListed(s)) { enterManifest(s); }
-    else if (cmd == "?" || cmd == "H") { say(s, "Type a command and press ENTER. Q backs out of most menus."); if (isSysop(s)) say(s, "USER opens the user editor."); s.state = BULLETIN; prompt(s, "Press ENTER: "); }
+    else if (cmd == "?") { keysHelp(s); }
+    else if (cmd == "X") { mainMenu(s); }
+    else if (cmd == "Q") { say(s, "This is the main menu. G logs off."); prompt(s, "Main Board Command? "); }
     else if (cmd == "Z" && isSysop(s)) { sysopMenu(s); }
     else if (cmd == "RELOAD" && isSysop(s)) { say(s, "Settings reloaded: " + loadSettings() + "."); say(s, "Network settings take effect after a restart."); prompt(s, "Main Board Command? "); }
     else if (cmd == "USER" && isSysop(s)) { sysopUsers(s); }
@@ -119,19 +161,24 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
   }
   if (s.state == USER_LIST) {
     if (cmd == "Q") { mainMenu(s); return true; }
+    if (cmd == "X") { mainMenu(s); return true; }
+    if (cmd == "?") { keysHelp(s); return true; }
     if (cmd == "Z" && isSysop(s)) { sysopUsers(s); return true; }
     uint16_t pages = userListPages();
     if (cmd == "P" && s.userPage) s.userPage--;
-    else if (!cmd.length() && s.userPage + 1 < pages) s.userPage++;
+    else if ((cmd == "N" || !cmd.length()) && s.userPage + 1 < pages) s.userPage++;
     userList(s); return true;
   }
   if (s.state == BULLETIN_LIST) {
     uint32_t n;
-    if (!line.length() || cmd == "Q") { mainMenu(s); return true; }
+    if (cmd == "Q") { mainMenu(s); return true; }
+    if (cmd == "X") { mainMenu(s); return true; }
+    if (cmd == "?") { keysHelp(s); return true; }
+    if (!line.length()) { bulletinMenu(s); return true; }
     const Bulletin *b = readNumber(line, n) ? visibleBulletin(s, n) : nullptr;
-    if (!b) say(s, "No such bulletin.");
-    else showBulletin(s, *b);
-    prompt(s, "Bulletin # (ENTER = back): "); return true;
+    if (!b) { say(s, "No such bulletin."); prompt(s, "Bulletin #, then ENTER (Q = back): "); }
+    else openBulletin(s, *b);
+    return true;
   }
   if (s.state == CHAT) { chatCommand(s, line, cmd); return true; }
   return false;

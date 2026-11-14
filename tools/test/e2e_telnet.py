@@ -208,8 +208,8 @@ def sync(c):
 def read_msg(c, n, marker):
     """Message command? -> read message n (a number, or a subject from the list R shows), see `marker`."""
     start = len(c.all)
-    c.send("R")
-    c.expect("Read #", timeout=10)
+    c.send("L")
+    c.expect("Message #", timeout=10)
     if isinstance(n, str):
         rows = re.findall(r"^\s*\*?\s*(\d+)\s.*?" + re.escape(n) + r"\s*$", c.all[start:], re.M)
         if not rows:
@@ -217,13 +217,10 @@ def read_msg(c, n, marker):
         n = rows[-1]
     c.send(str(n))
     c.expect(marker, timeout=15)
-    # Short messages end on a line prompt; long ones open the reader, which takes single keys.
-    hit = c.expect("ENTER = next", "Q quit", timeout=10)
+    # Every message opens in the pager (Q20 UX, contract C4); Q goes back to the area menu.
+    c.expect("Q back", timeout=10)
     time.sleep(0.3)
-    if hit == "Q quit":
-        key(c, "q")
-    else:
-        c.send("Q")
+    key(c, "q")
     c.expect("Message command?", timeout=10)
     c.buf = ""
     time.sleep(0.3)
@@ -257,7 +254,7 @@ def pick_file_area(c, name):
     """Main Board Command? -> F -> the area `name`, at File command?."""
     start = len(c.all)
     c.send("F")
-    c.expect("File area?", timeout=15)
+    c.expect("File area #", timeout=15)
     c.send(number_of(c, start, name))
     c.expect("File command?", timeout=15)
     return len(c.all)
@@ -422,8 +419,8 @@ def main():
         c.send(password)
         # Bulletins, then the main menu; the first scene may take the screen.
         for _ in range(6):
-            hit = c.expect("Press ENTER", "Main Board Command?", "not on the crew list", timeout=30)
-            if hit == "Press ENTER":
+            hit = c.expect("Press any key", "Main Board Command?", "not on the crew list", timeout=30)
+            if hit == "Press any key":
                 c.send("")
             else:
                 state["pending_hit"] = hit
@@ -502,9 +499,9 @@ def main():
         start = len(c.all)
         c.send("M")
         c.expect("Message command?", timeout=15)
-        if "post a message" not in c.all[start:].lower():
+        if "write a message" not in c.all[start:].lower():
             raise AssertionError("no Post option in the Lounge")
-        c.send("P")
+        c.send("W")
         c.expect("To (ENTER", timeout=10)
         c.send("")
         c.expect("Subject:")
@@ -517,8 +514,8 @@ def main():
         c.expect("Message command?", timeout=10)
         # Q12d, the act gates: posts after 22 Nov 13:52 do not exist yet for this caller.
         start = len(c.all)
-        c.send("R")
-        c.expect("Read #", timeout=10)
+        c.send("L")
+        c.expect("Message #", timeout=10)
         seg = c.all[start:]
         for hidden in ("Notice", "Module 3", "power bay", "from the seat"):
             if hidden in seg:
@@ -539,17 +536,17 @@ def main():
         seg = c.all[start:]
         if "Mission Log" not in seg:
             raise AssertionError("did not enter Mission Log")
-        if "post a message" in seg.lower():
+        if "write a message" in seg.lower():
             raise AssertionError("Post is offered in a read-only conference")
-        c.send("P")
+        c.send("W")
         c.expect("read-only", timeout=10)
         c.expect("Message command?", timeout=10)
-        c.send("R")
-        c.expect("Read #", timeout=10)
+        c.send("L")
+        c.expect("Message #", timeout=10)
         start = len(c.all)
         c.send("")
         c.expect("Cmdr. M. Halvorsen", timeout=15)
-        c.expect("ENTER = next", timeout=10)
+        c.expect("Q back", timeout=10)
         if "eply" in c.all[start:]:
             raise AssertionError("a reply key is offered in a read-only conference")
         c.send("Q")
@@ -566,7 +563,7 @@ def main():
         c = state["c"]
         start = len(c.all)
         c.send("F")
-        c.expect("File area?", timeout=15)
+        c.expect("File area #", timeout=15)
         seg = c.all[start:]
         if "Ty's Gallery" not in seg or "Library" not in seg:
             raise AssertionError("file areas missing: %r" % seg[-400:])
@@ -588,7 +585,7 @@ def main():
         key(c, "q")
         c.expect("File command?", timeout=15)
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("2")
         c.expect("File command?", timeout=15)
         seg = c.all[-1500:]
@@ -602,7 +599,7 @@ def main():
         key(c, "q")
         c.expect("File command?", timeout=15)
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
 
@@ -630,7 +627,7 @@ def main():
         start = len(c.all)
         c.send("M")
         c.expect("Message command?", timeout=15)
-        if "post a message" in c.all[start:].lower():
+        if "write a message" in c.all[start:].lower():
             raise AssertionError("a read-only crew account is offered Post")
         c.send("A")
         c.expect("Area #", timeout=10)
@@ -638,11 +635,11 @@ def main():
             raise AssertionError("Ty's mailbox is not listed on his own account")
         c.send("3")
         c.expect("Message command?", timeout=10)
-        c.send("R")
-        c.expect("Read #", timeout=10)
+        c.send("L")
+        c.expect("Message #", timeout=10)
         c.send("")
         c.expect("you are in SPACE", timeout=15)
-        c.expect("ENTER = next", timeout=10)
+        c.expect("Q back", timeout=10)
         c.send("Q")
         c.expect("Message command?", timeout=10)
         c.send("Q")
@@ -657,7 +654,7 @@ def main():
         c.expect("Password:")
         c.send(password)
         for _ in range(8):
-            hit = c.expect("Press ENTER", "Main Board Command?", timeout=40)
+            hit = c.expect("Press any key", "Main Board Command?", timeout=40)
             if hit == "Main Board Command?":
                 break
             c.send("")
@@ -684,19 +681,19 @@ def main():
         def list_numbers(text):
             return [int(n) for n in re.findall(r"^[\s*]*(\d+)\s+\S", text, re.M)]
         start = len(c.all)
-        c.send("R")
-        c.expect("E = earlier", timeout=10)
+        c.send("L")
+        c.expect("P = earlier", timeout=10)
         newest = list_numbers(c.all[start:])
-        if "L = later" in c.all[start:]:
-            raise AssertionError("L = later is offered on the newest page")
+        if "N = later" in c.all[start:]:
+            raise AssertionError("N = later is offered on the newest page")
         start = len(c.all)
-        c.send("E")
-        c.expect("L = later", timeout=10)
+        c.send("P")
+        c.expect("N = later", timeout=10)
         earlier = list_numbers(c.all[start:])
         if not newest or not earlier or max(earlier) >= min(newest):
             raise AssertionError("E did not list the messages before the newest page: %r %r" % (newest, earlier))
-        c.send("L")
-        c.expect("E = earlier", timeout=10)
+        c.send("N")
+        c.expect("P = earlier", timeout=10)
         c.send("Q")
         c.expect("Message command?", timeout=10)
         # numbers: Q12d put Ty's "brb" and ELIZA's reply on 6 Nov, two places before these
@@ -705,8 +702,8 @@ def main():
             read_msg(c, n, marker)
         # act 3 (2 Dec onward) waits for Achterberg's account (Q12d)
         start = len(c.all)
-        c.send("R")
-        c.expect("Read #", timeout=10)
+        c.send("L")
+        c.expect("Message #", timeout=10)
         if "Dr. Tanabe" in c.all[start:] or "from the seat" in c.all[start:]:
             raise AssertionError("an act 3 post is listed before the CHAOS visit")
         c.send("Q")
@@ -767,7 +764,7 @@ def main():
         key(c, "q")
         c.expect("File command?", timeout=15)
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
 
@@ -797,14 +794,14 @@ def main():
                 advance(c, "Main Board Command?", timeout=60)
                 pos = pick_file_area(c, "Ship Logs")
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
         pos = pick_file_area(c, "Records")
         open_file(c, number_of(c, pos - 3000, "BUDGET.MEM"), "RETURN CAPSULE: CUT")
         open_file(c, number_of(c, pos - 3000, "PROSPECT.TXT"), "YOUR DATA. OUR ORBIT")
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         if "Ty's Desktop" in c.all[-1500:] or "Archive" in c.all[-1500:]:
             raise AssertionError("a closed area is listed")
         c.send("Q")
@@ -885,7 +882,7 @@ def main():
         c.expect("Password:")
         c.send(password)
         for _ in range(8):
-            if c.expect("Press ENTER", "Main Board Command?", timeout=40) == "Main Board Command?":
+            if c.expect("Press any key", "Main Board Command?", timeout=40) == "Main Board Command?":
                 break
             c.send("")
         c.send("M")
@@ -918,7 +915,7 @@ def main():
         if code != "NW1-98-44-17":
             raise AssertionError("the pieces give %r" % code)
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
 
@@ -953,7 +950,7 @@ def main():
         read_tune(c, number_of(c, pos - 3000, "HARBOUR.MOD"), "harbour (not done)", "bay 3 is so quiet")
         open_file(c, number_of(c, pos - 3000, "TYDEMO.NFO"), "NOT DONE")     # Q11: starts Ty's demo scene
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("Q")
         advance(c, "tyv presents", timeout=60)                              # the scene waits for a calm prompt
         advance(c, "it starts with the", timeout=90)                        # the crash is at the same place every time
@@ -965,7 +962,7 @@ def main():
         c.expect("Password:")
         c.send(password)
         for _ in range(8):
-            if c.expect("Press ENTER", "Main Board Command?", timeout=40) == "Main Board Command?":
+            if c.expect("Press any key", "Main Board Command?", timeout=40) == "Main Board Command?":
                 break
             c.send("")
 
@@ -1082,7 +1079,7 @@ def main():
     def post(c, subject, lines):
         c.send("M")
         c.expect("Message command?", timeout=15)
-        c.send("P")
+        c.send("W")
         c.expect("To (ENTER", timeout=10)
         c.send("")
         c.expect("Subject:")
@@ -1110,7 +1107,7 @@ def main():
         # one long typed line overruns too (playtest run 5 typed it that way); the scene plays only once
         c.send("M")                                   # the line overruns as it is typed: no /S needed
         c.expect("Message command?", timeout=15)
-        c.send("P")
+        c.send("W")
         c.expect("To (ENTER", timeout=10)
         c.send("")
         c.expect("Subject:")
@@ -1124,8 +1121,8 @@ def main():
         start = len(c.all)
         c.send("M")
         c.expect("Message command?", timeout=15)
-        c.send("R")
-        c.expect("Read #", timeout=10)
+        c.send("L")
+        c.expect("Message #", timeout=10)
         seg = c.all[start:]
         if "e2e zeros 19" not in seg or "e2e zeros 20" in seg or "e2e zeros long" in seg:
             raise AssertionError("the near miss must be posted and the overrun swallowed: %r" % seg[-800:])
@@ -1171,7 +1168,7 @@ def main():
         pos = pick_file_area(c, "Commander's Desk")
         open_file(c, number_of(c, pos - 3000, "HANDBOOK.TXT"), "MEMORY CHECK (MEMCHK)")
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
         if ("Back to " + handle) not in c.all[-6000:]:
@@ -1180,7 +1177,7 @@ def main():
         advance(c, "Main Board Command?", timeout=150)
         start = len(c.all)
         c.send("F")
-        c.expect("File area?", timeout=15)
+        c.expect("File area #", timeout=15)
         if "Commander's Desk" in c.all[start:] or "Engineering" in c.all[start:]:
             raise AssertionError("the Commander's desk or Engineering is listed on the own account")
         c.send("Q")
@@ -1220,7 +1217,7 @@ def main():
         open_file(c, number_of(c, pos - 3000, "GOLIVE.TXT"), "KESTREL4")
         open_file(c, number_of(c, pos - 3000, "STANDING.TXT"), "THE CREW ARE THE COST")
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
         c.send("Z")
@@ -1257,7 +1254,7 @@ def main():
         pos = pick_file_area(c, "Mission Computer")
         open_file(c, number_of(c, pos - 3000, "OPSLOG.TXT"), "Standing order 5")
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
         c.send("D")
@@ -1393,7 +1390,7 @@ def main():
         c.expect("Password:")
         c.send(password)
         for _ in range(6):
-            if c.expect("Press ENTER", "Main Board Command?", timeout=30) == "Main Board Command?":
+            if c.expect("Press any key", "Main Board Command?", timeout=30) == "Main Board Command?":
                 break
             c.send("")
         state["c"] = c
@@ -1497,8 +1494,8 @@ def main():
         c2.send(password)
         hit = ""
         for _ in range(6):
-            hit = c2.expect("Press ENTER", "Where is the crew", "Main Board Command?", timeout=40)
-            if hit != "Press ENTER":
+            hit = c2.expect("Press any key", "Where is the crew", "Main Board Command?", timeout=40)
+            if hit != "Press any key":
                 break
             c2.send("")
         if hit != "Where is the crew":
@@ -1509,7 +1506,7 @@ def main():
         state["c2"] = c2
         start = len(c2.all)
         c2.send("W")
-        c2.expect("Press ENTER", timeout=15)
+        c2.expect("Press any key", timeout=15)
         seg = c2.all[start:]
         if handle not in seg or "On the crew list" not in seg or "28y" not in seg:
             raise AssertionError("no sticky row for %s: %r" % (handle, seg[-300:]))
@@ -1526,7 +1523,7 @@ def main():
         c.expect("Password:")
         c.send(password)
         for _ in range(6):
-            if c.expect("Press ENTER", "Main Board Command?", timeout=30) == "Main Board Command?":
+            if c.expect("Press any key", "Main Board Command?", timeout=30) == "Main Board Command?":
                 break
             c.send("")
         state["c"] = c
@@ -1570,7 +1567,7 @@ def main():
         c2 = state["c2"]
         start = len(c2.all)
         c2.send("W")
-        c2.expect("Press ENTER", timeout=15)
+        c2.expect("Press any key", timeout=15)
         seg = c2.all[start:]
         if handle not in seg or "Downlink open" not in seg:
             raise AssertionError("sticky row not updated: %r" % seg[-300:])
@@ -1582,7 +1579,7 @@ def main():
         state["c"].expect("Password:")
         state["c"].send(password)
         for _ in range(6):
-            if state["c"].expect("Press ENTER", "Main Board Command?", timeout=30) == "Main Board Command?":
+            if state["c"].expect("Press any key", "Main Board Command?", timeout=30) == "Main Board Command?":
                 break
             state["c"].send("")
     @step("after sending, the next login brings a private message from OH9ZQW")
@@ -1638,14 +1635,14 @@ def main():
         open_file(c, number_of(c, pos - 3000, "BROCHURE.TXT"), "waterslide")
         open_file(c, number_of(c, pos - 3000, "NODELIST.TXT"), "Sublevel_2")
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
         pos = pick_file_area(c, "Records")
         open_file(c, number_of(c, pos - 3000, "Y2K.MEM"), "YEAR 2000")
         open_file(c, number_of(c, pos - 3000, "TARIFF.TXT"), "ORBIT CLUB")
         c.send("Q")
-        c.expect("File area?", timeout=10)
+        c.expect("File area #", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
 
@@ -1711,7 +1708,7 @@ def main():
         c.expect("Password:")
         c.send(password)
         for _ in range(6):
-            if c.expect("Press ENTER", "Main Board Command?", timeout=30) == "Main Board Command?":
+            if c.expect("Press any key", "Main Board Command?", timeout=30) == "Main Board Command?":
                 break
             c.send("")
     @step("a registered caller skips the prologue and has no timer")
@@ -1721,7 +1718,7 @@ def main():
         c.send(handle)
         c.expect("Password:")
         c.send(password)   # a second login of the account takes over the first session
-        hit = c.expect("Press ENTER", "Main Board Command?", "SHIP>", timeout=20)
+        hit = c.expect("Press any key", "Main Board Command?", "SHIP>", timeout=20)
         if hit == "SHIP>":
             raise AssertionError("a registered caller was sent to the ship console")
         time.sleep(args.timer + 3)
@@ -1762,7 +1759,7 @@ def main():
         c.send(who)
         c.expect("Password:")
         c.send(pw)
-        c.expect("Press ENTER", "Main Board Command?", timeout=20)
+        c.expect("Press any key", "Main Board Command?", timeout=20)
         c.close()
 
     for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act3_posts, act2_desktop, doors_menu, diag, doors_leave, m5_overrun, m6_early, m6_cure, m6_grant, sysvw_read, m7_eliza, shell, eliza_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, eero_mail, egg_modem, egg_hidden, egg_files, egg_chat, egg_snake, egg_hangup, registered, second, bye, crew):

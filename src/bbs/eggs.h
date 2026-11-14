@@ -21,7 +21,7 @@ static void eggPrompt(Session &s) {
     case LOGIN_CHOICE: prompt(s, "(N)ew user, (L)ogin, or (G)oodbye? "); break;
     case LOGIN_HANDLE: prompt(s, powerEnabled ? "Login: " : "Handle: "); break;
     case DOOR_MENU: prompt(s, "Door command? "); break;
-    case BULLETIN: prompt(s, "Press ENTER: "); break;
+    case BULLETIN: prompt(s, "Press any key: "); break;
     default: prompt(s, "Main Board Command? "); break;
   }
 }
