@@ -898,7 +898,9 @@ def main():
         advance(c, "tell them the", timeout=150)
         time.sleep(0.3)
         c.send("")
-        advance(c, "Main Board Command?", timeout=60)
+        advance(c, "Message command?", timeout=60)   # Q20 UX: the scene ends in the message menu it began in
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=15)
         # the four pieces, out of order by name and unnumbered (Q18): the order is in the text,
         # where each sentence runs on from one strip to the next
         pos = pick_file_area(c, "Archive")
