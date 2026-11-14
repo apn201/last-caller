@@ -47,7 +47,8 @@ static void brownoutLogin(Session &s) {
   powerScreen(s, powerBannerPlayed ? "REBOOT" : "BOOT");
   powerBannerPlayed = true;
   // Q20: the front page says what this is, and after CREW that the account is made. After the art, which clears the screen.
-  if (powerCfg.frontHint.length()) { String h = powerCfg.frontHint; h.replace("|", "\r\n"); say(s, s.ansi ? "\x1b[0;33m" + h + "\x1b[0m" : h); }
+  // Critic round 4: not again on a line that has signed in to an own account (after L, G or a crew visit).
+  if (powerCfg.frontHint.length() && !s.ownUserId) { String h = powerCfg.frontHint; h.replace("|", "\r\n"); say(s, s.ansi ? "\x1b[0;33m" + h + "\x1b[0m" : h); }
   if (s.loginNote.length()) { String n = s.loginNote; n.replace("|", "\r\n"); say(s, s.ansi ? "\x1b[1;32m" + n + "\x1b[0m" : n); s.loginNote = ""; }
   s.state = LOGIN_HANDLE;
   prompt(s, "Login: ");

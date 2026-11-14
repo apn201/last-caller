@@ -110,11 +110,12 @@ def key(c, text):
 
 
 def advance(c, marker, timeout=120.0):
-    """Press Enter now and then (it skips a scene's typing and pauses) until `marker` appears."""
+    """Press Enter now and then (it skips a scene's typing and pauses) until `marker` appears.
+    Every 2.5 s: a waiting page or scene starts only after two quiet seconds (core/haunt.h, Q20)."""
     end = time.time() + timeout
     while True:
         try:
-            return c.expect(marker, timeout=1.0)
+            return c.expect(marker, timeout=2.5)
         except TimeoutError:
             if time.time() > end:
                 raise

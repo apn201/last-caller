@@ -232,6 +232,8 @@ static void hauntTick(uint32_t now) {
     s.hauntIdleSec = idle;
     if (!hauntMinutesAt.empty() && hauntCrossed(hauntMinutesAt, s.hauntMinute, minutes)) hauntEvent(s, haunt::EV_MINUTES, "", minutes);
     s.hauntMinute = minutes;
-    if (!s.hauntShows.empty() && hauntCalm(s)) hauntShow(s);
+    // Q20 (critic round 4): a waiting show starts only after two quiet seconds, so it never lands on
+    // a key the caller is typing (a letter on a scene's [any key] wait was used up).
+    if (!s.hauntShows.empty() && hauntCalm(s) && now - s.lastAt >= 2000) hauntShow(s);
   }
 }
