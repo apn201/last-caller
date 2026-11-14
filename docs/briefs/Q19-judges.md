@@ -53,6 +53,15 @@ Juha's framing for the judges (14 Nov 2026), to shape the text:
   `docs/CONTENT_POLICY.md` and the content scripts in `tools/`). Do not
   bolt on a dataset (NASA or other) just to tick the box; it would feel
   artificial.
+- Proof that the engine is a real, usable BBS and not only a game:
+  `kouvosto.helppox.com` runs the same TinyBBS engine as an ordinary board,
+  seeded with about 1000 real FidoNet messages (the `tools/fidonet-seed.py`
+  history). Name it in the Devpost text and README as the reference board,
+  next to `halcyon.helppox.com` (the game). The FidoNet archive is also the
+  honest answer to "public resources": real BBS history, reused. Check its
+  source and licence in `docs/CONTENT_POLICY.md` before describing it. The
+  judges may look at the Kouvosto board's front page as a judge would
+  (read only, no posting).
 - The Devpost form answers carry most of the weight: a judge must
   understand in the first paragraph what this is, who it is for and why
   it matters.
