@@ -216,3 +216,30 @@ were already fixed and by which commit.
    for every account kind (own, crew, admin console, SysOp) and list
    anything else whose letters change with the account. Put engine items
    on the TinyBBS port list.
+
+## Addition 6 (Juha, 14 Nov 2026) - known crew passwords, and L on the own account
+
+This replaces item 2 of Addition 5 where they differ.
+
+1. **The notebook remembers a crew password once it has worked.** After
+   the caller's first successful login to a crew account (Ty first), the
+   manifest notebook shows that account and its password. Finding the
+   password stays the puzzle; typing it again is only friction.
+2. **L on the own account becomes a crew list.** "Log in as another"
+   lists the crew accounts the caller has already opened (and the
+   option to type any handle, for the ones not found yet). Picking a
+   known one logs in without asking the password; a new one asks the
+   handle and password as now. The knowledge lives on the caller's own
+   account (the `VISIT_*` flags or similar that the crew login carries),
+   never on the crew account.
+3. **On a crew account there is no L.** Crew accounts are shared by every
+   caller (multi-node), so "return to the previous account" cannot work
+   there. G is the way back: it ends the crew visit and returns to
+   `Login:` keeping the line, and the caller logs in to the own account.
+   Say that on the crew account's menu (for example
+   `[G] Goodbye - back to Login: for your own account`) and once at the
+   crew login. R on a crew login follows Addition 5 item 2 (read-only
+   with a reason, or left out with a note).
+4. The story lint, the e2e and `docs/MENU_AUDIT.md` follow. A crew account
+   whose password is part of a later puzzle stays a puzzle until its first
+   login. The real `SYSOP` flag is never granted.
