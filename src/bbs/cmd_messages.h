@@ -18,7 +18,7 @@ static bool messageCommand(Session &s, String &line, const String &cmd) {
   if (s.state == MSG_MENU) {
     if (cmd == "L") listMessages(s);
     else if (cmd == "N") readNew(s);
-    else if (cmd == "W" && canPost(s)) startPost(s);
+    else if (cmd == "W") startPost(s);   // where posting is closed it says so (readOnlyNotice)
     else if (cmd == "A" && severalAreas(s.user)) areaList(s);
     else if (cmd == "Q" || cmd == "X") mainMenu(s);
     else if (cmd == "?") keysHelp(s);
