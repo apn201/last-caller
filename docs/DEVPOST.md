@@ -55,6 +55,15 @@ possible. The BBS core does not know how bytes reach it. Telnet and the
 browser are two transports into the same core, and a mesh link would be a
 third.
 
+Why a game and not a utility? One reason was Kiro. A utility is mostly
+tested by checking that its functions work. A game has to work on every
+level at once: the story, the gameplay, the puzzles and the technical
+implementation. If one of them fails, the whole game fails. So I thought a
+game would test Kiro's abilities better than a utility, and it did force
+testing on all of those levels: playtester and critic agents for the story
+and puzzles, usability testers for the interface, and property tests and an
+end to end script for the code.
+
 ## What it does
 
 The core of the project is TinyBBS (fully built within the hackathon
@@ -214,7 +223,10 @@ and the property test.
 
 **Custom agents.** ghostwriter (crew posts in each voice), puzzle-smith
 (hints and gates), firmware-guard (keeps ESP32 and Linux headers out of the
-core) and playtester.
+core) and playtester. Later two adventure-game critics who score the story
+and puzzles, and two usability testers who never used a BBS and score the
+interface on the System Usability Scale. Each starts with an empty memory
+and a new caller account.
 
 **MCP.** I wrote a small MCP server, `bbs-caller`, that dials the board
 over Telnet and returns the screen as text. Through it the playtester agent
