@@ -1264,7 +1264,13 @@ def main():
         c = state["c"]
         sync(c)
         c.send("L")
-        c.expect("Login:", timeout=15)
+        if c.expect("Login:", "LOG IN AS ANOTHER", timeout=15) != "Login:":
+            # Q20 (Addition 6): the crew accounts already opened are listed; ELIZA is not one of them yet.
+            c.expect("no ENTER", timeout=10)
+            if "] ELIZA" in c.all[-600:]:
+                raise AssertionError("ELIZA is listed before her first login")
+            key(c, "A")
+            c.expect("Login:", timeout=15)
         c.send("ELIZA")
         c.expect("Password:")
         c.send("ELIZA")
