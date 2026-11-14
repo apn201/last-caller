@@ -142,3 +142,16 @@ puzzle: do not name the RTG, the switch or the command. Card text only
 (`sd/BBS/`), ANSI via `tools/ansi/` if the art changes; story lint and the
 e2e must still pass. Note it in `docs/ACTION_PLAN.md` area 2 (already marked
 DECIDED) and in the UX-LOOP round 2 fixes.
+
+## Addition 2 (Juha, 14 Nov 2026) - fix everything, then round 2
+
+- Fix every round-1 finding before round 2, the game ones too: the login
+  hint above, and the old power-fault screen that returns after CREW (say
+  plainly that the account is made and what to do next). Then run UX
+  round 2 and carry on the loop as written.
+- Everything that is not HALCYON story (engine, menus, keys, pager, prompts,
+  chat, doors such as Snake, the browser terminal, the e2e and caller
+  tools) goes on the "Port to TinyBBS" list in `docs/PLATFORM_UX.md` as you
+  make it, with its commits and files, not only at the end. Update the list
+  after every round, so nothing found in testing is lost for `../TinyBBS`.
+  Still do not edit `../TinyBBS` in this item.
