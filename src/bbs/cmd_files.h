@@ -53,7 +53,7 @@ static bool fileCommand(Session &s, String &line, const String &cmd) {
     }
     if (cmd == "V" || (cmd == "D" && s.web && fileAreas[s.fileArea].downloads)) {   // the key alone asks for the number
       s.askKey = cmd[0]; s.state = FILE_ASK;
-      prompt(s, String(cmd == "V" ? "View" : "Download") + " which file #, then ENTER (Q = cancel): ");
+      prompt(s, String(cmd == "V" ? "View" : "Download") + " which file #, then ENTER (Q cancels at once): ");
       return true;
     }
     // A number alone opens it: a folder is entered, a file is viewed.

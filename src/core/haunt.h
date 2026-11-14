@@ -20,6 +20,7 @@ static std::vector<uint32_t> hauntIdleAt, hauntMinutesAt;  // after= values of t
 
 static void sceneStart(Session &s, const String &name);  // core/scene.h
 static void ghostTrigger(Session &s, const std::string &ruleId, const std::string &flags);  // core/ghost.h
+static void eggPrompt(Session &s);  // bbs/eggs.h: the prompt the caller was at, drawn again
 
 static std::string hauntStd(const String &s) { return std::string(s.c_str(), s.length()); }
 static String hauntStr(const std::string &s) { return String(s.c_str()); }
@@ -195,8 +196,10 @@ static void hauntShow(Session &s) {
   if (s.sceneHold) return;
   std::vector<HauntShow> shows;
   shows.swap(s.hauntShows);
+  bool shown = false;   // Q20 UX: a page printed under a prompt draws that prompt again
   for (size_t i = 0; i < shows.size(); ++i) {
     const HauntShow &h = shows[i];
+    shown |= h.text.length() || h.art.length();
     if (h.text.length()) {
       String text = h.text; text.replace("|", "\r\n  ");
       say(s, "\r\n\x1b[1;33m" + h.from + ":\x1b[0;33m " + text + "\x1b[0m");
@@ -214,6 +217,7 @@ static void hauntShow(Session &s) {
       }
     }
   }
+  if (shown) { write(s, "\r\n"); eggPrompt(s); }
 }
 
 // Did the count go past one of the thresholds since the last look?

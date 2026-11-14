@@ -21,7 +21,7 @@ static void mainMenu(Session &s) {
   items.push_back({"A", "ANSI gallery"});
   if (anyDoorOpen(s)) items.push_back({"D", "Doors & games"});
   if (manifestListed(s)) items.push_back({"R", "Crew manifest"});
-  items.push_back({"C", "Node chat"});
+  items.push_back({"C", "Chat: SysOp, callers"});
   if (bulletins) items.push_back({"B", "Bulletins"});
   if (severalAreas(s.user)) items.push_back({"J", "Conferences"});
   items.push_back({"W", "Who is online"});
@@ -39,6 +39,11 @@ static void mainMenu(Session &s) {
   showMenu(s, "MAIN", items, board.name + " // MAIN BOARD");
   // SYSOP view (milestone M6) opens reading and nothing else: one line tells the caller what changed.
   if (hasFlag(s.user, "SYSVW")) say(s, s.ansi ? "\x1b[0;33mSYSOP view is on: every area is open to read.\x1b[0m" : "SYSOP view is on: every area is open to read.");
+  // Q20 UX: the one rule a new caller needs, once per call, under the first main menu.
+  if (s.menusSeen.indexOf("|KEYHINT|") < 0) {
+    s.menusSeen += "|KEYHINT|";
+    say(s, s.ansi ? "\x1b[0;36mPress a letter. No ENTER needed. ? shows the keys, X comes back here.\x1b[0m" : "Press a letter. No ENTER needed. ? shows the keys, X comes back here.");
+  }
   prompt(s, "\x1b[1;33mMain Board Command? \x1b[0m");
 }
 // The gallery's G browses the first file area whose folder name has ANSI in it.

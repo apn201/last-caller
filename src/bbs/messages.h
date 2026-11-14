@@ -161,7 +161,7 @@ static void areaList(Session &s) {
            (fresh ? ", \x1b[1;32m" + String(fresh) + " new\x1b[0m" : String()) + ")" +
            (c.description.length() ? "  " + c.description : String()));
   }
-  prompt(s, "Area #, then ENTER (Q = back, now in " + confName(s.conference) + "): ");
+  prompt(s, "Area #, then ENTER (Q goes back at once; now in " + confName(s.conference) + "): ");
 }
 static void messageArea(Session &s) {
   s.state = MSG_MENU; activity(s, "MESSAGES");

@@ -36,7 +36,8 @@ are allowed: they never appear on screen.
 | R | the caller can save (not a crew login, not `admin`) and holds evidence about at least one crew row (`STORY/MANIFEST.INI`) | Q6. G with an unfinished manifest shows ELIZA's thanks (partial ending). |
 | Z | SysOp only | Hidden for the SysOp: `USER`, `RELOAD`. |
 | L | an own account (not a crew login, not `admin`) | Q12d: "Log in as another". Signs off to `Login:` and keeps the line, so a crew login after it reads the caller's own flags (the shell in ELIZA's menu needs `NOWHERE_OPEN` and `M_Z` from the own account). |
-| C | always | Q12d: for a caller (not the SysOp) node chat opens as the scene `ELZ_TALK`: numbered replies, the memory-check reply only with `OVR` and `CURE`; "Say something else." opens the typed chat (keywords, eggs). A card without the scene opens the chat directly. |
+| C | always | Label "Chat: SysOp, callers" (Q20 UX round 2: was "Node chat"). A lone Q, QUIT, EXIT or /Q leaves the typed chat. Q12d: for a caller (not the SysOp) node chat opens as the scene `ELZ_TALK`: numbered replies, the memory-check reply only with `OVR` and `CURE`; "Say something else." opens the typed chat (keywords, eggs). A card without the scene opens the chat directly. |
+| (hint line) | once per call, under the first main menu | Q20 UX round 2: "Press a letter. No ENTER needed. ? shows the keys, X comes back here." |
 | (marker line) | the caller holds `SYSVW` | Q12d: "SYSOP view is on: every area is open to read." No command comes with it. |
 
 ## Messages

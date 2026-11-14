@@ -22,6 +22,13 @@ static void eggPrompt(Session &s) {
     case LOGIN_HANDLE: prompt(s, powerEnabled ? "Login: " : "Handle: "); break;
     case DOOR_MENU: prompt(s, "Door command? "); break;
     case BULLETIN: prompt(s, "Press any key: "); break;
+    // Q20 UX: the other calm prompts a page may follow (core/haunt.h hauntShow).
+    case MSG_MENU: prompt(s, "Message command? "); break;
+    case FILE_MENU: prompt(s, "File area #, then ENTER: "); break;
+    case FILE_LIST: prompt(s, "File command? "); break;
+    case ANSI_GALLERY: prompt(s, "Gallery command? "); break;
+    case BULLETIN_LIST: prompt(s, "Bulletin #, then ENTER (Q goes back at once): "); break;
+    case JOIN_CONF: prompt(s, "Area #, then ENTER (Q goes back at once): "); break;
     default: prompt(s, "Main Board Command? "); break;
   }
 }

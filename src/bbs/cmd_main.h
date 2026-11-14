@@ -75,7 +75,7 @@ static void bulletinMenu(Session &s) {
   say(s, "\r\n\x1b[1;36mBULLETINS\x1b[0m");
   for (uint32_t i = 1; i <= count; ++i) say(s, "\x1b[1;33m[" + String(i) + "]\x1b[0m " + visibleBulletin(s, i)->title);
   s.state = BULLETIN_LIST;
-  prompt(s, "Bulletin #, then ENTER (Q = back): ");
+  prompt(s, "Bulletin #, then ENTER (Q goes back at once): ");
 }
 // C: node chat. A caller first meets ELIZA in the scene ELZ_TALK (numbered replies, STORY/SCENES);
 // its reply "Say something else" opens the typed chat (then=CHAT). A card without the scene, a
@@ -176,7 +176,7 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
     if (cmd == "?") { keysHelp(s); return true; }
     if (!line.length()) { bulletinMenu(s); return true; }
     const Bulletin *b = readNumber(line, n) ? visibleBulletin(s, n) : nullptr;
-    if (!b) { say(s, "No such bulletin."); prompt(s, "Bulletin #, then ENTER (Q = back): "); }
+    if (!b) { say(s, "No such bulletin."); prompt(s, "Bulletin #, then ENTER (Q goes back at once): "); }
     else openBulletin(s, *b);
     return true;
   }
