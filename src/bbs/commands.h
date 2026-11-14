@@ -59,7 +59,8 @@ static void input(Session &s, const String &bytes) {
     if (quiet) {
       if (c == '\r') { s.input = ""; s.ignoreNextLf = true; handleLine(s, ""); }
       else if (c == '\n') { if (s.ignoreNextLf) { s.ignoreNextLf = false; continue; } s.input = ""; handleLine(s, ""); }
-      else if ((uint8_t)c >= 32 && s.sceneRun.phase() == scene::P_KEY) { s.input = \   // not echoed now, not lost: played back after the scene
+      else if ((uint8_t)c >= 32 && s.sceneRun.phase() == scene::P_KEY) { s.input = ""; handleLine(s, ""); }   // [any key]: any key goes on
+      else if ((uint8_t)c >= 32 && s.typeAhead.length() < 24) s.typeAhead += c;   // not echoed now, not lost: played back after the scene
       continue;
     }
     // Q20 UX, contract C1: a letter at a menu acts at once. It waits hotkeyTick's moment first: a
