@@ -1322,7 +1322,7 @@ def main():
         c.expect("Crew manifest", timeout=15)
         c.expect("Main Board Command?")
 
-    @step("manifest: four crew rows, no ELIZA row, notebook lists what was found")
+    @step("manifest: four crew rows, no ELIZA row, notebook keeps what was shown (Q21)")
     def manifest_open():
         if not args.evidence:
             return need
@@ -1336,13 +1336,46 @@ def main():
                 raise AssertionError("row %s missing" % h)
         if "[5]" in seg:
             raise AssertionError("the ELIZA row is shown before the four crew rows are confirmed")
-        c.send("N")
+        key(c, "N")   # hot keys, no Enter: the notebook screens take single keys
         c.expect("NOTEBOOK")
-        c.expect("The commander")
         c.expect("MANIFEST>")
-        if "Logged in with 140374" not in c.all[start:]:
+        seg = c.all[start:]
+        kept = re.findall(r"(\d+) kept", seg)
+        if not kept or int(kept[-1]) < 5:
+            raise AssertionError("the notebook has kept almost nothing of what the evidence steps showed: %r" % seg[-300:])
+        if "[1]" not in seg or "Open" not in seg:
+            raise AssertionError("the notebook lists no numbered notes")
+        if "The commander" in seg:
+            raise AssertionError("the notebook still shows a conclusion written by the board")
+        key(c, "1")   # a note opens, says where it came from; Q comes back to the list
+        c.expect("NOTEBOOK")
+        c.expect("MANIFEST>")
+        key(c, "Q")
+        c.expect("MANIFEST>")
+        at = len(c.all)   # the logins that worked are their own page (Q20 Addition 6)
+        key(c, "L")
+        c.expect("LOGINS THAT WORKED")
+        c.expect("MANIFEST>")
+        if "Logged in with 140374" not in c.all[at:]:
             raise AssertionError("the notebook does not keep the crew password that worked (TYVANCE)")
-        c.send("Q")
+        key(c, "Q")
+        c.expect("MANIFEST>")
+        key(c, "S")   # a replay shows a scene again, saves nothing, and Q comes back to the scenes seen
+        c.expect("SCENES SEEN")
+        c.expect("MANIFEST>")
+        key(c, "1")
+        c.expect("Replay. Q goes back to the notebook.", timeout=15)
+        key(c, "Q")
+        c.expect("SCENES SEEN", timeout=15)
+        c.expect("MANIFEST>")
+        at = len(c.all)
+        key(c, "Q")   # scenes seen -> the notes again: the same count as before the replay
+        c.expect("kept")
+        c.expect("MANIFEST>")
+        again = re.findall(r"(\d+) kept", c.all[at:])
+        if not again or again[-1] != kept[-1]:
+            raise AssertionError("a replay changed the notebook: %s kept before, %r after" % (kept[-1], again))
+        key(c, "Q")
         c.expect("MANIFEST>")
 
     @step("manifest: one right row and one wrong row confirm nothing and name nothing")

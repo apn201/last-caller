@@ -38,7 +38,7 @@ are allowed: they never appear on screen.
 | Z | SysOp only | Hidden for the SysOp: `USER`, `RELOAD`. |
 | L | an own account (not a crew login, not `admin`) | Q12d: "Log in as another". Signs off to `Login:` and keeps the line, so a crew login after it reads the caller's own flags (the shell in ELIZA's menu needs `NOWHERE_OPEN` and `M_Z` from the own account). Q20 (Addition 6): once a crew account has opened for this caller (`KNOWN_<HANDLE>` on the own account), L lists those accounts: a number (no ENTER) logs in without the password, A goes to `Login:` for any other handle, Q or X back. With none known L goes straight to `Login:`. Never on a crew account. |
 | Y | a crew account, with the caller's own account signed in earlier on this line | Q18: "Back to <handle>", no password. |
-| (notebook) | manifest, N | Q20 (Addition 6): each crew account that has opened is written down with the card's password while it still opens the account: "Logged in with 140374. L on the main menu opens it." |
+| (notebook) | manifest, N | Q21: see the Manifest section. The crew logins that worked (Q20, Addition 6) are on the notebook's L page: "Logged in with 140374. L on the main menu opens it." |
 | C | always | Label "Chat with the SysOp" for a caller, "Node chat" for the SysOp (Q20 UX round 3; round 2 tried "Chat: SysOp, callers", and testers looked for callers that the scene hides behind "Something else"). A lone Q, QUIT, EXIT or /Q leaves the typed chat. Q12d: for a caller (not the SysOp) node chat opens as the scene `ELZ_TALK`: numbered replies, the memory-check reply only with `OVR` and `CURE`; "Say something else." opens the typed chat (keywords, eggs). A card without the scene opens the chat directly. |
 | (hint line) | once per call, under the first main menu | Q20 UX round 2: "Press a letter. No ENTER needed. ? shows the keys, X comes back here." |
 | (marker line) | the caller holds `SYSVW` | Q12d: "SYSOP view is on: every area is open to read." No command comes with it. |
@@ -112,7 +112,10 @@ are allowed: they never appear on screen.
 | Rows | row number, S, N, Q | S files the manifest. The ELIZA row is listed only after the four crew rows are locked. |
 | A row | 1 2 3, Q | A locked row offers no blank. |
 | Pick list | option number, 0, Q | Only options the caller has evidence for. |
-| Notebook | Q | Notes the caller has earned. |
+| Notebook (notes) | 1 to 6 open, N next page, P previous page, S scenes seen, L logins, Q back to the rows, X main menu | Q21: what the board has shown the caller (a message, a file, a picture, a scene line, a page of ELIZA's, an answer of Diagnostics or the shell), one short line each with its source, in the order seen, six to a page. Saved as flags `N_<ID>` on the caller's own account. S shows only when a scene has been seen, L only when a crew login has worked, N and P only when there is a next or previous page. The notebook keeps what was shown and adds nothing. |
+| Notebook (one note) | R show it again, N next, P previous, Q back to the list | The source, the line, and where to read it again (message: area and number; file: area and name). R is listed only for a note that can be replayed (a scene, a page of ELIZA's, a story picture) and only when the card still has it. |
+| Scenes seen | 1 to 9 replay, N, P, Q | Scene titles from `title=` in each scene file, newest last. A replay shows the scene as it was, saves nothing and changes no flag; choices are shown and followed but set nothing; Q (or the end) comes back to this list. |
+| Logins that worked | any key | The crew accounts that opened for this caller and their passwords (Q20, Addition 6). |
 | NOWHERE shell | final command | `release out-1122 ground-1` needs the full manifest (`M_Z`); otherwise it is `command not found`. With `M_Z` the verb with other arguments prints the usage line only, and `incident.rpt` exists. The door itself is listed only for a caller holding `NOWHERE_OPEN`, which the order code in Diagnostics grants (Q9). The `ENDING` scene follows. |
 
 ## Message areas (Q7)

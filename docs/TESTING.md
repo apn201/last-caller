@@ -63,7 +63,7 @@ Wording is draft. The real evidence flags come with the content (Q7 to Q9); unti
 
 1. As SysOp, user editor: add `KHI,KAI,KTI,KVI,KHF,KAF,KTF,KVF,KHC,KAC,KTC,KVC,KZI,KZO,KZW` to a test account (the e2e rule does this when Diagnostics is entered). For the endings also open the shell (`NOWHERE_OPEN`).
 2. Main menu: `R Crew manifest` appears only now (not on a crew login, not for `admin`).
-3. `R`: four rows, no ELIZA row. `N` is the notebook. Open a row, a blank, pick; `0` clears. Leave and sign in again: picks are kept.
+3. `R`: four rows, no ELIZA row. `N` is the notebook (Q21): the lines the board has shown, six to a page, `1` to `6` open one, `S` lists the scenes seen and a number replays one (Q comes back, nothing changes), `L` lists the crew logins that worked. Open a row, a blank, pick; `0` clears. Leave and sign in again: picks are kept.
 4. Fill one row right and another wrong, `S`: `Rows confirmed: 0 of 4.` and no names. Fill a second row right, `S`: the two are named and locked. Wrong rows are never named.
 5. Confirm all four: the ELIZA row opens. A wrong ELIZA row says only the count. Goodbye now: ELIZA thanks you for your interest (partial ending).
 6. Fill the ELIZA row right: `MANFULL` plays. Doors, `N`, `release outbound`: the `ENDING` scene. Leave it queued: you are on the crew list; another caller sees your handle in `W`. Run it again and send: return traffic, and `W` says the downlink is open.
