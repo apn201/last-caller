@@ -1107,7 +1107,9 @@ def main():
         post(c, "e2e zeros 20", ["0" * 10, "0" * 10])
         c.expect("MESSAGE LOST", timeout=10)
         advance(c, "lost my place", timeout=90)
-        advance(c, "Main Board Command?", timeout=60)
+        advance(c, "Message command?", timeout=60)   # Q20 UX: back in the message menu
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=15)
         # one long typed line overruns too (playtest run 5 typed it that way); the scene plays only once
         c.send("M")                                   # the line overruns as it is typed: no /S needed
         c.expect("Message command?", timeout=15)
