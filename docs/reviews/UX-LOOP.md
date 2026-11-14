@@ -17,6 +17,7 @@ inconsistency, or after round 4.
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | 14 Nov 2026 | cbb892f | 47.5 | 50 | 48.75 | none in keys; one S in both: no way to register on the front page (game, not platform) |
 | 2 | 14 Nov 2026 | 8a4c5f3 (Ulf), 395f0f5 (Ines) | 67.5 | 62.5 | 65 | none |
+| 3 | 14 Nov 2026 | 4cacb98 | 60 | 62.5 | 61.25 | none (Ulf rated one S: a dropped line at C, not reproduced) |
 
 ## Round 1
 
@@ -78,3 +79,25 @@ Two real findings came out of it and were fixed (191660b): X did not leave
 the Diagnostics door (`QUERY>`), and the pager bar cut the message keys at
 the right edge when the title was long (the keys now always fit; the title
 gives way, then the row counter).
+
+## Round 3
+
+Reports: `UX-r3-ulf.md`, `UX-r3-ines.md`, one tester at a time on one
+board. All 11 tasks done by both (Ines's chat only with ELIZA). The score did
+not move: the same first-five-minutes items dominate both reports (the
+prologue, ELIZA's scenes arriving over a prompt, chat), and both testers
+score the whole visit by them.
+
+| Finding | Who | Fix (7e8ff0f) |
+| --- | --- | --- |
+| An ELIZA scene came up over the "Bulletin #" prompt | both, M | scenes and pages wait for a menu prompt; never a number prompt (bulletin, area, file area) |
+| Menu says "Chat: SysOp, callers"; C opens ELIZA, callers are behind "Something else" | both, M | label "Chat with the SysOp" for callers, "Node chat" for the SysOp (who goes straight to it) |
+| Scene choices `> ` do not say whether ENTER is needed | Ulf, M | each choice list ends "Press a number, no ENTER." (and "Q leaves." where Q works) |
+| The password prompt shows nothing; did it take my keys? | Ines, L | a star per key |
+| The board closed the line the first time C was pressed | Ulf, S | not reproduced. The event log shows the client socket closed while the scene drew (`LOGOFF` from the socket check, no idle or lock path); the e2e opens C three times with no drop. Watch in round 4 |
+| A blank screen for 10 s after "Press any key for the Main Board" | Ulf, M | not reproduced with a crew login through the same tool |
+| Prologue, re-login after CREW, `[K]` in brackets | both, M and L | game; Juha's decision in `docs/ACTION_PLAN.md` area 2 |
+
+Checks after the fixes (7e8ff0f): `pio run` passed (RAM 62148 bytes, flash
+1647683 bytes), host tests 12 of 12, story lint 0 errors, staging check PASS
+(server build, ctest, e2e 63 of 63).
