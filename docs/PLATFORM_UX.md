@@ -81,6 +81,29 @@ caller is unsure), L = low (polish).
 | U25 | The slash commands of the editor (`/S /A /L /? /H /C /D /R`) are a third convention, next to letters and words. Fine for typing mode, but the footer does not say it. | editor | L |
 | U26 | Hidden words (AT..., XYZZY, FORTUNE, POST, REBOOT) are lines in a menu that otherwise takes keys. | main, doors | L |
 
+### 1.3 Letters by account kind (Q20 Addition 5, checked in the code on 14 Nov 2026)
+
+Four kinds: own (a caller's account), crew (a read-only story account: TYVANCE,
+CMDR, CHAOS, GARDEN, ELIZA), admin (the ship's maintenance login) and SysOp.
+A letter never means two things across kinds; only whether it is shown changes.
+
+| Screen | Key | Own | Crew | Admin | SysOp | Why it differs |
+| --- | --- | --- | --- | --- | --- | --- |
+| Main | L Log in as another | yes (a list once crew accounts have opened) | no | no menu | yes | A crew account is shared by every caller; G is its way back |
+| Main | Y Back to own | no | when the own account signed in earlier on the line | no menu | no | Only a crew visit has an own account to return to |
+| Main | G | Goodbye (hangs up) | "Goodbye (to Login:)" (keeps the line) | no menu (EXIT at SHIP>) | Goodbye | The crew G keeps the line so the visit's finds go to the own account; the label says so |
+| Main | R Crew manifest | with evidence | no (the crew login says the manifest is on the own account) | no menu | with evidence | A read-only account cannot file |
+| Main | C | "Chat with the SysOp" | same | no menu | "Node chat" | The SysOp has no ELIZA scene before the chat |
+| Main | O Page SysOp | when a SysOp is on | same | no menu | no | |
+| Main | Z SysOp console | no | no | no | yes | |
+| Messages | W write, R reply, K kill, E edit | where the area takes posts | no (W says why) | no menu | yes, everywhere | A read-only account saves nothing |
+| Files | U upload | browser, where uploads are on | no | no menu | yes | same |
+| Doors | doors that save (manifest, MUD) | yes | no | no menu | yes | `saves` in the door table |
+| SHIP> | words (HELP, STATUS, SOURCE RTG, CREW, EXIT) | no | no | yes | no | The prologue console, a line door |
+
+Nothing found here gives one letter two meanings. The open item was L and G on
+crew accounts (Addition 5 item 2), changed in ee6db49 and 916f58c.
+
 ## 2. Contract (what every screen promises, Telnet and browser alike)
 
 The same text is in `.kiro/steering/interaction.md`.
@@ -209,3 +232,7 @@ the port is its own item run inside that repository. "Engine" means port it;
 | P29 | A door's yes-or-no confirm is one key (the RTG `ACK>` takes K or aborts at once; the line says "PRESS K TO ACKNOWLEDGE. NO ENTER.") | d1e33c3 | `src/core/stream.h` (`hotkeyState`), `src/doors/ship.h`, `sd/BBS/STORY/SHIP.INI` | Engine rule (hotkey states for confirms); the ship door is HALCYON | Kouvosto doors with Y/N confirms: add their confirm state to `hotkeyState` |
 | P30 | (open, from round 4) Snake prompt should say moves need no ENTER | none yet | `src/doors/snake.h` | Engine | Ines typed moves with ENTER; one word in the prompt |
 | P31 | (open, from round 4) In node chat the caller's own line is echoed after a fast reply, so the order looks jumbled | none yet | `src/bbs/chat.h` | Engine | Low; check echo order when a scripted or SysOp reply comes in under 1 s |
+| P32 | One page, picture or scene per calm prompt; the rest wait for the caller's next command (a login never prints a pile of shows) | 093c8a3, 301fdbf | `src/core/haunt.h` (`hauntShow`), `tools/test/story_property_test.cpp` (P11), `tools/test/e2e_telnet.py` | Engine if the haunt engine exists | P11 reads the card's TRIGGERS.INI: HALCYON test, port the idea only |
+| P33 | "Log in as another" lists the accounts this caller has opened before (number, no ENTER; A for any handle), logging in without the password; the knowledge is a `KNOWN_<HANDLE>` flag on the caller's own account | ee6db49, 567e9f1 | `src/bbs/accounts.h` (`crewKnown*`), `src/bbs/cmd_main.h` (`crewPick`, `crewSwitch`, state `CREW_PICK`), `src/core/session.h`, `src/core/stream.h`, `src/bbs/commands.h` | HALCYON (crew accounts are story accounts); the switch-without-password is safe only for read-only accounts | TinyBBS has no read-only story accounts; do not port unless Kouvosto gets shared guest accounts |
+| P34 | A read-only shared account has no L; its G reads "Goodbye (to Login:)" and its login says once how it is left | ee6db49, 916f58c | `src/bbs/board.h` | Engine rule (labels say what a key does on that account; menu labels fit the column width, 20 characters in MAIN) | Kouvosto's guest account, if any |
+| P35 | Manifest notebook writes down the passwords of crew accounts that opened | ee6db49 | `src/doors/manifest.h` | HALCYON | Do not port |

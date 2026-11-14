@@ -29,14 +29,16 @@ are allowed: they never appear on screen.
 
 | Key | Shown when | Notes |
 | --- | --- | --- |
-| M, N, A, D, C, W, U, S, ?, G | always | W opens the node monitor (kick, M) for the SysOp. G on a read-only crew account logs off to the login prompt and keeps the line (Q2: what the visit found goes to the caller's own login). Q4: W lists ghosts too, with an Idle column; a ghost's node is "no caller on that node" for the monitor. |
+| M, N, A, D, C, W, U, S, ?, G | always | W opens the node monitor (kick, M) for the SysOp. G on a read-only crew account logs off to the login prompt and keeps the line (Q2: what the visit found goes to the caller's own login); Q20: there it reads "Goodbye (to Login:)", and the crew login says once "This is a crew account, read-only. G goes back to Login: for your own account." (plus the Y line when Y works, and "Your crew manifest is on your own account."). Q4: W lists ghosts too, with an Idle column; a ghost's node is "no caller on that node" for the monitor. |
 | F | an area is open to the caller (an empty upload area counts in the browser) | |
 | B | a bulletin is visible to the caller | |
 | J | more than one message area can be joined | Q7: a conference with a `required_flag` (Mail: TYVANCE, `VISIT_TY`) is listed only for callers who hold it, from the account flag field or the story record. |
 | O | a SysOp is online | Q20: was P. |
 | R | the caller can save (not a crew login, not `admin`) and holds evidence about at least one crew row (`STORY/MANIFEST.INI`) | Q6. G with an unfinished manifest shows ELIZA's thanks (partial ending). |
 | Z | SysOp only | Hidden for the SysOp: `USER`, `RELOAD`. |
-| L | an own account (not a crew login, not `admin`) | Q12d: "Log in as another". Signs off to `Login:` and keeps the line, so a crew login after it reads the caller's own flags (the shell in ELIZA's menu needs `NOWHERE_OPEN` and `M_Z` from the own account). |
+| L | an own account (not a crew login, not `admin`) | Q12d: "Log in as another". Signs off to `Login:` and keeps the line, so a crew login after it reads the caller's own flags (the shell in ELIZA's menu needs `NOWHERE_OPEN` and `M_Z` from the own account). Q20 (Addition 6): once a crew account has opened for this caller (`KNOWN_<HANDLE>` on the own account), L lists those accounts: a number (no ENTER) logs in without the password, A goes to `Login:` for any other handle, Q or X back. With none known L goes straight to `Login:`. Never on a crew account. |
+| Y | a crew account, with the caller's own account signed in earlier on this line | Q18: "Back to <handle>", no password. |
+| (notebook) | manifest, N | Q20 (Addition 6): each crew account that has opened is written down with the card's password while it still opens the account: "Logged in with 140374. L on the main menu opens it." |
 | C | always | Label "Chat with the SysOp" for a caller, "Node chat" for the SysOp (Q20 UX round 3; round 2 tried "Chat: SysOp, callers", and testers looked for callers that the scene hides behind "Something else"). A lone Q, QUIT, EXIT or /Q leaves the typed chat. Q12d: for a caller (not the SysOp) node chat opens as the scene `ELZ_TALK`: numbered replies, the memory-check reply only with `OVR` and `CURE`; "Say something else." opens the typed chat (keywords, eggs). A card without the scene opens the chat directly. |
 | (hint line) | once per call, under the first main menu | Q20 UX round 2: "Press a letter. No ENTER needed. ? shows the keys, X comes back here." |
 | (marker line) | the caller holds `SYSVW` | Q12d: "SYSOP view is on: every area is open to read." No command comes with it. |
