@@ -63,7 +63,7 @@ static void sceneEnd(Session &s, const String &then = String()) {
   s.hideInput = false;
   endingRecord(s);   // a finished caller stays in WHO
   String next = then; next.toUpperCase();
-  if (next == "CHAT") { startChat(s, "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk.\x1b[0m"); return; }
+  if (next == "CHAT") { startChat(s, "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk. /Q leaves.\x1b[0m"); return; }
   if (next.length()) {
     s.state = s.helpBack;
     sceneStart(s, next);

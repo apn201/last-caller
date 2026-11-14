@@ -47,6 +47,7 @@ static void enterShell(Session &s) {
   if (s.ansi) artOnce(s, "/BBS/ANSI/DOORS/NOWHERE.ANS", "NOWHERE");
   else plainArt(s, "/BBS/ASCII/DOORS/NOWHERE.ASC", "NOWHERE");
   if (shellTable.motd.length()) { String m = hauntStr(shellTable.motd); m.replace("|", "\r\n"); say(s, "\x1b[0;37m" + m + "\x1b[0m"); }
+  say(s, "\x1b[0;90mexit or q leaves.\x1b[0m");
   shellPrompt(s);
 }
 

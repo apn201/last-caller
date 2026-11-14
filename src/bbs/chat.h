@@ -99,14 +99,15 @@ static void leaveChat(Session &s, const char *why) {
 }
 static void chatResume(Session &s) { s.state = CHAT; chatScreen(s); chatBars(); prompt(s, "> "); }
 static void chatCommand(Session &s, const String &line, const String &cmd) {
-  if (cmd == "/Q") { leaveChat(s, "left the chat."); mainMenu(s); return; }
+  // Contract C8: /Q leaves, and so do the plain words Q, QUIT and EXIT when they are the whole line.
+  if (cmd == "/Q" || cmd == "Q" || cmd == "QUIT" || cmd == "EXIT" || cmd == "/QUIT") { leaveChat(s, "left the chat."); mainMenu(s); return; }
   if (cmd == "/W") { say(s, "\x1b[0;37mIn chat: " + chatHere(s) + "\x1b[0m"); chatPrompt(s); return; }
   if (cmd == "/H" && isSysop(s)) {
     std::vector<String> rows = chatHistory(CHAT_HISTORY);
     if (rows.empty()) { say(s, "No chat saved yet."); chatPrompt(s); return; }
     if (s.ansi) write(s, "\x1b[r");  // the reader needs the whole screen
     broadcastChat(s, "is reading the chat history.");
-    openRows(s, rows, "Chat history", "SPACE page  B back  \x18\x19 line  Q back to chat", chatResume, nullptr, true);
+    openRows(s, rows, "Chat history", "SPACE next  B back  Q back to chat", chatResume, nullptr, true);
     chatBars();
     return;
   }

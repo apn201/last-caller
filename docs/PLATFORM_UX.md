@@ -151,7 +151,24 @@ tool text changed.
 
 | Screen | Old | New | Why |
 | --- | --- | --- | --- |
-| (to follow) | | | |
+| Main | P page the SysOp | O | P is previous everywhere else (U3) |
+| Message menu | P post | W | same (U3); W is write |
+| Message menu | R read or list | L | R is reply and the crew manifest (U5) |
+| Message list | E earlier, L later | P, N | previous and next are P and N in every list (U7) |
+| Main, doors, files, SysOp | ENTER leaves | ENTER redraws, Q leaves | U1 |
+| Main, any pager | (none) | X main menu, ? keys | U10, U11 |
+| All "Press ENTER" | ENTER | any key | U13 |
+| Yes or no | y or n, then ENTER | one key | U14 |
+| File list | V #, D # | V and D ask for the number; a bare number still opens | U18 |
+| Chat | /Q only | /Q, and Q, QUIT, EXIT as the whole line | U16 |
+| Shell | exit, logout, quit, bye | and q | U17 |
+
+Not moved, on purpose: R at the main menu stays the crew manifest (the story
+names the manifest, not the key, but the game is built around it); the user
+list (U) and upload (U) never share a screen; D for doors and D for download
+likewise; S is system info at the main menu and slow replay in the pager. The
+story text never names a key that moved, and `tools/story_lint.py` checks it
+(`check_keys`).
 
 ## 4. Port to TinyBBS
 

@@ -81,7 +81,7 @@ static void bulletinMenu(Session &s) {
 // its reply "Say something else" opens the typed chat (then=CHAT). A card without the scene, a
 // SysOp, or a scene that will not start (no power for this caller) opens the chat directly.
 static void chatEntry(Session &s) {
-  const char *banner = "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk.\x1b[0m";
+  const char *banner = "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk. /Q leaves.\x1b[0m";
   if (!isSysop(s) && SD_MMC.exists("/BBS/STORY/SCENES/ELZ_TALK.INI")) {
     sceneStart(s, "ELZ_TALK");
     if (s.state == SCENE_PLAY) return;

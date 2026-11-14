@@ -108,7 +108,7 @@ static bool openTuneText(Session &s, uint16_t number, const String &path, const 
   }
   s.viewer.number = number;
   activity(s, "LISTENING " + clean(name, 30));
-  openRows(s, rows, clean(name, 24), "SPACE page  B back  \x18\x19 line  N/P file  Q quit", fileReaderQuit, fileReaderKey);
+  openRows(s, rows, clean(name, 24), "SPACE next  B back  N/P file  Q back  X main  ? keys", fileReaderQuit, fileReaderKey);
   return true;
 }
 // ---------- ZIP contents in the reader ---------------------------------------------------
@@ -119,7 +119,7 @@ static bool openZipList(Session &s, uint16_t number, const String &path, const S
   if (!zipContents(path, rows)) { if (!quiet) prompt(s, "Not a ZIP this board can read. File command? "); return false; }
   s.viewer.number = number;
   activity(s, "LISTING " + clean(name, 30));
-  openRows(s, rows, clean(name, 24), "SPACE page  B back  \x18\x19 line  N/P file  Q quit", fileReaderQuit, fileReaderKey);
+  openRows(s, rows, clean(name, 24), "SPACE next  B back  N/P file  Q back  X main  ? keys", fileReaderQuit, fileReaderKey);
   return true;
 }
 
@@ -178,7 +178,7 @@ static bool openFileViewerOnce(Session &s, uint16_t number, bool quiet) {
   r = Reader();
   r.path = path; r.start = start; r.end = end; r.utf8 = utf8;
   r.title = clean(name, 24);
-  r.hint = "SPACE page  B back  \x18\x19 line  S slow  N/P file  Q quit";   // S: replays at modem speed (Q18: "play" read as music)
+  r.hint = "SPACE next  B back  S slow  N/P file  Q back  X main  ? keys";   // S: replays at modem speed (Q18: "play" read as music)
   r.onKey = fileReaderKey; r.onQuit = fileReaderQuit;
   if (ansi && s.ansi) { r.kind = READER_ANSI; renderAnsi(r); }
   else { r.kind = READER_TEXT; r.crop = artLike; indexText(r); }

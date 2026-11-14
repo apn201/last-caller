@@ -5,6 +5,15 @@ an option that does not work for that caller on that transport. Checked
 against the code on 2026-11-12. "Browser" and "Telnet" are the two
 transports; "SysOp" is level 255 with the SYSOP flag.
 
+Q20 UX (14 Nov 2026): the keys below follow the contract in `docs/PLATFORM_UX.md`.
+A letter acts at once at every menu, list and pager (no ENTER). Q goes back one
+level, X goes to the main menu, ? lists the keys, N and P are next and previous,
+ENTER redraws a menu and never leaves it. Messages, bulletins, WHO, system info
+and help open in the pager. Moved keys: P (page the SysOp) is O; P (post) is W;
+R (read or list) is L; E and L in the message list (earlier, later) are P and N.
+The tables below name the screen's keys; where they still show an old key the
+code wins and PLATFORM_UX.md section 3 lists the change.
+
 Hidden commands (typed but not advertised) are listed where they exist. They
 are allowed: they never appear on screen.
 
@@ -23,7 +32,7 @@ are allowed: they never appear on screen.
 | F | an area is open to the caller (an empty upload area counts in the browser) | |
 | B | a bulletin is visible to the caller | |
 | J | more than one message area can be joined | Q7: a conference with a `required_flag` (Mail: TYVANCE, `VISIT_TY`) is listed only for callers who hold it, from the account flag field or the story record. |
-| P | a SysOp is online | |
+| O | a SysOp is online | Q20: was P. |
 | R | the caller can save (not a crew login, not `admin`) and holds evidence about at least one crew row (`STORY/MANIFEST.INI`) | Q6. G with an unfinished manifest shows ELIZA's thanks (partial ending). |
 | Z | SysOp only | Hidden for the SysOp: `USER`, `RELOAD`. |
 | L | an own account (not a crew login, not `admin`) | Q12d: "Log in as another". Signs off to `Login:` and keeps the line, so a crew login after it reads the caller's own flags (the shell in ELIZA's menu needs `NOWHERE_OPEN` and `M_Z` from the own account). |
@@ -34,9 +43,9 @@ are allowed: they never appear on screen.
 
 | Screen | Keys | Notes |
 | --- | --- | --- |
-| Area menu | R, N, P, Q; A when more than one area | Error text lists A only when shown. **Fixed.** |
+| Area menu | L, N, W, Q; A when more than one area | Q20: R is L, P is W. W only where the caller can post. |
 | Area list | number, ENTER | |
-| Reading (short message) | N, P, R, T, Q; K, E for the author and SysOp; H when edited | |
+| Reading (any length) | N, P, R, T, Q, X; K, E for the author and SysOp; H when edited | Q20: every message opens in the pager. |
 | Reading (long message, reader) | same keys in the status bar | k, e, h used to leave the reader for a message the caller cannot change; now they only act when offered, and k scrolls otherwise. **Fixed.** |
 | Editor | /S /A /L /? /H /C /D n /R n | |
 
@@ -105,7 +114,7 @@ are allowed: they never appear on screen.
 
 | Key | Shown when | Notes |
 | --- | --- | --- |
-| P (post), R (reply) | the caller can save and the conference is not `read_only=1` (the SysOp may post anywhere) | Q7. Mission Log, Garden Notes and the mailboxes are read-only; Lounge, Spoilers, No Spoilers and Radio Room take posts. |
+| W (write), R (reply) | the caller can save and the conference is not `read_only=1` (the SysOp may post anywhere) | Q7. Mission Log, Garden Notes and the mailboxes are read-only; Lounge, Spoilers, No Spoilers and Radio Room take posts. |
 | B | a bulletin is visible; a `.ANS` bulletin shows its `.ASC` twin under `ASCII/` to a caller without ANSI | Q7. Bulletin 5 (News Wire) needs `END1`: listed only after the queue was sent (Q9). |
 | U | always | Shows the last call of each account (`1998-12-08 03:47` as `08 Dec 03:47`). |
 

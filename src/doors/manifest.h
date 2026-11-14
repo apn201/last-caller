@@ -117,7 +117,7 @@ static void manPrompt(Session &s) { prompt(s, "\x1b[1;36mMANIFEST> \x1b[0m"); }
 static void manSay(Session &s, const String &text) { say(s, "\x1b[0;37m" + text + "\x1b[0m"); }
 
 static void manOverview(Session &s) {
-  s.manMode = 0;
+  s.manMode = 0; s.digitHot = true;
   std::string flags = doorFlagsOf(s);
   auto rows = manRows(s);
   say(s, "");
@@ -138,7 +138,7 @@ static void manOverview(Session &s) {
 }
 
 static void manRowView(Session &s) {
-  s.manMode = 1;
+  s.manMode = 1; s.digitHot = true;
   std::string flags = doorFlagsOf(s);
   auto rows = manRows(s);
   if (s.manRow >= rows.size()) { manOverview(s); return; }
@@ -157,11 +157,12 @@ static void manRowView(Session &s) {
 }
 
 static void manPickView(Session &s) {
-  s.manMode = 2;
+  s.manMode = 2; s.digitHot = false;
   auto rows = manRows(s);
   if (s.manRow >= rows.size()) { manOverview(s); return; }
   const manifest::Row &r = *rows[s.manRow];
   auto opts = manifest::choices(manTable, r, s.manSlot, doorFlagsOf(s));
+  s.digitHot = opts.size() <= 9;   // a one-digit number is a key; ten or more are typed, then ENTER
   manifest::Picks3 p = manifest::picksOf(hauntStd(s.manPicks), r.id);
   say(s, "");
   say(s, "\x1b[1;36m  " + hauntStr(r.handle) + ": " + hauntStr(manifest::slotLabel(manTable, r, s.manSlot)) + "\x1b[0m");
@@ -185,7 +186,7 @@ static void manPickView(Session &s) {
 }
 
 static void manNotebook(Session &s) {
-  s.manMode = 3;
+  s.manMode = 3; s.digitHot = false;
   auto notes = manifest::notebook(manTable, doorFlagsOf(s));
   say(s, "");
   say(s, "\x1b[1;36m  NOTEBOOK\x1b[0m");
@@ -237,17 +238,20 @@ static void handleManifest(Session &s, String &, const String &cmd) {
   auto rows = manRows(s);
   switch (s.manMode) {
     case 0: {
-      if (cmd == "Q") { event("MANIFEST", s.user.handle + " node " + s.node + " left the manifest"); mainMenu(s); return; }
+      if (cmd == "Q" || cmd == "X" || cmd == "QUIT" || cmd == "EXIT") { event("MANIFEST", s.user.handle + " node " + s.node + " left the manifest"); mainMenu(s); return; }
+      if (!cmd.length() || cmd == "?") { manOverview(s); return; }
       if (cmd == "S") { manFile(s); return; }
       if (cmd == "N") { manNotebook(s); return; }
       long n = cmd.toInt();
       if (n >= 1 && (size_t)n <= rows.size() && String(n) == cmd) { s.manRow = (uint8_t)(n - 1); manRowView(s); return; }
-      manSay(s, "Choose a row number, S, N or Q.");
+      manSay(s, "Keys: a row number, S file, N notebook, Q back.");
       manPrompt(s);
       return;
     }
     case 1: {
-      if (cmd == "Q" || !cmd.length()) { manOverview(s); return; }
+      if (cmd == "Q") { manOverview(s); return; }
+      if (cmd == "X") { mainMenu(s); return; }
+      if (!cmd.length() || cmd == "?") { manRowView(s); return; }
       bool locked = s.manRow < rows.size() && manifest::rowDone(*rows[s.manRow], doorFlagsOf(s));
       long n = cmd.toInt();
       if (!locked && n >= 1 && n <= manifest::SLOTS && String(n) == cmd) { s.manSlot = (uint8_t)(n - 1); manPickView(s); return; }
@@ -256,7 +260,9 @@ static void handleManifest(Session &s, String &, const String &cmd) {
       return;
     }
     case 2: {
-      if (cmd == "Q" || !cmd.length()) { manRowView(s); return; }
+      if (cmd == "Q") { manRowView(s); return; }
+      if (cmd == "X") { mainMenu(s); return; }
+      if (!cmd.length() || cmd == "?") { manPickView(s); return; }
       if (s.manRow >= rows.size()) { manOverview(s); return; }
       const manifest::Row &r = *rows[s.manRow];
       auto opts = manifest::choices(manTable, r, s.manSlot, doorFlagsOf(s));
@@ -275,7 +281,7 @@ static void handleManifest(Session &s, String &, const String &cmd) {
       manRowView(s);
       return;
     }
-    default:
+    default:   // the notebook: any key goes back
       manOverview(s);
       return;
   }

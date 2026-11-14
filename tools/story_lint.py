@@ -374,6 +374,7 @@ class Lint:
 
         # ---- voice
         self.check_voice()
+        self.check_keys()
 
         # ---- power
         if power:
@@ -782,6 +783,29 @@ class Lint:
               "plethora", "myriad", "quintessential", "elucidate", "underscore", "a reminder that", "stands as"]
     ODD = {"\u2014": "em dash", "\u2013": "en dash", "\u201c": "curly quote", "\u201d": "curly quote",
            "\u2018": "curly quote", "\u2019": "curly quote", "\u2026": "ellipsis character"}
+
+    # Q20 UX: caller text that names a key (docs/PLATFORM_UX.md section 3). A key that moved or went away
+    # must not still be named. MOVED maps the old wording to the key that replaced it.
+    MOVED_KEYS = [(r"\b(press|type|hit|use|key)\s+\[?P\]?\b[^.\n]{0,20}\b(page|sysop)", "O pages the SysOp now"),
+                  (r"\b(press|type|hit|use|key)\s+\[?P\]?\b[^.\n]{0,20}\bpost", "W writes a post now"),
+                  (r"\b(press|type|hit|use|key)\s+\[?R\]?\b[^.\n]{0,20}\b(read|list)", "L lists messages now"),
+                  (r"press\s+enter\s+(to\s+continue|for\b|:)", "continue is any key now (Press any key)")]
+    # Keys the board gives for what a caller may be told by name in a story text.
+    def check_keys(self):
+        for top in ("STORY", "MSGBASE", "BULLETINS", "FILES"):
+            for root, _, names in os.walk(os.path.join(self.card, top)):
+                for n in names:
+                    if not n.upper().endswith((".INI", ".TXT", ".LOG", ".MEM", ".RPT", ".CFG", ".ASC")):
+                        continue
+                    p = os.path.join(root, n)
+                    rel = os.path.relpath(p, self.card).replace("\\", "/")
+                    try:
+                        low = open(p, encoding="utf-8").read()
+                    except (UnicodeDecodeError, OSError):
+                        continue
+                    for pat, now in self.MOVED_KEYS:
+                        if re.search(pat, low, re.I):
+                            self.err(rel, "names a key that moved (%s)" % now)
 
     def check_voice(self):
         paths = []

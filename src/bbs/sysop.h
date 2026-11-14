@@ -112,5 +112,5 @@ static void sysopLogs(Session &s, String filter) {
   if (rows.empty()) { say(s, filter.length() ? "No log lines match." : "The log is empty."); prompt(s, "SysOp command? "); return; }
   activity(s, "SYSOP LOGS");
   openRows(s, rows, filter.length() ? "Log: " + filter.substring(0, 16) : String("Event log"),
-           "SPACE page  B back  \x18\x19 line  G/< top  Q console", sysopMenuBack, nullptr, true);
+           "SPACE next  B back  Q back  X main  ? keys", sysopMenuBack, nullptr, true);
 }

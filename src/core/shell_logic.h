@@ -240,7 +240,7 @@ inline Result exec(const Table &t, std::string &cwd, const std::string &flags, c
     r.out = subst(t.finalHeld, "{cmd}", w[0]);
     return r;
   }
-  if (cmd == "exit" || cmd == "logout" || cmd == "quit" || cmd == "bye") { r.exit = true; return r; }
+  if (cmd == "exit" || cmd == "logout" || cmd == "quit" || cmd == "bye" || cmd == "q") { r.exit = true; return r; }
   if (cmd == "pwd") { r.out = cwd; return r; }
   if (cmd == "whoami") { r.out = t.user; return r; }
   if (cmd == "hostname") { r.out = t.host; return r; }
