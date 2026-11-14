@@ -19,7 +19,7 @@ static bool streaming(const Session &s) {
 static bool hotkeyState(const Session &s) {
   switch (s.state) {
     case LOGIN_CHOICE: case BULLETIN: case MAIN: case USER_LIST: case MSG_MENU: case MSG_READ: case MSG_VIEW: case MSG_KILL:
-    case SNAKE_PLAY: case MANIFEST_PROMPT: case POST_PRIVATE: case JOIN_CONF: case BULLETIN_LIST: case DOOR_MENU: case ANSI_GALLERY: case FILE_MENU: case FILE_LIST: case SYSOP_MENU:
+    case CHAT: case SNAKE_PLAY: case MANIFEST_PROMPT: case POST_PRIVATE: case JOIN_CONF: case BULLETIN_LIST: case DOOR_MENU: case ANSI_GALLERY: case FILE_MENU: case FILE_LIST: case SYSOP_MENU:
       return true;
     case SCENE_PLAY: return s.sceneRun.choiceKeys();
     default: return false;

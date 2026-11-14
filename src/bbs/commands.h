@@ -72,6 +72,7 @@ static void input(Session &s, const String &bytes) {
     } else if (!s.input.length() && hotkeyState(s)) {
       if (c == ' ' && s.state != BULLETIN && s.state != MSG_VIEW) continue;   // a tap or a stray space is not the start of a word
       if (s.state == SCENE_PLAY) { if ((c >= '1' && c <= '9') || c == 'q' || c == 'Q') { s.hotKey = c; s.hotAt = millis(); continue; } }
+      else if (s.state == CHAT) { if (c == 'q' || c == 'Q') { s.hotKey = c; s.hotAt = millis(); continue; } }   // a lone Q leaves; anything after it makes a line
       else if (isalpha((unsigned char)c) || c == '?' || (s.state == MANIFEST_PROMPT && s.digitHot && isdigit((unsigned char)c)) || ((s.state == BULLETIN || s.state == MSG_VIEW) && c > ' ')) { s.hotKey = c; s.hotAt = millis(); continue; }
     }
     // CRLF is one Enter key.  Without this guard the LF becomes a phantom

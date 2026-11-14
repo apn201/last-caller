@@ -25,6 +25,8 @@ static bool canPost(const Session &s) {
   const Conference *c = findConference(s.conference);
   return !c || !c->readOnly || isSysop(s);
 }
+// A caller's own posts are never "new" to them (a crew login, read-only, keeps the story's own count).
+static bool mine(const Session &s, const Message &m) { return s.user.id && !s.readOnly && up(m.from) == s.user.normalized; }
 static bool canRead(const Session &s, const Message &m) {
   // The act gates (Q12d): a message that needs a flag does not exist for a caller without it, in a
   // list, a count, a new-message scan or a thread. SYSOP view passes; a real SysOp sees everything.
@@ -118,7 +120,7 @@ static void allAreaCounts(const Session &s, AreaCount counts[256]) {
     if (!canRead(s, m)) return true;
     AreaCount &a = counts[m.conference];
     a.total++;
-    if (!m.history && msgOrder(m.id) > marks[m.conference]) a.fresh++;
+    if (!m.history && !mine(s, m) && msgOrder(m.id) > marks[m.conference]) a.fresh++;
     return true;
   });
 }
@@ -126,7 +128,7 @@ static void areaCounts(const Session &s, uint8_t conference, uint32_t &total, ui
   total = fresh = 0;
   uint64_t mark = msgOrder(lastReadIn(s, conference));
   eachMessage([&](const Message &m) {
-    if (m.conference == conference && canRead(s, m)) { total++; if (!m.history && msgOrder(m.id) > mark) fresh++; }
+    if (m.conference == conference && canRead(s, m)) { total++; if (!m.history && !mine(s, m) && msgOrder(m.id) > mark) fresh++; }
     return true;
   });
 }
@@ -195,7 +197,7 @@ static void listMessages(Session &s, char what = 0) {
   eachMessage([&](const Message &m) {
     if (m.conference != s.conference || !canRead(s, m)) return true;
     if (at >= from && at < from + LIST_ROWS)
-      rows.push_back({m.id, m.when, m.from, m.to.length() ? m.to : String("All"), m.subject, !m.history && msgOrder(m.id) > msgOrder(mark)});
+      rows.push_back({m.id, m.when, m.from, m.to.length() ? m.to : String("All"), m.subject, !m.history && !mine(s, m) && msgOrder(m.id) > msgOrder(mark)});
     at++;
     return at < from + LIST_ROWS;
   });
@@ -399,7 +401,7 @@ static uint32_t firstNew(const Session &s) {
   uint64_t mark = msgOrder(lastReadIn(s, s.conference));
   uint32_t found = 0;
   eachMessage([&](const Message &m) {
-    if (m.conference != s.conference || m.history || !canRead(s, m) || msgOrder(m.id) <= mark) return true;
+    if (m.conference != s.conference || m.history || mine(s, m) || !canRead(s, m) || msgOrder(m.id) <= mark) return true;
     found = m.id;
     return false;
   });
