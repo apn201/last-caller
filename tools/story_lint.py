@@ -376,6 +376,9 @@ class Lint:
         self.check_voice()
         self.check_keys()
 
+        # ---- the notebook (Q21)
+        self.check_notes(self.load("NOTES.INI", False), trig, scenes, diag, shell, sysop, ghosts)
+
         # ---- power
         if power:
             pn = power.named().get("POWER", {})
@@ -806,6 +809,118 @@ class Lint:
                     for pat, now in self.MOVED_KEYS:
                         if re.search(pat, low, re.I):
                             self.err(rel, "names a key that moved (%s)" % now)
+
+    NOTE_KINDS = ("login", "crew_login", "read", "file", "art", "door", "screen", "scene", "page", "eliza", "ghost", "diag", "shell")
+
+    def chain_clues(self):
+        """The clue ids the notebook has to cover: E01.. in the story bible's evidence matrix, M1..M9 and the
+        side puzzles P1.. in docs/PUZZLE_CHAIN.md. (None, None) when the docs are not next to the card."""
+        root = os.path.normpath(os.path.join(self.card, "..", ".."))
+        bible = os.path.join(root, ".kiro", "specs", "story-bible", "design.md")
+        chain = os.path.join(root, "docs", "PUZZLE_CHAIN.md")
+        if not (os.path.isfile(bible) and os.path.isfile(chain)):
+            return None
+        want = {}
+        with open(bible, encoding="utf-8") as f:
+            for line in f:
+                m = re.match(r"\| (E\d+b?) \|", line)
+                if m:
+                    want[m.group(1).upper()] = "story bible evidence matrix"
+        with open(chain, encoding="utf-8") as f:
+            for line in f:
+                m = re.match(r"\| (M\d) \|", line)
+                if m:
+                    want[m.group(1).upper()] = "docs/PUZZLE_CHAIN.md chain"
+                m = re.match(r"\| (?:NEW )?(P\d+)\b", line)
+                if m:
+                    want[m.group(1).upper()] = "docs/PUZZLE_CHAIN.md side puzzles"
+        return want
+
+    def check_notes(self, notes, trig, scenes, diag, shell, sysop, ghosts):
+        """NOTES.INI: every note points at something on the card, fits, and every clue of the chain and the
+        story bible has a note (a clue the notebook cannot keep is a clue a caller can lose)."""
+        if not notes:
+            return
+        covered = set()
+        rules = {name: kv for name, kv, _ in trig.sections} if trig else {}
+        lines = {}
+        for ini in (sysop, ghosts):
+            if ini:
+                for name, kv, _ in ini.sections:
+                    lines[name] = kv
+        ghost_ids = {name for name, kv, _ in ghosts.sections if kv.get("handle")} if ghosts else set()
+        diag_codes = {name for name, _, _ in diag.sections} if diag else set()
+        shell_paths = {name.upper() for name, _, _ in shell.sections if name.startswith("/")} if shell else set()
+        for name, kv, _ in notes.sections:
+            where = "NOTES.INI [%s]" % name
+            if not re.fullmatch(r"[A-Z0-9_]{1,14}", name):
+                self.err(where, "the id must be letters, digits and _, 14 characters at most (the flag is N_<ID>)")
+            on = kv.get("on", "").lower()
+            match = kv.get("match", "").upper()
+            if on not in self.NOTE_KINDS:
+                self.err(where, "on=%s is not a kind of note" % on)
+                continue
+            if not kv.get("text"):
+                self.err(where, "no text")
+            if len(kv.get("text", "")) > 110:
+                self.err(where, "text longer than 110")
+            if not kv.get("src"):
+                self.err(where, "no src")
+            if len(kv.get("src", "")) > 30:
+                self.err(where, "src longer than 30")
+            if len(kv.get("where", "")) > 40:
+                self.err(where, "where longer than 40")
+            if on != "login" and not match:
+                self.err(where, "no match=")
+            if on == "read" and match.startswith("~"):
+                subj = match[1:]
+                if subj not in self.subjects:
+                    self.err(where, "no message with the subject '%s'" % subj)
+                elif kv.get("area", "") and kv["area"] not in self.subject_conf.get(subj, set()):
+                    self.err(where, "no message '%s' in conference %s" % (subj, kv["area"]))
+            elif on == "read" and not match.isdigit():
+                self.err(where, "read needs ~SUBJECT or a message number")
+            elif on in ("file", "art") and match not in self.files:
+                self.err(where, "%s is not on the card" % match)
+            elif on == "screen" and match not in ("USERS", "WHO") and not (match.startswith("BULLETIN ") and match[9:] in self.bulletins):
+                self.err(where, "screen '%s' is not USERS, WHO or a bulletin title" % match)
+            elif on == "scene":
+                sid, _, node = match.partition("/")
+                sc = scenes.get(sid)
+                if not sc:
+                    self.err(where, "scene %s has no file" % sid)
+                elif node and node not in {n for n, _, _ in sc.sections}:
+                    self.err(where, "scene %s has no node %s" % (sid, node))
+            elif on == "page" and not (rules.get(match.lower()) or rules.get(match)):
+                self.err(where, "no trigger rule %s" % match)
+            elif on == "eliza" and match not in lines:
+                self.err(where, "no line %s in SYSOP.INI" % match)
+            elif on == "ghost" and match.replace("WHO_", "", 1) not in ghost_ids and match not in ghost_ids:
+                self.err(where, "no ghost %s in GHOSTS.INI" % match)
+            elif on == "diag" and match != "HELP" and match not in diag_codes:
+                self.err(where, "no query %s in DIAG.INI" % match)
+            elif on == "shell" and match not in shell_paths:
+                self.err(where, "no path %s in SHELL.INI" % match)
+            rp = kv.get("replay", "")
+            if rp:
+                kind, _, target = rp.partition(":")
+                target = target.strip().upper()
+                kind = kind.strip().lower()
+                ok = ((kind == "scene" and target in scenes) or (kind == "page" and target in rules) or (kind == "eliza" and target in lines)
+                      or (kind == "ghost" and target in ghost_ids) or (kind == "art" and (target + ".ANS") in self.files))
+                if not ok:
+                    self.err(where, "replay=%s points at nothing on the card" % rp)
+            for c in re.split(r"[,\s]+", kv.get("clue", "")):
+                if c:
+                    covered.add(c.upper())
+        want = self.chain_clues()
+        if want is None:
+            self.warn("NOTES.INI", "docs/PUZZLE_CHAIN.md or the story bible is not next to the card: clue coverage not checked")
+            return
+        missing = sorted(c for c in want if c not in covered)
+        for c in missing:
+            self.err("NOTES.INI", "clue %s (%s) has no note: add clue=%s to the note that keeps it" % (c, want[c], c))
+        self.note_count = len(notes.sections)
 
     def check_voice(self):
         paths = []

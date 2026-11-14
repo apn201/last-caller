@@ -185,28 +185,9 @@ static void manPickView(Session &s) {
   manPrompt(s);
 }
 
-static void manNotebook(Session &s) {
-  s.manMode = 3; s.digitHot = false;
-  auto notes = manifest::notebook(manTable, doorFlagsOf(s));
-  std::vector<User> known = crewKnown(s);   // Q20 (Addition 6): logins that worked, with their passwords
-  say(s, "");
-  say(s, "\x1b[1;36m  NOTEBOOK\x1b[0m");
-  if (notes.empty() && known.empty()) say(s, "  \x1b[0;90mNothing written down yet.\x1b[0m");
-  for (const auto *n : notes) {
-    char row[160];
-    snprintf(row, sizeof(row), "  \x1b[1;33m%-9s\x1b[0m %s", n->about.c_str(), n->text.c_str());
-    say(s, row);
-  }
-  for (const User &u : known) {
-    String pw = crewKnownPassword(u);
-    char row[160];
-    snprintf(row, sizeof(row), "  \x1b[1;33m%-9s\x1b[0m %s", u.handle.c_str(),
-             pw.length() ? ("Logged in with " + pw + ". L on the main menu opens it.").c_str() : "Logged in once. L on the main menu opens it.");
-    say(s, row);
-  }
-  say(s, "  \x1b[1;33m[Q]\x1b[0m Back");
-  manPrompt(s);
-}
+// The notebook (Q21): what the board has shown the caller, in the order seen. Screens in bbs/notebook.h.
+static void notebookOpen(Session &s);
+static void notebookKey(Session &s, const String &cmd);
 
 // ---------- the door ---------------------------------------------------------------------------------
 static bool ownsManifest(const Session &s) { return s.state == MANIFEST_PROMPT; }
@@ -249,7 +230,7 @@ static void handleManifest(Session &s, String &, const String &cmd) {
       if (cmd == "Q" || cmd == "X" || cmd == "QUIT" || cmd == "EXIT") { event("MANIFEST", s.user.handle + " node " + s.node + " left the manifest"); mainMenu(s); return; }
       if (!cmd.length() || cmd == "?") { manOverview(s); return; }
       if (cmd == "S") { manFile(s); return; }
-      if (cmd == "N") { manNotebook(s); return; }
+      if (cmd == "N") { notebookOpen(s); return; }
       long n = cmd.toInt();
       if (n >= 1 && (size_t)n <= rows.size() && String(n) == cmd) { s.manRow = (uint8_t)(n - 1); manRowView(s); return; }
       manSay(s, "Keys: a row number, S file, N notebook, Q back.");
@@ -289,8 +270,8 @@ static void handleManifest(Session &s, String &, const String &cmd) {
       manRowView(s);
       return;
     }
-    default:   // the notebook: any key goes back
-      manOverview(s);
+    default:   // modes 3 to 6: the notebook (bbs/notebook.h)
+      notebookKey(s, cmd);
       return;
   }
 }

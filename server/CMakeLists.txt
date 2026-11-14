@@ -65,6 +65,7 @@ tb_logic_test(modinfo_logic_test)
 tb_logic_test(haunt_logic_test ${TB_STORY}/TRIGGERS.INI)
 tb_logic_test(manifest_logic_test ${TB_STORY}/MANIFEST.INI)
 tb_logic_test(ghost_logic_test ${TB_STORY}/GHOSTS.INI ${TB_STORY}/SYSOP.INI)
+tb_logic_test(notes_logic_test ${TB_STORY}/NOTES.INI)
 tb_logic_test(scene_logic_test ${TB_SCENES})
 tb_logic_test(shell_logic_test ${TB_STORY}/SHELL.INI)
 tb_logic_test(story_property_test ${TB_STORY}/TRIGGERS.INI ${TB_STORY}/MANIFEST.INI

@@ -76,7 +76,7 @@ static void handleDiag(Session &s, String &line, const String &cmd) {
   }
   if (cmd == "HELP" || cmd == "?") {
     String help = iniGet(diagIni, "DIAG", "help", "");
-    if (help.length()) { diagSay(s, help); diagPrompt(s); return; }
+    if (help.length()) { diagSay(s, help); notesOn(s, notes::K_DIAG, "HELP"); diagPrompt(s); return; }
   }
   String code = diagCode(line);
   if (!code.length()) { diagSay(s, iniGet(diagIni, "DIAG", "nocode", "Please enter a query code.")); diagPrompt(s); return; }
@@ -95,5 +95,6 @@ static void handleDiag(Session &s, String &line, const String &cmd) {
   }
   event("DIAG", s.user.handle + " node " + s.node + " query " + code);
   diagSay(s, iniGet(diagIni, code, "text"));
+  notesOn(s, notes::K_DIAG, code);   // Q21: the answer is in the notebook
   diagPrompt(s);
 }

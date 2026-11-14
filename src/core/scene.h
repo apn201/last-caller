@@ -17,6 +17,7 @@ static void mainMenu(Session &s);  // bbs/board.h
 static void startChat(Session &s, const String &banner);  // bbs/chat.h
 static void endingRecord(Session &s);  // doors/manifest.h
 static void keysHelpBack(Session &s);  // bbs/help.h: draws the screen s.helpBack again
+static void notebookBack(Session &s);  // bbs/notebook.h: a replay is over, the notebook is drawn again (Q21)
 
 // "ELIZA_WAKE" -> a checked, upper-case name; "" if it is not a plain name.
 static String sceneName(const String &raw) {
@@ -61,6 +62,7 @@ static bool sceneGrant(Session &s, const std::string &add) {
 static void sceneEnd(Session &s, const String &then = String()) {
   s.sceneRun = scene::Player();
   s.hideInput = false;
+  if (s.sceneReplay) { s.sceneReplay = false; notebookBack(s); return; }   // Q21: a replay ends where it began, with nothing saved
   endingRecord(s);   // a finished caller stays in WHO
   String next = then; next.toUpperCase();
   if (next == "CHAT") { startChat(s, "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk. Q leaves.\x1b[0m"); return; }
@@ -80,6 +82,7 @@ static void sceneWrite(Session &s, const scene::Out &o) {
     if (s.ansi) art(s, ("/BBS/ANSI/STORY/" + file + ".ANS").c_str());
     else plainArt(s, ("/BBS/ASCII/STORY/" + file + ".ASC").c_str());
   }
+  for (const auto &n : o.nodes) notesOn(s, notes::K_SCENE, s.sceneName + "/" + hauntStr(n));   // Q21: a line on screen is in the notebook
   if (o.grant.size() && !sceneGrant(s, o.grant)) event("SCENE_FAIL", s.user.handle + ": flags not saved: " + hauntStr(o.grant));
   if (o.finished) { event("SCENE", s.user.handle + " node " + s.node + " finished a scene"); sceneEnd(s, hauntStr(o.then)); }
 }
@@ -97,6 +100,8 @@ static void sceneStart(Session &s, const String &raw) {
     return;
   }
   event("SCENE", s.user.handle + " node " + s.node + " starts " + name);
+  s.sceneName = name; s.sceneReplay = false;
+  notesOn(s, notes::K_SCENE, name);   // Q21
   s.hideInput = false;
   s.helpBack = s.state;   // sceneEnd draws this screen again
   s.state = SCENE_PLAY;
@@ -104,6 +109,25 @@ static void sceneStart(Session &s, const String &raw) {
   soundCue(s, hauntStr(sc->sound));
   write(s, "\r\n\r\n");   // Q20 UX: never on the line of the prompt it interrupts
   sceneWrite(s, s.sceneRun.start(sc, sceneFlagsOf(s), s.ansi, millis()));
+}
+
+// Q21: a scene the caller has seen, shown again from the notebook. It saves no marker and no flag, and
+// grants nothing; Q (or the end) goes back to the notebook. False if the scene cannot be shown.
+static bool sceneReplayStart(Session &s, const String &raw) {
+  if (!s.authenticated || hauntMaint(s.user) || s.state == SCENE_PLAY) return false;
+  String name = sceneName(raw), why;
+  if (!name.length()) return false;
+  auto sc = sceneLoad(name, why);
+  if (!sc) { event("SCENE_SKIP", name + ": replay: " + why); return false; }
+  if (!haunt::flagsHas(sceneFlagsOf(s), scene::marker(sc->id))) return false;   // only what was seen
+  s.sceneName = name; s.sceneReplay = true;
+  s.hideInput = false;
+  s.state = SCENE_PLAY;
+  activity(s, "IN THE NOTEBOOK");
+  soundCue(s, hauntStr(sc->sound));
+  write(s, "\r\n" + String(s.ansi ? "\x1b[0;90m" : "") + "  Replay. Q goes back to the notebook." + (s.ansi ? "\x1b[0m" : "") + "\r\n\r\n");
+  sceneWrite(s, s.sceneRun.start(sc, sceneFlagsOf(s), s.ansi, millis(), true));
+  return true;
 }
 
 // From bbsTick, after hauntTick.
@@ -118,6 +142,7 @@ static void sceneTick(uint32_t now) {
 static bool ownsScene(const Session &s) { return s.state == SCENE_PLAY; }
 static void sceneEnter(Session &) {}               // not reachable: listed nowhere
 static bool sceneListed(const Session &) { return false; }
-static void handleScene(Session &s, String &line, const String &) {
+static void handleScene(Session &s, String &line, const String &cmd) {
+  if (s.sceneReplay && (cmd == "Q" || cmd == "X")) { s.sceneRun = scene::Player(); s.sceneReplay = false; notebookBack(s); return; }   // Q21
   sceneWrite(s, s.sceneRun.input(hauntStd(line), millis()));
 }

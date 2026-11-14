@@ -65,6 +65,11 @@ int main(int argc, char **argv) {
   CHECK(due(t, K_SCENE, "TY_DESK/MORE", 0, "").empty());                   // has=CREW
   CHECK(due(t, K_SCENE, "TY_DESK/MORE", 0, "CREW").size() == 1);
   CHECK(due(t, K_NONE, "", 0, "").empty());
+  // area= keeps a repeated subject to its own conference
+  Table ar = load("[M1]\non=read\nmatch=~DAY 27\narea=1\nsrc=Mission Log\ntext=a\n[G1]\non=read\nmatch=~DAY 27\narea=2\nsrc=Garden Notes\ntext=b\n");
+  CHECK(ar.notes.size() == 2 && ar.notes[0].area == 1);
+  CHECK(due(ar, K_READ, "~DAY 27", 0, "", 1).size() == 1 && due(ar, K_READ, "~DAY 27", 0, "", 1)[0]->id == "M1");
+  CHECK(due(ar, K_READ, "~DAY 27", 0, "", 2)[0]->id == "G1" && due(ar, K_READ, "~DAY 27", 0, "", 5).empty());
 
   // ---- the notebook lists what is held, in the order the flags were saved ----
   auto h = held(t, "KZI,N_D_FOUR,T_X,N_A_ONE,N_GONE,N_B_TWO,N_A_ONE");

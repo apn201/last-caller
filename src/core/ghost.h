@@ -75,6 +75,7 @@ static void ghostWhoRows(Session &viewer, std::vector<WhoRow> &rows) {
       for (const auto &r : rows) if (r.node == g.node) { taken = true; break; }
       if (taken) continue;
       rows.push_back({(uint8_t)g.node, hauntStr(g.handle), hauntStr(g.idle.empty() ? std::string("0:00") : g.idle), hauntStr(g.activity)});
+      notesOn(viewer, notes::K_GHOST, hauntStr("WHO_" + g.id));   // Q21: a ghost in WHO is in the notebook
     }
   }
   manifestStickyRows(viewer, rows);   // finished callers stay (they take a free node from 60 up)
@@ -90,11 +91,12 @@ static std::vector<String> ghostsInChat(Session &viewer) {
 
 // ---------- pages ----------------------------------------------------------------------------
 // Queue a page or line for the next calm prompt. False if the queue is full.
-static bool ghostPage(Session &s, const std::string &from, const std::string &text) {
+static bool ghostPage(Session &s, const std::string &from, const std::string &text, notes::Kind noteKind = notes::K_NONE, const std::string &noteId = std::string()) {
   if (s.hauntShows.size() >= 8) return false;
   HauntShow h;
   h.from = hauntStr(from.empty() ? std::string("ELIZA") : from);
   h.text = hauntStr(text);
+  h.noteKind = noteKind; h.noteId = hauntStr(noteId);
   s.hauntShows.push_back(h);
   return true;
 }
@@ -107,7 +109,7 @@ static void ghostTrigger(Session &s, const std::string &ruleId, const std::strin
     if (s.hauntShows.size() >= 8) break;
     if (!sceneGrant(s, ghost::lineFlags(*l))) { event("GHOST_FAIL", hauntStr(l->id) + " " + s.user.handle + ": flags not saved, nothing said"); continue; }
     event("GHOST", hauntStr(l->id) + " " + s.user.handle + " node " + s.node + " (trigger " + hauntStr(ruleId) + ")");
-    ghostPage(s, l->from, l->say);
+    ghostPage(s, l->from, l->say, notes::K_ELIZA, l->id);
   }
 }
 
@@ -122,7 +124,7 @@ static void ghostSpeak(Session &s, const ghost::Line &l, const char *why) {
   for (const auto &b : beats) {
     at += b.wait;
     GhostLine g;
-    g.dueAt = at; g.from = hauntStr(l.from); g.text = hauntStr(b.text);
+    g.dueAt = at; g.from = hauntStr(l.from); g.text = hauntStr(b.text); g.id = hauntStr(l.id);
     s.ghostSay.push_back(g);
   }
 }
@@ -154,6 +156,7 @@ static void ghostTick(uint32_t now) {
         GhostLine g = s.ghostSay.front();
         s.ghostSay.erase(s.ghostSay.begin());
         chatSpeak(s, g.from, g.text);
+        if (g.id.length()) notesOn(s, notes::K_ELIZA, g.id);   // Q21: said, so noted
       }
     }
     if (!pages || !s.authenticated || s.state == GOODBYE || s.state == SCENE_PLAY || hauntMaint(s.user)) continue;
@@ -164,7 +167,7 @@ static void ghostTick(uint32_t now) {
       if (s.hauntShows.size() >= 8) break;
       if (!sceneGrant(s, ghost::pageFlags(g))) { event("GHOST_FAIL", hauntStr(g.id) + " " + s.user.handle + ": flags not saved, nothing shown"); continue; }
       event("GHOST", hauntStr(g.id) + " " + s.user.handle + " node " + s.node + " (page)");
-      ghostPage(s, g.pageFrom, g.page);
+      ghostPage(s, g.pageFrom, g.page, notes::K_GHOST, g.id);
       c.flags = ghostFlags(s);
     }
   }

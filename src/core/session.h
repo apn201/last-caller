@@ -44,9 +44,9 @@ struct StreamJob {
 // ANSI picture is drawn into an 80-column cell buffer, a message is ready rows.
 struct Session;
 // A trigger's page or art, waiting until the caller is at a menu prompt (core/haunt.h).
-struct HauntShow { String from, text, art, scene; };
+struct HauntShow { String from, text, art, scene; uint8_t noteKind = 0; String noteId; };   // noteKind: notes::Kind of the thing shown (core/notes.h)
 // An answer from a ghost or ELIZA, waiting for its typing time to pass (core/ghost.h).
-struct GhostLine { uint32_t dueAt = 0; String from, text; };
+struct GhostLine { uint32_t dueAt = 0; String from, text, id; };
 enum ReaderKind : uint8_t { READER_TEXT, READER_ANSI, READER_ROWS };
 struct Reader {
   ReaderKind kind = READER_ROWS;
@@ -141,6 +141,11 @@ struct Session {
   // doors/manifest.h (state MANIFEST_PROMPT): screen (0 rows, 1 a row, 2 a pick list, 3 notebook), row, blank, picks.
   uint8_t manMode = 0, manRow = 0, manSlot = 0;
   String manPicks;
+  // Q21 the notebook (manMode 3 the notes, 4 one note, 5 the scenes seen): page, the entry picked, a replay in progress.
+  uint8_t manPage = 0;
+  uint16_t manNote = 0;
+  bool sceneReplay = false;   // core/scene.h: the scene on screen is a replay from the notebook; it grants nothing
+  String sceneName;           // the scene being played, for the notebook's notes
   scene::Player sceneRun;  // core/scene.h: the scene being played (state SCENE_PLAY)
   snake::Game snake;       // doors/snake.h: the game in progress (state SNAKE_PLAY)
   uint32_t hauntIdleSec = 0, hauntMinute = 0;

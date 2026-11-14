@@ -86,6 +86,7 @@ static uint8_t iniLevel(const Ini &ini, const String &section) {
 static String loadFileAreas();  // bbs/files.h
 static String loadTriggers();   // core/haunt.h
 static String loadGhosts();     // core/ghost.h
+static String loadNotes();      // core/notes.h
 static void loadGlitches();     // core/glitch.h
 static String loadManifest();   // doors/manifest.h
 static String loadSettings() {
@@ -169,12 +170,13 @@ static String loadSettings() {
   loadPower();  // STORY/POWER.INI
   String triggers = loadTriggers();  // STORY/TRIGGERS.INI
   String ghosts = loadGhosts();      // STORY/GHOSTS.INI, STORY/SYSOP.INI
+  String noteInfo = loadNotes();     // STORY/NOTES.INI
   loadGlitches();                    // STORY/GLITCH.INI
   String manifestInfo = loadManifest();  // STORY/MANIFEST.INI
   String areas = loadFileAreas();
   String history = loadHistory();
   String syncDetail = clockSyncBrowser ? " (browser sync)" : (clockSyncSystem ? " (system sync)" : "");
-  return areas + ", " + history + ", " + triggers + ", " + ghosts + ", " + manifestInfo + ", clock " + clock + syncDetail + ", " + String(board.conferences.size()) + " conferences, " + board.bulletins.size() + " bulletins, " +
+  return areas + ", " + history + ", " + triggers + ", " + ghosts + ", " + noteInfo + ", " + manifestInfo + ", clock " + clock + syncDetail + ", " + String(board.conferences.size()) + " conferences, " + board.bulletins.size() + " bulletins, " +
          board.maxNodes + " nodes, " + (board.baud ? String(board.baud) + " baud" : String("no speed limit"));
 }
 

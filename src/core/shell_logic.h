@@ -214,6 +214,7 @@ struct Result {
   std::string grant;    // flags to add to the caller (the final command)
   bool final = false;
   std::string scene;    // the final command: the scene to start after the text
+  std::vector<std::string> read;   // paths of the files cat showed (Q21: the notebook notes them)
 };
 
 inline std::string pad(const std::string &s, size_t w, bool right = false) {
@@ -267,7 +268,7 @@ inline Result exec(const Table &t, std::string &cwd, const std::string &flags, c
       std::string p;
       std::string one;
       if (!resolve(cwd, w[i], p)) one = "cat: " + w[i] + ": No such file or directory";
-      else if (const Node *n = fileAt(t, p, flags)) one = expand(textFor(*n, flags));
+      else if (const Node *n = fileAt(t, p, flags)) { one = expand(textFor(*n, flags)); r.read.push_back(p); }
       else if (isDir(t, p, flags)) one = "cat: " + w[i] + ": Is a directory";
       else one = "cat: " + w[i] + ": No such file or directory";
       if (!r.out.empty()) r.out += "\n";

@@ -26,7 +26,7 @@ enum Kind : uint8_t { K_NONE, K_LOGIN, K_CREW_LOGIN, K_READ, K_FILE, K_ART, K_DO
 
 static constexpr size_t MAX_NOTES = 200;      // memory on the stick
 static constexpr size_t MAX_ID = 14;          // "N_" + id is the flag; 16 characters in the story record
-static constexpr size_t MAX_TEXT = 90, MAX_SRC = 30, MAX_WHERE = 40, MAX_MATCH = 40;
+static constexpr size_t MAX_TEXT = 110, MAX_SRC = 30, MAX_WHERE = 40, MAX_MATCH = 40;
 
 // Replay: how a note can be shown again as it was (or "" for none).
 enum Replay : uint8_t { R_NONE, R_SCENE, R_PAGE, R_ELIZA, R_GHOST, R_ART };
@@ -36,6 +36,7 @@ struct Note {
   Kind kind = K_NONE;
   std::string match;            // upper case; empty = any
   uint32_t baudMax = 0;         // art: only at that speed or slower (0 = any)
+  int area = -1;                // read: the conference number the message is in (-1 = any); subjects repeat between areas
   std::string has, lacks;       // flags the caller needs / must not have for the note to be taken
   std::string src;              // where it came from: "Mail from CMDR", "SHIP.LOG"
   std::string text;             // the line kept
@@ -104,7 +105,7 @@ inline bool buildNote(const std::string &id, const std::vector<Kv> &kv, Note &n,
   n = Note();
   if (!haunt::idOk(id) || id.size() > MAX_ID) { why = "bad note name"; return false; }
   n.id = haunt::upper(id);
-  std::string baud;
+  std::string baud, area;
   std::vector<std::string> seen;
   for (const auto &e : kv) {
     const std::string k = haunt::lower(haunt::trim(e.key)), &v = e.value;
@@ -115,6 +116,7 @@ inline bool buildNote(const std::string &id, const std::vector<Kv> &kv, Note &n,
     if (k == "on") n.kind = parseKind(v);
     else if (k == "match") n.match = haunt::upper(haunt::capText(v, MAX_MATCH));
     else if (k == "baud_max") baud = haunt::trim(v);
+    else if (k == "area") area = haunt::trim(v);
     else if (k == "has") n.has = haunt::flagsClean(v);
     else if (k == "lacks") n.lacks = haunt::flagsClean(v);
     else if (k == "src") n.src = haunt::capText(v, MAX_SRC);
@@ -128,6 +130,12 @@ inline bool buildNote(const std::string &id, const std::vector<Kv> &kv, Note &n,
   if (n.text.empty()) { why = "no text"; return false; }
   if (n.src.empty()) { why = "no src"; return false; }
   if (n.match.empty() && n.kind != K_LOGIN) { why = "needs match="; return false; }
+  if (!area.empty()) {
+    uint32_t a = 0;
+    if (n.kind != K_READ) { why = "area needs on=read"; return false; }
+    if (!haunt::parseUint(area, 255, a)) { why = "bad area"; return false; }
+    n.area = (int)a;
+  }
   if (!baud.empty()) {
     if (n.kind != K_ART) { why = "baud_max needs on=art"; return false; }
     if (!haunt::parseUint(baud, 10000000, n.baudMax) || !n.baudMax) { why = "bad baud_max"; return false; }
@@ -162,7 +170,7 @@ inline void parse(const std::vector<Kv> &entries, Table &t) {
 // The notes this thing being shown puts in the notebook now: the ones that match and that the
 // caller does not hold yet. `flags` are the caller's flags before. A held note is never due again,
 // so showing a line twice saves its flag once.
-inline std::vector<const Note *> due(const Table &t, Kind kind, const std::string &match, uint32_t baud, const std::string &flags) {
+inline std::vector<const Note *> due(const Table &t, Kind kind, const std::string &match, uint32_t baud, const std::string &flags, int area = -1) {
   std::vector<const Note *> out;
   if (kind == K_NONE) return out;
   const std::string m = haunt::upper(haunt::trim(match));
@@ -170,6 +178,7 @@ inline std::vector<const Note *> due(const Table &t, Kind kind, const std::strin
     if (n.kind != kind) continue;
     if (!n.match.empty() && n.match != m) continue;
     if (n.baudMax && (!baud || baud > n.baudMax)) continue;
+    if (n.area >= 0 && n.area != area) continue;
     if (!n.has.empty() && !haunt::flagsHasAll(flags, n.has)) continue;
     if (!n.lacks.empty() && haunt::flagsHasAny(flags, n.lacks)) continue;
     if (haunt::flagsHas(flags, n.flag())) continue;

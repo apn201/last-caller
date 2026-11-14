@@ -57,6 +57,7 @@ static void input(Session &s, const String &bytes) {
     // scene, as an empty line, to skip the typing or the pause.
     const bool quiet = s.state == SCENE_PLAY && !s.sceneRun.wantsEcho();
     if (quiet) {
+      if (s.sceneReplay && (c == 'q' || c == 'Q')) { s.input = ""; handleLine(s, "Q"); continue; }   // Q21: a replay from the notebook ends at once
       if (c == '\r') { s.input = ""; s.ignoreNextLf = true; handleLine(s, ""); }
       else if (c == '\n') { if (s.ignoreNextLf) { s.ignoreNextLf = false; continue; } s.input = ""; handleLine(s, ""); }
       else if ((uint8_t)c >= 32 && s.sceneRun.phase() == scene::P_KEY) { s.input = ""; handleLine(s, ""); }   // [any key]: any key goes on

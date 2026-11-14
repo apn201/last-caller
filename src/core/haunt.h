@@ -13,6 +13,7 @@
 // save worked. Pages and art wait until the caller is at a menu prompt.
 
 #include "haunt_logic.h"
+#include "notes_logic.h"
 
 static constexpr const char *TRIGGERS_INI = "/BBS/STORY/TRIGGERS.INI";
 static haunt::Table hauntRules;
@@ -21,6 +22,7 @@ static std::vector<uint32_t> hauntIdleAt, hauntMinutesAt;  // after= values of t
 static void sceneStart(Session &s, const String &name);  // core/scene.h
 static void ghostTrigger(Session &s, const std::string &ruleId, const std::string &flags);  // core/ghost.h
 static void eggPrompt(Session &s);  // bbs/eggs.h: the prompt the caller was at, drawn again
+static void notesOn(Session &s, notes::Kind kind, const String &match);  // core/notes.h: the notebook (Q21)
 
 static std::string hauntStd(const String &s) { return std::string(s.c_str(), s.length()); }
 static String hauntStr(const std::string &s) { return String(s.c_str()); }
@@ -124,6 +126,7 @@ static bool hauntMessage(const std::string &from, const String &to, const std::s
 // Something happened to this caller. `adds` collects the lines read rules add
 // to the message being shown. `amount` is idle seconds or minutes online.
 static void hauntEvent(Session &s, haunt::Ev ev, const String &match, uint32_t amount = 0, std::vector<String> *adds = nullptr) {
+  notesOn(s, notes::kindOf(ev), match);   // Q21: what this shows goes into the notebook, whatever the rules do
   if (hauntRules.rules.empty() || !s.authenticated || hauntMaint(s.user)) return;
   User own;
   bool haveOwn = hauntOwner(s, own);
@@ -149,6 +152,7 @@ static void hauntEvent(Session &s, haunt::Ev ev, const String &match, uint32_t a
       HauntShow h;
       h.from = hauntStr(r->pageFrom.empty() ? std::string("ELIZA") : r->pageFrom);
       h.text = hauntStr(r->page); h.art = hauntStr(r->art); h.scene = hauntStr(r->scene);
+      h.noteKind = notes::K_PAGE; h.noteId = hauntStr(r->id);
       if (s.hauntShows.size() < 8) s.hauntShows.push_back(h);
     }
     // ELIZA's lines keyed by this rule (STORY/SYSOP.INI). They save flags to the
@@ -210,6 +214,7 @@ static void hauntShow(Session &s) {
     sceneStart(s, h.scene);
     if (s.state == SCENE_PLAY) return;
   }
+  if (h.noteKind && (h.text.length() || h.art.length())) notesOn(s, (notes::Kind)h.noteKind, h.noteId);   // Q21: on screen now
   if (h.text.length() || h.art.length()) { write(s, "\r\n"); eggPrompt(s); }   // Q20 UX: a page under a prompt draws that prompt again
 }
 
