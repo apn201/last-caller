@@ -95,7 +95,7 @@ options. Owner Kiro, when the Devpost item runs.
 | --- | --- | --- | --- |
 | D4a | Finish the film with browser footage or wait for the stick box | Browser only now; stick shots later | Browser footage now, stick for the reveal if the box exists by 26 Nov. A finished film beats a perfect one. |
 | D4b | Scripted "are they alive" reply plus one fallback line, or a keyword engine | Scripted; keyword engine | Scripted (both critics agree). The engine waits. |
-| D4c | The `[L]` switch-account key | Now; after submission | After submission (both critics, no points for judges). |
+| D4c | The `[L]` switch-account key | Now; after submission | DONE in Q20 by Juha's Addition 6 (ee6db49): L lists the crew accounts already opened and logs in without the password. |
 | D4d | Who plays and who pays | Audience line only; pricing line | Audience line: hosted board is the product, the stick is the collector's edition. |
 | D4e | "AI agents are dead stupid idiots" quote | Keep; cut | Keep, and follow at once with the banner-bug story. |
 | D4f | Hide News Wire until the downlink scene | Hide; leave | Hide (small, gives away the last scene). |
