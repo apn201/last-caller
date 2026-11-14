@@ -187,7 +187,7 @@ static bool hauntCalm(const Session &s) {
     case BULLETIN: case BULLETIN_LIST: case JOIN_CONF: break;
     default: return false;
   }
-  return !streaming(s) && !s.input.length() && !s.hideInput;
+  return !streaming(s) && !s.input.length() && !s.hotKey && !s.hideInput;
 }
 static void hauntShow(Session &s) {
   // A scene takes the whole screen: whatever is queued behind it waits for the next calm prompt,

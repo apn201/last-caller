@@ -59,7 +59,18 @@ static void input(Session &s, const String &bytes) {
     if (quiet) {
       if (c == '\r') { s.input = ""; s.ignoreNextLf = true; handleLine(s, ""); }
       else if (c == '\n') { if (s.ignoreNextLf) { s.ignoreNextLf = false; continue; } s.input = ""; handleLine(s, ""); }
+      else if ((uint8_t)c >= 32 && s.typeAhead.length() < 24) s.typeAhead += c;   // not echoed now, not lost: played back after the scene
       continue;
+    }
+    // Q20 UX, contract C1: a letter at a menu acts at once. It waits hotkeyTick's moment first: a
+    // second key right behind it (a pasted word, a tool, Telnet in line mode) makes a typed word.
+    if (s.hotKey) {
+      char h = s.hotKey; s.hotKey = 0;
+      if (!s.hideInput) write(s, String(h));
+      s.input += h;
+    } else if (!s.input.length() && hotkeyState(s)) {
+      if (c == ' ' && s.state != BULLETIN) continue;   // a tap or a stray space is not the start of a word
+      if (isalpha((unsigned char)c) || c == '?' || (s.state == BULLETIN && c > ' ')) { s.hotKey = c; s.hotAt = millis(); continue; }
     }
     // CRLF is one Enter key.  Without this guard the LF becomes a phantom
     // handle/command in Telnet clients such as PuTTY.
@@ -67,5 +78,23 @@ static void input(Session &s, const String &bytes) {
     else if (c == '\n') { if (s.ignoreNextLf) { s.ignoreNextLf = false; continue; } if (!s.hideInput) say(s); String line = s.input; s.input = ""; handleLine(s, line); }
     else if (c == 8 || c == 127) { if (s.input.length()) { s.input.remove(s.input.length() - 1); if (!s.hideInput) write(s, "\b \b"); } }
     else if ((uint8_t)c >= 32 && s.input.length() < 900) { s.input += c; if (!s.hideInput) write(s, String(c)); }
+  }
+}
+// bbsTick: a letter that nobody followed within HOTKEY_MS is a hotkey. It is echoed and run as the
+// one-letter line it stands for, and the Enter that a line-mode client sends after it is eaten.
+static constexpr uint32_t HOTKEY_MS = 120;
+static void hotkeyTick(uint32_t now) {
+  for (auto &s : sessions) {
+    // Keys typed during a scene: once it has ended and the screen is still, they arrive as typed.
+    if (s.used && s.typeAhead.length() && s.state != SCENE_PLAY) {
+      if (s.state == GOODBYE || !s.authenticated) s.typeAhead = "";
+      else if (!streaming(s) && s.pending.length() == 0 && s.jobs.empty()) { String keys = s.typeAhead; s.typeAhead = ""; input(s, keys); }
+    }
+    if (!s.used || !s.hotKey || now - s.hotAt < HOTKEY_MS) continue;
+    char c = s.hotKey; s.hotKey = 0;
+    if (!hotkeyState(s) || s.input.length()) continue;
+    s.eatEnterUntil = now + 700;
+    if (!s.hideInput) { write(s, String(c)); say(s); }
+    handleLine(s, String(c));
   }
 }

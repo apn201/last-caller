@@ -26,6 +26,7 @@ template <typename F> static void bbsTick(F transports) {
   transports();
   tickClock();
   now = millis();
+  hotkeyTick(now);
   powerSessionsTick(now);
   hauntTick(now);
   sceneTick(now);

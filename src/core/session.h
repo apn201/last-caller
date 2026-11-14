@@ -5,7 +5,7 @@
 #include "egg_logic.h"
 #include "snake_logic.h"
 
-enum State : uint8_t { DEAD, LOGIN_CHOICE, LOGIN_HANDLE, LOGIN_PASSWORD, NEW_HANDLE, NEW_PASSWORD, NEW_REAL, NEW_LOCATION, BULLETIN, MAIN, USER_LIST, MSG_MENU, MSG_READ, POST_TO, POST_SUBJECT, POST_BODY, JOIN_CONF, CHAT, SYSOP_MENU, SYSOP_USERS, SYSOP_DOORS, SYSOP_ADD_PASSWORD, SYSOP_DELETE_CONFIRM, ANSI_GALLERY, FILE_MENU, FILE_LIST, DOOR_MENU, MUD_MENU, BULLETIN_LIST, MSG_VIEW, POST_PRIVATE, SYSOP_USER_EDIT, SYSOP_USER_FIELD, SYSOP_ADD_HANDLE, SYSOP_NODES, READER, MSG_KILL, FILE_IMAGE, FILE_MUSIC, FILE_UPLOAD_DESC, FILE_UPLOAD_WAIT, SYSOP_UPLOADS, GOODBYE, SHIP_CONSOLE, SHIP_CONFIRM, SCENE_PLAY, DIAG_PROMPT, SHELL_PROMPT, MANIFEST_PROMPT, SNAKE_PLAY };
+enum State : uint8_t { DEAD, LOGIN_CHOICE, LOGIN_HANDLE, LOGIN_PASSWORD, NEW_HANDLE, NEW_PASSWORD, NEW_REAL, NEW_LOCATION, BULLETIN, MAIN, USER_LIST, MSG_MENU, MSG_READ, POST_TO, POST_SUBJECT, POST_BODY, JOIN_CONF, CHAT, SYSOP_MENU, SYSOP_USERS, SYSOP_DOORS, SYSOP_ADD_PASSWORD, SYSOP_DELETE_CONFIRM, ANSI_GALLERY, FILE_MENU, FILE_LIST, DOOR_MENU, MUD_MENU, BULLETIN_LIST, MSG_VIEW, POST_PRIVATE, SYSOP_USER_EDIT, SYSOP_USER_FIELD, SYSOP_ADD_HANDLE, SYSOP_NODES, READER, MSG_KILL, FILE_IMAGE, FILE_MUSIC, FILE_UPLOAD_DESC, FILE_UPLOAD_WAIT, SYSOP_UPLOADS, GOODBYE, SHIP_CONSOLE, SHIP_CONFIRM, SCENE_PLAY, DIAG_PROMPT, SHELL_PROMPT, MANIFEST_PROMPT, SNAKE_PLAY, FILE_ASK };
 struct Quest {
   uint32_t id = 0, gold = 35, bank = 0, exp = 0;
   uint16_t hp = 30, maxHp = 30;
@@ -119,6 +119,10 @@ struct Session {
   bool powered = false;
   bool makingCrew = false;
   bool sceneHold = false;  // a scene just played: the next waits until the caller has typed a command (core/haunt.h)
+  String typeAhead;        // keys typed while a scene types out: played back when it ends (contract C7)
+  char askKey = 0;        // FILE_ASK: the key (V or D) that wants a file number
+  State helpBack = MAIN;  // the screen ? was pressed on (bbs/help.h)
+  char hotKey = 0; uint32_t hotAt = 0;  // a letter typed at a menu waits a moment: more keys after it make a typed word (bbs/commands.h)
   uint32_t eatEnterUntil = 0;  // a hotkey closed a viewer: the Enter typed after it (until then, in millis()) is not a line
   String menusSeen;  // menus drawn with their art once this session; later draws are compact (bbs/menus.h)
   // Triggers (core/haunt.h). The caller behind this connection: the own account
