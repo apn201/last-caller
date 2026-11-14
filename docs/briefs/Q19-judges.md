@@ -39,6 +39,24 @@ where it fits best; draft for Juha's edit, in his plain voice, following
   BBS core; a mesh would be a third). Do not claim it runs on Meshtastic
   today.
 
+Juha's framing for the judges (14 Nov 2026), to shape the text:
+
+- The game counts as a real product someone can use: people play it, on
+  the hosted board or on the stick. It is not a mock-up of a product.
+- At the same time the project is a feasibility study: does BBS technology
+  still work for today's low-data links such as Meshtastic? The game is the
+  proof that a text-mode system can be rich, intuitive and fun.
+- Using a real, working BBS as the game engine is the unusual part (the
+  Innovation criterion): the story is told through message bases, file
+  areas, doors, node chat and logins, not a game engine dressed as a BBS.
+- Public resources: say honestly what the project already uses (check
+  `docs/CONTENT_POLICY.md` and the content scripts in `tools/`). Do not
+  bolt on a dataset (NASA or other) just to tick the box; it would feel
+  artificial.
+- The Devpost form answers carry most of the weight: a judge must
+  understand in the first paragraph what this is, who it is for and why
+  it matters.
+
 Commit this before the judges play, so they read it.
 
 ## 2. The judges
@@ -115,6 +133,10 @@ must say what they would refuse to change and why. Typical tensions to
 settle: a judge's 40 minutes against a 2-hour story; first-five-minutes
 onboarding for people who never saw a BBS; the account hopping; how the
 game and the mesh use case support each other in the pitch and the video.
+
+Because the Devpost answers matter most, the panel also drafts a better
+version of each Devpost field, mapped to the five criteria, as an appendix
+of `PANEL-1.md` (a proposal for Juha, not applied to `DEVPOST.md`).
 
 Write `docs/reviews/PANEL-1.md`: the discussion (condensed), then a ranked
 action list, each item with: what to change, which criterion and how many
