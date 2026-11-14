@@ -172,4 +172,29 @@ story text never names a key that moved, and `tools/story_lint.py` checks it
 
 ## 4. Port to TinyBBS
 
-(to follow at the end of Q20)
+Kept current after every round (Addition 2). Do not edit `../TinyBBS` in Q20;
+the port is its own item run inside that repository. "Engine" means port it;
+"HALCYON" means story, do not port. Commits are Last Caller commits.
+
+| # | Change | Commits | Files | Port? | Care in TinyBBS |
+| --- | --- | --- | --- | --- | --- |
+| P1 | Interaction contract and audit | 4406e13 | `.kiro/steering/interaction.md`, this file | Engine (docs) | Rewrite the audit rows for Kouvosto's screens and doors |
+| P2 | Letters act at once at every menu, list, pager and yes/no (hotkey tick, browser key mode 3, Backspace) | 6b5d486 | `src/bbs/commands.h`, `src/bbs/runtime.h`, `src/core/stream.h`, `src/core/session.h`, `shared/web/terminal.html` | Engine | The `src/core/haunt.h` part is the calm-prompt hook: port only the `hotKey` check. Regenerate `web_terminal.h` with `tools/embed_web.py` |
+| P3 | ENTER never leaves a level; Q back, X main, ? keys everywhere; one pager for messages, bulletins, WHO and stats; P page -> O, P post -> W, R read -> L; scene type-ahead and return to the interrupted screen | 0e0fd5e, 28934d2 | `src/bbs/board.h`, `cmd_*.h`, `eggs.h`, `help.h`, `messages.h`, `sysop.h`, `files.h`, `viewers.h`, `chat.h`, `src/core/reader.h`, `src/core/session.h`, `src/core/stream.h` | Engine | Kouvosto's doors (Legend, dice, VolaMUD) need Q, QUIT, EXIT and a "how to leave" line on entry; check their own key loops against section 2. Scene parts (`src/core/scene.h`) exist only if TinyBBS has the haunt engine: otherwise skip |
+| P4 | Manifest keys, shell leave words | 28934d2 | `src/doors/manifest.h`, `src/doors/shell.h`, `src/core/shell_logic.h` | HALCYON | Do not port |
+| P5 | `story_lint.py` `check_keys` | 28934d2 | `tools/story_lint.py` | HALCYON | TinyBBS has no story lint; port the idea only if it gets help texts that name keys |
+| P6 | W in a read-only area says why it takes no post | 7416445 | `src/bbs/cmd_messages.h` | Engine | |
+| P7 | e2e follows the new keys and the pager | 0e0fd5e, 3eb7196, d46bcfd, a788055, 2c51055, 7ab5e37, cbb892f, f17933d, 8a4c5f3 | `tools/test/e2e_telnet.py` | Engine parts | Kouvosto's e2e (if any) needs the same key changes; the story steps are HALCYON |
+| P8 | Numbered scene choices (1 to 9) and Q act at once; `[any key]` waits | f17933d, 240ea43 | `src/bbs/commands.h`, `src/core/scene_logic.h`, `src/core/stream.h` | Engine if scenes exist | |
+| P9 | Snake: moves and Q act at once, Q door menu, X main | f17933d | `src/doors/snake.h` | Engine | Check Kouvosto's Snake copy is the same file |
+| P10 | Single-page documents drop the row counter; Q and X first in footers | f17933d | `src/core/reader.h` | Engine | |
+| P11 | Chat: banner says `Q leaves.`; a lone Q, QUIT, EXIT, /Q leave; a lone Q acts at once | 8a4c5f3, 3e35651 | `src/bbs/chat.h`, `src/bbs/cmd_main.h`, `src/bbs/commands.h`, `src/core/stream.h` | Engine | |
+| P12 | Reply save ends like a post (back to the message menu) | 8a4c5f3 | `src/bbs/messages.h` | Engine | |
+| P13 | A caller's own posts are never "new" to them | 3e35651 | `src/bbs/messages.h` | Engine | `mine()` checks `s.readOnly` (a HALCYON crew login); in TinyBBS drop that part if there is no read-only login |
+| P14 | Front page puzzle hint, account-made note after CREW, "Start with the service label" | 8a4c5f3, c51eb3c | `sd/BBS/STORY/POWER.INI`, `src/bbs/power_ui.h`, `src/core/power.h` | HALCYON | Do not port |
+| P15 | A queued page under a prompt draws that prompt again (`eggPrompt` covers every calm prompt) | c51eb3c | `src/core/haunt.h`, `src/bbs/eggs.h` | Engine | `eggPrompt` is used by the eggs too; TinyBBS has the eggs, port both together |
+| P16 | A scene starts on a fresh line, never on the prompt it interrupts | c51eb3c | `src/core/scene.h` | Engine if scenes exist | |
+| P17 | Key hint once per call under the first main menu ("Press a letter. No ENTER needed. ? shows the keys, X comes back here.") | c51eb3c | `src/bbs/board.h` | Engine | Uses `s.menusSeen`, no new field |
+| P18 | Number prompts say "Q goes back at once" | c51eb3c | `src/bbs/cmd_main.h`, `src/bbs/messages.h`, `src/bbs/cmd_files.h`, `src/bbs/eggs.h` | Engine | The e2e matches only the "Bulletin #", "Area #", "File area #" prefix |
+| P19 | Main menu C label "Chat: SysOp, callers" | c51eb3c | `src/bbs/board.h`, `tools/ansi/render.py` | Engine (label) | On Kouvosto, with a human SysOp, "Node chat" may read better; decide there |
+| P20 | UX tester agents and the fixed task list | f17933d | `.kiro/agents/ux-tester-1.md`, `ux-tester-2.md` | Engine (tooling) | They point at HALCYON staging; change the host and the board name |
