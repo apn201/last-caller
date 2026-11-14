@@ -1,0 +1,65 @@
+WARNING: Uncommitted changes are not served: only the pushed main is built.
+
+== checkout
+
+== build
+[  6%] Built target egg_logic_test
+[ 16%] Built target wrap_logic_test
+[ 20%] Built target tinybbs-miniz
+[ 33%] Built target overrun_logic_test
+[ 33%] Built target glitch_logic_test
+[ 40%] Built target modinfo_logic_test
+[ 46%] Built target power_logic_test
+[ 53%] Built target haunt_logic_test
+[ 60%] Built target manifest_logic_test
+[ 66%] Built target ghost_logic_test
+[ 73%] Built target scene_logic_test
+[ 80%] Built target shell_logic_test
+[ 86%] Built target story_property_test
+[ 93%] Built target tinybbs-phase1-smoke
+[100%] Built target tinybbs-server
+
+== ctest
+      Start  1: egg_logic_test
+ 1/13 Test  #1: egg_logic_test ...................   Passed    0.01 sec
+      Start  2: wrap_logic_test
+ 2/13 Test  #2: wrap_logic_test ..................   Passed    0.00 sec
+      Start  3: overrun_logic_test
+ 3/13 Test  #3: overrun_logic_test ...............   Passed    0.00 sec
+      Start  4: glitch_logic_test
+ 4/13 Test  #4: glitch_logic_test ................   Passed    0.00 sec
+      Start  5: power_logic_test
+ 5/13 Test  #5: power_logic_test .................   Passed    0.00 sec
+      Start  6: modinfo_logic_test
+ 6/13 Test  #6: modinfo_logic_test ...............   Passed    0.00 sec
+      Start  7: haunt_logic_test
+ 7/13 Test  #7: haunt_logic_test .................   Passed   38.62 sec
+      Start  8: manifest_logic_test
+ 8/13 Test  #8: manifest_logic_test ..............   Passed    0.02 sec
+      Start  9: ghost_logic_test
+ 9/13 Test  #9: ghost_logic_test .................   Passed    0.01 sec
+      Start 10: scene_logic_test
+10/13 Test #10: scene_logic_test .................   Passed    1.15 sec
+      Start 11: shell_logic_test
+11/13 Test #11: shell_logic_test .................   Passed    0.01 sec
+      Start 12: story_property_test
+12/13 Test #12: story_property_test ..............   Passed   91.43 sec
+      Start 13: story_lint
+13/13 Test #13: story_lint .......................   Passed    0.18 sec
+
+100% tests passed, 0 tests failed out of 13
+
+Total Test time (real) = 131.45 sec
+
+== card
+
+== phase-1 smoke
+[TINYBBS 00000668] USER_APPEND_OK :: GARDEN #6
+[TINYBBS 00000670] USER_APPEND_OK :: TYVANCE #7
+SETTINGS: 10 file areas, 117 history messages, 72 triggers, 5 ghosts, 20 SysOp lines, 5 manifest rows, clock 1998-12-08 04:17, 12 conferences, 5 bulletins, 8 nodes, 28800 baud
+LOGIN OK: admin (#1)
+
+== start server
+
+== serving
+SERVING: Telnet 127.0.0.1:2323, HTTP 127.0.0.1:8086, card /home/lastcaller/lastcaller-staging/card. Stop: touch /home/lastcaller/lastcaller-staging/stop (or end this session).
