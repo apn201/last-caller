@@ -353,7 +353,7 @@ Facts use the ids in the Fates table.
 | E24 | MSG | CREW MAIL: Tanabe to her mother, 1 Dec, "ELIZA says it is a sensor fault" | T-F T-C | GARDEN login | P2 |
 | E25 | MSG | CREW MAIL: ELIZA to Ty, seat, "it is only a formality", the test request | A-C V-C | TYVANCE | P1 |
 | E26 | MSG | ARCHIVE: Achterberg's last message, 3 Dec: lock log, Ty, client list, parts of the final command | A-F A-C H-C Z-O Z-W | ACH | P6 |
-| E27 | FILE | ARCHIVE: the Sponsor's order, jigsaw of four numbered ANSI pieces; "THE ASSET IS NOT THE CREW" | Z-O V-C | ACH | P5 |
+| E27 | FILE | ARCHIVE: the Sponsor's order, jigsaw of four unnumbered ANSI strips, ordered by the sentences that run on from one strip to the next (Q18); "THE ASSET IS NOT THE CREW" | Z-O V-C | ACH | P5 |
 | E28 | FILE | LIBRARY: budget memo, "capsule: CUT, use the mock-up for photos" | V-C | CREW | start |
 | E29 | FILE | LIBRARY: NOWHERE prospectus, "Your data is NOWHERE" | Z-W | CREW | start |
 | E30 | FILE | LIBRARY: comms manual, DIAG query codes and queue syntax | (unlocks P4, P8) | CREW | P4 |
@@ -429,7 +429,7 @@ stories) can be done in any order.
 | M1 | Power to the RTG | `admin`/`admin`, two minutes (exists) | ELIZA wakes | `ELIZA_WAKE` |
 | M2 | Own account | Power restored (exists) | Act 1: 31 Oct to 22 Nov 13:51 | NEW `ELZ_WELCOME` |
 | M3 | The crew area | `TYVANCE` login, birthday (exists) | Act 2: 22 Nov 13:52 to 1 Dec | `TY_DESK` |
-| M4 | Achterberg's archive | `CHAOS` login, `LADDER`; the jigsaw (order code) hangs off it | Act 3: 2 Dec onward, his last message | `MEM_REC` |
+| M4 | Achterberg's archive | `CHAOS` login, `CORRIGENDUM` (Q18: only on Orbit 3 at slow speed; `LADDER` from his paper is a wrong guess); the jigsaw (order code) hangs off it | Act 3: 2 Dec onward, his last message | `MEM_REC` |
 | M5 | ELIZA's memory damaged | NEW: a post with 20 zeros in a row | ELIZA's lines change | NEW `MEM_GLITCH` |
 | M6 | SYSOP view | NEW: ELIZA grants it in the SysOp chat, once the caller has M5 and has read the handbook page | All areas, all crew mail, the Sponsor's orders in full (catch-up) | NEW `ELZ_GRANT` |
 | M7 | ELIZA's account | NEW: her password is in the go-live checklist, Engineering, SYSOP view | Her door menu, her mail, her ops log | NEW `ELZ_OPS` |
@@ -544,7 +544,7 @@ reply to "brb" says she corrected the cause (she did not).
 - Engine and content need: short original WAV/MP3 sounds (power hum, relay
   clicks, a reboot chirp). Recorded in tasks, designed in S7.
 - Passwords and codes are placeholders until S3: `TYVANCE` = birthday as
-  digits, `CHAOS` = `LADDER`.
+  digits, `CHAOS` = `CORRIGENDUM` (was `LADDER` until Q18).
 
 ## Social board, side story, scenes (folded in from STORY_EXTRAS, Q0)
 

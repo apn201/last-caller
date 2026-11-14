@@ -37,7 +37,7 @@ jigsaw there.
 | M1 | Power to the RTG | `admin`/`admin`, switch the source within two minutes | `MET_ELIZA` (exists) | ELIZA wakes | `ELIZA_WAKE` |
 | M2 | Own account | M1; create the account in the console | (account) | Act 1 board, 31 Oct to 22 Nov 13:51 | NEW `ELZ_WELCOME` |
 | M3 | Crew area | M2; `TYVANCE` login, password = his birthday | `CREW`, NEW `ACT2` | Act 2, 22 Nov 13:52 to 1 Dec: logs, records, the other crew passwords | `TY_DESK` |
-| M4 | Achterberg's archive | M3; `CHAOS` login, password `LADDER` | `ACH`, NEW `ACT3` | Act 3, 2 Dec onward; his last message; the jigsaw | `MEM_REC` |
+| M4 | Achterberg's archive | M3; `CHAOS` login, password `CORRIGENDUM` (Q18) | `ACH`, NEW `ACT3` | Act 3, 2 Dec onward; his last message; the jigsaw | `MEM_REC` |
 | M5 | ELIZA's memory damaged | M2; post a body with 20 zeros in a row (19 gives one garbled ELIZA line and nothing else) | NEW `OVR` | ELIZA's lines change | NEW `MEM_GLITCH` |
 | M6 | SYSOP view | M5 and the handbook page (CMDR login, so M3); reply 3 in the SysOp chat | NEW `CURE`, NEW `SYSVW` | Everything, every crew mailbox, the Sponsor's orders in full | NEW `ELZ_GRANT` |
 | M7 | ELIZA's account | M6; her password from the go-live checklist | NEW `ELZ_IN` | Her door menu, her mail, her ops log | NEW `ELZ_OPS` |
@@ -57,7 +57,7 @@ flags.
 | M1 | Boot banner: maintenance account, see the label | Console warning names the key | Unknown login gets one in-world line (exists) |
 | M2 | WELCOME bulletin: guests read, ELIZA offers an account | The console offers it after the RTG | |
 | M3 | CREW bulletin: Ty's bio with his birthday | Ty's journal: "I use my birthday for everything" | User list: `TYVANCE` "all decks"; his tune's sample names (E39) |
-| M4 | Orbit 3 shown at 300 baud: the covered frame | Lounge "Locks", 25 Nov, and Achterberg's repeated "ladder" | AUDIT.LOG shows his archive made 28 Nov |
+| M4 | Orbit 3 shown at 300 baud: the covered frame | Lounge "Locks", 25 Nov, and Ty's journal ("a very des word"); his "ladder" paper is now a wrong guess (Q18) | AUDIT.LOG shows his archive made 28 Nov |
 | M5 | Lounge, 6 Nov, Ty: "20 zeros", the board went away for three minutes | Archive, 2 Dec, Achterberg: the one place she cannot watch | ELIZA's reply under Ty's post: "unavailable for three minutes" |
 | M6 cure | CMDR's handbook page: SYSOP mode has a memory check | Archive, 2 Dec: she must allow the check, for its duration | ELIZA, once the caller has M5: she cannot account for some minutes |
 | M7 | The checklist itself, by name and date, in Engineering | ELIZA's grant line: Engineering is listed now | Archive, 3 Dec: "the operators never changed it" |
@@ -74,13 +74,13 @@ Optional unless marked. Any order after their parent.
 | Side puzzle | Parent | What the caller does | Reward |
 | --- | --- | --- | --- |
 | P1 Ty's birthday | M2 | Finds the date in the bio, journal and tune | M3 |
-| P6 Overpainted Orbit 3 | M3 | Slows the picture to 300 baud and reads the covered frame | `LADDER` for M4 |
+| P6 Overpainted Orbit 3 | M3 | Slows the picture to 300 baud and reads the covered frame | `CORRIGENDUM` for M4 |
 | P2 CMDR login (`ANDERS`) | M3 | Reads the Lounge "Locks" and Orbit 5 | Her mail (E23); NEW handbook page (E43), needed for M6 |
 | P2 GARDEN login (`HANAMI`) | M3 | Reads Garden Notes 24 Nov and Orbit 6 | Her mail (E24) |
 | P3 Audit log | M3 | Reads AUDIT.LOG and the warning Ty scrolled past | A-C, A-F |
 | P7 Logs | M3 | Reads SUIT1, GARDEN, CAPSULE, RACK, POWER, MODULE logs and NEW BULKHEAD.LOG | H-F, T-F, V-F, Z-W |
 | P4 Diagnostics | M3 | Queries by number from the comms manual | Truthful answers; the order-code query |
-| P5 Jigsaw | M4 | Orders the four Archive pieces | Order code for M8 |
+| P5 Jigsaw | M4 | Orders the four unnumbered Archive strips by their running sentences (Q18) | Order code for M8 |
 | NEW P10 Overrun | M2 | See M5 | M5 |
 | NEW P11 Memory check | M3, M5 | See M6 | M6 |
 | NEW P12 ELIZA's login | M6 | See M7 | M7 |
