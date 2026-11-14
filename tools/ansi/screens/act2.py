@@ -99,7 +99,7 @@ def orbit3():
         c.box(30, 4, 46, 9, "single", DGREY)
         if hidden:
             c.text(33, 6, "KEY", YELLOW)
-            c.text(33, 8, "LADDER", WHITE)
+            c.text(33, 8, "CORRIGENDUM", WHITE)
             c.text(33, 10, "(des. do not tell ty)", GREY)
         else:
             for yy in range(5, 12):
@@ -108,7 +108,7 @@ def orbit3():
             c.text(33, 8, "work in progress", GREY)
             c.text(33, 10, "(ty will finish this one)", DGREY)
             c.put(60, 11, "\u2591", DGREY)
-        c.text(30, 15, "des said the portrait needed a ladder in it.", GREY)
+        c.text(30, 15, "des said the portrait needed one more word in it.", GREY)
         c.text(30, 16, "he has been right about everything else.", GREY)
         c.text(59, 21, TY_TAG, GREY)
         return c
@@ -347,8 +347,9 @@ def frag(letter, n, code, lines):
     for i, t in enumerate(lines):
         c.text(5, 2 + i * 2 if len(lines) < 6 else 2 + i, t, WHITE if t[:1].isdigit() else GREY)
     c.text(5, 12, "-----", DGREY)
-    c.text(60, 11, "AUTH %d/4: %s" % (n, code), YELLOW)
-    c.text(60, 12, "PIECE %d OF 4" % n, DGREY)
+    # no piece number: the order is in the text (sentences run on from strip to strip)
+    c.text(60, 11, "AUTH: %s" % code, YELLOW)
+    c.text(60, 12, "TORN. SCANNED", DGREY)
     c.put(3, 1, "\u00b7", DGREY); c.put(76, 12, "\u00b7", DGREY)
     c.text(40, 12, "", GREY)
     rel = "FILES/005_ARCHIVE/FRAG_%s.ANS" % letter

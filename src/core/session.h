@@ -118,6 +118,8 @@ struct Session {
   bool powerTimerOn = false;
   bool powered = false;
   bool makingCrew = false;
+  bool sceneHold = false;  // a scene just played: the next waits until the caller has typed a command (core/haunt.h)
+  uint32_t eatEnterUntil = 0;  // a hotkey closed a viewer: the Enter typed after it (until then, in millis()) is not a line
   String menusSeen;  // menus drawn with their art once this session; later draws are compact (bbs/menus.h)
   // Triggers (core/haunt.h). The caller behind this connection: the own account
   // signed in here (kept across a crew login), and flags earned on a crew

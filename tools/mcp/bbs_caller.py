@@ -40,6 +40,23 @@ HOST = os.environ.get("BBS_HOST", "127.0.0.1")
 PORT = int(os.environ.get("BBS_PORT", "12323"))
 CTL_PORT = int(os.environ.get("BBS_CTL_PORT", "12399"))
 MAX_RETURN = 12000
+POS = re.compile(r"\x1b\[(\d+);(\d+)H")
+
+
+def place(raw):
+    """Menus write their options into the art with cursor moves (ESC[row;colH).
+    A terminal shows them in rows; with the moves removed they ran into one line.
+    Without a screen model, each move to a new row starts a new line here, and a
+    move along the same row keeps the options side by side."""
+    state = {"row": None}
+
+    def move(m):
+        row = int(m.group(1))
+        if row == state["row"]:
+            return "  "
+        state["row"] = row
+        return "\n"
+    return POS.sub(move, raw)
 
 
 class Caller:
@@ -96,7 +113,7 @@ class Caller:
         if tail and not self.eof:
             keep = self.raw[tail.start():]
             self.raw = self.raw[:tail.start()]
-        text = ANSI.sub("", self.raw)
+        text = ANSI.sub("", place(self.raw))
         self.raw = keep
         self.buf = ""
         text = re.sub(r"\n{4,}", "\n\n\n", text)

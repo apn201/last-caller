@@ -301,6 +301,7 @@ static void closeReader(Session &s) {
   Reader &r = s.reader;
   void (*quit)(Session &) = r.onQuit;
   r = Reader();
+  s.eatEnterUntil = millis() + 1500;  // Q then Enter: the Enter must not also answer the list's prompt
   write(s, "\x1b[0m\x1b[2J\x1b[H");
   if (quit) quit(s);
 }

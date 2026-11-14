@@ -59,7 +59,7 @@ static void ansiGallery(Session &s) {
 // FILES.ANS is the header art; the areas below it come from the card.
 static void fileMenu(Session &s) {
   s.state = FILE_MENU; activity(s, "FILE AREAS");
-  art(s, "/BBS/ANSI/MENUS/FILES.ANS", "\x1b[1;36mFILE CABINETS\x1b[0m");
+  artOnce(s, "/BBS/ANSI/MENUS/FILES.ANS", "\x1b[1;36mFILE CABINETS\x1b[0m");
   uint32_t n = 0;
   for (size_t i = 0; i < fileAreas.size(); ++i) {
     if (!listedArea(s, i)) continue;

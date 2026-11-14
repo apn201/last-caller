@@ -207,7 +207,7 @@ static void enterManifest(Session &s) {
   s.manPicks = manPicksLoad(s.user.id);
   activity(s, "CREW MANIFEST");
   event("MANIFEST", s.user.handle + " node " + s.node + " opened the manifest");
-  if (s.ansi) art(s, "/BBS/ANSI/DOORS/MANIFEST.ANS", hauntStr(manTable.title));
+  if (s.ansi) artOnce(s, "/BBS/ANSI/DOORS/MANIFEST.ANS", hauntStr(manTable.title));
   else plainArt(s, "/BBS/ASCII/DOORS/MANIFEST.ASC", hauntStr(manTable.title));
   if (manTable.intro.length()) manSay(s, manLines(hauntStr(manTable.intro)));
   manOverview(s);

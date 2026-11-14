@@ -755,12 +755,12 @@ def main():
         c.send(number_of(c, len(c.all) - 6000, "ORBIT_3.ANS"))
         c.expect("ORBIT 3", timeout=15)
         c.expect("N/P file", timeout=10)
-        if "LADDER" in c.all[pos:]:
+        if "CORRIGENDUM" in c.all[pos:]:
             raise AssertionError("the password is in the still picture")
         if "work in progress" not in c.all[pos:]:
             raise AssertionError("the cover is missing")
         key(c, "s")                       # play: the covered rows come first, each painted over
-        c.expect("LADDER", timeout=15)
+        c.expect("CORRIGENDUM", timeout=15)
         c.expect("do not tell ty", timeout=10)
         time.sleep(0.5)
         key(c, "q")
@@ -859,19 +859,19 @@ def main():
         advance(c, "Main Board Command?", timeout=60)
         mailbox("Mail: GARDEN", "sensor", "Read it twice")
 
-    @step("act 2: CHAOS opens with LADDER; the Archive conference and its files open")
+    @step("act 2: CHAOS opens with CORRIGENDUM (LADDER, from his paper, is wrong); the Archive conference and its files open")
     def act2_chaos():
         c = state["c"]
         c.send("G")
         c.expect("Login:", timeout=20)
         c.send("CHAOS")
         c.expect("Password:")
-        c.send("RUNG")
+        c.send("LADDER")
         c.expect("Bad password")
         c.expect("Login:")
         c.send("CHAOS")
         c.expect("Password:")
-        c.send("LADDER")
+        c.send("CORRIGENDUM")
         advance(c, "Main Board Command?", timeout=60)
         mailbox("Archive", "To whoever comes after", "got through a lock")
 
@@ -899,16 +899,20 @@ def main():
         time.sleep(0.3)
         c.send("")
         advance(c, "Main Board Command?", timeout=60)
-        # the four pieces, out of order by name: the code is read off them in piece order
+        # the four pieces, out of order by name and unnumbered (Q18): the order is in the text,
+        # where each sentence runs on from one strip to the next
         pos = pick_file_area(c, "Archive")
         parts = {}
+        opening = {"ABOVE IT ALL HOLDINGS": 1, "MISSION AND ARE TO BE": 2, "ASSET POWERED AND": 3, "MOVE FAST.": 4}
         for name in ("FRAG_D.ANS", "FRAG_K.ANS", "FRAG_Q.ANS", "FRAG_V.ANS"):
             start = len(c.all)
-            open_file(c, number_of(c, pos - 3000, name), "PIECE")
-            m = re.search(r"AUTH (\d)/4: (\w+)", c.all[start:])
-            if not m:
-                raise AssertionError("%s carries no piece number and code" % name)
-            parts[int(m.group(1))] = m.group(2)
+            open_file(c, number_of(c, pos - 3000, name), "AUTH:")
+            seg = c.all[start:]
+            m = re.search(r"AUTH: (\w+)", seg)
+            if not m or re.search(r"PIECE \d|AUTH \d/4", seg):
+                raise AssertionError("%s: no code, or a piece number gives the order away" % name)
+            first = min((seg.find(k), n) for k, n in opening.items() if k in seg)
+            parts[first[1]] = m.group(1)
         code = "-".join(parts[i] for i in (1, 2, 3, 4))
         if code != "NW1-98-44-17":
             raise AssertionError("the pieces give %r" % code)

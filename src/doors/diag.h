@@ -57,7 +57,7 @@ static void enterDiag(Session &s) {
   iniLoad(DIAG_INI, diagIni);
   s.state = DIAG_PROMPT; s.hideInput = false; activity(s, "DIAGNOSTICS");
   event("DIAG", s.user.handle + " node " + s.node + " opened diagnostics");
-  if (s.ansi) art(s, "/BBS/ANSI/DOORS/DIAG.ANS", iniGet(diagIni, "DIAG", "title", "DIAGNOSTICS"));
+  if (s.ansi) artOnce(s, "/BBS/ANSI/DOORS/DIAG.ANS", iniGet(diagIni, "DIAG", "title", "DIAGNOSTICS"));
   else plainArt(s, "/BBS/ASCII/DOORS/DIAG.ASC", iniGet(diagIni, "DIAG", "title", "DIAGNOSTICS"));
   diagSay(s, iniGet(diagIni, "DIAG", "intro", "Enter a query code, or QUIT."));
   diagPrompt(s);

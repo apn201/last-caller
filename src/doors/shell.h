@@ -44,7 +44,7 @@ static void enterShell(Session &s) {
   shellLoad();
   s.state = SHELL_PROMPT; s.hideInput = false; s.shellCwd = "/"; activity(s, "NOWHERE");
   event("SHELL", s.user.handle + " node " + s.node + " opened the NOWHERE shell");
-  if (s.ansi) art(s, "/BBS/ANSI/DOORS/NOWHERE.ANS", "NOWHERE");
+  if (s.ansi) artOnce(s, "/BBS/ANSI/DOORS/NOWHERE.ANS", "NOWHERE");
   else plainArt(s, "/BBS/ASCII/DOORS/NOWHERE.ASC", "NOWHERE");
   if (shellTable.motd.length()) { String m = hauntStr(shellTable.motd); m.replace("|", "\r\n"); say(s, "\x1b[0;37m" + m + "\x1b[0m"); }
   shellPrompt(s);

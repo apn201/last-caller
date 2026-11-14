@@ -4,6 +4,7 @@
 
 static void handleLine(Session &s, String line) {
   s.lastAt = millis(); line.trim(); String cmd = up(line);
+  if (s.state != SCENE_PLAY) s.sceneHold = false;  // a command after a scene: the next scene may come (core/haunt.h)
   if (s.user.locked) { closeSession(s); return; }
   if (s.pageNode && isSysop(s) && (cmd == "/A" || cmd == "/R")) { answerPage(s, cmd == "/A"); return; }
   bool sysopState = s.state == SYSOP_MENU || s.state == SYSOP_USERS || s.state == SYSOP_DOORS || s.state == SYSOP_ADD_PASSWORD ||
@@ -46,6 +47,11 @@ static void input(Session &s, const String &bytes) {
     return;
   }
   for (uint16_t i = 0; i < bytes.length() && s.used && s.state != GOODBYE; ++i) { char c = bytes[i];
+    // The Enter after a hotkey that closed a viewer belongs to that key, not to the next prompt.
+    if (s.eatEnterUntil) {
+      if ((c == '\r' || c == '\n' || c == 0) && s.input.length() == 0 && (int32_t)(s.eatEnterUntil - millis()) > 0) { if (c == '\r') s.ignoreNextLf = true; else if (c == '\n') s.ignoreNextLf = false; if (c != 0) s.eatEnterUntil = 0; continue; }
+      s.eatEnterUntil = 0;
+    }
     // A scene types its own text: a key typed meanwhile is neither echoed nor
     // kept (it would land in the middle of a sentence). Enter still reaches the
     // scene, as an empty line, to skip the typing or the pause.

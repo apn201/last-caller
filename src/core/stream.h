@@ -174,6 +174,14 @@ static void art(Session &s, const char *path, const String &fallback = "") {
   }
   say(s, fallback);
 }
+// A header picture drawn once per session: on a return visit the caller gets the title line only
+// (menusSeen, shared with bbs/menus.h). Saves a full screen on every way back to a list.
+static void artOnce(Session &s, const char *path, const String &title) {
+  String key = String("|") + path + "|";
+  if (s.menusSeen.indexOf(key) >= 0) { say(s, "\r\n" + title); return; }
+  s.menusSeen += key;
+  art(s, path, title);
+}
 
 // Plain-text board art for callers without ANSI (ASCII/LOGIN/WELCOME.ASC):
 // printable bytes pass through, escapes and control characters are dropped.

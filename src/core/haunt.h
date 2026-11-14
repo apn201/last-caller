@@ -190,7 +190,9 @@ static bool hauntCalm(const Session &s) {
   return !streaming(s) && !s.input.length() && !s.hideInput;
 }
 static void hauntShow(Session &s) {
-  // A scene takes the whole screen: whatever is queued behind it waits for the next calm prompt.
+  // A scene takes the whole screen: whatever is queued behind it waits for the next calm prompt,
+  // and, after a scene, for the caller's next command, so two scenes never play back to back.
+  if (s.sceneHold) return;
   std::vector<HauntShow> shows;
   shows.swap(s.hauntShows);
   for (size_t i = 0; i < shows.size(); ++i) {
@@ -206,6 +208,7 @@ static void hauntShow(Session &s) {
     if (h.scene.length()) {
       sceneStart(s, h.scene);
       if (s.state == SCENE_PLAY) {
+        s.sceneHold = true;
         for (size_t k = i + 1; k < shows.size(); ++k) s.hauntShows.push_back(shows[k]);
         return;
       }
