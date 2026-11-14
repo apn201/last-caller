@@ -101,3 +101,14 @@ score the whole visit by them.
 Checks after the fixes (7e8ff0f): `pio run` passed (RAM 62148 bytes, flash
 1647683 bytes), host tests 12 of 12, story lint 0 errors, staging check PASS
 (server build, ctest, e2e 63 of 63).
+
+## Fixes before round 4
+
+| Finding | Who | Fix |
+| --- | --- | --- |
+| A second `Login:` after CREW; the caller types handle and password again | both, L (rounds 1 to 3) | Juha's Addition 4: CREW logs the new account in at once; the note says "You are logged in." (824782e, e2e 8d9d4eb, 3769688) |
+| "TYPE [K] AND PRESS ENTER": the only bracketed letter that needs ENTER | Ulf, L (round 3), Ines (round 2) | the ACK is one key (contract C5); the line says "PRESS [K] TO ACKNOWLEDGE. NO ENTER." (d1e33c3). The puzzle is unchanged: finding SOURCE RTG |
+
+Checks after the fixes (d1e33c3): `pio run` passed (RAM 62148 bytes, flash
+1647919 bytes), host tests 12 of 12, story lint 0 errors, staging check PASS
+(server build, ctest, e2e 63 of 63).
