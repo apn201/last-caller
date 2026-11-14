@@ -69,6 +69,11 @@ static void handleDiag(Session &s, String &line, const String &cmd) {
     doorMenu(s);
     return;
   }
+  if (cmd == "X") {   // Q20 UX: X is the main menu from every screen, a line door too
+    event("DIAG", s.user.handle + " node " + s.node + " left diagnostics");
+    mainMenu(s);
+    return;
+  }
   if (cmd == "HELP" || cmd == "?") {
     String help = iniGet(diagIni, "DIAG", "help", "");
     if (help.length()) { diagSay(s, help); diagPrompt(s); return; }

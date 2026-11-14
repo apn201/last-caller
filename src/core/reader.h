@@ -252,7 +252,16 @@ static String readerBar(const Reader &r, const String &note) {
   uint32_t total = readerCount(r);
   uint32_t last = min(r.top + PAGE_LINES, total);
   String where = (total && total <= PAGE_LINES) ? String() : total ? String(r.top + 1) + "-" + last + "/" + total + (last >= total ? " END" : "  " + String(last * 100 / total) + "%") : String("empty");
-  String status = " " + r.title + "  " + where + "  " + (note.length() ? note : r.hint);
+  String keys = note.length() ? note : r.hint;
+  // Q20 UX: the keys always fit in 79 columns; a long title gives way first, then the row counter.
+  if (1 + (int)where.length() + 2 + (int)keys.length() > 79) where = "";
+  String title = r.title;
+  int room = 79 - 1 - (where.length() ? (int)where.length() + 2 : 0) - 2 - (int)keys.length();
+  if ((int)title.length() > room) title = room > 3 ? title.substring(0, room - 1) + "~" : String();
+  String status = " ";
+  if (title.length()) status += title + "  ";
+  if (where.length()) status += where + "  ";
+  status += keys;
   String bar;
   size_t width = 0;
   for (size_t i = 0; i < status.length() && width < 79; ++i) {

@@ -198,3 +198,6 @@ the port is its own item run inside that repository. "Engine" means port it;
 | P18 | Number prompts say "Q goes back at once" | c51eb3c | `src/bbs/cmd_main.h`, `src/bbs/messages.h`, `src/bbs/cmd_files.h`, `src/bbs/eggs.h` | Engine | The e2e matches only the "Bulletin #", "Area #", "File area #" prefix |
 | P19 | Main menu C label "Chat: SysOp, callers" | c51eb3c | `src/bbs/board.h`, `tools/ansi/render.py` | Engine (label) | On Kouvosto, with a human SysOp, "Node chat" may read better; decide there |
 | P20 | UX tester agents and the fixed task list | f17933d | `.kiro/agents/ux-tester-1.md`, `ux-tester-2.md` | Engine (tooling) | They point at HALCYON staging; change the host and the board name |
+| P21 | Pager bar: the keys always fit in 79 columns; a long title gives way first, then the row counter | (round 3 fix) | `src/core/reader.h` | Engine | |
+| P22 | X leaves the Diagnostics door to the main menu | (round 3 fix) | `src/doors/diag.h` | HALCYON door, engine rule | TinyBBS line doors (Legend, dice, VolaMUD) need the same X, unless X is a game word there |
+| P23 | Testers run one at a time: the `bbs-caller` MCP server holds one Telnet connection, so parallel sub-agents share it | (round 3) | `tools/mcp/bbs_caller.py`, `docs/reviews/UX-LOOP.md` | Engine (tooling) | Same in TinyBBS if the tool is copied |

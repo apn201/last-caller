@@ -86,7 +86,8 @@ are allowed: they never appear on screen.
 | Screen | Keys | Notes |
 | --- | --- | --- |
 | Door menu | one per door in the door table, Q | |
-| Snake (Ty's) | W A S D (several at once), ENTER goes on, Q; after a game over ENTER plays again | In the door menu (key S) for every caller who is not the maintenance login and when the card has its title art. Saves nothing, so read-only accounts have it too. |
+| Snake (Ty's) | W A S D and Q act at once (Q20); Q door menu, X main menu; after a game over ENTER plays again | In the door menu (key S) for every caller who is not the maintenance login and when the card has its title art. Saves nothing, so read-only accounts have it too. |
+| Diagnostics | a query code, then ENTER; HELP or ?; Q, QUIT, EXIT, BYE door menu; X main menu (Q20 UX round 3) | Line door: the intro says "Enter a query code, or QUIT." |
 | VolaMUD | HELP lists LOOK, N/S/E/W, GO, TALK, BUY/SELL, INV, WEAR, TASK, BANK, SAY, FIGHT, WHO, STATS, QUIT | All handled. |
 
 ## SysOp
