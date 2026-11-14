@@ -15,10 +15,10 @@ Not changed this round: the stale "ELIZA NOT RESPONDING" line on the reboot
 banner (kept as ELIZA's lie, noted by both), fragment numbering, digits in the
 reader, Q depth, the unlisted P key.
 
-## Round 2, before the round was played (fixes found while checking Ada's lost first run and her cut-off rerun)
+## Round 2 (Ada 66, cut off by a lock-out; Mara not played; round closed)
 
-Round 2 Ada scored 66 on a game she did not finish (see LOOP.md). These fixes
-go in before round 2 is replayed from a fresh board; round 2 then counts.
+Round 2 is closed as incomplete rather than replayed after these fixes, so no
+score is compared across commits. Round 3 plays the commit with them.
 
 | Change | Answers | Why |
 | --- | --- | --- |
