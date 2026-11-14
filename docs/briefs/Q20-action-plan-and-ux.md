@@ -26,9 +26,14 @@ done before filming, what waits until after submission. Put the open
 decisions for Juha at the top, each with the options and a recommendation.
 Known ones:
 
-- The panel wants to drop "feasibility study" and "product" from the first
-  paragraph; Juha's framing keeps both. Propose wording that keeps both
-  ideas and still says in one sentence what this is.
+- **Framing: DECIDED by Juha (14 Nov 2026), not open.** Frame it clearly
+  as a game, on the Resurrection theme: "We resurrected BBS technology to
+  study its feasibility as a game engine." Other uses worth studying (a
+  LoRa/Meshtastic text interface, FidoNet-style sync over a mesh, etc.)
+  are named as possible directions that were out of scope for this
+  hackathon. So the first paragraph leads with the game; the mesh is one
+  honest "what's next" line, not a second product. Plan the Devpost and
+  README rewrite to this framing.
 - **Kouvosto is missing.** The Q19 brief asked for `kouvosto.helppox.com` as
   the reference board (the same TinyBBS engine as an ordinary BBS, seeded
   with about 1000 real FidoNet messages), and it is in neither
