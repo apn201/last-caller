@@ -175,6 +175,7 @@ These go to Q20 part B and then to both repositories (Part C).
 | Remove "12 hours" and the credits figure on the day; cut the invented judges' names (D3) | Panel | +0.1 | small | none | Kiro | Devpost item |
 | Judge test card: admin/admin, `SOURCE RTG`, press K; Q backs out one level (update to the new contract); the manifest never says which row is wrong, on purpose; "first act about 40 minutes, full story 60 to 120" | Anna stopped for lack of a next step | Design +0.25, Presentation +0.25 | small | none | Kiro | Devpost item, after Q20 B so the keys are right |
 | Browser first in judge instructions, Telnet second | Panel | +0.25 | small | none | Kiro | Devpost item |
+| Say the double resurrection out loud: the first puzzle *is* resurrecting the station (brownout, admin/admin, switch the bus to the RTG, and ELIZA wakes), inside a project that resurrects BBS technology. One sentence in "In short" or "What it does"; do not leave it for judges to notice | Juha, 14 Nov (Resurrection theme fit) | Innovation, Presentation | small | none | Kiro drafts, Juha edits | Devpost item |
 
 ## 4. Video plan
 
@@ -182,6 +183,7 @@ These go to Q20 part B and then to both repositories (Part C).
 | --- | --- | --- | --- | --- | --- | --- |
 | The film exists: 3 minutes, browser footage is enough if the box is not ready | Both judges: it is a plan (Presentation) | +1 to +1.5 | large | none | Juha | Q16 |
 | Open on the boot banner, 20 seconds: banner, service label, admin/admin, amber ring; then the stick: "This is all of it." | Panel (Presentation) | +0.5 | small | none | Juha | Q16 |
+| The power-up is the resurrection shot: the dead station coming back on RTG power and ELIZA's first line, framed as the theme (one title card, e.g. "Resurrection, twice") | Juha, 14 Nov | Presentation, Innovation | small | none | Juha | Q16 |
 | Humour beat 0:20 to 0:45: the label with its arrow, one Sponsor memo line in caps for three seconds | Panel | +0.25 | small | none | Juha | Q16 |
 | Grief beat 1:15 to 1:35: Day 31 post ends mid-sentence, then "Crew aboard now: 0. I would like to be accurate about that." No voiceover | Panel | +0.5 | small | none | Juha | Q16 |
 | Kiro 35 seconds: the `bbs-caller` agent playing as a caller, one title card each for specs, steering, hooks | Panel (Technological, Presentation) | +0.5 | small | none | Juha | Q16 |
