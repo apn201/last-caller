@@ -1,0 +1,158 @@
+# Platform UX: audit, contract, port
+
+Q20 part B. The engine came from TinyBBS and is a pile of pieces that did not
+quite fit, like a spaceship. To a 1990s caller that is period correct. To a
+caller today it is friction. This file records what was there (the audit),
+what the engine promises now (the contract) and what to carry back into the
+TinyBBS repository (the port). The look, the ANSI art and the voice stay.
+
+Contents: 1 Audit (before Q20). 2 Contract. 3 Moved keys. 4 Port to TinyBBS.
+
+## 1. Audit (state before Q20, checked in the code on 14 Nov 2026)
+
+"Key" means one character; "line" means characters plus ENTER. Telnet and the
+browser use the same board code, so the table holds for both. The browser
+added one difference: it sends whole lines, except in the reader and the
+viewers, where it sends every key.
+
+### 1.1 Screens
+
+| Screen | Input today | ENTER does | Q does | ? does | Text shown how | Leave by |
+| --- | --- | --- | --- | --- | --- | --- |
+| Login (`Login:`) | line | empty at a new-account prompt: cancel | n/a | n/a | art, then prompt | G on the old N/L/G prompt, close |
+| Login choice (old cards) | line, one letter | nothing (asks again) | n/a | n/a | art | G |
+| After login | line | "Press ENTER for Main Board" | n/a | n/a | bulletins in place | ENTER |
+| Main board | line | redraws the menu | unknown command | help line, then "Press ENTER" | menu art once, then title and options | G |
+| Bulletin (one) | line | "Press ENTER", returns to main | n/a | n/a | in place | ENTER |
+| Bulletin list | line, number | back | back | none | in place | ENTER or Q |
+| Who, system info, page SysOp | line | "Press ENTER", returns to main | n/a | n/a | in place | ENTER |
+| User list | line | next page; at the last page it redraws | to main | none | in place | Q |
+| Message menu | line | back to main | back to main | "Use R, N, P or Q." | menu | Q or ENTER |
+| Area list | line, number | stay in this area | none | none | in place | ENTER or number |
+| Message list | line, number | first new message | back | none | in place | Q |
+| A short message (20 rows or fewer) | line | next message | back to area menu | none | in place, one prompt line of keys | Q |
+| A long message | key, immediate | next page, at the end next message | back to area menu | none | pager | Q |
+| Editor | line, text | adds an empty line | none | `/?` | prompt `NN:` | `/S` or `/A` |
+| Yes/no (kill, private) | line | no | n/a | n/a | prompt | Y or N, then ENTER |
+| File cabinets | line, number | back | back | none | list | Q or ENTER |
+| File list | line | back | back one folder, then to the cabinets | none | list | Q or ENTER |
+| Text, ANSI, ZIP viewer | key, immediate | next page | back | none | pager | Q |
+| Image, music (browser) | key | none | ESC, N, P | none | viewer | ESC |
+| ANSI gallery | line | back | back | none | menu | Q or ENTER |
+| Door menu | line | back | back | none | menu | Q or ENTER |
+| Node chat | line, text | empty line, redraws prompt | sent as text | none | scroll region and bar | `/Q` |
+| ELIZA scene in chat | line, numbered replies | skips the typing | answers a numbered reply | none | typed out by the scene | the scene ends, main menu |
+| Manifest | line | rows view: back | back | none | list | Q |
+| Diagnostics, ship console, shell, MUD | line, words | varies | QUIT or Q (varies per door) | HELP | in place | QUIT, Q, EXIT |
+| Snake | key, several at once | plays again | quits | none | board | Q |
+| SysOp console and editors | line | back or keeps | back | none | in place | Q or ENTER |
+
+### 1.2 Numbered inconsistencies
+
+Severity: S = severe (a caller is stuck or acts wrongly), M = moderate (a
+caller is unsure), L = low (polish).
+
+| # | Inconsistency | Where | Sev |
+| --- | --- | --- | --- |
+| U1 | ENTER means "back" in menus (message, file, door, gallery, SysOp), "next" in the message reader and the user list, "continue" at "Press ENTER", "first new" in the message list, "stay" in the area list, "skip" in a scene and "do nothing" in chat. | everywhere | S |
+| U2 | A letter acts at once in the pager, the viewers and Snake, and needs ENTER in every menu. Nothing on the screen says which. | everywhere | S |
+| U3 | P is Page SysOp (main), Post (message menu), Previous (message reader, file list, user list, pager). | main, messages, files | S |
+| U4 | N is New scan (main), Read new (message menu), Next (readers, file list), Next page. | main, messages, files | M |
+| U5 | R is Crew manifest (main), Read/list (message menu), Reply (reader), Reload (SysOp console). | main, messages, SysOp | S |
+| U6 | L is Log in as another (main), List (message menu, file list), Later (message list), Logs (SysOp), Login (old login prompt). | main, messages, files, SysOp | M |
+| U7 | E is Earlier in the message list and Edit in the reader; L is Later there. Earlier and later are P and N in every other list. | message list | M |
+| U8 | U is User list (main), Upload (file list), Users (SysOp). D is Doors (main), Download (file list), Delete (user editor). | main, files, SysOp | M |
+| U9 | S is System info (main), Slow replay (pager), Save (`/S`), Snake (doors), Stats (SysOp). | everywhere | M |
+| U10 | Q backs out one level only. There is no key that returns to the main menu from deep inside (cabinet, folder, message). At the main menu Q is "Unknown command". | everywhere | S |
+| U11 | ? is help only on the main board. Message menu answers "Use R, N, P or Q." The main board's error says "Type ? for help" in menus where ? does nothing. | most menus | M |
+| U12 | Short documents (messages up to 20 rows, bulletins, who, system info, help) print in place with their own prompt line. Long ones open in the pager with different keys and a different footer. The keys change with the length of the text. | messages, bulletins, lists | S |
+| U13 | Three different "continue" prompts: "Press ENTER:", "Press ENTER for Main Board:", the prompt of the egg handler. | main, login | M |
+| U14 | Yes/no needs Y plus ENTER. Deleting an account needs the word YES. A kill needs `[y/N]` plus ENTER. | messages, SysOp | M |
+| U15 | A scene drops every key typed while it types out (they are neither echoed nor kept) and ends at the main menu from wherever it started, also from a bulletin menu. | scenes | S |
+| U16 | Chat is left with `/Q`. A plain Q is sent to the others as text. In the ELIZA scene "Q" leaves. The bar says `/Q quit` only on an ANSI screen. | chat, scenes | M |
+| U17 | Doors say nothing about how to leave. Diagnostics, MUD and Snake take Q or QUIT, the shell takes `exit`, `logout`, `quit` or `bye`, the ship console has its own word. A caller typed I and R into Diagnostics. | doors | S |
+| U18 | Numbers: a bare number opens a file or a message, but `V 3`, `D3`, `D 3` also work in the file list and nothing says so; digits typed in the message pager wait for ENTER and "any other key cancels". | files, messages | M |
+| U19 | The prompts do not agree: "Main Board Command?", "Message command?", "File command?", "Door command?", "Gallery command?", "SysOp command?", "File area?", "Area #", "Bulletin #". | all menus | L |
+| U20 | Menus draw their art on first visit and a bare title afterwards, so the same menu looks different the second time. | all menus | L |
+| U21 | Error replies differ: "Use R, N, P or Q.", "Choose an area number, or Q.", "Try A, F, or Q.", "Unknown command. Type ? for help." | all menus | L |
+| U22 | Escape does something only in the browser's pager and viewers (it is Q there). In every menu it does nothing. Backspace is not sent in key mode. | browser | M |
+| U23 | After `R` in the area list the line "Area:" can name another conference than the list just shown (Anna's report). | messages | M |
+| U24 | A Telnet client that sends lines (ENTER after each letter) and one that sends keys both work in the pager, but only the first works in menus. | Telnet | M |
+| U25 | The slash commands of the editor (`/S /A /L /? /H /C /D /R`) are a third convention, next to letters and words. Fine for typing mode, but the footer does not say it. | editor | L |
+| U26 | Hidden words (AT..., XYZZY, FORTUNE, POST, REBOOT) are lines in a menu that otherwise takes keys. | main, doors | L |
+
+## 2. Contract (what every screen promises, Telnet and browser alike)
+
+The same text is in `.kiro/steering/interaction.md`.
+
+**C1. Keys and lines, one rule.** At a menu, a list, a pager or a yes/no
+question, a letter acts at once. No ENTER. At a prompt that wants text or a
+number, ENTER ends the line, and the prompt says "number, ENTER" or "ENTER
+sends". Digits start a number: they are never a command, and ENTER ends them.
+A menu prompt always names itself `keys:` and never says "ENTER" to leave.
+
+**C2. Global keys.** On every key screen, and never inside text entry:
+
+| Key | Meaning |
+| --- | --- |
+| Q | back one level |
+| X | main menu, from anywhere |
+| ? | the keys of this screen (one in-world line, then the screen again) |
+| N | next (page, message, file page, user page) |
+| P | previous |
+| SPACE | next page, at the end next item |
+| ENTER | the screen's default forward step (next page, next message, first new); in a menu it draws the menu again. It never leaves a level. |
+| ESC | the same as Q (browser, where the key arrives; Telnet clients that send ESC alone) |
+| B | back one page, in the pager |
+
+**C3. Same kind of action, same key.** One letter, one action, in every menu
+that has it. L list or read, W write a post, R reply, N next or new, P
+previous, O page the operator, K kill, E edit, H history, T thread, D
+download, V view, U upload. Where a screen would need a second meaning for a
+letter, the odd action moves to another letter (section 3).
+
+**C4. One pager.** Every text the caller reads goes through the pager: a
+message of one line or of a hundred, a bulletin, a file, WHO, the stats, the
+help. The footer is the same: title, rows, `SPACE next  B back  N P  Q quit  ? keys`
+(a screen adds its own keys in front: `R reply  T thread`). The pager does not
+change with the length of the text. Menus and lists of options are not
+documents: they are screens of keys.
+
+**C5. Yes or no is one key.** `[Y/N]`, no ENTER. Destructive confirmations that
+need a word (delete an account) keep the word and say "type YES, then ENTER".
+
+**C6. Continue is any key.** The words "Press ENTER" are gone. The prompt is
+"Press any key" and a key does it (ENTER too).
+
+**C7. A scene or a timed event never swallows a key or cuts a line.** Keys
+typed while a scene types out are kept and acted on when it ends, in order.
+ENTER skips only the pause the scene is in. A timed event (a page, a ghost, a
+glitch) waits for the screen to be at a prompt, as before, and never writes
+into the middle of a line the caller typed. A scene started from a menu
+returns the caller to that menu's level, not the top.
+
+**C8. How a chat or a door is left.** Every chat and door says how on entry,
+in the room's own voice, and takes Q (in a typing screen `/Q`, for the same
+reason slash commands exist in the editor) and the words QUIT and EXIT.
+Doors that read words take the same three. HELP and ? list the commands.
+
+**C9. The browser adds buttons, never rules.** A button sends the same key a
+keyboard would. Keys arrive one at a time in a menu, as in the pager.
+
+**C10. Hidden words.** A word typed at a menu (AT..., XYZZY, FORTUNE) still
+works when it arrives in one go (a paste, a tool, a Telnet client in line
+mode), and when the caller starts it with a slash: `/ATZ`. Single letters act
+at once.
+
+## 3. Moved keys
+
+Filled in as the build goes on. Format: old, new, where, why, which story or
+tool text changed.
+
+| Screen | Old | New | Why |
+| --- | --- | --- | --- |
+| (to follow) | | | |
+
+## 4. Port to TinyBBS
+
+(to follow at the end of Q20)
