@@ -1154,6 +1154,12 @@ def main():
         sync(c)
         c.send("C")                                  # Q18: Q leaves her talk at a choice
         choose(c, "Something else.")
+        mark = len(c.all)
+        end = time.time() + 60
+        while not ("Say something else." in c.all[mark:] and c.all[mark:].rstrip().endswith(">")):
+            if time.time() > end:
+                raise TimeoutError("no choice prompt after Something else.")
+            c._pump()
         c.send("q")
         c.expect("Goodnight. I will be here.", timeout=30)
         advance(c, "Main Board Command?", timeout=30)
