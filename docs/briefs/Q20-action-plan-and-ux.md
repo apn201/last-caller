@@ -186,3 +186,33 @@ The real `SYSOP` flag is still never granted. Update the e2e, the
 text or clue that tells the caller to log in again. Engine part (log a
 session in to a newly made account) goes on the TinyBBS port list if it is
 not HALCYON-only.
+
+## Addition 5 (Juha, 14 Nov 2026) - what Juha saw on the live board
+
+Juha played the old deployed version on halcyon.helppox.com. Check each
+against the current code; fix what is still there, and say in the tick which
+were already fixed and by which commit.
+
+1. **Logging in as Ty, the scenes of every crew member played at once.**
+   Since `0bb00e5` (Q18 R2) a scene holds the rest until the caller's next
+   command, but pages and story art queued by the same event still print
+   together. Check: a Ty login on a fresh card shows only what belongs to
+   Ty's login; no scene or page of another crew member fires on it (check
+   the `crew_login` rules in `STORY/TRIGGERS.INI` and their `match=`); and
+   at most one scene or one page is shown per calm prompt, the rest one
+   by one at the next prompts. Add an e2e or host-test step for it.
+2. **The menu changes with the account.** On a crew login (Ty) the
+   manifest (R) and "Log in as another" (L) are missing, and G there does
+   what L does on the own account. Contract C3 (one letter, one action)
+   applies across accounts too. Make L "Log in as another" on every login
+   where it works, crew logins included, and G always means goodbye
+   (crew login: back to `Login:` keeping the line is fine, but then say so
+   on the menu). For R on a crew login: show it if the caller's own
+   manifest can be opened from there (read-only with a one-line reason
+   why it cannot be filed is fine); otherwise leave it out and say once,
+   at the crew login, that the manifest is on your own account. Never show
+   an option that does not work. Update `docs/MENU_AUDIT.md`.
+3. Go through the main menu, message menu, file and door menus once more
+   for every account kind (own, crew, admin console, SysOp) and list
+   anything else whose letters change with the account. Put engine items
+   on the TinyBBS port list.
