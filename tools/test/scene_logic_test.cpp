@@ -83,6 +83,31 @@ static Run play(const std::shared_ptr<Scene> &sc, const std::string &flags, cons
 int main(int argc, char **argv) {
   // ---- parse ----
   auto sc = load(DEMO);
+  // ---- replay (Q21): shown as it was, grants nothing, choices are followed but set nothing, then= is not followed ----
+  {
+    auto rp = load(DEMO);
+    std::string flags = "KEY_CARD";
+    Player p; uint32_t now = 1000; Run r; std::vector<std::string> nodes;
+    auto grab = [&](const Out &o) { take(r, o); for (const auto &n : o.nodes) nodes.push_back(n); };
+    grab(p.start(rp, flags, true, now, true));
+    for (unsigned t = 0; !r.finished && t < 20000; ++t) {
+      now += 50; grab(p.tick(now));
+      if (r.finished) break;
+      if (p.phase() == P_CHOICE) grab(p.input("2", now));   // Liar: sets LIED on a real run
+      else if (p.phase() == P_KEY) grab(p.input("", now));
+    }
+    CHECK(r.finished);
+    CHECK(r.grant.empty());                                  // no flag, not the choice's, not the scene's set=
+    CHECK(r.text.find("Goodbye, friend.") == std::string::npos);   // LIED was never set, so the plain ending
+    CHECK(r.text.find("Hello there.") != std::string::npos);
+    CHECK(nodes.size() >= 4 && nodes[0] == "START");
+    Run real = play(rp, flags, {"2", ""});
+    CHECK(real.grant.find("LIED") != std::string::npos && real.grant.find("DONE") != std::string::npos);   // the same scene, played for real, does
+    auto th = load("[SCENE]\nspeed=100\n[START]\ntext=x\nthen=CHAT\n");
+    Player p2; Run r2; take(r2, p2.start(th, "", true, 1000, true));
+    for (uint32_t t = 1000; !r2.finished && t < 60000; t += 50) take(r2, p2.tick(t));
+    CHECK(r2.finished && r2.then.empty());
+  }
   CHECK(sc != nullptr);
   CHECK(sc && sc->nodes.size() == 6);
   CHECK(sc && sc->speed == 100 && sc->start == "START" && sc->set == "DONE" && !sc->repeat);

@@ -261,6 +261,7 @@ struct Out {
   std::string grant;      // flags to save to the caller now
   std::string then;       // with finished: where the caller goes next (CHAT, or a scene name); empty = the main menu
   bool finished = false;  // the scene is over
+  std::vector<std::string> nodes;   // nodes entered by this call, in order (Q21: the notebook notes lines from them)
   std::string text() const { std::string t; for (const auto &p : parts) if (!p.isArt) t += p.s; return t; }
   void addText(const std::string &s) { if (!s.empty()) parts.push_back({false, s}); }
 };
@@ -281,8 +282,10 @@ class Player {
   // Numbered replies of nine or fewer, and Q: single keys (contract C1), no ENTER.
   bool choiceKeys() const { return (ph_ == P_CHOICE && shown_.size() <= 9) || ph_ == P_KEY; }   // a [any key] wait takes any key
 
-  Out start(std::shared_ptr<const Scene> sc, const std::string &flags, bool ansi, uint32_t now) {
-    sc_ = std::move(sc); flags_ = flags; ansi_ = ansi; steps_ = 0; ph_ = P_IDLE; node_.clear(); then_.clear();
+  // replay (Q21, the notebook): the scene as it was. It grants nothing and changes no flag; a choice is shown and
+  // followed but sets nothing, and a `then` is not followed.
+  Out start(std::shared_ptr<const Scene> sc, const std::string &flags, bool ansi, uint32_t now, bool replay = false) {
+    sc_ = std::move(sc); flags_ = flags; ansi_ = ansi; replay_ = replay; steps_ = 0; ph_ = P_IDLE; node_.clear(); then_.clear();
     Out out;
     if (!sc_) { out.finished = true; return out; }
     enter(sc_->start, now, out);
@@ -311,7 +314,7 @@ class Player {
  private:
   std::shared_ptr<const Scene> sc_;
   std::string flags_, node_, then_;
-  bool ansi_ = true;
+  bool ansi_ = true, replay_ = false;
   unsigned steps_ = 0;
   Phase ph_ = P_IDLE;
   uint32_t until_ = 0;
@@ -321,7 +324,7 @@ class Player {
   const Node &cur() const { return sc_->nodes[(size_t)sc_->find(node_)]; }
 
   void grant(const std::string &add, Out &out) {
-    if (add.empty()) return;
+    if (add.empty() || replay_) return;
     for (const auto &w : haunt::flagWords(add)) {   // only what the caller does not have yet
       if (haunt::flagsHas(flags_, w)) continue;
       flags_ = haunt::flagsAdd(flags_, w);
@@ -331,7 +334,7 @@ class Player {
   void finish(Out &out) {
     if (ph_ == P_END) return;
     grant(sc_->set, out);
-    ph_ = P_END; out.finished = true; out.then = then_;
+    ph_ = P_END; out.finished = true; out.then = replay_ ? std::string() : then_;
   }
   // Typing output and the step to the next phase when the text is out.
   void pump(uint32_t now, Out &out) {
@@ -351,6 +354,7 @@ class Player {
     }
     ++steps_;
     node_ = id;
+    out.nodes.push_back(id);
     const Node &n = cur();
     grant(n.set, out);
     if (!n.then.empty()) then_ = n.then;
