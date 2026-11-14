@@ -382,10 +382,11 @@ class Player {
       for (size_t k = 0; k < shown_.size(); ++k)
         out.addText(std::string(ansi_ ? "  \x1b[1;36m" : "  ") + std::to_string(k + 1) + (ansi_ ? "\x1b[0;37m) " : ") ") +
                     n.choices[shown_[k]].text + (ansi_ ? "\x1b[0m" : "") + "\r\n");
-      bool q = false;
-      for (const auto &ty : n.typed) for (const auto &w : ty.words) if (w == "q") q = true;
-      // contract C8: say how to answer and how to leave (Q20 UX round 3: "no ENTER" on the screen)
-      out.addText(std::string(ansi_ ? "\x1b[0;90m" : "") + "  Press a number, no ENTER." + (q ? " Q leaves." : "") + (ansi_ ? "\x1b[0m" : "") + "\r\n");
+      bool q = false, words = false;
+      for (const auto &ty : n.typed) for (const auto &w : ty.words) { if (w == "q") q = true; else words = true; }
+      // contract C8: say how to answer and how to leave (Q20 UX round 3: "no ENTER" on the screen).
+      // Critic round 5: where the node also takes typed replies, say so (never which words).
+      out.addText(std::string(ansi_ ? "\x1b[0;90m" : "") + "  Press a number, no ENTER." + (words ? " Or type a reply, then ENTER." : "") + (q ? " Q leaves." : "") + (ansi_ ? "\x1b[0m" : "") + "\r\n");
       out.addText(ansi_ ? "\r\n\x1b[1;36m> \x1b[0m" : "\r\n> ");
       ph_ = P_CHOICE;
     } else if (n.key) {
