@@ -175,3 +175,14 @@ DECIDED) and in the UX-LOOP round 2 fixes.
   more explained, find which Q20 change did it and undo or soften that
   change, then run the critics again (at most two critic rounds here).
   Put both critic scores in the Q20 tick.
+
+## Addition 4 (Juha, 14 Nov 2026) - no second login after CREW
+
+When CREW creates the caller's account, the caller is logged in to it
+straight away: no second `Login:`. Keep the account-made note, then go on
+as a fresh login of that account would (welcome, new mail, main menu).
+The real `SYSOP` flag is still never granted. Update the e2e, the
+`bbs-caller` flow, the story lint if it checks the login, and any story
+text or clue that tells the caller to log in again. Engine part (log a
+session in to a newly made account) goes on the TinyBBS port list if it is
+not HALCYON-only.
