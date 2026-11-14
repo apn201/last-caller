@@ -284,3 +284,11 @@ Rules for every item:
   panel proposes dropping "feasibility study" and "product" from the first
   paragraph, which is Juha's framing: his call. The PANEL-1 appendix names the
   invented judges; cut that before it goes on the real page.
+- [ ] **Q20 - Action plan, then the platform usability loop.** Brief:
+  `docs/briefs/Q20-action-plan-and-ux.md` (Claude Code, 14 Nov 2026, Juha's
+  request). Part A: `docs/ACTION_PLAN.md` from the judges, the panel and the
+  critics, with decisions for Juha on top (framing, Kouvosto as reference
+  board, FidoNet credits). Part B: audit keys, ENTER rules and the pager
+  across the engine, write one interaction contract, build it, and test with
+  two fresh no-BBS usability testers until SUS 80 (max 4 rounds). Part C:
+  the port list for `../TinyBBS` in `docs/PLATFORM_UX.md` (no edits there).
