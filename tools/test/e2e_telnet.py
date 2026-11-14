@@ -793,8 +793,8 @@ def main():
                 advance(c, scenes[name], timeout=150)
                 time.sleep(0.3)
                 c.send("")
-                advance(c, "Main Board Command?", timeout=60)
-                pos = pick_file_area(c, "Ship Logs")
+                advance(c, "File command?", timeout=60)   # Q20 UX: the scene ends where it began, in the cabinet
+                pos = len(c.all)
         c.send("Q")
         c.expect("File area #", timeout=10)
         c.send("Q")
