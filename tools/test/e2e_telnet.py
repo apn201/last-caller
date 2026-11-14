@@ -1490,10 +1490,7 @@ def main():
         c2.send("E2E Second")
         c2.expect("Location:")
         c2.send("Localhost")
-        c2.expect("Login:")
-        c2.send(handle2)
-        c2.expect("Password:")
-        c2.send(password)
+        c2.expect("the power is yours")   # logged in at once, no second Login: (Q20)
         hit = ""
         for _ in range(6):
             hit = c2.expect("Press any key", "Where is the crew", "Main Board Command?", timeout=40)
