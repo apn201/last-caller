@@ -2,7 +2,7 @@
 
 Current round: 4 (Q20: does the usability work keep the fun?)
 Step: round 4, Ada first, then Mara, one at a time, fresh boards
-Ada done: no (round 4)
+Ada done: yes (round 4), SCORE 83 (two sessions, finished)
 Mara done: no (round 4)
 Commit played: 2cba380
 Round 3 closed: Ada 85, Mara 80, average 82.5 (Q18 tick)
