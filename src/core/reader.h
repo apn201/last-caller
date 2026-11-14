@@ -269,7 +269,7 @@ static String readerBar(const Reader &r, const String &note) {
 static void openReader(Session &s, bool play, bool atEnd = false) {
   Reader &r = s.reader;
   r.top = atEnd ? readerMaxTop(r) : 0; r.keyEsc = ""; r.playing = false;
-  if (!r.hint.length()) r.hint = "SPACE page  B back  \x18\x19 line  S play  Q quit";
+  if (!r.hint.length()) r.hint = "SPACE page  B back  \x18\x19 line  S slow  Q quit";
   s.state = READER;
   if (play && s.cps && readerCount(r)) {
     write(s, "\x1b[0m\x1b[2J\x1b[H");
@@ -295,7 +295,7 @@ static void readerStopped(Session &s) {
   // Played to the end: the picture is already on the screen, so only the bar goes under it
   // (a full page would draw it a second time).
   if (ended) { write(s, readerBar(r, "")); return; }
-  showPage(s, "Stopped. S plays on from here");
+  showPage(s, "Stopped. S goes on slowly from here");
 }
 static void closeReader(Session &s) {
   Reader &r = s.reader;

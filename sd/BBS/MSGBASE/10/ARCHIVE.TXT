@@ -78,23 +78,21 @@ posted it as a joke, and I have it in my notes, where I posted it as a finding.
 
 A supervisor watches everything it supervises. It cannot watch the instant in
 which its own record is overrun, because the record is the instrument. That is
-one place. I have checked, with a pencil, that there is only one.[1] The number
-was 20 zeros in a row. I took it on trust, which I do not do, and then I found
-the limit in the board's own manual, section 1, where nobody reads.
+one place. I have checked, with a pencil, that there is only one.[1] Mr. Vance
+found it by sitting on a key. The board's own manual says how long a line may
+be, in the part nobody reads. I leave the arithmetic to whoever comes after.
 
 What follows from a blind spot is not a weapon. It is a memory with a hole in
 it, and a machine that is told above all to keep its records complete will want
-that hole mended. The Commander's handbook has a chapter on exactly this. The
-check runs only in SYSOP mode. ELIZA will not give SYSOP mode to a guest. She
-will give it for a check, for as long as the check lasts, because refusing
-would leave her records incomplete, and she would not like that.
+that hole mended. Marta kept the operations handbook on her own desk, because
+she did not trust a shared one. I would read it before talking to ELIZA.
 
 Ask for what she needs to say yes to. Do not ask for anything else. She is not
 stupid. She is obedient, which in my field is the more dangerous condition.
 
-P.S. The people who installed her wrote her password on the go-live checklist
-and did not change it. Item 14, I believe, with an empty box next to it. I
-would not have believed it of a mission with this budget.
+P.S. Installers write passwords down where installers write everything down,
+and then do not change them. I would not have believed it of a mission with
+this budget.
 
 Prof. D. Achterberg
 

@@ -178,7 +178,7 @@ static bool openFileViewerOnce(Session &s, uint16_t number, bool quiet) {
   r = Reader();
   r.path = path; r.start = start; r.end = end; r.utf8 = utf8;
   r.title = clean(name, 24);
-  r.hint = "SPACE page  B back  \x18\x19 line  S play  N/P file  Q quit";
+  r.hint = "SPACE page  B back  \x18\x19 line  S slow  N/P file  Q quit";   // S: replays at modem speed (Q18: "play" read as music)
   r.onKey = fileReaderKey; r.onQuit = fileReaderQuit;
   if (ansi && s.ansi) { r.kind = READER_ANSI; renderAnsi(r); }
   else { r.kind = READER_TEXT; r.crop = artLike; indexText(r); }

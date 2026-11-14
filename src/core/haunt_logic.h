@@ -132,7 +132,9 @@ inline bool gatePass(const std::string &have, const std::string &needs) {
   const bool view = flagsHas(have, "SYSVW");
   for (const auto &w : flagWords(needs)) {
     if (flagsHas(have, w)) continue;
-    if (view && !accessFlag(w)) continue;
+    // SYSOP view reads past story gates, but not past an ending (END1, END2): what happens after
+    // the ending is not shown before it (Q18: the News Wire bulletin was readable early).
+    if (view && !accessFlag(w) && upper(w).compare(0, 3, "END") != 0) continue;
     return false;
   }
   return true;

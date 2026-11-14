@@ -125,6 +125,7 @@ struct Session {
   // signed in here (kept across a crew login), and flags earned on a crew
   // account before any own account signed in. Shows wait for a calm prompt.
   uint32_t ownUserId = 0;
+  String ownHandle;   // its handle, for the crew account's way back (Y, bbs/cmd_main.h)
   String carriedFlags;
   // Gates (haunt.h gateFlags): a read-only login reads the own account behind it now and then, not on every message.
   mutable String gateOwn;

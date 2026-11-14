@@ -206,6 +206,19 @@ int main(int argc, char **argv) {
     CHECK(play(sc, "KEY_CARD", {"3", ""}, false).text.find("3) Secret") != std::string::npos);
     CHECK(k.grant == "DONE");
 
+    // Q18: a typed word, not listed, picks its node when its condition holds
+    {
+      auto ty = load("[START]\ntext=Ask.\nchoice1=Leave\ngo1=END\ntyped1=MemChk, memory check\ntypedgo1=YES\ntypedhas1=CURE\n[YES]\ntext=Checking.\n");
+      CHECK(ty != nullptr);
+      if (ty) {
+        Run y = play(ty, "CURE", {"memory CHECK", ""});
+        CHECK(y.text.find("Checking.") != std::string::npos && y.text.find("MemChk") == std::string::npos);
+        Run n = play(ty, "", {"memchk", "1", ""});
+        CHECK(n.text.find("Checking.") == std::string::npos && n.text.find("Choose 1 to 1.") != std::string::npos);
+      }
+      CHECK(load("[START]\ntext=x\ntyped1=a\ntypedgo1=END\n") == nullptr);   // typed needs choices
+    }
+
     // bad answers re-ask, they never advance
     Run b = play(sc, "", {"0", "x", "9", "", "1", ""});
     CHECK(b.finished && b.text.find("Choose 1 to 2.") != std::string::npos && b.text.find("Welcome.") != std::string::npos);

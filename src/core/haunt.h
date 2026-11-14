@@ -164,7 +164,7 @@ static void hauntScreen(Session &s, const String &what) { hauntEvent(s, haunt::E
 // caller, and gets what was earned on crew accounts before it. Call before the
 // login's own save, so both go in one write.
 static void hauntOwnLogin(Session &s) {
-  s.ownUserId = s.user.id;
+  s.ownUserId = s.user.id; s.ownHandle = s.user.handle;
   if (!s.carriedFlags.length()) return;
   std::string dropped;
   String before = s.user.story;

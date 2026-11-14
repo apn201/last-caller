@@ -461,7 +461,7 @@ class Lint:
         for n, kv in nodes.items():
             out = []
             for k in kv:
-                if k == "go" or k == "if_go" or re.fullmatch(r"go\d", k):
+                if k == "go" or k == "if_go" or re.fullmatch(r"go\d", k) or re.fullmatch(r"typedgo\d", k):
                     out.append(kv[k].upper())
             edges[n] = out
             for t in out:
@@ -524,6 +524,9 @@ class Lint:
                     m = re.fullmatch(r"go(\d)", k)
                     if m:
                         outs.append((v.upper(), cset | frozenset(flags(kv.get("has" + m.group(1))))))
+                    m = re.fullmatch(r"typedgo(\d)", k)   # Q18: a typed word at a choice node
+                    if m:
+                        outs.append((v.upper(), cset | frozenset(flags(kv.get("typedhas" + m.group(1))))))
                 for t, s in outs:
                     if t == "END" or t not in nodes:
                         continue
@@ -550,7 +553,7 @@ class Lint:
                 if nxt and nxt != "CHAT":
                     units.append(("scene %s [%s] then" % (sid, n), gate + ["SC_ENTER_" + sid] + sorted(cset), ["SC_ENTER_" + nxt]))
             for k, v in kv.items():
-                if re.fullmatch(r"has\d", k):
+                if re.fullmatch(r"has\d", k) or re.fullmatch(r"typedhas\d", k):
                     for f in flags(v):
                         required.append((where + " [%s]" % n, f))
             for k in ("art",):

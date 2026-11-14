@@ -19,6 +19,9 @@ static constexpr unsigned WIDTH = 76;        // columns, with the 2-column inden
 static constexpr const char *END = "END";    // reserved target: the scene ends
 
 struct Choice { std::string text, go, set, has, lacks; };
+// typed1..4= at a choice node: words the caller may type instead of a number (comma separated,
+// whole line, any case), not listed. typedgo1..4= the node; typedhas/typedlacks1..4= conditions (Q18).
+struct Typed { std::vector<std::string> words; std::string go, has, lacks; };
 
 struct Node {
   std::string id, speaker, text, art, color, set, go, ifHas, ifLacks, ifGo;
@@ -26,6 +29,7 @@ struct Node {
   uint32_t pauseMs = 700;
   bool key = false;
   std::vector<Choice> choices;
+  std::vector<Typed> typed;
 };
 
 struct Scene {
@@ -110,6 +114,22 @@ inline bool buildNode(const std::string &id, const std::vector<Kv> &kv, Node &n,
     if (c.has.empty() && c.lacks.empty()) anyOpen = true;
     n.choices.push_back(c);
   }
+  for (size_t i = 1; i <= MAX_CHOICES; ++i) {
+    std::string num = std::to_string(i), w = getKey(kv, "typed" + num, &f);
+    if (!f || haunt::trim(w).empty()) continue;
+    Typed ty;
+    std::string word;
+    for (size_t k = 0; k <= w.size(); ++k) {
+      if (k == w.size() || w[k] == ',') { word = haunt::lower(haunt::trim(word)); if (!word.empty()) ty.words.push_back(word); word.clear(); }
+      else word += w[k];
+    }
+    ty.go = idText(getKey(kv, "typedgo" + num));
+    ty.has = haunt::flagsClean(getKey(kv, "typedhas" + num));
+    ty.lacks = haunt::flagsClean(getKey(kv, "typedlacks" + num));
+    if (ty.go.empty() || !haunt::idOk(ty.go)) { why = "typed" + num + " needs typedgo" + num; return false; }
+    if (n.choices.empty()) { why = "typed" + num + " needs choices on the node"; return false; }
+    n.typed.push_back(ty);
+  }
   // Every choice may be hidden by flags: then go= is the way on, else the caller is stuck.
   if (!n.choices.empty() && !anyOpen && n.go.empty()) { why = "every choice has a condition and the node has no go (a caller could be stuck)"; return false; }
   if (n.text.empty() && n.art.empty() && n.set.empty() && n.ifGo.empty() && n.choices.empty() && n.go.empty()) { why = "empty node"; return false; }
@@ -164,6 +184,8 @@ inline bool parse(const std::string &sceneId, const std::vector<Kv> &entries, Sc
     if (!target(n.go, "[" + n.id + "] go") || !target(n.ifGo, "[" + n.id + "] if_go")) return false;
     for (size_t k = 0; k < n.choices.size(); ++k)
       if (!target(n.choices[k].go, "[" + n.id + "] go" + std::to_string(k + 1))) return false;
+    for (size_t k = 0; k < n.typed.size(); ++k)
+      if (!target(n.typed[k].go, "[" + n.id + "] typedgo" + std::to_string(k + 1))) return false;
   }
   return true;
 }
@@ -370,9 +392,16 @@ class Player {
     }
   }
   void pick(const std::string &t, uint32_t now, Out &out) {
+    const std::string said = haunt::lower(haunt::trim(t));
+    for (const auto &ty : cur().typed) {
+      if (!conditionHolds(flags_, ty.has, ty.lacks)) continue;
+      for (const auto &w : ty.words) if (w == said) { enter(ty.go, now, out); return; }
+    }
     uint32_t v = 0;
     if (!haunt::parseUint(t, 99, v) || v < 1 || v > shown_.size()) {
-      out.addText(std::string(ansi_ ? "\x1b[0;33m" : "") + "  Choose 1 to " + std::to_string(shown_.size()) + "." + (ansi_ ? "\x1b[0m" : "") + "\r\n" +
+      bool q = false;
+      for (const auto &ty : cur().typed) for (const auto &w : ty.words) if (w == "q") q = true;
+      out.addText(std::string(ansi_ ? "\x1b[0;33m" : "") + "  Choose 1 to " + std::to_string(shown_.size()) + (q ? ", or Q to leave" : "") + "." + (ansi_ ? "\x1b[0m" : "") + "\r\n" +
                   (ansi_ ? "\x1b[1;36m> \x1b[0m" : "> "));
       return;
     }

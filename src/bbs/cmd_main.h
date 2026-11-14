@@ -92,7 +92,16 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
     else if (cmd == "RELOAD" && isSysop(s)) { say(s, "Settings reloaded: " + loadSettings() + "."); say(s, "Network settings take effect after a restart."); prompt(s, "Main Board Command? "); }
     else if (cmd == "USER" && isSysop(s)) { sysopUsers(s); }
     else if (cmd == "Z" || cmd == "USER") { say(s, "SysOp access requires level 255 and the SYSOP flag."); prompt(s, "Main Board Command? "); }
-    else if (cmd == "L" && !s.readOnly && s.user.id) {
+    else if (cmd == "Y" && s.readOnly && s.ownUserId) {
+      // Q18: back to the own account signed in earlier on this line (Session.ownUserId), no password again.
+      User own;
+      if (!findUserById(s.ownUserId, own) || own.locked || hasFlag(own, "READONLY")) { say(s, "That account is not available."); prompt(s, "Main Board Command? "); return true; }
+      event("LOGOFF", s.user.handle + " node " + s.node + ", back to " + own.handle);
+      s.authenticated = false; s.readOnly = false; s.input = ""; s.hideInput = false; s.conference = 0; s.reader = Reader();
+      s.user = own; s.pendingHandle = own.handle;
+      claimAccount(s); finishLogin(s);
+    }
+    else if (cmd == "L" && s.user.id) {
       // Sign off to Login: on the same line. The caller stays the caller (Session.ownUserId), so a
       // crew account signed in next carries its finds here and reads this account's flags.
       event("LOGOFF", s.user.handle + " node " + s.node + ", to the login prompt");

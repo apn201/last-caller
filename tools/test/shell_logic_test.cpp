@@ -137,6 +137,17 @@ int main(int argc, char **argv) {
   o = exec(t, cwd, "", "");
   CHECK(o.out.empty() && !o.exit);
 
+  // Q18: final_held says why the verb does not run yet; alt_text replaces a file once the flags are held
+  Table q;
+  parse(ini("[SHELL]\nfinal_cmd=send it\nfinal_has=OK\nfinal_text=Sent.\nfinal_held={cmd}: held\n[/q]\ntext=HELD\nalt_has=OK\nalt_text=CLEAR\n"), q);
+  cwd = "/";
+  o = exec(q, cwd, "", "send it");
+  CHECK(!o.final && o.out == "send: held");
+  o = exec(q, cwd, "OK", "send it");
+  CHECK(o.final && o.out == "Sent.");
+  CHECK(exec(q, cwd, "", "cat q").out == "HELD");
+  CHECK(exec(q, cwd, "OK", "cat q").out == "CLEAR");
+
   // help: the final command is listed only for a caller it works for
   o = exec(t, cwd, "", "help");
   CHECK(o.out == "ls  cat\nHeld things are in /orders.");
@@ -165,12 +176,12 @@ int main(int argc, char **argv) {
       CHECK(!c.nodes.empty());
       // with every flag, every file can be read and every listed directory entered
       std::string all;
-      for (auto &n : c.nodes) all = haunt::flagsAdd(all, n.has);
+      for (auto &n : c.nodes) all = haunt::flagsAdd(haunt::flagsAdd(all, n.has), n.altHas);
       std::string d = "/";
       for (auto &n : c.nodes) {
         std::string cwd2 = "/";
         if (n.dir) { exec(c, cwd2, all, "cd " + n.path); CHECK(cwd2 == n.path); }
-        else { Result cr = exec(c, cwd2, all, "cat " + n.path); CHECK(cr.out == expand(n.text)); }
+        else { Result cr = exec(c, cwd2, all, "cat " + n.path); CHECK(cr.out == expand(textFor(n, all))); }
       }
       if (!c.finalCmd.empty()) { std::string cw = "/"; Result fr = exec(c, cw, c.finalHas, c.finalCmd); CHECK(fr.final); }
     } else {

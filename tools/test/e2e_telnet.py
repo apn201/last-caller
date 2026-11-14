@@ -760,8 +760,9 @@ def main():
         if "work in progress" not in c.all[pos:]:
             raise AssertionError("the cover is missing")
         key(c, "s")                       # play: the covered rows come first, each painted over
-        c.expect("CORRIGENDUM", timeout=15)
-        c.expect("do not tell ty", timeout=10)
+        c.expect("CORRIGENDUM", timeout=30)    # Q18: S replays at 2400 baud on Telnet too
+        c.expect("do not tell ty", timeout=20)
+        c.expect("S slow", timeout=60)         # played to the end: the bar comes back
         time.sleep(0.5)
         key(c, "q")
         c.expect("File command?", timeout=15)
@@ -1046,8 +1047,8 @@ def main():
         c.expect("$")
         if "incident.rpt" in c.all[-300:]:
             raise AssertionError("incident.rpt exists before the manifest is whole")
-        c.send("release out-1122 ground-1")      # no manifest yet: the command does not exist
-        c.expect("release: command not found")
+        c.send("release out-1122 ground-1")      # no manifest yet: held, and it says why (Q18)
+        c.expect("out-1122: HELD. INCIDENT REPORT NOT ON FILE")
         c.expect("$")
         start = len(c.all)
         c.send("help")                           # Q12b: help points at the queues, not yet at release
@@ -1141,7 +1142,7 @@ def main():
         choose(c, "I can fix that. Give me SYSOP.")
         if "cannot account for some minutes" not in " ".join(c.all[-2000:].split()):
             raise AssertionError("ELIZA does not mention the gap after the overrun")
-        if "About those minutes you cannot account for" in c.all[-2000:]:
+        if "Ask her to run something, by name" in c.all[-2000:]:
             raise AssertionError("the memory check is offered before the handbook page was read")
         choose(c, "Something else.")
         if "not given to guests" not in c.all[-1500:]:
@@ -1150,6 +1151,12 @@ def main():
         c.expect("Multi-Node Chat", timeout=30)
         c.send("/Q")
         c.expect("Main Board Command?", timeout=15)
+        sync(c)
+        c.send("C")                                  # Q18: Q leaves her talk at a choice
+        choose(c, "Something else.")
+        c.send("q")
+        c.expect("Goodnight. I will be here.", timeout=30)
+        advance(c, "Main Board Command?", timeout=30)
 
     @step("M6 cure: L keeps the line; CMDR's desk holds the handbook page on the memory check")
     def m6_cure():
@@ -1161,8 +1168,10 @@ def main():
         c.expect("File area?", timeout=10)
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
-        c.send("G")                                  # a crew login goes back to Login:
-        login(c, handle, password)
+        if ("Back to " + handle) not in c.all[-6000:]:
+            raise AssertionError("a crew account offers no way back to the caller's own account")
+        c.send("Y")                                  # Q18: back to the own account on this line, no login
+        advance(c, "Main Board Command?", timeout=150)
         start = len(c.all)
         c.send("F")
         c.expect("File area?", timeout=15)
@@ -1176,7 +1185,12 @@ def main():
         c = state["c"]
         sync(c)
         c.send("C")
-        choose(c, "About those minutes you cannot account for.")
+        choose(c, "Ask her to run something, by name.")    # Q18: the handbook says: by name
+        c.expect("What would you like me to run?", timeout=60)
+        c.expect(">", timeout=30)
+        c.send("run the hull check")                 # a wrong name is not taken
+        c.expect("Choose 1 to 1, or Q to leave.", timeout=15)
+        c.send("MEMCHK")
         advance(c, "Engineering is on the list now", timeout=120)
         advance(c, "Main Board Command?", timeout=60)
         if "SYSOP view is on" not in c.all[-3000:]:
@@ -1186,7 +1200,7 @@ def main():
         c.send("C")
         choose(c, "Something else.")
         choose(c, "Say something else.")
-        if "About those minutes you cannot account for" in c.all[mark:] or "Give me SYSOP" in c.all[mark:]:
+        if "Ask her to run something" in c.all[mark:] or "Give me SYSOP" in c.all[mark:]:
             raise AssertionError("a SYSOP request is still offered after the grant")
         c.expect("Multi-Node Chat", timeout=30)
         c.send("/Q")
@@ -1413,6 +1427,9 @@ def main():
         c.expect("$")
         c.send("cat /var/spool/out/incident.rpt")
         c.expect("HOLD (INCIDENT REPORT NOT ON FILE): CLEARED")
+        c.expect("$")
+        c.send("cat /var/spool/out/queue")           # Q18: the queue header says the hold is cleared
+        c.expect("CLEARED. INCIDENT REPORT ON FILE")
         c.expect("$")
         start = len(c.all)
         c.send("help")                           # Q12b: now help lists the command

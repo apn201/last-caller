@@ -30,7 +30,9 @@ static void mainMenu(Session &s) {
   items.push_back({"?", "Help"});
   // L (Q12d): an own account signs off to the login prompt and keeps the line, so a crew login
   // after it reads this caller's own flags (the shell in ELIZA's menu needs that, core/haunt.h).
-  if (!s.readOnly && s.user.id && !isMaintenance(s.user)) items.push_back({"L", "Log in as another"});
+  if (s.user.id && !isMaintenance(s.user)) items.push_back({"L", "Log in as another"});
+  // Q18: a crew account goes back to the caller's own account on this line without the login again.
+  if (s.readOnly && s.ownUserId && s.ownHandle.length()) items.push_back({"Y", "Back to " + s.ownHandle});
   items.push_back({"G", "Goodbye"});
   if (isSysop(s)) items.push_back({"Z", "SysOp console", "\x1b[1;35m"});
   showMenu(s, "MAIN", items, board.name + " // MAIN BOARD");

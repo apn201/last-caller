@@ -19,6 +19,7 @@ struct Node {
   bool dir = false;
   std::string text;     // files: "|" breaks a line
   std::string has;      // flags the caller needs to see it (empty = everyone)
+  std::string altHas, altText;   // alt_has= alt_text=: what the file reads once the caller holds those flags
   std::string date;     // ls -l
   std::string owner;
 };
@@ -32,7 +33,8 @@ struct Table {
   std::string help = "ls [-la] [dir]  cat file  cd [dir]  pwd  whoami  uname  exit";   // "|" breaks a line
   std::string helpFinal;    // added to help for a caller who may use the final command
   std::string date = "Oct 31  1998", owner = "root";
-  std::string finalCmd, finalHas, finalSet, finalText, finalScene, finalUsage;   // finalScene: a scene (STORY/SCENES) the door starts after the final text
+  std::string finalCmd, finalHas, finalSet, finalText, finalScene, finalUsage;
+  std::string finalHeld;    // the final verb typed by a caller without final_has: why it does not run yet ({cmd})   // finalScene: a scene (STORY/SCENES) the door starts after the final text
   std::vector<Node> nodes;
   unsigned skipped = 0;
   std::vector<std::string> problems;
@@ -96,6 +98,9 @@ inline bool resolve(const std::string &cwd, const std::string &typed, std::strin
 inline std::string joinPath(const std::string &dir, const std::string &name) { return dir == "/" ? "/" + name : dir + "/" + name; }
 
 inline bool visible(const Node &n, const std::string &flags) { return n.has.empty() || haunt::flagsHasAll(flags, n.has); }
+inline const std::string &textFor(const Node &n, const std::string &flags) {
+  return !n.altHas.empty() && haunt::flagsHasAll(flags, n.altHas) ? n.altText : n.text;
+}
 
 inline const Node *findNode(const Table &t, const std::string &path) {
   for (const auto &n : t.nodes) if (n.path == path) return &n;
@@ -138,7 +143,7 @@ inline std::vector<Entry> list(const Table &t, const std::string &dir, const std
     for (auto &e : out) if (e.name == name) { seen = true; if (isD) e.dir = true; break; }
     if (seen) continue;
     const Node *self = findNode(t, joinPath(dir, name));
-    out.push_back({name, isD, isD ? 512 : expand(n.text).size(),
+    out.push_back({name, isD, isD ? 512 : expand(textFor(n, flags)).size(),
                    self && !self->date.empty() ? self->date : t.date, self && !self->owner.empty() ? self->owner : t.owner});
   }
   std::sort(out.begin(), out.end(), [](const Entry &a, const Entry &b) { return a.name < b.name; });
@@ -176,6 +181,7 @@ inline void parse(const std::vector<Kv> &kv, Table &t) {
   t.finalText = haunt::capText(get(kv, "SHELL", "final_text"), MAX_TEXT);
   t.finalScene = haunt::upper(haunt::trim(get(kv, "SHELL", "final_scene")));
   t.finalUsage = haunt::capText(get(kv, "SHELL", "final_usage"), MAX_TEXT);
+  t.finalHeld = haunt::capText(get(kv, "SHELL", "final_held"), MAX_TEXT);
   std::vector<std::string> seen;
   for (const auto &e : kv) {
     if (e.section.empty() || e.section[0] != '/') continue;
@@ -190,6 +196,9 @@ inline void parse(const std::vector<Kv> &kv, Table &t) {
     n.dir = get(kv, e.section, "dir") == "1";
     n.text = haunt::capText(get(kv, e.section, "text"), MAX_TEXT);
     n.has = haunt::flagsClean(get(kv, e.section, "has"));
+    n.altHas = haunt::flagsClean(get(kv, e.section, "alt_has"));
+    n.altText = haunt::capText(get(kv, e.section, "alt_text"), MAX_TEXT);
+    if (n.altText.empty()) n.altHas.clear();
     n.date = haunt::capText(get(kv, e.section, "date"), 20);
     n.owner = haunt::capText(get(kv, e.section, "owner"), 12);
     if (!n.dir && n.text.empty()) { t.problem(e.section, "a file needs text= (or dir=1)"); continue; }
@@ -226,6 +235,11 @@ inline Result exec(const Table &t, std::string &cwd, const std::string &flags, c
     r.out = t.finalUsage;
     return r;
   }
+  // The final verb before the caller may use it: why it is held, when the card says so.
+  if (!t.finalHeld.empty() && !t.finalCmd.empty() && cmd == t.finalCmd.substr(0, t.finalCmd.find(' '))) {
+    r.out = subst(t.finalHeld, "{cmd}", w[0]);
+    return r;
+  }
   if (cmd == "exit" || cmd == "logout" || cmd == "quit" || cmd == "bye") { r.exit = true; return r; }
   if (cmd == "pwd") { r.out = cwd; return r; }
   if (cmd == "whoami") { r.out = t.user; return r; }
@@ -253,7 +267,7 @@ inline Result exec(const Table &t, std::string &cwd, const std::string &flags, c
       std::string p;
       std::string one;
       if (!resolve(cwd, w[i], p)) one = "cat: " + w[i] + ": No such file or directory";
-      else if (const Node *n = fileAt(t, p, flags)) one = expand(n->text);
+      else if (const Node *n = fileAt(t, p, flags)) one = expand(textFor(*n, flags));
       else if (isDir(t, p, flags)) one = "cat: " + w[i] + ": Is a directory";
       else one = "cat: " + w[i] + ": No such file or directory";
       if (!r.out.empty()) r.out += "\n";
@@ -280,7 +294,7 @@ inline Result exec(const Table &t, std::string &cwd, const std::string &flags, c
     std::vector<Entry> es;
     if (const Node *f = fileAt(t, p, flags)) {
       std::string name = p.substr(p.rfind('/') + 1);
-      es.push_back({name, false, expand(f->text).size(), f->date.empty() ? t.date : f->date, f->owner.empty() ? t.owner : f->owner});
+      es.push_back({name, false, expand(textFor(*f, flags)).size(), f->date.empty() ? t.date : f->date, f->owner.empty() ? t.owner : f->owner});
     } else if (isDir(t, p, flags)) es = list(t, p, flags, all);
     else { r.out = "ls: " + target + ": No such file or directory"; return r; }
     for (auto &e : es) {

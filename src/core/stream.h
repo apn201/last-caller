@@ -101,15 +101,20 @@ static size_t utf8Cut(const String &s, size_t want) {
 static uint32_t readerCount(const Reader &r);
 static String readerRow(const Reader &r, uint32_t row);
 static void readerStopped(Session &s);
+static constexpr uint32_t READER_REPLAY_CPS = 240;   // 2400 baud: the viewer's S on a line with no speed of its own
 static void pace(Session &s, uint32_t now) {
   uint32_t elapsed = now - s.paceAt;
   s.paceAt = now;
   if (s.paused) return;
   size_t budget;
-  bool paced = ((!s.jobs.empty() && s.jobs.front().paced) || (s.jobs.empty() && s.reader.playing)) && s.cps;
+  // S in the viewer replays at modem speed on every line, Telnet too (its own speed is 0, no limit):
+  // a picture drawn over itself (ORBIT_3) shows what is under the cover only when it is slow (Q18).
+  const bool replay = s.jobs.empty() && s.reader.playing;
+  const uint32_t cps = s.cps ? s.cps : (replay ? READER_REPLAY_CPS : 0);
+  bool paced = ((!s.jobs.empty() && s.jobs.front().paced) || replay) && cps;
   if (!paced) { budget = 4096; s.paceCredit = 0; }
   else {
-    s.paceCredit = min<uint32_t>(s.paceCredit + min<uint32_t>(elapsed, 1000) * s.cps, 128000);
+    s.paceCredit = min<uint32_t>(s.paceCredit + min<uint32_t>(elapsed, 1000) * cps, 128000);
     budget = s.paceCredit / 1000;
     if (!budget) return;
   }
