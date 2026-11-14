@@ -255,7 +255,7 @@ Rules for every item:
   with a good reason; every change goes in `docs/reviews/CHANGES.md`.
   Loop state in `docs/reviews/LOOP.md` so later runs resume.
   PAUSED by Juha, 14 Nov 2026, after round 3 (Ada 85, Mara 80, average 82.5); round-3 fixes in `bb94e79`, staging check cut off (rerun in Q19). Do not resume until Juha says so.
-- [ ] **Q19 - Judges' panel, then the critics' plan.** Brief:
+- [x] **Q19 - Judges' panel, then the critics' plan.** Brief:
   `docs/briefs/Q19-judges.md` (Claude Code, 14 Nov 2026, Juha's request).
   Rerun the staging check on `bb94e79`; add the mesh/FidoNet use case to
   `docs/DEVPOST.md` and `README.md`; two invented judges with no BBS
@@ -264,3 +264,23 @@ Rules for every item:
   and agree scores on the five Kiroween criteria (`docs/reviews/JUDGES-1.md`);
   then Ada and Mara turn that into a ranked action list that keeps the
   game's soul (`docs/reviews/PANEL-1.md`). No game changes in this item.
+  DONE 14 Nov 2026. Staging check on the round-3 code (served commit
+  `b842f3d`, docs-only on top of `bb94e79`): PASS (server build, ctest, smoke,
+  e2e 63 passed 0 failed). Use case added to `DEVPOST.md` and `README.md`.
+  Judges (`JUDGES-1.md`), agreed: Impact 5, Technological Implementation 8,
+  Design 8, Innovation/Idea 8, Presentation 5, total 34/50 (Hans 35, Anna 34).
+  Hans played about 165 calls and locked 4 of 5 manifest rows (stopped at the
+  ELIZA row, out of time); Anna played about 60 calls (20 to 25 minutes) and
+  stopped at the manifest screen, unsure how to progress without guessing.
+  Both Telnet only. Panel (`PANEL-1.md`) top five: (1) rewrite the README to the
+  board that ships, +1 Presentation; (2) rewrite the Devpost "In short" with one
+  plain BBS sentence first, +1 Presentation; (3) counts match the folder, fill
+  or cut every [fill], name who plays and pays, +0.5 each; (4) make the film,
+  boot banner first, +1 to +1.5 Presentation, large; (5) small game honesty
+  fixes (Diagnostics "this account" line, filed-report feedback, boot banner
+  after power-up, scripted "are they alive" reply plus fallback, row status
+  line), about +1 Design. Note: the two panel agents were not in the registry,
+  so the panel turns ran through the general agent reading those files. The
+  panel proposes dropping "feasibility study" and "product" from the first
+  paragraph, which is Juha's framing: his call. The PANEL-1 appendix names the
+  invented judges; cut that before it goes on the real page.
