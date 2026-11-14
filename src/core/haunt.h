@@ -192,33 +192,25 @@ static bool hauntCalm(const Session &s) {
   return !streaming(s) && !s.input.length() && !s.hotKey && !s.hideInput;
 }
 static void hauntShow(Session &s) {
-  // A scene takes the whole screen: whatever is queued behind it waits for the next calm prompt,
-  // and, after a scene, for the caller's next command, so two scenes never play back to back.
-  if (s.sceneHold) return;
-  std::vector<HauntShow> shows;
-  shows.swap(s.hauntShows);
-  bool shown = false;   // Q20 UX: a page printed under a prompt draws that prompt again
-  for (size_t i = 0; i < shows.size(); ++i) {
-    const HauntShow &h = shows[i];
-    shown |= h.text.length() || h.art.length();
-    if (h.text.length()) {
-      String text = h.text; text.replace("|", "\r\n  ");
-      say(s, "\r\n\x1b[1;33m" + h.from + ":\x1b[0;33m " + text + "\x1b[0m");
-    }
-    if (h.art.length()) {
-      if (s.ansi) art(s, ("/BBS/ANSI/STORY/" + h.art + ".ANS").c_str());
-      else plainArt(s, ("/BBS/ASCII/STORY/" + h.art + ".ASC").c_str());
-    }
-    if (h.scene.length()) {
-      sceneStart(s, h.scene);
-      if (s.state == SCENE_PLAY) {
-        s.sceneHold = true;
-        for (size_t k = i + 1; k < shows.size(); ++k) s.hauntShows.push_back(shows[k]);
-        return;
-      }
-    }
+  // Q20 (Addition 5): one show per calm prompt. A page, a picture or a scene, then the rest wait
+  // for the caller's next command (sceneHold), so a login never prints a pile of them at once.
+  if (s.sceneHold || s.hauntShows.empty()) return;
+  HauntShow h = s.hauntShows.front();
+  s.hauntShows.erase(s.hauntShows.begin());
+  s.sceneHold = true;
+  if (h.text.length()) {
+    String text = h.text; text.replace("|", "\r\n  ");
+    say(s, "\r\n\x1b[1;33m" + h.from + ":\x1b[0;33m " + text + "\x1b[0m");
   }
-  if (shown) { write(s, "\r\n"); eggPrompt(s); }
+  if (h.art.length()) {
+    if (s.ansi) art(s, ("/BBS/ANSI/STORY/" + h.art + ".ANS").c_str());
+    else plainArt(s, ("/BBS/ASCII/STORY/" + h.art + ".ASC").c_str());
+  }
+  if (h.scene.length()) {
+    sceneStart(s, h.scene);
+    if (s.state == SCENE_PLAY) return;
+  }
+  if (h.text.length() || h.art.length()) { write(s, "\r\n"); eggPrompt(s); }   // Q20 UX: a page under a prompt draws that prompt again
 }
 
 // Did the count go past one of the thresholds since the last look?

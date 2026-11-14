@@ -16,6 +16,7 @@
 //       other story file named after the first two (scenes, SYSOP.INI, DIAG.INI, SHELL.INI)
 //   P9  SYSOP view (SYSVW) passes every story gate and never an access flag, on random flag sets
 //   P10 the act gates hold: no rule can give ACT3 or SYSVW to a caller without the visits they need
+//   P11 a crew login fires only that crew account's rules, and at most one scene (Q20)
 #include "haunt_logic.h"
 #include "manifest_logic.h"
 #include <algorithm>
@@ -236,6 +237,27 @@ int main(int argc, char **argv) {
     if (haunt::flagsHas(g, "ACT3")) CHECKF(r.ev == haunt::EV_CREW_LOGIN && haunt::upper(r.match) == "CHAOS", "P10 rule %s gives ACT3", r.id.c_str());
     CHECKF(!haunt::flagsHas(g, "SYSVW"), "P10 rule %s gives SYSVW (only the scene ELZ_GRANT may)", r.id.c_str());
     CHECKF(!haunt::flagsHas(g, "OVR"), "P10 rule %s gives OVR (only the post path may)", r.id.c_str());
+  }
+
+  // P11 (Q20, Addition 5): a crew login shows only what belongs to that crew account. On any
+  // flag set, crew_login <H> fires no rule keyed to another handle, and at most one scene.
+  {
+    std::set<std::string> handles;
+    for (const auto &r : tr.rules) if (r.ev == haunt::EV_CREW_LOGIN) handles.insert(haunt::upper(r.match));
+    std::vector<std::string> all;
+    for (const auto &r : tr.rules) for (const auto &w : haunt::flagWords(haunt::flagsOf(r))) all.push_back(w);
+    for (const auto &h : handles)
+      for (int n = 0; n < 300; ++n) {
+        std::string flags;
+        for (const auto &w : all) if (rnd() % 3 == 0) flags = haunt::flagsAdd(flags, w);
+        haunt::Ctx c; c.ev = haunt::EV_CREW_LOGIN; c.match = h; c.level = 20; c.flags = flags;
+        int scenes = 0;
+        for (const haunt::Rule *r : haunt::due(tr, c)) {
+          CHECKF(r->ev == haunt::EV_CREW_LOGIN && haunt::upper(r->match) == h, "P11 crew_login %s fires rule %s", h.c_str(), r->id.c_str());
+          if (!r->scene.empty()) scenes++;
+        }
+        CHECKF(scenes <= 1, "P11 crew_login %s starts %d scenes at once", h.c_str(), scenes);
+      }
   }
 
   if (failures) { printf("story_property_test: %d FAILED\n", failures); return 1; }
