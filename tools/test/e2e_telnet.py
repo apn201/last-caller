@@ -638,7 +638,7 @@ def main():
             advance(c, "you are not ty", timeout=60)
             advance(c, "Main Board Command?", timeout=60)
         # Q20 (Addition 5 and 6): a crew account has no L; G says it goes back to Login:.
-        if "This is a crew account" not in c.all or "Goodbye (back to Login:)" not in c.all:
+        if "This is a crew account" not in c.all or "Goodbye (to Login:)" not in c.all:
             raise AssertionError("the crew login does not say how it is left")
         if "Log in as another" in c.all[c.all.find("This is a crew account"):]:
             raise AssertionError("a crew account offers L")

@@ -36,7 +36,7 @@ static void mainMenu(Session &s) {
   if (s.user.id && !isMaintenance(s.user) && !s.readOnly) items.push_back({"L", "Log in as another"});
   // Q18: a crew account goes back to the caller's own account on this line without the login again.
   if (s.readOnly && s.ownUserId && s.ownHandle.length()) items.push_back({"Y", "Back to " + s.ownHandle});
-  items.push_back({"G", s.readOnly ? "Goodbye (back to Login:)" : "Goodbye"});
+  items.push_back({"G", s.readOnly ? "Goodbye (to Login:)" : "Goodbye"});
   if (isSysop(s)) items.push_back({"Z", "SysOp console", "\x1b[1;35m"});
   showMenu(s, "MAIN", items, board.name + " // MAIN BOARD");
   // SYSOP view (milestone M6) opens reading and nothing else: one line tells the caller what changed.
