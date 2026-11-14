@@ -16,7 +16,7 @@ struct Door {
 };
 
 static const Door DOORS[] = {
-  {"V", "VolaMUD", enterMud, playingMud, handleMud, true, nullptr},
+  {"V", "VolaMUD", enterMud, playingMud, handleMud, true, mudListed},
   // The ship console: entered at login by the maintenance account, never from the menu.
   {"", "Ship systems", enterShip, ownsShip, handleShip, false, shipListed},
   // ELIZA's diagnostics: query codes from the comms manual; open while the ship has power.

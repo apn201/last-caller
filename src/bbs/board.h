@@ -130,10 +130,10 @@ static void finishLogin(Session &s) {
   if (repairedSysop) say(s, "\r\nPrimary SYSOP account normalized: level 255, SYSOP flag.");
   callers++; loadPointer(s); event("LOGIN", s.user.handle + " node " + s.node); trace("LOGIN_OK", s.user.handle + " node " + s.node); activity(s, "BULLETINS");
   say(s, "\r\nCaller #" + String(callers) + "  Security: " + String(s.user.level) + "  Conference: " + confName(s.conference));
-  // Mandatory bulletins from BULLETINS.INI are shown at every login.
+  // Mandatory bulletins from BULLETINS.INI are shown at a caller's first login only (a crew login or a return visit skips them); B lists them after that.
   bool shown = false;
   for (const auto &b : board.bulletins)
-    if (b.mandatory && canSee(s.user, b.level, b.flag)) { showBulletin(s, b); shown = true; }
+    if (b.mandatory && (!s.readOnly && s.user.calls <= 1) && canSee(s.user, b.level, b.flag)) { showBulletin(s, b); shown = true; }
   if (!shown) say(s, "Welcome to " + board.name + ".");
   // Triggers: an own login, or a visit to a crew account. Pages wait for the prompt below.
   if (s.readOnly) hauntEvent(s, haunt::EV_CREW_LOGIN, s.user.handle);

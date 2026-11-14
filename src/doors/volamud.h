@@ -181,6 +181,8 @@ static bool loadMud(uint32_t id, MudCharacter &character) {
 }
 static bool saveMud(const MudCharacter &character) { return putRecord(MUD_DATA, character.id, mudLine(character)); }
 static bool playingMud(const Session &s) { return s.state == MUD_MENU; }
+// listed=0 in VOLAMUD.INI takes the door out of the menu (the HALCYON card does: it is a fantasy city).
+static bool mudListed(const Session &) { return config(MUD_CONFIG, "VOLAMUD", "listed", "1").toInt() != 0; }
 static String mudEncounterName(const Session &s) {
   if (s.mudEnemyKind == 1) {
     if (s.mud.worldX == 13 && s.mud.worldY == -8) return "Lord Korja, Crown-Bearer";

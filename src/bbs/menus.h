@@ -21,6 +21,12 @@ static void showMenu(Session &s, const String &name, const std::vector<MenuItem>
   // Without a MENUS.INI section: the usual picture, options below it.
   String path = m ? m->art : name == "MAIN" ? board.mainMenu : "/BBS/ANSI/MENUS/" + name + ".ANS";
   bool haveArt = s.ansi && path.length() && sdReady && SD_MMC.exists(path);  // ASCII callers get the title
+  // The art is drawn once per menu and session; coming back shows the title and options only.
+  String seenKey = "|" + name + "|";
+  if (haveArt) {
+    if (s.menusSeen.indexOf(seenKey) >= 0) haveArt = false;
+    else s.menusSeen += seenKey;
+  }
   bool slots = haveArt && s.ansi && m && m->rows && m->height;
   if (haveArt) {
     if (slots) write(s, "\x1b[0m\x1b[2J\x1b[H");  // the slots are screen positions in the art

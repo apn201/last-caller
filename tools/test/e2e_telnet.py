@@ -1137,7 +1137,7 @@ def main():
         choose(c, "I can fix that. Give me SYSOP.")
         if "cannot account for some minutes" not in " ".join(c.all[-2000:].split()):
             raise AssertionError("ELIZA does not mention the gap after the overrun")
-        if "Run the memory check" in c.all[-2000:]:
+        if "About those minutes you cannot account for" in c.all[-2000:]:
             raise AssertionError("the memory check is offered before the handbook page was read")
         choose(c, "Something else.")
         if "not given to guests" not in c.all[-1500:]:
@@ -1172,7 +1172,7 @@ def main():
         c = state["c"]
         sync(c)
         c.send("C")
-        choose(c, "Run the memory check. It needs SYSOP mode.")
+        choose(c, "About those minutes you cannot account for.")
         advance(c, "Engineering is on the list now", timeout=120)
         advance(c, "Main Board Command?", timeout=60)
         if "SYSOP view is on" not in c.all[-3000:]:
@@ -1182,7 +1182,7 @@ def main():
         c.send("C")
         choose(c, "Something else.")
         choose(c, "Say something else.")
-        if "Run the memory check" in c.all[mark:] or "Give me SYSOP" in c.all[mark:]:
+        if "About those minutes you cannot account for" in c.all[mark:] or "Give me SYSOP" in c.all[mark:]:
             raise AssertionError("a SYSOP request is still offered after the grant")
         c.expect("Multi-Node Chat", timeout=30)
         c.send("/Q")

@@ -118,6 +118,7 @@ struct Session {
   bool powerTimerOn = false;
   bool powered = false;
   bool makingCrew = false;
+  String menusSeen;  // menus drawn with their art once this session; later draws are compact (bbs/menus.h)
   // Triggers (core/haunt.h). The caller behind this connection: the own account
   // signed in here (kept across a crew login), and flags earned on a crew
   // account before any own account signed in. Shows wait for a calm prompt.
