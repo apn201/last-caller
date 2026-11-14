@@ -1,7 +1,7 @@
 # Q18 loop state
 
 Current round: 3
-Step: round 3, Ada done (85); Mara next on a fresh board
+Step: round 3, Mara first session cut off at the manifest (notes-mara.md kept); second session on the same board and account
 Ada done: yes (round 3), SCORE 85
 Mara done: no (round 3)
 Commit played: 69e0cd4
@@ -18,5 +18,6 @@ Round 2 log:
 - Ada, second run: SCORE 66, unfinished after about 110 calls. Closed the round instead of replaying it on newer code.
 
 Fixes: docs/reviews/CHANGES.md.
+
 
 
