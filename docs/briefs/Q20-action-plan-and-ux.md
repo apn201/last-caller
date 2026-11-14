@@ -243,3 +243,16 @@ This replaces item 2 of Addition 5 where they differ.
 4. The story lint, the e2e and `docs/MENU_AUDIT.md` follow. A crew account
    whose password is part of a later puzzle stays a puzzle until its first
    login. The real `SYSOP` flag is never granted.
+
+## Addition 7 (Juha, 14 Nov 2026) - replay a cutscene from the notebook
+
+Every scene the caller has seen (its `SC_<NAME>` marker flag on the own
+account, or carried from a crew login) can be played again from the
+manifest notebook: a "Scenes seen" list with a title per scene, newest
+last; pick a number to replay. A replay shows the scene as it was, grants
+nothing and changes no flag, and choices in it are shown but do not
+count. Q leaves the replay back to the notebook. Scene titles come from
+the scene files on the card (add a `title=` where one is missing; story
+text unchanged). The replay viewer is engine (TinyBBS port list); the
+notebook and the titles are HALCYON. Add a host test that a replay
+grants no flag.
