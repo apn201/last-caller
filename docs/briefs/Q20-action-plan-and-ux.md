@@ -256,3 +256,40 @@ the scene files on the card (add a `title=` where one is missing; story
 text unchanged). The replay viewer is engine (TinyBBS port list); the
 notebook and the titles are HALCYON. Add a host test that a replay
 grants no flag.
+
+## Addition 8 (Juha, 14 Nov 2026) - the notebook collects everything
+
+A caller who missed a line or did not write it down must find it again in
+the notebook. Extends Additions 6 and 7.
+
+1. **Every hint is collected automatically when it is shown.** Minimum:
+   every clue, code, password, handle, name, number or direction the game
+   gives (ELIZA's pages and chat lines, scene lines, story art captions,
+   mail, bulletins, file text, door output, the front-page hint) goes into
+   the notebook the moment it is on screen, with where it came from
+   ("ELIZA, chat", "Mail from CMDR", "SHIP.LOG") and in the order seen. A
+   hint that is part of a bigger text is noted as its own short line; the
+   source text stays where it is.
+2. **Replay where it can be replayed.** Scenes (Addition 7), ELIZA's pages
+   and story art can be shown again from the notebook as they were.
+   Messages and files point to where they are (area and number), or open
+   them.
+3. **How.** Mark the hints on the card, not in code: each scene line,
+   trigger page, mail or file that carries a hint gets a note key (e.g.
+   `note=` with the line to keep, or a `NOTES.INI` table keyed by the
+   trigger, scene or file), and showing it saves a flag on the caller's
+   own account (carried from a crew login as other flags are). The
+   notebook lists what the caller holds. Nothing in the notebook solves a
+   puzzle the caller has not been shown: it keeps what was seen, it does
+   not add answers.
+4. **Check it.** Go through `docs/PUZZLE_CHAIN.md` and the story bible:
+   every clue on the chain must have a note. The story lint fails on a
+   clue with no note (`check_notes`). A host test: showing a noted line
+   saves its flag once; a replay grants nothing else.
+5. Engine part (a notes table, collecting on show, the notebook viewer)
+   goes on the TinyBBS port list; the notes themselves are HALCYON.
+
+Do this together with Additions 6 and 7 before ticking Q20, then re-run
+the staging check and the e2e. If the critic rounds are over, one more
+critic play-through (either critic, a fresh board) checks that the
+notebook helps without giving the game away.
