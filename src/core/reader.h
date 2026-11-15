@@ -343,7 +343,7 @@ static void readerKey(Session &s, const String &k) {
     mainMenu(s);
     return;
   }
-  else if (k == "?") { showPage(s, String("SPACE or ENTER next  B back  \x18\x19 line  G top") + (r.kind == READER_ANSI ? "  S slow" : "") + "  Q back  X main"); return; }
+  else if (k == "?") { showPage(s, String("SPACE or ENTER next  B back  \x18\x19 line  G top") + (r.kind == READER_ANSI ? "  S at 300 baud" : "")   /* Q21: the second clue to S */ + "  Q back  X main"); return; }
   else { showPage(s); return; }
   r.top = constrain(top, (int32_t)0, maxTop);
   showPage(s);

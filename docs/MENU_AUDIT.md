@@ -147,3 +147,11 @@ are allowed: they never appear on screen.
 | Messages: Mail: ELIZA | `VISIT_ELIZA` (her login, carried) or `SYSVW` | Read-only. |
 | Door: NOWHERE shell | the `ELIZA` account (`SHELL.INI` `account=`) and the caller's own `NOWHERE_OPEN` | Gone from every other menu. |
 | SYSOP view | never | `SYSVW` opens no SysOp tool: `Z`, `USER`, `RELOAD`, the SysOp console conference, the SysOp page and every `SYSOP`, `READONLY`, `BACKROOM`, `VAULT` gate stay shut. |
+
+## Timed lines (Q21)
+
+| Where | Line | Notes |
+| --- | --- | --- |
+| any prompt, 30 s before the line closes | "Still there? The line closes in 30 seconds. Press any key to stay." | Then the prompt and what was typed are drawn again. Limits: a new line 2 minutes, Login: on a line that has signed in 10 minutes, signed in 30 minutes. Any key resets the count. Not during a scene or a picture. |
+| front page on a line that has signed in | the ONLINE banner (RTG on the bus, ELIZA online) | A new line still gets BOOT or REBOOT. |
+| picture viewer, ? | "... S at 300 baud ..." | The key itself is unchanged (S). |

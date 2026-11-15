@@ -123,5 +123,7 @@ repeat. The only typed repetition is the 20 zeros of M5, and it can be pasted.
   own, or a setting.
 - Each fact keeps an open item and at least four items in four media (matrix in
   the story bible, with E41 to E48 added in S12c).
+- Q21 timeline check: the dates that are not clues now agree (ELIZA's last status report is 8 Dec 04:15, Diagnostics 300 says the last downlink ack was 22 Nov 14:08, the Office's capsule mail is 22 Nov 11:30, the 5 Nov mark is a practice paper, the 486 has 16 MB). The clue dates are unchanged.
+- Every clue on this page and in the story bible has a note in `sd/BBS/STORY/NOTES.INI` (`clue=`), checked by `tools/story_lint.py` (`check_notes`).
 - Posts after 22 Nov 13:52 are behind the act gates; the audit and the one new
   small note for H-C are in the story bible, "Act gates audit".

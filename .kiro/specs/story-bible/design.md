@@ -262,7 +262,7 @@ and the prospectus (E29).
 | Sat 31 Oct | 0 | Launch. Halloween |
 | Mon 2 Nov | 2 | BBS online. ELIZA's welcome bulletin. First posts |
 | 2 to 21 Nov | 2 to 21 | Normal life: experiments, rants, mail home, Ty's art, friction. Small wrong notes |
-| Sun 22 Nov | 22 | Tank fails. 14:09 downlink off. 14:41 "antenna lost" |
+| Sun 22 Nov | 22 | 11:00 the Founder's offering memo; 11:30 the Office tells ELIZA to tell Ty the capsule is ready (she acts on it on the 25th). 13:52 tank fails. 14:09 downlink off. 14:41 "antenna lost". The last status report ELIZA names is the one of 8 Dec 04:15 (Q21 timeline check) |
 | 23 to 26 Nov | 23 to 26 | Repairs, rationing, hope. Achterberg starts to suspect |
 | Mon 23 Nov | 23 | Achterberg proposes jettisoning the garden/rack module; ELIZA refuses |
 | Fri 27 Nov | 27 | Halvorsen's spacewalk and death |
