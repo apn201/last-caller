@@ -338,3 +338,7 @@ Rules for every item:
   notebook, story lint `check_notes`; then Addition 1 (every open game
   item in `ACTION_PLAN.md` area 2, Kiro's recommendations) and two critics
   to 83. Re-read the brief before ticking: do not tick with Addition 1 undone.
+- [ ] **Q22 - Polish: the last critic items.** Brief: `docs/briefs/Q22-polish.md`
+  (Claude Code, 15 Nov 2026, Juha's request: take the recommendations, go
+  for gold). Manifest option C, crew-password clues, key lag around scenes,
+  redial banner, News Wire, shell help, disconnects; two critics to 83.
