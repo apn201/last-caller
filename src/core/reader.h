@@ -175,7 +175,7 @@ static void renderAnsi(Reader &r) {
       if ((x > 0 || wrap) && f.peek() != '\n' && f.peek() != '\r' && y < (int)maxRows && r.over.size() < MAX_OVERSTRIKES) r.over.push_back({(uint32_t)y, ansiRow(r, y)});
       x = 0; wrap = false; continue;
     }
-    if (b == '\n') { y++; wrap = false; continue; }
+    if (b == '\n') { x = 0; y++; wrap = false; continue; }   // a bare LF starts at column 0 too (LF-only art)
     if (b == '\t') { x = min(79, (x / 8 + 1) * 8); continue; }
     if (b == 8) { if (x) x--; wrap = false; continue; }
     if (b == 0 || b == 7 || b == 127) continue;
