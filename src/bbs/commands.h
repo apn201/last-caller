@@ -43,7 +43,8 @@ static void input(Session &s, const String &bytes) {
       else other = true;
     }
     if (!space && !other) return;
-    if (space && !other) s.paused = !s.paused;
+    // Q22: at "Press any key" (a login banner or a bulletin still drawing) SPACE is a key, not a pause: it skips to the end.
+    if (space && !other && s.state != BULLETIN) s.paused = !s.paused;
     else { if (bytes.indexOf('\r') >= 0) s.ignoreNextLf = true; skipStream(s); }
     return;
   }
