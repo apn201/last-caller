@@ -292,8 +292,48 @@ Rules for every item:
   across the engine, write one interaction contract, build it, and test with
   two fresh no-BBS usability testers until SUS 80 (max 4 rounds). Part C:
   the port list for `../TinyBBS` in `docs/PLATFORM_UX.md` (no edits there).
-- [ ] **Q21 - The notebook keeps everything.** Brief: `docs/briefs/Q21-notebook.md`
-  (Claude Code, 15 Nov 2026, Juha's request). Builds Q20 Additions 7 and 8:
+- [x] **Q21 - The notebook keeps everything.** Brief: `docs/briefs/Q21-notebook.md`
+  DONE by the two-round limit of Addition 1, not by the 83 goal (rounds 7 and 8 averaged 76.5 and
+  78.5). Commits 1d5773f..9d2d2c0 (`git log --oneline ea14565..`) plus this tick.
+  **What the notebook collects:** 124 notes in `sd/BBS/STORY/NOTES.INI`, saved as `N_<ID>` on the
+  caller's own account the moment the thing is on screen (once; a crew login carries them), listed in
+  the order seen with their source: 34 from messages (Lounge, Mission Log, Garden Notes, the four
+  mailboxes, the Archive), 42 from files (logs, records, Engineering, the handbook, the journals, the
+  tunes, the four order strips), 17 from scene lines, 8 from pictures (Orbit 3 only at 300 baud),
+  5 from bulletins and the user list, 5 from ELIZA's chat lines, 4 from WHO ghosts, 4 from
+  Diagnostics, 4 from the NOWHERE shell, 1 from the front page. The notes keep evidence, not
+  conclusions; the manifest's own conclusion notes are gone (action plan option B).
+  **What replays:** every scene seen (S, "Scenes seen", titles from the card, newest last) and, from a
+  single note (R), the 17 scene notes and the 5 ELIZA lines. A replay grants nothing, saves no
+  marker and no flag, does not follow `then=`, and Q goes back to the notebook (host test in
+  `scene_logic_test`, e2e step). Messages and files show where to read them again (area and number,
+  or area and file name). The engine also replays trigger pages, ghost pages and story art (`page:`,
+  `ghost:`, `art:`); no note on the card uses them yet.
+  **Checks on the story:** `check_notes` in the story lint fails on a clue of `docs/PUZZLE_CHAIN.md`
+  (M1 to M9, P1 to P12) or of the story bible's evidence matrix (E01 to E48, E06b) with no note, and
+  on a note that points at nothing on the card. Host test `notes_logic_test`: a noted line saves its
+  flag once, area= keeps repeated subjects apart, the card's file loads.
+  **Critic on the notebook (R6, Ada, 80):** it helped as a memory aid across two sessions, the logins
+  page most; it solved nothing; it gave away "mostly no": one note set 22 Nov beside the tank date,
+  and that note (`WAKE_CREW`) was trimmed to ELIZA's words. Mara R8: "The notebook that collects clues
+  automatically is very good interface design."
+  **Addition 1:** every open area-2 row of `docs/ACTION_PLAN.md` is done and marked with its commit
+  (idle warning and 10 minutes, ONLINE banner, timeline fixes, Diagnostics 201, row status line,
+  filed-report line, scripted "are they alive" and one fallback, Ty's card border, second clue to S);
+  "Welcome back, caller." twice is a glitch line and stays. Round 7 fixes of what both critics hit:
+  5bbf023. Rounds: 7 Ada 68 / Mara 85, 8 Ada 84 / Mara 73. Neither says the game got easier; both
+  still call the manifest matching. **Open for Juha** (ACTION_PLAN, new row): manifest option C, and
+  the small items both critics still hit (keys typed during a scene or login, the redial banner after
+  a dropped line, News Wire on a crew account, `release` in the shell's help).
+  **RAM and flash** (`pio run`): before (Q20 tick) RAM 62148 bytes, flash 1653071 bytes; after RAM
+  62572 bytes (+424, static only), flash 1675159 bytes (+22088). Notes are collected per shown
+  thing, not per tick; the idle check allocates only when it prints.
+  **Checks:** `pio run` SUCCESS; `python tools/run_host_tests.py` all 13 passed (zig c++, Windows);
+  `python tools/story_lint.py` 0 errors, 0 warnings; `tools/staging-check.ps1` at 9d2d2c0: STAGING
+  CHECK PASS (server build, ctest 14 of 14, E2E 63 passed, 0 failed, the game finished). The server
+  build itself cannot run on this Windows PC; it ran on the staging host. `main` is pushed to
+  `staging`. **Deploy commit for OpenClaw: 9d2d2c0** (the tick commit after it changes only this file).
+  Was: (Claude Code, 15 Nov 2026, Juha's request). Builds Q20 Additions 7 and 8:
   every hint collected when shown, scenes and pages replay from the
   notebook, story lint `check_notes`; then Addition 1 (every open game
   item in `ACTION_PLAN.md` area 2, Kiro's recommendations) and two critics
