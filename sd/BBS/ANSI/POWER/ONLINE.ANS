@@ -1,0 +1,15 @@
+[0m[2J[H  [1mHALCYON-486 FLIGHT BIOS  REV 2.04
+  [0mMEMORY TEST  16384K OK                                        [1;33m▄▄▄▄
+                                                              ██▀▀▀▀[43m▀[0;33m█
+  [1;30mWARM RESTART                                               [33m██  [0;33m▄▄  [1;30;43m▄[0;33m█
+  [1;36mRTG-1 ON BUS - ATTITUDE HOLD                               [33m██  [0;33m▀▀  [1;30;43m▀[0;33m█
+                                                              [1;43m▀[0;33m█▄[1;30m▄▄[0;33m▄[1;30m██
+  [0mBATTERY BANK [1;30m........... [31mOPEN CIRCUIT                         [0;33m▀▀▀▀
+  [37mELIZA MISSION AI [1;30m....... [0;33mONLINE  (SYSOP)
+  [37mMODEM [1;30m.................. [0m28800 READY
+
+   ┌─ [1mSERVICE LABEL [0m──────────────────────┐
+   │ MAINT ACCT   ADMIN                   │
+   │ PASSWORD     ADMIN                   │
+   └──────────────────────────────────────[1;30m░
+[0m

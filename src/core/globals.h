@@ -7,7 +7,10 @@
 // the stick stays conservative; the server has room for more callers. The
 // card's max_nodes= setting remains the caller-visible limit.
 static constexpr uint8_t MAX_NODES = platformMaxNodes();
-static constexpr uint32_t LOGIN_TIMEOUT_MS = 120000;
+static constexpr uint32_t LOGIN_TIMEOUT_MS = 120000;          // a line that has not signed in yet
+static constexpr uint32_t CALLER_LOGIN_TIMEOUT_MS = 600000;   // Q21: back at Login: after a sign-in on this line (a crew visit, L, G)
+static constexpr uint32_t SIGNED_IN_TIMEOUT_MS = 1800000;     // signed in
+static constexpr uint32_t IDLE_WARN_MS = 30000;               // the warning comes this long before the line closes
 static constexpr uint32_t WEB_CARRIER_TIMEOUT_MS = 180000;
 static const char *ROOT = "/BBS";
 static const char *MODEM_AUDIO = "/BBS/ASSETS/DIALUP.MP3";

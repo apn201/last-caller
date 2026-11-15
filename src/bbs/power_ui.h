@@ -42,9 +42,11 @@ static void powerScreen(Session &s, const char *name, const String &fallback = "
 }
 
 // The first connection since start-up gets the full BIOS banner, every later
-// one the short reboot banner. The caller then sees "Login:".
+// one the short reboot banner. The caller then sees "Login:". Q21: a line that has
+// signed in (back after G, L or a crew visit) has power: its banner says so.
 static void brownoutLogin(Session &s) {
-  powerScreen(s, powerBannerPlayed ? "REBOOT" : "BOOT");
+  if (s.ownUserId && SD_MMC.exists(s.ansi ? "/BBS/ANSI/POWER/ONLINE.ANS" : "/BBS/ASCII/POWER/ONLINE.ASC")) powerScreen(s, "ONLINE");
+  else powerScreen(s, powerBannerPlayed ? "REBOOT" : "BOOT");
   powerBannerPlayed = true;
   // Q20: the front page says what this is, and after CREW that the account is made. After the art, which clears the screen.
   // Critic round 4: not again on a line that has signed in to an own account (after L, G or a crew visit).

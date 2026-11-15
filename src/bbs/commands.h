@@ -25,6 +25,7 @@ static void handleLine(Session &s, String line) {
     uploadCommand(s, line, cmd) || fileCommand(s, line, cmd) || messageCommand(s, line, cmd) || doorCommand(s, line, cmd);
 }
 static void input(Session &s, const String &bytes) {
+  if (bytes.length()) s.lastAt = millis();   // Q21: any key keeps the line (the idle warning says so)
   // While a picture or file is streaming, keys belong to the stream: space
   // pauses and resumes, anything else skips to the end.
   if (s.state == READER && !streaming(s)) { readerInput(s, bytes); return; }

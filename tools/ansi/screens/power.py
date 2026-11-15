@@ -2,6 +2,7 @@
 
 BOOT     brownout boot banner, a BIOS count with the ship's faults (first connection)
 REBOOT   the same, short (every later connection)
+ONLINE   the short banner for a line that has signed in: the RTG carries the bus, ELIZA is up (Q21)
 SUNSIDE  "SUNSIDE ENDS - CARRIER LOST", shown as a session is dropped
 CONSOLE  ship systems console, solar bus only
 WARNING  the RTG switch warning (the board prints the confirming key under it)
@@ -117,6 +118,46 @@ def reboot():
         "| MAINT ACCT   ADMIN                 |",
         "| PASSWORD     ADMIN                 |",
         "| (CHANGE ON FIRST USE)              |",
+        "+------------------------------------+",
+    ])]
+
+
+# ---------------------------------------------------------------- ONLINE
+
+def online():
+    """Q21: back at Login: on a line that has signed in (G, L, a crew visit). The ship has power
+    for this caller now, so the banner no longer says SOLAR BUS ONLY or NOT RESPONDING."""
+    c = Canvas(80, 14)
+    c.text(2, 0, "HALCYON-486 FLIGHT BIOS  REV 2.04", WHITE)
+    c.text(2, 1, "MEMORY TEST  16384K OK", GREY)
+    c.text(2, 3, "WARM RESTART", DGREY)
+    c.text(2, 4, "RTG-1 ON BUS - ATTITUDE HOLD", LCYAN)
+    leader(c, 6, "BATTERY BANK", "OPEN CIRCUIT", LRED, x=2, lead_to=24)
+    leader(c, 7, "ELIZA MISSION AI", "ONLINE  (SYSOP)", AMBER, x=2, lead_to=24)
+    leader(c, 8, "MODEM", "28800 READY", GREY, x=2, lead_to=24)
+    # her ring, lit, one light still dark
+    ring = PixelLayer(12, 12)
+    eliza_ring(ring, 5.5, 5.5, r_out=5.4, r_in=3.4, segs=12, off=(7,), dim=(), core=True)
+    ring.flush(c, 60, 1)
+    c.box(3, 10, 40, 4, "single", GREY)
+    c.text(5, 10, " SERVICE LABEL ", WHITE)
+    c.text(5, 11, "MAINT ACCT   ADMIN", GREY)
+    c.text(5, 12, "PASSWORD     ADMIN", GREY)
+    c.put(42, 13, "\u2591", DGREY)        # the same peeling corner
+    return [c.save("ANSI/POWER/ONLINE.ANS"), ascii_screen("ASCII/POWER/ONLINE.ASC", [
+        "HALCYON-486 FLIGHT BIOS  REV 2.04",
+        "MEMORY TEST  16384K OK",
+        "",
+        "WARM RESTART",
+        "RTG-1 ON BUS - ATTITUDE HOLD",
+        "",
+        "BATTERY BANK ........ OPEN CIRCUIT",
+        "ELIZA MISSION AI .... ONLINE  (SYSOP)",
+        "MODEM ............... 28800 READY",
+        "",
+        "+--- SERVICE LABEL ------------------+",
+        "| MAINT ACCT   ADMIN                 |",
+        "| PASSWORD     ADMIN                 |",
         "+------------------------------------+",
     ])]
 
@@ -283,7 +324,7 @@ def wake():
 
 def build():
     out = []
-    for f in (boot, reboot, sunside, warning, wake):
+    for f in (boot, reboot, online, sunside, warning, wake):
         out.extend(f())
     out.extend(console(False))
     return out

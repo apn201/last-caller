@@ -89,6 +89,8 @@ struct Session {
   uint8_t mudEnemyKind = 0, mudEnemyPick = 0;
   bool mudEnemyDefeated = false;
   uint32_t connectedAt = 0, lastAt = 0, lastRead = 0;
+  bool idleWarned = false;   // bbs/runtime.h: the line has been told it closes in 30 seconds
+  String lastPrompt;         // the last prompt written, drawn again under a timed line (the idle warning)
   std::vector<std::pair<uint8_t, uint32_t>> readPtrs;  // last-read message per area
   uint32_t lastPoll = 0;
   uint32_t wsClient = 0;  // live WebSocket for a browser node, 0 = polling
@@ -172,7 +174,7 @@ static void write(Session &s, const String &text) {
   if (dst.length() > 14000) dst.remove(0, dst.length() - 14000);
 }
 static void say(Session &s, const String &text = "") { write(s, text + "\r\n"); }
-static void prompt(Session &s, const String &text) { write(s, text); }
+static void prompt(Session &s, const String &text) { s.lastPrompt = text; write(s, text); }
 // What the caller is doing, for WHO and the node monitor. A change is also
 // written to the event log, so the SysOp can follow a caller's visit.
 static void activity(Session &s, const String &what) {

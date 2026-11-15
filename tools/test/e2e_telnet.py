@@ -1272,6 +1272,10 @@ def main():
                 raise AssertionError("ELIZA is listed before her first login")
             key(c, "A")
             c.expect("Login:", timeout=15)
+        # Q21: a line that has signed in gets the powered banner, not the brownout one
+        tail = c.all[-1500:]
+        if "RTG-1 ON BUS" not in tail or "NOT RESPONDING" in tail:
+            raise AssertionError("after L the banner still shows the brownout: %r" % tail[-400:])
         c.send("ELIZA")
         c.expect("Password:")
         c.send("ELIZA")
