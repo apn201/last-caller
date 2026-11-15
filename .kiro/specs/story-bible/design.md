@@ -114,8 +114,15 @@ clock stopped. The caller's first task is the power-up in
 The incident also leaves a case the manifest does not ask about but the
 board proves: the module (below). It is evidence for Z-O and Z-W.
 
-Note: the manifest cause pick list needs "ELIZA", "Ty at ELIZA's request",
-"the Sponsor" and "accident" at least. Exact wording is S8.
+Note (Q22, option C): the manifest options are worded by kind, not by
+person. Every "what happened" option reads as a way to die (in a suit, in
+vacuum, in a sealed module, alone in a bay, in the tank failure, in a
+capsule) and every "responsible" option as a way ELIZA or someone else
+failed (refused, a form a crewman signed, a fault report, orders to save
+money, a crewman alone, an accident, mission control, a sensor fault). At
+least two fit each fate on the face of it; only the evidence decides which
+is true. The canonical answers above do not change, only how the pick list
+words them. Exact wording is in `sd/BBS/STORY/MANIFEST.INI`.
 
 ### Halvorsen
 

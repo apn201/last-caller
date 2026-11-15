@@ -84,7 +84,7 @@ Optional unless marked. Any order after their parent.
 | NEW P10 Overrun | M2 | See M5 | M5 |
 | NEW P11 Memory check | M3, M5 | See M6 | M6 |
 | NEW P12 ELIZA's login | M6 | See M7 | M7 |
-| Manifest | M2 (rows fill as facts are found) | Pairs of rows confirmed | `M_Z` for M9 |
+| Manifest | M2 (rows fill as facts are found) | Pairs of rows confirmed. Q22: options are worded by kind, so at least two fit each fate on the face of it and only the evidence decides | `M_Z` for M9 |
 | Eggs, snake, Ty's demo, modem commands | M2 | Type something odd | Colour; no flags that gate anything |
 | Tanabe and Eero | M2 | Reads the Radio Room, her mail, Eero's last message (22 Nov) | The love story; his answer at the end |
 | Ty's crush | M2 | Greets in .NFO files, the demo scroller | Texture |
