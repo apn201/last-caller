@@ -338,7 +338,28 @@ Rules for every item:
   notebook, story lint `check_notes`; then Addition 1 (every open game
   item in `ACTION_PLAN.md` area 2, Kiro's recommendations) and two critics
   to 83. Re-read the brief before ticking: do not tick with Addition 1 undone.
-- [ ] **Q22 - Polish: the last critic items.** Brief: `docs/briefs/Q22-polish.md`
+- [x] **Q22 - Polish: the last critic items.** Brief: `docs/briefs/Q22-polish.md`.
+  Done 15 Nov 2026 (Kiro). **Scores:** round 9 Ada 82 (finished) / Mara 76 (turn limit at MEMCHK),
+  average 79; round 10 Ada 82 (stopped at the last gate) / Mara 82 (turn limit after KESTREL4),
+  average 82. **Goal 83 not reached in the two rounds**; neither critic calls the game easier.
+  **What changed:** manifest option C (options worded by kind, two fit each fate, the evidence
+  decides; story bible and PUZZLE_CHAIN follow); Locks and Six digits no longer say where each
+  password is; contract C7 changed: keys typed during a scene are dropped and a grey line says so
+  (PLATFORM_UX, steering); SPACE at "Press any key" is a key; the powered banner on a redial once
+  the RTG is on, and the powered ship console on a signed-in line (CONSOLE_ON art); News Wire checks
+  the caller's own flags; the shell's help lists `release` with its usage and says the manifest is
+  the report; Ty's cause and the capsule tied to the phase one budget. **Disconnects: the board.**
+  The idle check did `now - lastAt` unsigned while a key in the same tick stamped `lastAt` later,
+  wrapping to about 49 days and closing the line at once (`msSince`, 814b876); LOGOFF now logs
+  why. Also Telnet keeps output a full send buffer did not take. Port list P48 to P50.
+  **RAM and flash** (`pio run`): before (Q21 tick) RAM 62572, flash 1675159; after RAM 62596
+  (+24), flash 1676087 (+928). **Checks:** `pio run` SUCCESS at 814b876; host tests all 13 passed;
+  story lint 0 errors, 0 warnings; `tools/staging-check.ps1` at 814b876 STAGING CHECK PASS (server
+  build, ctest, E2E 63 passed, the game finished). The server build cannot run on this Windows PC;
+  it ran on the staging host. `main` pushed to `staging`. **Deploy commit: 333bf19.**
+  Open for Juha (ACTION_PLAN, new row): ELIZA's free chat, MEMCHK through option 1 only, the pair
+  rule with option C, a scene taking the BUDGET.MEM open.
+  Was: Brief: `docs/briefs/Q22-polish.md`
   (Claude Code, 15 Nov 2026, Juha's request: take the recommendations, go
   for gold). Manifest option C, crew-password clues, key lag around scenes,
   redial banner, News Wire, shell help, disconnects; two critics to 83.
