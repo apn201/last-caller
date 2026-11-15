@@ -65,3 +65,14 @@ key); the boot banner art still says ELIZA NOT RESPONDING after the RTG
 (round 3 too); the first hour is reading only; timeline mismatches (bulletin 4
 dated 08 Dec, Diagnostics 300 vs DOWNLINK.CFG, Anders's mark, 8 MB vs 16384K);
 "Welcome back, caller." printed twice; Diagnostics 201 "Nobody is breathing it."
+
+
+## Q21 fun check: does the notebook help without giving the game away
+
+One critic, one fresh board, agent files unchanged, commit 4234644 (the notebook collects what the board shows; S lists the scenes seen and replays them). Ada, two sessions on one account, finished (the ending "send it"); the file is `docs/reviews/R6-ada.md`.
+
+| Round | Date | Commit played | Ada | Mara | Average | Top issues |
+| --- | --- | --- | --- | --- | --- | --- |
+| 6 (Q21 only) | 15 Nov 2026 | 4234644 | 80 (finished, two sessions) | not played | n/a | ELIZA's account is hard to find (nothing sends the caller back to GOLIVE.TXT); the release working after the manifest is never stated; a digit typed ahead lands on the next list; the "responsible" column names its crew member; keys lost after scenes |
+
+On the notebook she says: it helped as a memory aid across two sessions, the L page (logins that worked) most of all; it did not solve anything; it gave away "mostly no", with one mild exception: the note "The last status report was filed on the twenty-second" sets 22 Nov beside the tank date before the caller links them. That note (`WAKE_CREW`) now keeps only ELIZA's words "The crew are resting. Everyone is well." S listed nine scenes on two pages and a replay worked; R, N, P and Q on a single note worked. She could not confirm a note for item 14 of GOLIVE.TXT (she did not page through all 12 pages); the card has two notes for that file (`ENG_GOLIVE`, `ENG_GOLIVE_B`) and the host test and lint check them. Her "pressed 4 right after S and got note 4" is a key typed before the S key had run (the tool sends both at once); the same lag as her note on keys after scenes (Q20 round 5, not Q21).
