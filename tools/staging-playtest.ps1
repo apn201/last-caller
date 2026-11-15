@@ -23,5 +23,5 @@ if ($LASTEXITCODE -ne 0) { throw 'git push staging main failed' }
 
 # -L: the tunnel; SERVE=1: staging-remote.sh leaves the server up until this session ends.
 # Stop it from another window:  ssh $Remote "touch ~/lastcaller-staging/stop"
-ssh -o ExitOnForwardFailure=yes -L "127.0.0.1:${LocalPort}:127.0.0.1:2323" $Remote "SERVE=1 bash <(git --git-dir=`$HOME/last-caller.git show main:tools/staging-remote.sh)"
+ssh -o ExitOnForwardFailure=yes -o ServerAliveInterval=20 -o ServerAliveCountMax=6 -L "127.0.0.1:${LocalPort}:127.0.0.1:2323" $Remote "SERVE=1 bash <(git --git-dir=`$HOME/last-caller.git show main:tools/staging-remote.sh)"
 exit $LASTEXITCODE

@@ -176,7 +176,10 @@ static void closeSession(Session &s) {
   if (s.state == CHAT) leaveChat(s, "lost carrier.");
   if (playingMud(s)) mudBroadcastRoom(s, s.user.handle + " loses carrier.");
   trace("SESSION_CLOSE", String("node ") + s.node + " " + (s.user.handle.length() ? s.user.handle : "anonymous"));
-  event("LOGOFF", (s.user.handle.length() ? s.user.handle : String("anonymous")) + " node " + s.node + ", " + String((millis() - s.connectedAt) / MS_PER_MINUTE) + " min");
+  // Q22: the log says why the line closed, so a drop can be told from the board (idle, goodbye, locked) and from the peer (the caller or the tunnel).
+  const uint32_t quietSec = (millis() - s.lastAt) / 1000;
+  const char *why = s.user.locked ? "account locked" : s.state == GOODBYE ? "goodbye" : quietSec >= 100 ? "no key for the idle limit" : "closed by the peer";
+  event("LOGOFF", (s.user.handle.length() ? s.user.handle : String("anonymous")) + " node " + s.node + ", " + String((millis() - s.connectedAt) / MS_PER_MINUTE) + " min, " + why + " (last key " + String(quietSec) + " s ago)");
   if (s.socket) s.socket.stop();
   if (s.wsClient) wsHangups.push_back(s.wsClient);
   s = Session();
