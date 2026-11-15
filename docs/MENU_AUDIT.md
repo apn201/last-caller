@@ -116,7 +116,7 @@ are allowed: they never appear on screen.
 | Notebook (one note) | R show it again, N next, P previous, Q back to the list | The source, the line, and where to read it again (message: area and number; file: area and name). R is listed only for a note that can be replayed (a scene, a page of ELIZA's, a story picture) and only when the card still has it. |
 | Scenes seen | 1 to 9 replay, N, P, Q | Scene titles from `title=` in each scene file, newest last. A replay shows the scene as it was, saves nothing and changes no flag; choices are shown and followed but set nothing; Q (or the end) comes back to this list. |
 | Logins that worked | any key | The crew accounts that opened for this caller and their passwords (Q20, Addition 6). |
-| NOWHERE shell | final command | `release out-1122 ground-1` needs the full manifest (`M_Z`); otherwise it is `command not found`. With `M_Z` the verb with other arguments prints the usage line only, and `incident.rpt` exists. The door itself is listed only for a caller holding `NOWHERE_OPEN`, which the order code in Diagnostics grants (Q9). The `ENDING` scene follows. |
+| NOWHERE shell | final command | `release out-1122 ground-1` needs the full manifest (`M_Z`); before it the verb answers "HELD. INCIDENT REPORT NOT ON FILE", and `help` lists `release` with its usage and says the manifest is the report (Q22). With `M_Z` the verb with other arguments prints the usage line only, and `incident.rpt` exists. The door itself is listed only for a caller holding `NOWHERE_OPEN`, which the order code in Diagnostics grants (Q9). The `ENDING` scene follows. |
 
 ## Message areas (Q7)
 

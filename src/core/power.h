@@ -22,6 +22,7 @@ struct PowerConfig {
 static PowerConfig powerCfg;
 static bool powerEnabled = false;       // POWER.INI exists
 static bool powerBannerPlayed = false;  // the full boot banner has been shown since start-up
+static bool rtgSwitched = false;        // Q22: some caller has switched the ship to the RTG since start-up: a line that redials sees the powered banner
 
 // POWER.INI is read at boot and again on RELOAD.
 static void loadPower() {

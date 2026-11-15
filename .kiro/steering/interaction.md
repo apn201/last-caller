@@ -23,8 +23,9 @@ the friction goes.
 - **One pager** for every text a caller reads, whatever its length: same
   footer, same keys. Menus and option lists are not documents.
 - **Yes or no is one key.** "Continue" is any key, not "Press ENTER".
-- **Scenes and timed events never swallow a key or cut a line.** Keys typed
-  during a scene are kept and played back after it, in order.
+- **Scenes and timed events never land a key on a prompt it was not meant
+  for, and never cut a line.** Keys typed during a scene are dropped when it
+  ends (Q22); ENTER skips the pause, any key goes on at an [any key] pause.
 - **Chats and doors say how to leave** when entered and take Q (or `/Q` where
   the line is text), QUIT and EXIT.
 - **The browser adds buttons, never rules.** A button sends the key a

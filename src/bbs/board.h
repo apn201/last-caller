@@ -13,7 +13,7 @@ static void mainMenu(Session &s) {
   s.state = MAIN; activity(s, "MAIN MENU");
   bool files = false, bulletins = false;
   for (size_t i = 0; i < fileAreas.size(); ++i) files |= listedArea(s, i);
-  for (const auto &b : board.bulletins) bulletins |= canSee(s.user, b.level, b.flag);
+  for (const auto &b : board.bulletins) bulletins |= bulletinOpen(s, b);
   std::vector<MenuItem> items;
   items.push_back({"M", "Message bases"});
   items.push_back({"N", "New scan"});
@@ -143,7 +143,7 @@ static void finishLogin(Session &s) {
   // Mandatory bulletins from BULLETINS.INI are shown at a caller's first login only (a crew login or a return visit skips them); B lists them after that.
   bool shown = false;
   for (const auto &b : board.bulletins)
-    if (b.mandatory && (!s.readOnly && s.user.calls <= 1) && canSee(s.user, b.level, b.flag)) { showBulletin(s, b); shown = true; }
+    if (b.mandatory && (!s.readOnly && s.user.calls <= 1) && bulletinOpen(s, b)) { showBulletin(s, b); shown = true; }
   if (!shown) say(s, "Welcome to " + board.name + ".");
   // Q20 (Addition 5 and 6): a crew login says once how it is left and where the manifest is.
   if (s.readOnly && !isMaintenance(s.user)) {

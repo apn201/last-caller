@@ -83,6 +83,9 @@ static std::string gateFlags(const Session &s) {
 static bool gatePassFor(const Session &s, const String &needs) {
   return !needs.length() || haunt::gatePass(gateFlags(s), hauntStd(needs));
 }
+// Q22: a bulletin's required_flag is checked on the caller's own flags, as every other gate is, so News Wire
+// (END1) is on the list of a crew login as well, for a caller who has the ending on the own account.
+static bool bulletinOpen(const Session &s, const Bulletin &b) { return s.user.level >= b.level && gatePassFor(s, b.flag); }
 
 // Add flags to the caller's story record (core/story.h). Saved before anything
 // is shown; false = not saved.

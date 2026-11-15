@@ -26,12 +26,12 @@ static void answerPage(Session &op, bool accept) {
 // Bulletins from BULLETINS.INI that this caller may read, numbered from 1.
 static const Bulletin *visibleBulletin(const Session &s, uint32_t wanted) {
   uint32_t n = 0;
-  for (const auto &b : board.bulletins) if (canSee(s.user, b.level, b.flag) && ++n == wanted) return &b;
+  for (const auto &b : board.bulletins) if (bulletinOpen(s, b) && ++n == wanted) return &b;
   return nullptr;
 }
 static uint32_t bulletinCount(const Session &s) {
   uint32_t n = 0;
-  for (const auto &b : board.bulletins) if (canSee(s.user, b.level, b.flag)) n++;
+  for (const auto &b : board.bulletins) if (bulletinOpen(s, b)) n++;
   return n;
 }
 static void bulletinMenu(Session &s);

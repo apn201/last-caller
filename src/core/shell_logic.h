@@ -31,7 +31,8 @@ struct Table {
   std::string motd;
   std::string unknown = "{cmd}: command not found";
   std::string help = "ls [-la] [dir]  cat file  cd [dir]  pwd  whoami  uname  exit";   // "|" breaks a line
-  std::string helpFinal;    // added to help for a caller who may use the final command
+  std::string helpFinal;    // Q22: added to help for everyone: the verb and its usage
+  std::string helpHeld;     // Q22: and, for a caller the final command does not work for yet, one line on why
   std::string date = "Oct 31  1998", owner = "root";
   std::string finalCmd, finalHas, finalSet, finalText, finalScene, finalUsage;
   std::string finalHeld;    // the final verb typed by a caller without final_has: why it does not run yet ({cmd})   // finalScene: a scene (STORY/SCENES) the door starts after the final text
@@ -172,7 +173,7 @@ inline void parse(const std::vector<Kv> &kv, Table &t) {
   t = Table();
   auto set = [&](const char *key, std::string &dst) { std::string v = get(kv, "SHELL", key); if (!v.empty()) dst = haunt::capText(v, 160); };
   set("host", t.host); set("user", t.user); set("prompt", t.prompt); set("unknown", t.unknown);
-  set("date", t.date); set("owner", t.owner); set("help", t.help); set("help_final", t.helpFinal);
+  set("date", t.date); set("owner", t.owner); set("help", t.help); set("help_final", t.helpFinal); set("help_held", t.helpHeld);
   t.needs = haunt::flagsClean(get(kv, "SHELL", "needs"));
   t.motd = haunt::capText(get(kv, "SHELL", "motd"), MAX_TEXT);
   t.finalCmd = squash(get(kv, "SHELL", "final_cmd"));
@@ -248,8 +249,10 @@ inline Result exec(const Table &t, std::string &cwd, const std::string &flags, c
   if (cmd == "uname") { r.out = "NOWHERE 4.1.3 #1 " + t.date; return r; }
   if (cmd == "help" || cmd == "?") {
     r.out = expand(t.help);
-    // The final command is listed only for a caller it works for (it is "not found" for the rest).
-    if (!t.helpFinal.empty() && !t.finalCmd.empty() && (t.finalHas.empty() || haunt::flagsHasAll(flags, t.finalHas))) r.out += "\n" + expand(t.helpFinal);
+    // Q22: the final command is listed for everyone (it answers "held" before its flags, never "not found"),
+    // and a caller it does not work for yet also gets the line that says what it waits for.
+    if (!t.helpFinal.empty() && !t.finalCmd.empty()) r.out += "\n" + expand(t.helpFinal);
+    if (!t.helpHeld.empty() && !t.finalCmd.empty() && !(t.finalHas.empty() || haunt::flagsHasAll(flags, t.finalHas))) r.out += "\n" + expand(t.helpHeld);
     return r;
   }
   if (cmd == "cd") {

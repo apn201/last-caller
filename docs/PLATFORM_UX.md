@@ -147,9 +147,11 @@ need a word (delete an account) keep the word and say "type YES, then ENTER".
 **C6. Continue is any key.** The words "Press ENTER" are gone. The prompt is
 "Press any key" and a key does it (ENTER too).
 
-**C7. A scene or a timed event never swallows a key or cuts a line.** Keys
-typed while a scene types out are kept and acted on when it ends, in order.
-ENTER skips only the pause the scene is in. A timed event (a page, a ghost, a
+**C7. A scene or a timed event never lands a key on a prompt it was not meant
+for, and never cuts a line.** Keys typed while a scene types out are not
+echoed and are dropped when it ends (Q22; before, they were played back and
+arrived at the next prompt as a surprise). ENTER skips only the pause the
+scene is in, and any key goes on at an [any key] pause. A timed event (a page, a ghost, a
 glitch) waits for the screen to be at a prompt, as before, and never writes
 into the middle of a line the caller typed. A scene started from a menu
 returns the caller to that menu's level, not the top.
@@ -248,3 +250,4 @@ the port is its own item run inside that repository. "Engine" means port it;
 | P45 | Pages and scenes no longer start at "Press any key" (BULLETIN): the key meant for the prompt was taken by the scene | 5bbf023 | `src/core/haunt.h` (`hauntCalm`) | Engine if the haunt engine exists | |
 | P46 | Digits typed in the message reader redraw only the bar ("Go to #12"), not the page once per digit | 5bbf023 | `src/bbs/messages.h` | Engine | |
 | P47 | The viewer's ? line names S as "S at 300 baud" | 76301c6 | `src/core/reader.h` | Engine | Kouvosto may prefer "S slow" |
+| P48 | C7 changed: keys typed during a scene are dropped when it ends, not played back into the next prompt | Q22 | `src/bbs/commands.h` (`hotkeyTick`, `input`), `src/core/session.h` (`typeAhead`) | Engine if scenes exist | Contract C7 and `.kiro/steering/interaction.md` follow |

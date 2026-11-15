@@ -1069,11 +1069,11 @@ def main():
         c.expect("out-1122: HELD. INCIDENT REPORT NOT ON FILE")
         c.expect("$")
         start = len(c.all)
-        c.send("help")                           # Q12b: help points at the queues, not yet at release
+        c.send("help")                           # Q22: help lists release with its usage, and says the manifest is the report
         c.expect("/var/spool/out")
+        c.expect("usage: release QUEUE DESTINATION")
+        c.expect("The report is the crew manifest")
         c.expect("$")
-        if "release QUEUE" in c.all[start:]:
-            raise AssertionError("help lists release before the manifest is whole")
         c.send("cat ../../nothing")
         c.expect("No such file or directory")
         c.expect("$")

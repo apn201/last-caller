@@ -62,7 +62,7 @@ static void input(Session &s, const String &bytes) {
       if (c == '\r') { s.input = ""; s.ignoreNextLf = true; handleLine(s, ""); }
       else if (c == '\n') { if (s.ignoreNextLf) { s.ignoreNextLf = false; continue; } s.input = ""; handleLine(s, ""); }
       else if ((uint8_t)c >= 32 && s.sceneRun.phase() == scene::P_KEY) { s.input = ""; handleLine(s, ""); }   // [any key]: any key goes on
-      else if ((uint8_t)c >= 32 && s.typeAhead.length() < 24) s.typeAhead += c;   // not echoed now, not lost: played back after the scene
+      else if ((uint8_t)c >= 32 && s.typeAhead.length() < 24) s.typeAhead += c;   // Q22: not echoed, and dropped when the scene ends (contract C7): a key meant for what the caller could not see must not land on the next prompt
       continue;
     }
     // Q20 UX, contract C1: a letter at a menu acts at once. It waits hotkeyTick's moment first: a
@@ -90,11 +90,9 @@ static void input(Session &s, const String &bytes) {
 static constexpr uint32_t HOTKEY_MS = 120;
 static void hotkeyTick(uint32_t now) {
   for (auto &s : sessions) {
-    // Keys typed during a scene: once it has ended and the screen is still, they arrive as typed.
-    if (s.used && s.typeAhead.length() && s.state != SCENE_PLAY) {
-      if (s.state == GOODBYE || !s.authenticated) s.typeAhead = "";
-      else if (!streaming(s) && s.pending.length() == 0 && s.jobs.empty()) { String keys = s.typeAhead; s.typeAhead = ""; input(s, keys); }
-    }
+    // Q22, contract C7: keys typed during a scene were meant for what the caller could not see. When the
+    // scene has ended they are dropped, not played into whatever prompt comes next.
+    if (s.used && s.typeAhead.length() && s.state != SCENE_PLAY) s.typeAhead = "";
     if (!s.used || !s.hotKey || now - s.hotAt < HOTKEY_MS) continue;
     char c = s.hotKey; s.hotKey = 0;
     if (!hotkeyState(s) || s.input.length()) continue;
