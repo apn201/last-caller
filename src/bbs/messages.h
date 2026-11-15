@@ -358,7 +358,8 @@ static bool msgReaderKey(Session &s, const String &k) {
   // Digits then ENTER go to that message (the plain reader takes a number at its prompt too).
   if (k.length() == 1 && k[0] >= '0' && k[0] <= '9' && s.reader.num.length() < 6) {
     s.reader.num += k;
-    showPage(s, "Go to #" + s.reader.num + "  ENTER goes, any other key cancels");
+    // Q21 (both critics, round 7): only the bar is drawn again, not the page once per digit
+    write(s, "\r\x1b[2K" + readerBar(s.reader, "Go to #" + s.reader.num + "  ENTER goes, any other key cancels"));
     return true;
   }
   if (s.reader.num.length()) {

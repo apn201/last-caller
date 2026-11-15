@@ -83,6 +83,17 @@ static Run play(const std::shared_ptr<Scene> &sc, const std::string &flags, cons
 int main(int argc, char **argv) {
   // ---- parse ----
   auto sc = load(DEMO);
+  // ---- typed_else (Q21): a typed reply with no word goes to its own node, a number still picks ----
+  {
+    auto te = load("[SCENE]\nspeed=200\n[START]\ntext=Run what?\nchoice1=Never mind.\ngo1=END\ntyped1=memchk\ntypedgo1=YES\ntyped_else=NONE\n"
+                   "[YES]\ntext=Running.\nset=RAN\n[NONE]\ntext=Nothing by that name.\ngo=START\n");
+    CHECK(te != nullptr && te->nodes[0].typedElse == "NONE");
+    Run a = play(te, "", {"defrag", "memchk"});
+    CHECK(a.text.find("Nothing by that name.") != std::string::npos && a.grant == "RAN");
+    Run b = play(te, "", {"1"});
+    CHECK(b.text.find("Nothing by that name.") == std::string::npos && b.grant.empty());
+    CHECK(fails("[SCENE]\n[START]\ntext=x\nchoice1=a\ngo1=END\ntyped_else=NOPE\n", "no node NOPE"));
+  }
   // ---- replay (Q21): shown as it was, grants nothing, choices are followed but set nothing, then= is not followed ----
   {
     auto rp = load(DEMO);

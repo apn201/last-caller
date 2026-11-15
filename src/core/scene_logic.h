@@ -25,6 +25,7 @@ struct Typed { std::vector<std::string> words; std::string go, has, lacks; };
 
 struct Node {
   std::string id, speaker, text, art, color, set, go, ifHas, ifLacks, ifGo;
+  std::string typedElse;   // Q21: typed_else= the node a typed reply that matches no word goes to (else: "Choose 1 to n")
   std::string then;   // follow-up when the scene ends by this node: CHAT (node chat) or another scene's name
   uint32_t pauseMs = 700;
   bool key = false;
@@ -87,6 +88,8 @@ inline bool buildNode(const std::string &id, const std::vector<Kv> &kv, Node &n,
   n.ifLacks = haunt::flagsClean(getKey(kv, "if_lacks"));
   n.ifGo = idText(getKey(kv, "if_go"));
   n.then = idText(getKey(kv, "then"));
+  n.typedElse = idText(getKey(kv, "typed_else"));
+  if (!n.typedElse.empty() && !haunt::idOk(n.typedElse)) { why = "bad typed_else"; return false; }
   if (!n.then.empty() && !haunt::idOk(n.then)) { why = "bad then"; return false; }
   bool f = false;
   std::string pause = haunt::trim(getKey(kv, "pause", &f)), key = haunt::trim(getKey(kv, "key"));
@@ -186,6 +189,7 @@ inline bool parse(const std::string &sceneId, const std::vector<Kv> &entries, Sc
       if (!target(n.choices[k].go, "[" + n.id + "] go" + std::to_string(k + 1))) return false;
     for (size_t k = 0; k < n.typed.size(); ++k)
       if (!target(n.typed[k].go, "[" + n.id + "] typedgo" + std::to_string(k + 1))) return false;
+    if (!target(n.typedElse, "[" + n.id + "] typed_else")) return false;
   }
   return true;
 }
@@ -409,6 +413,8 @@ class Player {
       for (const auto &w : ty.words) if (w == said) { enter(ty.go, now, out); return; }
     }
     uint32_t v = 0;
+    // Q21: a node that invites a typed reply answers one it does not know in its own words (typed_else=)
+    if (!cur().typedElse.empty() && !said.empty() && !haunt::parseUint(t, 99, v)) { enter(cur().typedElse, now, out); return; }
     if (!haunt::parseUint(t, 99, v) || v < 1 || v > shown_.size()) {
       bool q = false;
       for (const auto &ty : cur().typed) for (const auto &w : ty.words) if (w == "q") q = true;

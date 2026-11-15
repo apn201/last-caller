@@ -189,8 +189,9 @@ static void hauntOwnLogin(Session &s) {
 // number prompt (bulletin, area or file area #): a scene there hid the question.
 static bool hauntCalm(const Session &s) {
   switch (s.state) {
-    case MAIN: case MSG_MENU: case FILE_LIST: case DOOR_MENU: case ANSI_GALLERY:
-    case BULLETIN: break;
+    case MAIN: case MSG_MENU: case FILE_LIST: case DOOR_MENU: case ANSI_GALLERY: break;
+    // Q21 (both critics, round 7): not at "Press any key": a scene there took the key meant for the
+    // prompt, and the prompt came back after it, so a crew login needed a second key. It waits for the menu.
     default: return false;
   }
   return !streaming(s) && !s.input.length() && !s.hotKey && !s.hideInput;

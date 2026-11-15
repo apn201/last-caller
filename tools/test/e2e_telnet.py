@@ -1214,8 +1214,10 @@ def main():
         choose(c, "Ask her to run something, by name.")    # Q18: the handbook says: by name
         c.expect("What would you like me to run?", timeout=60)
         c.expect(">", timeout=30)
-        c.send("run the hull check")                 # a wrong name is not taken
-        c.expect("Choose 1 to 1, or Q to leave.", timeout=15)
+        c.send("run the hull check")                 # a wrong name is not taken; she says so (Q21)
+        advance(c, "I have nothing to run by that name.", timeout=30)
+        advance(c, "What would you like me to run?", timeout=60)
+        c.expect(">", timeout=30)
         c.send("MEMCHK")
         advance(c, "Engineering is on the list now", timeout=120)
         advance(c, "Main Board Command?", timeout=60)

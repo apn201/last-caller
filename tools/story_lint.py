@@ -465,7 +465,7 @@ class Lint:
         for n, kv in nodes.items():
             out = []
             for k in kv:
-                if k == "go" or k == "if_go" or re.fullmatch(r"go\d", k) or re.fullmatch(r"typedgo\d", k):
+                if k in ("go", "if_go", "typed_else") or re.fullmatch(r"go\d", k) or re.fullmatch(r"typedgo\d", k):
                     out.append(kv[k].upper())
             edges[n] = out
             for t in out:
@@ -524,6 +524,8 @@ class Lint:
                 for k in ("go", "if_go"):
                     if kv.get(k):
                         outs.append((kv[k].upper(), cset | (frozenset(flags(kv.get("if_has"))) if k == "if_go" else frozenset())))
+                if kv.get("typed_else"):   # Q21
+                    outs.append((kv["typed_else"].upper(), cset))
                 for k, v in kv.items():
                     m = re.fullmatch(r"go(\d)", k)
                     if m:
