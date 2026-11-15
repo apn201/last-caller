@@ -38,7 +38,9 @@ template <typename F> static void bbsTick(F transports) {
     // a new line two. Thirty seconds before the line closes it says so once, on its own line, and the
     // prompt and what was typed are drawn again under it.
     uint32_t idleLimit = s.authenticated ? SIGNED_IN_TIMEOUT_MS : (s.ownUserId ? CALLER_LOGIN_TIMEOUT_MS : LOGIN_TIMEOUT_MS);
-    uint32_t quiet = now - s.lastAt;
+    // Q22: a key run in this tick (hotkeyTick, a scene) sets lastAt after `now`; unsigned, now - lastAt would wrap
+    // to about 49 days and close the line at once. That was the "connection closed" both critics saw.
+    uint32_t quiet = msSince(now, s.lastAt);
     if (quiet + IDLE_WARN_MS < idleLimit) s.idleWarned = false;
     else if (!s.idleWarned && s.state != GOODBYE && s.state != SCENE_PLAY && !streaming(s)) {
       s.idleWarned = true;
@@ -46,7 +48,7 @@ template <typename F> static void bbsTick(F transports) {
       if (s.input.length()) { String shown = s.input; if (s.hideInput) for (size_t i = 0; i < shown.length(); ++i) shown[i] = '*'; write(s, shown); }
     }
     bool idle = quiet >= idleLimit;
-    if (idle || (s.web && now - s.lastPoll >= WEB_CARRIER_TIMEOUT_MS))
+    if (idle || (s.web && msSince(now, s.lastPoll) >= WEB_CARRIER_TIMEOUT_MS))
       closeSession(s);
   }
 }

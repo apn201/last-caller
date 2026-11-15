@@ -30,8 +30,8 @@ static void glitchTick(uint32_t now) {
   for (auto &s : sessions) {
     if (!s.used || !s.authenticated || s.readOnly || s.state == GOODBYE || hauntMaint(s.user)) continue;
     uint32_t signed_ = s.signedAt ? s.signedAt : s.connectedAt;
-    uint32_t online = (now - signed_) / 1000;
-    if (!glitch::allowed(glitchTable, online, s.glitchAt != 0, s.glitchAt ? (now - s.glitchAt) / 1000 : 0)) continue;
+    uint32_t online = msSince(now, signed_) / 1000;
+    if (!glitch::allowed(glitchTable, online, s.glitchAt != 0, s.glitchAt ? msSince(now, s.glitchAt) / 1000 : 0)) continue;
     if (!s.hauntShows.empty() || !hauntCalm(s)) continue;   // a page or a scene goes first
     int i = glitch::pick(glitchTable, gateFlags(s), online / 60, s.glitchNext);
     if (i < 0) continue;

@@ -53,8 +53,8 @@ static ghost::Ctx ghostCtx(Session &s, const std::string &flags) {
   uint32_t now = millis();
   ghost::Ctx c;
   c.flags = flags;
-  c.onlineMin = (now - s.connectedAt) / MS_PER_MINUTE;
-  c.signedSec = s.signedAt ? (now - s.signedAt) / 1000 : 0;
+  c.onlineMin = msSince(now, s.connectedAt) / MS_PER_MINUTE;
+  c.signedSec = s.signedAt ? msSince(now, s.signedAt) / 1000 : 0;
   c.powered = true;  // ghosts only reach callers who have power (the maintenance login is skipped)
   return c;
 }
@@ -160,7 +160,7 @@ static void ghostTick(uint32_t now) {
       }
     }
     if (!pages || !s.authenticated || s.state == GOODBYE || s.state == SCENE_PLAY || hauntMaint(s.user)) continue;
-    if (!s.signedAt || (now - s.signedAt) / 1000 < ghostFirstPage) continue;
+    if (!s.signedAt || msSince(now, s.signedAt) / 1000 < ghostFirstPage) continue;
     ghost::Ctx c = ghostCtx(s);
     for (const auto &g : ghostTable.ghosts) {
       if (!ghost::pageDue(g, c)) continue;

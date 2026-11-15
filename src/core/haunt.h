@@ -235,7 +235,7 @@ static void hauntTick(uint32_t now) {
   last = now;
   for (auto &s : sessions) {
     if (!s.used || !s.authenticated || s.state == GOODBYE || hauntMaint(s.user)) continue;
-    uint32_t idle = (now - s.lastAt) / 1000, minutes = (now - (s.signedAt ? s.signedAt : s.connectedAt)) / 60000;   // minutes since sign-in
+    uint32_t idle = msSince(now, s.lastAt) / 1000, minutes = msSince(now, s.signedAt ? s.signedAt : s.connectedAt) / 60000;   // minutes since sign-in
     if (idle < s.hauntIdleSec) s.hauntIdleSec = 0;  // a key was pressed: a new idle stretch
     if (!hauntIdleAt.empty() && hauntCrossed(hauntIdleAt, s.hauntIdleSec, idle)) hauntEvent(s, haunt::EV_IDLE, "", idle);
     s.hauntIdleSec = idle;
@@ -243,6 +243,6 @@ static void hauntTick(uint32_t now) {
     s.hauntMinute = minutes;
     // Q20 (critic round 4): a waiting show starts only after two quiet seconds, so it never lands on
     // a key the caller is typing (a letter on a scene's [any key] wait was used up).
-    if (!s.hauntShows.empty() && hauntCalm(s) && now - s.lastAt >= 2000) hauntShow(s);
+    if (!s.hauntShows.empty() && hauntCalm(s) && msSince(now, s.lastAt) >= 2000) hauntShow(s);
   }
 }
