@@ -15,89 +15,126 @@
 >
 > *Works on any VT100 compatible terminal or Netscape Navigator 4. Best
 > viewed at 800x600. Some features may not be available in all regions of
-> cyberspace. Draft copy: the author makes the final edit.*
+> cyberspace.*
 
 Below the copy, the facts.
-A 1990s-style BBS running on a $10 ESP32-S3 USB dongle, the
-[Pocket-Dongle-S3](https://www.aliexpress.com/item/1005008896509314.html). No
-Internet, no modem, no phone line. The board makes its own WiFi network and
-you call it from a phone browser or a Telnet client. A hosted server build
-runs the same core.
 
-The board is HALCYON BBS. In 1998 a secret, privately funded spacecraft flew
-the first private science mission, and it carried a BBS so the crew could
-write home; the mission AI, ELIZA, ran the board as its SysOp. Mission control
-lost contact, and 28 years later radio amateurs found the ship's signal again.
-You are dialling into that BBS, and you work out what happened to the crew
-from its messages, files, logs and ghosts.
+Last Caller is a horror puzzle game you play by calling the BBS of a dead
+spaceship. The game engine is a real, working 1990s style bulletin board
+system, TinyBBS. It runs on a $10 ESP32-S3 USB stick, the
+[Pocket-Dongle-S3](https://www.aliexpress.com/item/1005008896509314.html), and
+the same code runs on a Linux server. Play it at
+[halcyon.helppox.com](https://halcyon.helppox.com) in a browser, or with
+Telnet on the stick.
 
-## Why a BBS, today
+This is an entry to Kiroween 2026, category Resurrection. I resurrected BBS
+technology to see if it still works as a game engine. The first puzzle of the
+game is a resurrection too: the ship is dead and you have to bring its power
+back before you can do anything else.
 
-Text-mode communication over slow, high-latency or offline links, such as
-Meshtastic and other LoRa mesh networks, is hard to use and joyless. Today
-it mostly offers a public chat line. The BBS solved this 30 years ago:
-message boards that sync slowly between machines, as FidoNet did, plus chat
-on the node. TinyBBS could run on small ESP-based Meshtastic devices the same
-way. That is a direction, not built: nothing here runs on Meshtastic today.
-What exists is a core that does not care how bytes arrive. Telnet and the
-browser are two transports into one BBS, and a mesh link would be a third.
-HALCYON is the demo: a real game people can play, and the proof that a
-few kilobytes of ANSI can carry a rich, intuitive and fun text system.
-## What it is
+## The game
 
-TinyBBS is the engine. Last Caller is the content and story on top of it.
-Browser and Telnet callers are two transports into the same BBS core. They
-share one pool of nodes and see each other in WHO and chat. The board has
-ANSI screens, message conferences, file areas with ratios, a SysOp tools
-console and a native door.
+HALCYON was a secret private spaceflight in 1998, crew of four. The ship had a
+BBS on a 486 so the crew could write home, and the mission AI, ELIZA, ran it as
+SysOp. Mission control lost contact and nobody ever announced it. In November
+2026 the shorted battery bank has gone open circuit, the solar panels feed the
+bus again, and radio amateurs pick up the signal.
 
-## What it does now
+The ship tumbles, so the BBS has power for a minute or two at a time. You log
+in as the maintenance account, `admin` / `admin`, and have two minutes to
+switch the ship to the RTG before the sun goes away and the carrier drops. The
+login screen says it is a puzzle game and that the first job is the power and
+your own account. Then ELIZA wakes up, very politely.
 
-- Opens an open WiFi access point, `HALCYON` by default. Phones get a
-  captive portal that lands on the terminal.
-- Browser terminal at `http://192.168.4.1`: press DIAL, get a node. A page
-  reload rejoins the same node, and the screen has 1000 lines of scrollback.
-- Telnet on port 23 for PuTTY, SyncTERM and friends. 80 columns.
-- Eight nodes, shared by browser and Telnet callers.
-- New-user signup, logins, security levels and flags.
-- Message areas read the 1990s way: one message at a time with next and
-  previous, replies linked into threads, a thread view, a line editor, and
-  "new" counted per area. Private mail is opt-in.
-- 1990s FidoNet traffic as read-only history in seven conferences, with every
-  name, address and BBS replaced by invented ones. Callers' posts come after
-  it, and it never counts as new.
-- Multi-node chat, WHO, page the SysOp, bulletins (ANSI files or a line of
-  text), ANSI gallery.
-- File areas made from the folders on the card, with sub-folders,
-  descriptions from `FILES.BBS`, `DESCRIPT.ION` and `FILE_ID.DIZ`, file dates,
-  per-file download counts, ZIP contents listed with `V`, and browser
-  downloads that check quota and ratio.
-- Tracker music (MOD, S3M, XM, IT) plays with `V` in the browser: a
-  tracker-style screen with the live pattern and channel meters, played by
-  libopenmpt from the card. Fifty modules from The Mod Archive to start with.
-- Easter eggs for people who remember 1998: modem commands (`ATI`, `+++`, `ATH0`, `ATDT`), a few unlisted words at the main menu, a snake game in the doors menu, Ty's unfinished demo. None of them is needed to finish the game.
-- Ty's three tunes (`SUNSIDE`, `THERMO`, `HARBOUR`) are original modules made by `tools/mod/`.
-  Their sample names carry his messages: the player lists them, and Telnet gets a text view of
-  the module header. Short original sound effects (hum, relay, chirp, static) play as cues in
-  the browser terminal.
-- C64 SID tunes play the same way with jsSID, on a C64-style screen with the
-  three voices live. Thirty HVSC classics to start with. The player shows each
-  tune's description.
-- Pictures (GIF, JPG, PNG, BMP) open with `V` in a full-screen image viewer
-  in the browser; `N`/`P` step through the folder.
-- Uploads from the browser to areas that allow them, into a queue the SysOp
-  approves from the console. Approved uploads earn ratio and credit.
-- Download credit: new accounts start with credit and a ratio from
-  `SYSTEM.INI`, and posting messages earns more.
-- ANSI pictures opened with `V` scroll in at modem speed. Any key skips,
-  space pauses, and the browser's SPEED button picks the baud rate.
-- An invented 1990s board clock that only runs while the stick has power.
-- SysOp tools: user editor, node monitor with disconnect and one-way
-  messages, answering a page into chat, and a file manager page in the
-  browser for the SD card.
-- One native door: VolaMUD.
-- Optional dial-up sound in the browser, after you click for it.
-- A small LCD on the board shows the logo, SD state, IP and the last caller.
+After that it is a normal 1998 BBS: message conferences, file areas, doors,
+chat, WHO, bulletins, ANSI art on every screen. The crew's posts, mail, logs,
+Ty's ANSI art and his tracker tunes are the evidence. You crack crew
+passwords, put together a jigsaw of ANSI pieces, read a portrait that is
+overpainted at 300 baud, ask ELIZA questions in the diagnostics door, poke
+around the NOWHERE shell and fill in the crew manifest: who each person was,
+how they died and who caused it. Facts confirm in pairs, like in Return of the
+Obra Dinn. The ending is sending ELIZA's held outbound queue to the world.
+
+Could had been any story, but a dead board with a dead crew felt right for a
+resurrected technology. The story is told only with things a BBS has: message
+bases, file areas, door games, node chat and logins.
+
+It is a solo game on a social board. Story areas and crew accounts are read
+only. The Lounge, Spoilers, No Spoilers and Radio Room work like on any BBS, so
+players can trade hints or stay away from them. A first time player should
+finish in about 60 to 120 minutes. The puzzles are meant to be hard. The
+interface is not: the same key does the same thing everywhere (Q back, X main
+menu, ? help), letters act at once, and the notebook (K) collects every hint
+and password you have seen, and replays the scenes.
+
+Easter eggs for people who remember 1998: modem commands (`ATI`, `+++`,
+`ATH0`, `ATDT`), a few unlisted words at the main menu, a snake game by Ty in
+the doors menu. None of them is needed to finish the game.
+
+## Why a BBS
+
+BBS was simple and robust technology, made for slow phone lines, low
+processing power and a PC in someone's bedroom. It works in text, still it
+could look good. ANSI art did a lot with 16 colours and 80 columns, and a
+screen of it is a few kilobytes.
+
+Small microcontrollers and slow radio links (LoRa, Meshtastic, packet radio)
+have the same limits today. Text over them is mostly a public chat line. A BBS
+had message boards that synced slowly between machines, like FidoNet, and chat
+on the node. TinyBBS could run on a Meshtastic device like that some day. That
+is a direction and was out of scope here. Nothing in this repo runs on
+Meshtastic. What exists is a core that does not care how bytes reach it:
+Telnet and the browser are two transports into one BBS, and a mesh link would
+be a third.
+
+The engine has its own repository,
+[github.com/apn201/TinyBBS](https://github.com/apn201/TinyBBS), and a plain
+board with about 1000 archived FidoNet messages runs on it at
+[kouvosto.helppox.com](https://kouvosto.helppox.com). That one is the proof it
+is a real BBS and not a game pretending to be one. The interface work done for
+this game (keys, pager, notebook engine) was ported back to it.
+
+## How it was built
+
+Everything was built in the hackathon window. Claude built the ESP32 version
+of TinyBBS. Codex built the Linux port, and an OpenClaw agent set up the
+server side. Kiro built the game on top: the story, the game mechanics, the
+art and the tests, with Claude writing the briefs and reviewing. This repo
+starts from a copy of TinyBBS (the first commit, 12 Nov 2026), and everything
+after that commit is Kiro's.
+
+Kiro ran headless, `kiro-cli chat --no-interactive`, one queue item per run
+from [`docs/briefs/QUEUE.md`](docs/briefs/QUEUE.md). Every run started clean
+from the files in the repo instead of a long chat history, so it could run
+overnight without me. What is in [`.kiro`](.kiro):
+
+- 19 specs (rebrand, ANSI art, story bible, power prologue, triggers, scenes,
+  ghosts, acts, shell and doors, manifest, music, eggs, verification and so
+  on). The story bible is a spec too: every fact about the crew must be
+  provable from several items in different media, so the game survives a
+  missed clue.
+- 8 steering files: tech rules (no ESP32 or Linux headers in shared code),
+  structure, product, card content, ANSI art, story voice, writing rules and
+  the interaction contract.
+- Hooks: saving a web page regenerates the firmware headers, saving a story
+  file runs the story lint, saving shared game logic runs the host tests.
+- Agents: ghostwriter, puzzle-smith, firmware-guard and playtester, then two
+  adventure game critics who score the story and puzzles, two usability
+  testers who never used a BBS, and two judges.
+- An MCP server, `bbs-caller` ([`tools/mcp`](tools/mcp)), that dials the board
+  over Telnet and returns the screen as text. With it the agents play the
+  game on the staging server like a real caller.
+
+One reason I made a game and not a utility was to test Kiro. A utility is
+mostly tested by checking that its functions work. A game has to work on
+every level at once, story, gameplay, puzzles and code, and it forced testing
+on all of them.
+
+No queue item was ticked on code reading. Each had to pass `pio run` for the
+stick, the host tests, the story lint and a staging check on a Linux server:
+the server build, CTest, a smoke test and an end to end Telnet script that
+plays the whole game as a new caller (63 steps). How to run them is in
+[`docs/TESTING.md`](docs/TESTING.md).
 
 ## Technical details
 
@@ -105,7 +142,7 @@ console and a native door.
 
 | Part | Detail |
 | --- | --- |
-| Board | [Pocket-Dongle-S3](https://www.aliexpress.com/item/1005008896509314.html), USB-stick form factor, get the variant with the SD slot |
+| Board | [Pocket-Dongle-S3](https://www.aliexpress.com/item/1005008896509314.html), USB stick form factor, get the variant with the SD slot |
 | MCU | ESP32-S3 N16R8, 16 MB flash, 8 MB PSRAM, PlatformIO profile `esp32-s3-devkitc1-n16r8` |
 | Display | On-board 0.96 inch ST7735, 80x160 native, used as 160x80 landscape |
 | Storage | On-board microSD slot, SD_MMC 1-bit mode, FAT32 |
@@ -113,241 +150,112 @@ console and a native door.
 | Network | 2.4 GHz soft AP, channel 1 by default |
 | Power | USB, from a computer or a phone charger |
 
-Nothing is attached and no GPIO is exposed. No modem, no keyboard, no audio
-out. Pins and display offsets are in [`docs/HARDWARE.md`](docs/HARDWARE.md).
+Nothing attached, no modem, no keyboard. The stick makes its own WiFi network,
+`HALCYON`, with a captive portal, so a phone opens the terminal by itself. It
+never joins another network. Pins and display offsets are in
+[`docs/HARDWARE.md`](docs/HARDWARE.md).
 
 ### Firmware layout
 
-The firmware is Arduino on ESP32, about 6000 lines of C++ plus the two web
-pages. `src/main.cpp` has `setup()` and `loop()` and includes the modules in
-order, as one translation unit:
+Arduino on ESP32, about 11000 lines of C++ plus the two web pages.
+`src/main.cpp` has `setup()` and `loop()` and includes the modules in order, as
+one translation unit.
 
 | Folder | Contents |
 | --- | --- |
-| `src/core` | Globals, helpers, the board clock, SD storage and INI reader, users, message store, message history from the card, sessions, paced output, the reader |
-| `src/bbs` | Settings, menus, file areas, ZIP reading, viewers, uploads, messages, SysOp tools and user editor, login, one `cmd_*.h` per command area, CP437 conversion |
-| `src/doors` | VolaMUD, the shared purse (`purse.h`), `doors.h`, the door table |
-| `src/net` | Browser terminal and SysOp file manager pages (compiled into flash), HTTP and WebSocket routes, Telnet |
-| `src/hw` | Status LCD and the splash logo as DOS palette indexes |
+| `src/core` | Globals, helpers, board clock, SD storage and INI reader, users, message store, sessions, paced output, the reader, and the game logic: story record, triggers, scenes, ghosts, glitches, notebook |
+| `src/bbs` | Settings, menus, file areas, ZIP reading, viewers, uploads, messages, SysOp tools, login, one `cmd_*.h` per command area |
+| `src/doors` | Ship systems, diagnostics, NOWHERE shell, crew manifest, snake, scenes, the door table |
+| `src/net` | HTTP and WebSocket routes, Telnet, browser pages (generated) |
+| `src/platform` | `platform.h`, the contract between the core and the machine; `esp32.h` |
+| `src/hw` | Status LCD and the splash logo |
+| `server/` | The Linux build of the same core, with civetweb for HTTP and WebSocket |
 
-The browser pages are plain files in `shared/web/`; a pre-build step embeds
-them in the firmware. The core talks to the hardware only through
-`src/platform/`, so the same code can run as a server behind Apache later
-(`docs/APACHE_PORT.md`). The hosted board is installed with `deploy/install.sh`; see `docs/DEPLOY.md`.
+The core reaches the machine only through `src/platform/platform.h`, so the
+same code builds for the stick and for Linux. The browser pages are plain
+files in `shared/web/` and a pre-build step embeds them in the firmware.
 
-The music player is not in the firmware. It is `player.js` plus libopenmpt
-and jsSID in `/BBS/ASSETS/PLAYER` on the card, and the board only serves the
-files.
+### The game is data
 
-A door is one header with `enter`, `owns` and `handle` functions plus one
-line in the door table.
-
-Libraries: Arduino GFX Library, ESPAsyncWebServer and AsyncTCP, `DNSServer`,
-`SD_MMC`, mbedTLS for SHA-256 and the inflater in the ESP32-S3 ROM for
-`FILE_ID.DIZ`. HTTP and WebSocket run in the async server's task. One
-recursive mutex guards sessions, users and the card. WebSocket keys are
-queued and applied in `loop()`, which also serves DNS, polls Telnet, paces
-output, expires idle sessions, keeps the clock and refreshes the LCD.
+The story is on the SD card, not in the firmware. `sd/BBS/STORY` holds a per
+caller story record, the trigger table (`TRIGGERS.INI`, flags only grow), the
+scenes, ghosts in WHO, glitches, ELIZA's diagnostics, the shell, the
+manifest, the crew accounts and the notebook (`NOTES.INI`, 124 notes). Change
+the story without reflashing. `python tools/story_lint.py` checks it for
+unreachable facts, softlocks and lost endings, and a property test plays the
+triggers and manifest in random orders.
 
 ### One BBS, two transports
 
-The core does not know how a caller connected. There is a fixed pool of
-eight `Session` structs. Each has a state machine (about 40 states, from
-login prompt to door combat), an input line and an output buffer capped at
-14 KB. A transport only pushes bytes into `input()` and drains the output
-buffer.
+The core does not know how a caller connected. A fixed pool of session structs
+(eight on the stick), each a state machine with an input line and a capped
+output buffer. A transport only pushes bytes in and drains bytes out.
 
-- **Telnet** uses a `WiFiServer` on port 23. A small IAC state machine strips
-  option negotiation and answers WILL and DO with refusals, except ECHO and
-  SUPPRESS-GO-AHEAD. CR, LF and CRLF all end a line, so PuTTY and raw
+- **Telnet** on port 23. A small IAC state machine refuses every option except
+  ECHO and SUPPRESS-GO-AHEAD. CR, LF and CRLF all end a line, so PuTTY and raw
   clients behave the same.
-- **Browser** loads one page from flash. It draws an 80x25 terminal on a
-  640x400 canvas with 8x16 cells, the 16-colour DOS palette and an ANSI
-  parser in JavaScript. `POST /api/connect` returns a node number and a
-  random token. The carrier is then a WebSocket at `/ws`, with one-letter
-  frames: keys, output, password masking, the modem speed and the phone's
-  clock. If the socket fails, the page falls back to HTTP polling
-  (`/api/out`, `/api/in`). Node and token are kept in `sessionStorage`, so a
-  reload or a dropped WiFi rejoins the node until the three-minute carrier
-  timeout.
+- **Browser**: one page, 80x25 on a canvas, 8x16 cells, the 16 colour DOS
+  palette and an ANSI parser in JavaScript. The carrier is a WebSocket with
+  one letter frames, with HTTP polling as a fallback. A page reload rejoins
+  the same node. Tracker modules play with libopenmpt and sound effects play
+  in the browser.
 
-Output goes through a small pipeline. Menus and text go out at once. A file
-opened with `V` is streamed from the card in chunks, at the caller's modem
-speed for ANSI, and chunks never end inside an escape sequence or a UTF-8
-character. Text written while a file streams waits until it has finished.
+A Telnet caller and a browser caller share the pool, so they see each other in
+WHO and can chat.
 
-Because both sides share the same session pool, a Telnet caller and a phone
-caller can chat, duel in the door game and see each other in WHO.
-
-Timeouts: two minutes at the login prompt, three minutes for a browser that
-stops polling, 30 minutes idle after login.
-
-### Captive portal
-
-A `DNSServer` answers every name with the AP address and any unknown HTTP
-path redirects to `/`. Phones detect the portal and open the terminal
-without the caller typing an address.
+ANSI files stream from the card at the caller's chosen modem speed, and a
+chunk never ends inside an escape sequence. That is also how the 300 baud
+puzzle works: a line is drawn, then a bare CR, then another line over it. At
+300 baud you can read the first one. Archive ANSI is CP437 and the server
+converts it to UTF-8, so box drawing survives modern Telnet clients.
 
 ### Storage
 
-Everything lives as plain text on the FAT32 card under `/BBS`, so the SysOp
-can open it on a PC.
-
-- Users and messages are pipe-delimited lines with escaping.
-  `USERS/USERS.DAT` and `MSGS/MESSAGES.DAT` under `/BBS/DATA`.
-- Messages are append-only.
-- User updates and door saves are written to a `.NEW` file first and then
-  swapped in, with a `.BAK` for recovery. One function does this for every
-  record file.
-- Messages carry the message they answer, so replies form threads.
-- Per-user last-read pointers, one per message area, are small files in
-  `DATA/STATE`.
-- Passwords are salted SHA-256. The salt comes from the hardware RNG.
-- There is no real-time clock and the board never sees NTP, so it invents
-  one. The board clock starts from a 1990s date in `SYSTEM.INI`, only runs
-  while the stick has power, and is saved to `DATA/STATE/CLOCK.DAT` once a
-  minute. With `clock_sync=browser` it is pulled forward to a browser
-  caller's local time, moved back in steps of 28 years, because the calendar
-  repeats every 28 years and the weekday then still matches. It never runs
-  backwards.
-- ANSI screens, bulletins, menus, config and the modem sound are all files
-  on the card. Change the look without reflashing.
-- The firmware creates its runtime folders if they are missing. It never
-  formats the card.
-
-Archive ANSI is CP437. The server converts it to UTF-8 for both transports,
-so box drawing and shading survive in a modern Telnet client and in the
-browser.
-
-### File areas
-
-Every folder in `/BBS/FILES` is a file area, in the order of its number
-prefix. `014_BACKROOM_IMAGES` becomes "Backroom Images". Folders starting
-with `_` or `.` are hidden, and so is an area with no files in it (unless
-it takes uploads). Areas behind a flag, like the back room, are always last
-in the list.
-Sub-folders nest as deep as the card has them. A number opens a folder or
-views a file, and `Q` goes up one level.
-
-An optional `AREA.INI` in the folder sets the name, the lowest security
-level, a required user flag such as `BACKROOM`, and whether downloads and
-uploads are allowed. Areas are read at boot and on `RELOAD`.
-
-Descriptions come from `FILES.BBS` or `DESCRIPT.ION` in the folder. For a ZIP
-without one, the board reads `FILE_ID.DIZ` from the archive's central
-directory, inflates it with the ROM inflater and caches the first lines in
-`DATA/INDEX/ZIPINFO.DAT`. DOS line-drawing characters in descriptions show as
-they did on a DOS screen. Archives are never unpacked or renamed.
-
-Listings show each file's size, its date (MM-DD-YY) and how many
-times it has been downloaded. A ZIP shows the date of the newest file inside
-it, which is when the archive was made; other files show their date on the
-card. The counts are kept in
-`DATA/INDEX/DOWNLOADS.DAT`. `V` on a ZIP lists what is inside from the
-central directory, with sizes and dates, then the full `FILE_ID.DIZ`, any
-NFO inside and the archive comment.
-
-In the viewer, `N` and `P` open the next or previous viewable file in the
-same folder, so a folder of ANSI art can be flipped through. Pictures and
-music work the same way, on a screen of their own in the browser.
-
-Uploads are browser only. The caller types a description and picks a file,
-it waits in `/BBS/UPLOADS/INCOMING`, and the SysOp approves or deletes it
-from the console. An approved file moves to the folder it was sent to and its
-description goes into that folder's `FILES.BBS`.
-
-### Doors
-
-The door table lists only doors that work.
-
-**VolaMUD** is a native C++ MUD door with a fixed Vola City hub and an
-endless deterministic wilderness. City locals provide directions, trading,
-banking and a few deliberate tasks. Wilderness rooms are usually empty, but
-can contain a fixed seeded monster, a rare traveller, or a short-lived random
-skeleton, orc or goblin encounter. Enemies are announced before `FIGHT` can
-engage them; `FIGHT NPC` is possible but intentionally unwise.
-
-Characters persist their position, task, gold and equipment. `INV`, `WEAR`
-and `SELL` cover the current small inventory: boots, blade, shield, rings,
-amulet and the Black Crown. Worn loot changes HP or combat. The Black Crown
-is a task item, held by seeded Lord Korja at `13,-8`.
-Gold and bank funds are a purse kept by the shared door code in
-`src/doors/purse.h` (all that is left of the Legend door). It is a playable vertical slice rather than a deep MUD:
-there is no inventory UI, trading economy, party system, NPC memory or
-multi-stage quest engine yet. See [`docs/VOLA_MUD.md`](docs/VOLA_MUD.md).
-
-### LCD
-
-The 160x80 screen draws the card's logo (`lcd_logo=` in `SYSTEM.INI`), or a
-neutral built-in splash, then
-three status lines: SD state and node count, AP IP address and the latest
-caller or page.
+Everything is plain text on a FAT32 card under `/BBS`. Users and messages are
+pipe-delimited lines. Record rewrites go to a `.NEW` file first and are
+swapped in with a `.BAK`. Passwords are salted SHA-256, the salt from the
+hardware RNG. There is no real-time clock and no NTP, so the board invents
+one: for HALCYON it is frozen at 8 Dec 1998 04:17, the minute the power was
+cut, and runs only while the board has power.
 
 ## Getting started
 
+### Hosted
+
+Open [halcyon.helppox.com](https://halcyon.helppox.com) in a browser and press
+DIAL. A new caller starts with `admin` / `admin`. The hosted Telnet port
+listens on the server only (reach it with an SSH tunnel, see the deploy doc).
+Installing your own server copy is in
+[`docs/DEPLOY.md`](docs/DEPLOY.md) (`deploy/install.sh`).
+
+### On the stick
+
 1. Install PlatformIO with the Espressif32 platform.
 2. Build and flash: `pio run -t upload`. On Windows,
-   `tools\build-platformio.cmd` does the same. The proven target is the
-   Pocket-Dongle-S3 with the N16R8 profile in `platformio.ini`; see
-   **Flash and recovery** below before trying another board profile.
-3. Optional content that is not in the repository. Each script downloads
-   once and writes into `sd/BBS`:
-
-   ```powershell
-   python tools\fidonet-seed.py
-   python tools\fetch-modules.py
-   python tools\fetch-sids.py
-   ```
-
-   The first one is the FidoNet message history (150 MB download), the other
-   two the Tracker Music and C64 SID Music areas.
-4. Format a microSD card as FAT32 and copy this repository's `sd/BBS` into
-   the card's `BBS` folder. Or run:
-
-   ```powershell
-   .\tools\prepare-sd.ps1 -CardRoot X:\
-   ```
-
-   It also creates the folders the board needs. Add `-PresentationOnly` to
-   update screens, static door data and VolaMUD's seed configuration on a
-   card that already has users and messages. The script does not format the
-   card.
-5. Insert the card and power the board from USB.
-6. Join `HALCYON`. Press DIAL in the browser, or Telnet to
-   `192.168.4.1:23`.
-7. Create a user named `SYSOP` first. While no SysOp exists, that handle
-   becomes the level-255 SysOp. Change its password.
+   `tools\build-platformio.cmd` does the same. See **Flash and recovery**
+   below if the upload stalls.
+3. Format a microSD card as FAT32 and copy `sd/BBS` to it, or run
+   `.\tools\prepare-sd.ps1 -CardRoot X:\`. The script also creates the
+   folders the board needs. It does not format the card.
+4. Insert the card and power the stick from USB.
+5. Join `HALCYON`. Press DIAL in the browser, or Telnet to `192.168.4.1:23`.
 
 Settings live in `sd/BBS/CONFIG`, each file explained in its comments:
-
-- `SYSTEM.INI`: the board's identity (name, short name, LCD logo, door names;
-  nothing of it is fixed in the firmware), node limit, new-user level, modem speed for ANSI
-  pictures, the board clock, art paths, download credit and ratio for new
-  users, credit per message, the upload size limit.
-- `CONFERENCES.INI`: message bases with their security level and flag.
-- `BULLETINS.INI`: bulletins, and which ones are shown at every login.
-- `NETWORK.INI`: SSID, password, channel, Telnet port.
-- `MENUS.INI`: the art for each menu and where in it the options go. The
-  options themselves are generated: only what exists and what the caller may
-  use is listed, so a new door or file area shows up without editing ANSI.
-- `FILES/<area>/AREA.INI`: name, level, flag, downloads and uploads for one
-  file area. Optional.
-
-After editing (on the card, or in the SysOp file manager) type `RELOAD` as
-SysOp, or `Z` then `R`. `NETWORK.INI` needs a restart.
+`SYSTEM.INI` (board identity, nodes, modem speed, clock), `CONFERENCES.INI`,
+`BULLETINS.INI`, `NETWORK.INI` (SSID, channel, Telnet port) and `MENUS.INI`.
+Menu options are generated: only what exists and what the caller may use is
+listed.
 
 ## Flash and recovery
 
-The verified board is the Pocket-Dongle-S3 with an N16R8 module: Quad flash, Octal PSRAM, 16 MB flash and
-8 MB PSRAM. Use the board profile `esp32-s3-devkitc1-n16r8`. Its runtime image
-uses the board's QIO/OPI arrangement, but the serial write must use **DIO**.
-Do not force QIO in a direct `esptool` command: the ROM can reset before the
-bootloader loads, producing repeated USB connect/disconnect sounds.
+The verified board is the Pocket-Dongle-S3 with an N16R8 module. Use the
+profile `esp32-s3-devkitc1-n16r8`. The runtime image uses QIO/OPI, but the
+serial write must use **DIO**. Forcing QIO in a direct `esptool` command can
+make the ROM reset before the bootloader loads (repeating USB chimes).
 
-If a normal PlatformIO upload stalls because Windows cannot print ESP32 upload
-glyphs, build without uploading and use the direct, hash-verifying recovery
-path below. Replace `COM10` with the actual port. It rewrites only firmware
-regions; it does not touch the SD card.
+If a PlatformIO upload stalls, build without uploading and write the image
+directly. Replace `COM10` with the real port. It rewrites only firmware
+regions and does not touch the SD card.
 
 ```powershell
 pio run
@@ -360,69 +268,37 @@ $env:PYTHONIOENCODING = 'utf-8'
   0x10000 .pio-tinybbs\tinybbs_s3\firmware.bin
 ```
 
-`Hash of data verified` for every segment and a reset without repeating USB
-chimes are the expected result. Confirm that `HALCYON` appears as a 2.4 GHz
-SSID before trying browser or Telnet tests. The ESP ROM loader remains
-reachable over USB even after a bad application flash; do not erase the chip
-as a first response.
+Expect `Hash of data verified` for every segment, then check that `HALCYON`
+shows up as a 2.4 GHz network. The ROM loader stays reachable over USB after a
+bad flash, so don't erase the chip as a first response.
 
 ## SD card layout
 
 | Path | Purpose |
 | --- | --- |
-| `/BBS/ANSI`, `/BBS/ASCII`, `/BBS/BULLETINS`, `/BBS/ASSETS` | Screens, art and modem audio |
-| `/BBS/CONFIG` | Board, conference, bulletin and network config |
-| `/BBS/FILES` | File areas, one folder each, with an optional `AREA.INI` |
-| `/BBS/MSGBASE` | Read-only message history, a folder per conference id, the story's posts |
-| `/BBS/DATA` | Users, messages, door saves, indexes |
-| `/BBS/LOGS` | Caller and event logs |
-| `/BBS/TEMP`, `/BBS/UPLOADS` | Runtime temp and upload staging |
+| `/BBS/ANSI`, `/BBS/ASCII`, `/BBS/BULLETINS`, `/BBS/ASSETS` | Screens, art, music player, sounds |
+| `/BBS/CONFIG` | Board, conference, bulletin, menu and network config |
+| `/BBS/STORY` | The game: triggers, scenes, ghosts, shell, manifest, notebook |
+| `/BBS/FILES` | File areas, one folder each |
+| `/BBS/MSGBASE` | The crew's posts and mail, a folder per conference |
+| `/BBS/DATA`, `/BBS/LOGS`, `/BBS/TEMP` | Runtime: users, messages, story records, logs. Do not edit by hand |
 
-Do not edit `DATA`, `LOGS` or `TEMP` by hand while the board is in use.
-Callers never see SD paths.
-
-`sd/BBS/FILES` and `sd/BBS/MSGBASE` hold the story's own files and posts and are
-tracked. Nothing from outside goes there. Content rules are in
+Callers never see SD paths. Content rules are in
 [`docs/CONTENT_POLICY.md`](docs/CONTENT_POLICY.md).
 
 ## SysOp
 
-A level-255 account with the `SYSOP` flag gets `Z`, the SysOp console.
-
-- **User editor** (`Z` then `U`, or `USER`): a table of every account with
-  level, flags, calls, messages, downloads against the limit and ratio. A
-  number or handle opens a record where each setting has a number: level,
-  flags (with what each flag opens), lock, download limit, credits, ratio,
-  password, forest fights, real name and location. Sizes can be typed as
-  `500K` or `2M`. `N` and `P` step through users.
-- **Node monitor** (`W`): who is on and doing what. A node number
-  disconnects that caller, `M <node|ALL> <text>` sends a one-way message.
-- **Page answering**: when a caller pages, `/A` from any prompt pulls both
-  into chat and `/R` refuses.
-- **Upload queue** (`Z` then `I`): uploads waiting for approval. `A #`
-  approves, `D #` deletes. The uploader gets the credit when it is approved.
-- **File manager** (`Z` then `F`, browser only): a separate page for the SD
-  card. Upload, download, rename, delete and edit text files without
-  pulling the card. `DATA` and `LOGS` are read-only there.
-- **Logs** (`Z` then `L`): the event log in the reader, newest last. Logins,
-  failed logins, logoffs with minutes online, downloads, uploads, posts and
-  every change of what a caller is doing. `L <text>` shows only matching
-  lines, for example one caller's handle.
-- **Chat history** (`/H` in chat): chat is saved to `LOGS/CHAT.LOG`, and the
-  SysOp sees the latest lines on entering chat.
-- **`RELOAD`** rereads the settings and file areas.
+A level-255 account with the `SYSOP` flag gets `Z`, the SysOp console: user
+editor, node monitor, page answering, upload queue, file manager (browser
+only), the event log and `RELOAD`. The story never gives a caller the real
+SysOp flag.
 
 ## Limits
 
-- Telnet has no file transfers (no ZMODEM) and there is no QWK mail. Both
-  are on the backburner in the roadmap.
-- SID tunes play with jsSID, which does not run RSID tunes.
-- Eight nodes is a firmware limit. It has not been tested with eight real
-  callers on the board.
-- AP only. The board does not join any other network.
-
-More in [`docs/ROADMAP.md`](docs/ROADMAP.md). The original 1.0 target is in
-[`docs/SPEC_1.0.md`](docs/SPEC_1.0.md).
+- Telnet has no file transfers (no ZMODEM) and there is no QWK mail.
+- Eight nodes on the stick. It has not been tested with eight real callers.
+- The stick is AP only and never joins another network.
+- Tested on the server and in agent playtests far more than on the stick.
 
 ## Repository map
 
@@ -431,32 +307,26 @@ More in [`docs/ROADMAP.md`](docs/ROADMAP.md). The original 1.0 target is in
 | `src/` | Firmware and the shared BBS core |
 | `server/` | Linux build of the same core |
 | `shared/web/` | Browser pages, embedded into the firmware |
-| `sd/BBS/` | SD card content and config, including the music player |
-| `tools/` | SD preparation, story lint, tests, ANSI art and content scripts |
+| `sd/BBS/` | SD card content: the game, art, config, music player |
+| `tools/` | SD preparation, story lint, tests, ANSI art and module scripts, the MCP server |
 | `deploy/` | Install and reset scripts for the hosted board |
-| `docs/` | Hardware, roadmap, testing, deploy, content policy, menu audit; `archive/` holds finished plans |
-| `.kiro/` | Steering, specs, hooks and agents |
+| `docs/` | Hardware, testing, deploy, puzzle chain, interaction rules, briefs, reviews, Devpost text |
+| `.kiro/` | Specs, steering, hooks and agents |
 
 ## Credits
 
-Dial-up sound: source to be confirmed by the author.
+Story, art, Ty's music, crew posts and code are original to this project. The
+dial-up sound is recorded from a real modem.
 
-Message history: FidoNet traffic captured on the ExecPC BBS (1993-1999) and
-archived by Josh Renaud at
-[Break Into Chat](https://breakintochat.com/collections/messages/fidonet/).
-Names and addresses are replaced before anything reaches the card.
-
-Music: modules from [The Mod Archive](https://modarchive.org/) and SID tunes
-from the [High Voltage SID Collection](https://hvsc.c64.org/), copied as
-they are. Played with [libopenmpt](https://lib.openmpt.org/) and
-[jsSID](https://github.com/jhohertz/jsSID).
-
-GoMud was evaluated as a mechanics/world reference. Licences for all of the
-above are in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+Libraries: [libopenmpt](https://lib.openmpt.org/) and
+[jsSID](https://github.com/jhohertz/jsSID) in the browser, civetweb and miniz
+on the server, Arduino GFX Library, ESPAsyncWebServer, AsyncTCP and the ESP32
+Arduino core on the stick. TinyBBS used my earlier TinyIRC sketch as a
+reference for this board's hardware setup. Licences are in
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Licence
 
 MIT, see [`LICENSE`](LICENSE). That covers the code, the ANSI screens and the
-built-in splash image. The player libraries on the card keep their own
-licences (libopenmpt BSD, jsSID GPL v2), listed in
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+art. The player libraries on the card keep their own licences (libopenmpt BSD,
+jsSID GPL v2).
