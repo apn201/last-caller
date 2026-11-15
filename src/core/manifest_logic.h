@@ -38,6 +38,7 @@ struct Table {
   std::string hint[SLOTS], lastHint[SLOTS];   // shown under an empty pick list, in the caller's own voice
   std::string intro, fullScene;
   std::string count = "Rows confirmed: {n} of {total}.";
+  std::string status, statusLast;      // Q21: under the rows once two crew rows are locked ({n} {total}), and once all are
   std::string filed = "Confirmed and locked: {names}.";
   std::string partial;                 // goodbye without finishing; "|" breaks a line
   std::string sentActivity = "Downlink open", sentIdle = "0:00", crewActivity = "On the crew list", crewIdle = "28y";
@@ -74,7 +75,7 @@ inline const Option *findOption(const Table &t, const std::string &id) {
 inline void parse(const std::vector<Kv> &kv, Table &t) {
   t = Table();
   auto set = [&](const char *key, std::string &dst, size_t max) { std::string v = kget(kv, "MANIFEST", key); if (!v.empty()) dst = haunt::capText(v, max); };
-  set("title", t.title, 40); set("intro", t.intro, 400); set("count", t.count, 120); set("filed", t.filed, 120);
+  set("title", t.title, 40); set("intro", t.intro, 400); set("count", t.count, 120); set("filed", t.filed, 120); set("status", t.status, 160); set("status_last", t.statusLast, 160);
   for (int i = 0; i < SLOTS; ++i) {
     set(("slot" + std::to_string(i + 1)).c_str(), t.slot[i], 40);
     set(("last_slot" + std::to_string(i + 1)).c_str(), t.lastSlot[i], 40);

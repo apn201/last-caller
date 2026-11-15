@@ -82,7 +82,7 @@ CREW = [
     ("CMDR", "Cmdr. Marta Halvorsen", ["Commander and pilot.", "b. 9 Jun 1952, Norway.", "A former test pilot, 3,100 hours."]),
     ("CHAOS", "Prof. Desmond Achterberg", ["Risk adviser, for our insurers.", "b. 2 Nov 1940, Netherlands.", "Studies how complex systems fail."]),
     ("GARDEN", "Dr. Keiko Tanabe", ["Physician and plant biologist.", "b. 21 Aug 1959, Brazil.", "Runs the garden. Looks after us."]),
-    ("TYVANCE", "Tyler Vance", ["Payload specialist, mission artist.", "b. 14 Mar 1974, USA.", "The first artist in orbit. Family."]),
+    ("TYVANCE", "Tyler Vance", ["Payload specialist and artist.", "b. 14 Mar 1974, USA.", "First artist in orbit. Family."]),
 ]
 
 

@@ -132,6 +132,12 @@ static void manOverview(Session &s) {
     snprintf(row, sizeof(row), "  \x1b[1;33m[%u]\x1b[0m %-10s %s", (unsigned)(i + 1), r.handle.c_str(), state.c_str());
     say(s, row);
   }
+  // Q21 (action plan): what is left, once the first pair is locked. Counts only, never which row is wrong.
+  unsigned crewDone = 0, crewTotal = 0;
+  for (const auto &r : manTable.rows) if (!r.last) { crewTotal++; if (manifest::rowDone(r, flags)) crewDone++; }
+  const std::string &st = crewDone >= crewTotal ? manTable.statusLast : manTable.status;
+  if (crewDone >= 2 && !st.empty() && !manifest::finished(flags) && !haunt::flagsHas(flags, "M_Z"))
+    say(s, "\r\n  \x1b[0;90m" + hauntStr(manifest::subst(manifest::subst(st, "{n}", std::to_string(crewDone)), "{total}", std::to_string(crewTotal))) + "\x1b[0m");
   say(s, "");
   say(s, "  \x1b[1;33m[S]\x1b[0m File the manifest   \x1b[1;33m[N]\x1b[0m Notebook   \x1b[1;33m[Q]\x1b[0m Back");
   manPrompt(s);
