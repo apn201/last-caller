@@ -91,7 +91,7 @@ def main():
             c.send(args.handle)
             c.expect("Password:")
             c.send(password)
-            hit = c.expect("Press ENTER", "Main Board Command?", "Bad password", "Unknown caller", timeout=40)
+            hit = c.expect("Press any key", "Press ENTER", "Main Board Command?", "Bad password", "Unknown caller", timeout=40)
             if hit in ("Bad password", "Unknown caller"):
                 print("%s does not log in with the stored password" % args.handle, file=sys.stderr)
                 return 4
@@ -119,12 +119,18 @@ def main():
         c.send("SysOp")
         c.expect("Location:")
         c.send("Low Earth Orbit")
-        c.expect("Log in with it")
+        # Since Q20 a new account is logged in at once ("Press any key for the Main
+        # Board"); older boards said "Log in with it". Either way, prove the password
+        # on a fresh connection.
+        c.expect("Press any key", "Log in with it", timeout=40)
+        c.close()
+        time.sleep(1)
+        c = Conn(args.port)
         c.expect("Login:")
         c.send(args.handle)
         c.expect("Password:")
         c.send(password)
-        hit = c.expect("Press ENTER", "Main Board Command?", "Bad password", "Unknown caller", timeout=40)
+        hit = c.expect("Press any key", "Press ENTER", "Main Board Command?", "Bad password", "Unknown caller", timeout=40)
         if hit in ("Bad password", "Unknown caller"):
             print("the new account did not log in", file=sys.stderr)
             return 4
