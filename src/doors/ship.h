@@ -44,7 +44,7 @@ static void enterShip(Session &s) {
   iniLoad(SHIP_INI, shipIni);
   s.state = SHIP_CONSOLE; s.hideInput = false; activity(s, "SHIP SYSTEMS");
   event("SHIP", s.user.handle + " node " + s.node + " opened the ship console");
-  powerScreen(s, "CONSOLE", iniGet(shipIni, "SHIP", "title", "SHIP SYSTEMS"));
+  powerScreen(s, s.powered && SD_MMC.exists(s.ansi ? "/BBS/ANSI/POWER/CONSOLE_ON.ANS" : "/BBS/ASCII/POWER/CONSOLE_ON.ASC") ? "CONSOLE_ON" : "CONSOLE", iniGet(shipIni, "SHIP", "title", "SHIP SYSTEMS"));
   shipPrompt(s);
 }
 static bool ownsShip(const Session &s) { return s.state == SHIP_CONSOLE || s.state == SHIP_CONFIRM; }

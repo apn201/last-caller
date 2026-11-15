@@ -76,7 +76,7 @@ static void input(Session &s, const String &bytes) {
       if (c == ' ' && s.state != BULLETIN && s.state != MSG_VIEW) continue;   // a tap or a stray space is not the start of a word
       if (s.state == SCENE_PLAY) { if ((c >= '1' && c <= '9') || c == 'q' || c == 'Q') { s.hotKey = c; s.hotAt = millis(); continue; } }
       else if (s.state == CHAT) { if (c == 'q' || c == 'Q') { s.hotKey = c; s.hotAt = millis(); continue; } }   // a lone Q leaves; anything after it makes a line
-      else if (isalpha((unsigned char)c) || c == '?' || (s.state == MANIFEST_PROMPT && s.digitHot && isdigit((unsigned char)c)) || (s.state == CREW_PICK && isdigit((unsigned char)c)) || ((s.state == BULLETIN || s.state == MSG_VIEW) && c > ' ')) { s.hotKey = c; s.hotAt = millis(); continue; }
+      else if (isalpha((unsigned char)c) || c == '?' || (s.state == MANIFEST_PROMPT && s.digitHot && isdigit((unsigned char)c)) || (s.state == CREW_PICK && isdigit((unsigned char)c)) || (s.state == BULLETIN && c >= ' ') || (s.state == MSG_VIEW && c > ' ')) { s.hotKey = c; s.hotAt = millis(); continue; }
     }
     // CRLF is one Enter key.  Without this guard the LF becomes a phantom
     // handle/command in Telnet clients such as PuTTY.
@@ -93,7 +93,15 @@ static void hotkeyTick(uint32_t now) {
   for (auto &s : sessions) {
     // Q22, contract C7: keys typed during a scene were meant for what the caller could not see. When the
     // scene has ended they are dropped, not played into whatever prompt comes next.
-    if (s.used && s.typeAhead.length() && s.state != SCENE_PLAY) s.typeAhead = "";
+    // The caller is told once, under the prompt, so a key that did nothing is not a mystery.
+    if (s.used && s.typeAhead.length() && s.state != SCENE_PLAY) {
+      if (s.state == GOODBYE || !s.authenticated) s.typeAhead = "";
+      else if (!streaming(s) && s.pending.length() == 0 && s.jobs.empty()) {
+        s.typeAhead = "";
+        write(s, "\r\n\x1b[0;90m(Keys typed during the scene were not used.)\x1b[0m\r\n" + s.lastPrompt);
+        if (s.input.length()) write(s, s.hideInput ? String("*") : s.input);
+      }
+    }
     if (!s.used || !s.hotKey || now - s.hotAt < HOTKEY_MS) continue;
     char c = s.hotKey; s.hotKey = 0;
     if (!hotkeyState(s) || s.input.length()) continue;

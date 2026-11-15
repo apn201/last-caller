@@ -327,4 +327,5 @@ def build():
     for f in (boot, reboot, online, sunside, warning, wake):
         out.extend(f())
     out.extend(console(False))
+    out.extend(console(True))   # Q22: the console for a line that has already switched the ship to the RTG
     return out

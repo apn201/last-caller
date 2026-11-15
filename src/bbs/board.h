@@ -119,7 +119,10 @@ static void finishLogin(Session &s) {
   // The ship's maintenance account goes straight to the ship console: no
   // counters, no bulletins, no menu.
   if (isMaintenance(s.user)) {
-    startPowerTimer(s);
+    // Q22: a line that has signed in to an own account has switched the ship to the RTG already: the console
+    // says so and no timer runs. A new line still starts in brownout.
+    if (s.ownUserId) { s.powered = true; s.powerTimerOn = false; }
+    else startPowerTimer(s);
     event("LOGIN", s.user.handle + " node " + s.node);
     trace("LOGIN_OK", s.user.handle + " node " + s.node);
     enterShip(s);
