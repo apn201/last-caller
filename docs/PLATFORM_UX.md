@@ -41,7 +41,7 @@ viewers, where it sends every key.
 | ANSI gallery | line | back | back | none | menu | Q or ENTER |
 | Door menu | line | back | back | none | menu | Q or ENTER |
 | Node chat | line, text | empty line, redraws prompt | sent as text | none | scroll region and bar | `/Q` |
-| ELIZA scene in chat | line, numbered replies | skips the typing | answers a numbered reply | none | typed out by the scene | the scene ends, main menu |
+| ELIZA scene in chat | key (Q, digits), no ENTER | nothing (G1) | Q skips the scene; a number answers (after 1.5 s) | none | typed out by the scene | the scene ends, main menu |
 | Manifest | line | rows view: back | back | none | list | Q |
 | Diagnostics, ship console, shell, MUD | line, words | varies | QUIT or Q (varies per door) | HELP | in place | QUIT, Q, EXIT |
 | Snake | key, several at once | plays again | quits | none | board | Q |
@@ -151,8 +151,13 @@ need a word (delete an account) keep the word and say "type YES, then ENTER".
 for, and never cuts a line.** Keys typed while a scene types out are not
 echoed and are dropped when it ends, and one grey line under the prompt says
 so: "(Keys typed during the scene were not used.)" (Q22; before, they were
-played back and arrived at the next prompt as a surprise). ENTER skips only the pause the
-scene is in, and any key goes on at an [any key] pause. A timed event (a page, a ghost, a
+played back and arrived at the next prompt as a surprise). G1: **only Q skips a scene.** ENTER
+and other keys do not flush the typing or end a pause. Q jumps to the end and still grants the
+scene's flags, its then= target and its notebook lines; it stops at a numbered choice, which the
+caller still answers. Each scene opens with one dim line, "Q skips". A numbered choice and an
+[any key] wait take keys only 1.5 s after they appear (earlier keys are dropped, not queued). At
+scene start the half-typed line and any buffered keys are dropped. A lone Q waits the hotkey
+moment, so a word typed ahead does not skip. A timed event (a page, a ghost, a
 glitch) waits for the screen to be at a prompt, as before, and never writes
 into the middle of a line the caller typed. A scene started from a menu
 returns the caller to that menu's level, not the top.
@@ -254,3 +259,4 @@ the port is its own item run inside that repository. "Engine" means port it;
 | P48 | C7 changed: keys typed during a scene are dropped when it ends, not played back into the next prompt | Q22 | `src/bbs/commands.h` (`hotkeyTick`, `input`), `src/core/session.h` (`typeAhead`) | Engine if scenes exist | Contract C7 and `.kiro/steering/interaction.md` follow |
 | P49 | SPACE at "Press any key" is a key (was echoed as text and waited for ENTER); a maintenance login on a line that has signed in gets the powered console (`CONSOLE_ON`, no timer); Telnet keeps output a full send buffer did not take; LOGOFF says why the line closed | Q22 | `src/bbs/commands.h`, `src/bbs/board.h`, `src/doors/ship.h`, `src/net/telnet.h` | Engine (console: HALCYON) | |
 | P50 | The idle check, idle triggers, ghosts and glitches measure time with `msSince(now, at)`: a key run in the same tick stamps `lastAt` after the tick's `now`, and plain unsigned `now - lastAt` wrapped to about 49 days and closed the line at once (the "connection closed by the board" the critics saw, LOGOFF "last key 0 s ago"), and could fire an idle trigger right after a key | Q22 | `src/core/util.h`, `src/bbs/runtime.h`, `src/core/haunt.h`, `src/core/ghost.h`, `src/core/glitch.h` | Engine | Check every `now - x` in TinyBBS where x can be stamped later in the same tick |
+| P51 | Only Q skips a scene (G1): ENTER and other keys never flush typing or end a pause; Q grants flags, `then` and notebook lines as if played and stops at a choice; "Q skips" line after the first picture; numbered choices and [any key] take keys after a 1.5 s grace (`armed()`); the half-typed line and buffered keys are dropped at scene start; a lone Q waits `HOTKEY_MS` so a word typed ahead is not a Q | G1 | `src/core/scene_logic.h`, `src/core/scene.h`, `src/core/stream.h`, `src/bbs/commands.h`, `tools/test/scene_logic_test.cpp`, `tools/test/e2e_telnet.py` | Engine, if TinyBBS has the scene engine | `hotkeyState` returns true for a scene, so the browser sends every key at once |

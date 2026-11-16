@@ -270,6 +270,8 @@ struct Out {
   void addText(const std::string &s) { if (!s.empty()) parts.push_back({false, s}); }
 };
 
+static constexpr uint32_t GRACE_MS = 1500;   // G1: a [any key] wait or a choice takes keys only this long after it appears
+
 enum Phase : uint8_t { P_IDLE, P_TYPE, P_PAUSE, P_KEY, P_CHOICE, P_END };
 
 class Player {
@@ -282,14 +284,17 @@ class Player {
   // Should the board echo the caller's keys now? Only at a choice prompt. While
   // the text types, pauses or waits for Enter a key would land in the middle
   // of a sentence, so it is dropped (Enter still skips: see input()).
-  bool wantsEcho() const { return ph_ == P_CHOICE; }
+  bool wantsEcho() const { return ph_ == P_CHOICE && armed_; }
   // Numbered replies of nine or fewer, and Q: single keys (contract C1), no ENTER.
-  bool choiceKeys() const { return (ph_ == P_CHOICE && shown_.size() <= 9) || ph_ == P_KEY; }   // a [any key] wait takes any key
+  // G1: and only once the 1.5 s grace is over (armed_, set by tick()); before that keys are dropped.
+  bool choiceKeys() const { return armed_ && ((ph_ == P_CHOICE && shown_.size() <= 9) || ph_ == P_KEY); }   // a [any key] wait takes any key
+  bool armed() const { return armed_; }
 
   // replay (Q21, the notebook): the scene as it was. It grants nothing and changes no flag; a choice is shown and
   // followed but sets nothing, and a `then` is not followed.
   Out start(std::shared_ptr<const Scene> sc, const std::string &flags, bool ansi, uint32_t now, bool replay = false) {
     sc_ = std::move(sc); flags_ = flags; ansi_ = ansi; replay_ = replay; steps_ = 0; ph_ = P_IDLE; node_.clear(); then_.clear();
+    skipping_ = false; armed_ = false; shownAt_ = now;
     Out out;
     if (!sc_) { out.finished = true; return out; }
     enter(sc_->start, now, out);
@@ -299,6 +304,7 @@ class Player {
   Out tick(uint32_t now) {
     Out out;
     if (!active()) return out;
+    if (!armed_ && (ph_ == P_CHOICE || ph_ == P_KEY) && (int32_t)(now - shownAt_) >= (int32_t)GRACE_MS) armed_ = true;
     if (ph_ == P_PAUSE && (int32_t)(now - until_) >= 0) next(now, out);
     pump(now, out);
     return out;
@@ -308,9 +314,11 @@ class Player {
     Out out;
     if (!active()) return out;
     std::string t = haunt::trim(line);
-    if (ph_ == P_TYPE) { out.addText(typer_.flush()); afterText(now, out); }
-    else if (ph_ == P_PAUSE || ph_ == P_KEY) next(now, out);
-    else if (ph_ == P_CHOICE) pick(t, now, out);
+    // G1: only Q skips a scene. ENTER or any other key does not flush the typing or end a pause.
+    // A choice or an [any key] wait takes keys once the grace is over; earlier keys are dropped.
+    if (ph_ == P_CHOICE) { if (armed_) pick(t, now, out); }
+    else if (t == "q" || t == "Q") skip(now, out);
+    else if (ph_ == P_KEY && armed_) next(now, out);
     pump(now, out);
     return out;
   }
@@ -321,7 +329,8 @@ class Player {
   bool ansi_ = true, replay_ = false;
   unsigned steps_ = 0;
   Phase ph_ = P_IDLE;
-  uint32_t until_ = 0;
+  uint32_t until_ = 0, shownAt_ = 0;
+  bool skipping_ = false, armed_ = false;
   Typer typer_;
   std::vector<size_t> shown_;   // indexes of the choices on screen
 
@@ -349,7 +358,17 @@ class Player {
   static bool conditionHolds(const std::string &flags, const std::string &has, const std::string &lacks) {
     return (has.empty() || haunt::flagsHasAll(flags, has)) && (lacks.empty() || !haunt::flagsHasAny(flags, lacks));
   }
+  // G1: Q. The rest of the scene runs without its text: every node is entered (flags, notebook lines,
+  // the then= target), until a numbered choice, which the caller still has to make.
+  void skip(uint32_t now, Out &out) {
+    if (ph_ == P_TYPE) {
+      if (cur().choices.empty()) { typer_.flush(); skipping_ = true; next(now, out); }
+      else { out.addText(typer_.flush()); afterText(now, out); }   // a choice keeps its question
+    } else if (ph_ == P_PAUSE || ph_ == P_KEY) { skipping_ = true; next(now, out); }
+    skipping_ = false;
+  }
   void enter(std::string id, uint32_t now, Out &out) {
+   for (;;) {   // G1: while skipping, a node without choices is passed through in this loop
     for (unsigned jumps = 0;; ++jumps) {
       if (id.empty() || id == END || sc_->find(id) < 0 || jumps > MAX_JUMPS || steps_ >= MAX_STEPS) { finish(out); return; }
       const Node &n = sc_->nodes[(size_t)sc_->find(id)];
@@ -363,6 +382,12 @@ class Player {
     grant(n.set, out);
     if (!n.then.empty()) then_ = n.then;
     if (!n.art.empty()) out.parts.push_back({true, n.art});
+    // G1: one dim line tells the caller the only key a scene takes (after the first picture, which may clear the screen).
+    if (steps_ == 1 && !replay_) out.addText(std::string(ansi_ ? "\x1b[0;90m" : "") + "  Q skips" + (ansi_ ? "\x1b[0m" : "") + "\r\n");
+    if (skipping_ && n.choices.empty()) {
+      if (n.go.empty()) { finish(out); return; }
+      id = n.go; continue;
+    }
     if (n.text.empty()) { afterText(now, out); return; }
     std::string head, body, tail, speaker = n.speaker;
     if (ansi_) {
@@ -373,6 +398,9 @@ class Player {
     }
     typer_.begin(layout(head, speaker, body, tail, n.text, sc_->speed), now);
     ph_ = P_TYPE;
+    if (skipping_) { out.addText(typer_.flush()); skipping_ = false; afterText(now, out); }   // a choice: shown at once
+    return;
+   }
   }
   void next(uint32_t now, Out &out) {
     const std::string go = cur().go;
@@ -396,10 +424,10 @@ class Player {
       // Critic round 5: where the node also takes typed replies, say so (never which words).
       out.addText(std::string(ansi_ ? "\x1b[0;90m" : "") + "  Press a number, no ENTER." + (words ? " Or type a reply, then ENTER." : "") + (q ? " Q leaves." : "") + (ansi_ ? "\x1b[0m" : "") + "\r\n");
       out.addText(ansi_ ? "\r\n\x1b[1;36m> \x1b[0m" : "\r\n> ");
-      ph_ = P_CHOICE;
+      ph_ = P_CHOICE; armed_ = false; shownAt_ = now;
     } else if (n.key) {
       out.addText(ansi_ ? "\x1b[0;90m  [any key]\x1b[0m" : "  [any key]");
-      ph_ = P_KEY;
+      ph_ = P_KEY; armed_ = false; shownAt_ = now;
     } else if (n.go.empty()) {
       finish(out);
     } else {

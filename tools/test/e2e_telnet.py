@@ -110,8 +110,9 @@ def key(c, text):
 
 
 def advance(c, marker, timeout=120.0):
-    """Press Enter now and then (it skips a scene's typing and pauses) until `marker` appears.
-    Every 2.5 s: a waiting page or scene starts only after two quiet seconds (core/haunt.h, Q20)."""
+    """Press Enter now and then until `marker` appears. G1: ENTER no longer skips a scene (only Q does); it
+    still answers an [any key] wait once its 1.5 s grace is over, and a waiting page or scene starts only
+    after two quiet seconds (core/haunt.h, Q20), so a nudge every 2.5 s is what moves things on."""
     end = time.time() + timeout
     while True:
         try:
@@ -143,7 +144,7 @@ def choose(c, text, timeout=60):
         if time.time() > end:
             raise TimeoutError("the reply %r was not offered; last text: %r" % (text, c.all[-500:]))
         c._pump()
-    time.sleep(0.2)
+    time.sleep(1.7)   # G1: a scene takes keys 1.5 s after its reply list appears; earlier keys are dropped
     c.buf = ""
     c.send(found[-1].group(1))
 
@@ -443,10 +444,18 @@ def main():
         # it follows the first main-menu prompt.
         if state.get("pending_hit") != "not on the crew list":
             c.expect("not on the crew list", timeout=30)
+        # G1 (Q23 item 1): a caller who is typing when the scene starts. The line and its ENTER must not
+        # skip, flush or cut anything: the scene shows its last node, and says that only Q skips.
+        c.send("hello there")
+        c.send("")
         c.expect("Where is the crew", timeout=60)
+        if "Q skips" not in c.all:
+            raise AssertionError("the scene did not say that Q skips")
+        time.sleep(1.7)   # the reply list takes keys after a 1.5 s grace
         c.send("1")
         c.expect("Please make yourself at home", timeout=90)
         c.expect("[any key]", timeout=60)   # the scene waits for a key once the text has typed out
+        time.sleep(1.7)
         c.send("")
         c.expect("Main Board Command?", timeout=30)
         welcome_scene(c)                  # M2: ELIZA welcomes a guest (Q12d); one crew name is missing from it
@@ -1567,6 +1576,7 @@ def main():
             c2.send("")
         if hit != "Where is the crew":
             c2.expect("Where is the crew", timeout=60)     # the first scene starts at the first calm prompt
+        time.sleep(1.7)   # G1: the grace
         c2.send("1")
         advance(c2, "Main Board Command?", timeout=150)   # the scene plays itself out
         welcome_scene(c2)

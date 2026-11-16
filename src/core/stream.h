@@ -22,7 +22,7 @@ static bool hotkeyState(const Session &s) {
     case CHAT: case SNAKE_PLAY: case MANIFEST_PROMPT: case POST_PRIVATE: case JOIN_CONF: case BULLETIN_LIST: case DOOR_MENU: case ANSI_GALLERY: case FILE_MENU: case FILE_LIST: case SYSOP_MENU:
     case CREW_PICK: case SHIP_CONFIRM:   // Q20 UX, C5: the RTG acknowledge is one key, like any yes or no
       return true;
-    case SCENE_PLAY: return s.sceneRun.choiceKeys();
+    case SCENE_PLAY: return true;   // G1: a scene takes Q at once (every key goes to the board; it drops what it does not use)
     default: return false;
   }
 }

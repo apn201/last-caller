@@ -54,16 +54,27 @@ static void input(Session &s, const String &bytes) {
       if ((c == '\r' || c == '\n' || c == 0) && s.input.length() == 0 && (int32_t)(s.eatEnterUntil - millis()) > 0) { if (c == '\r') s.ignoreNextLf = true; else if (c == '\n') s.ignoreNextLf = false; if (c != 0) s.eatEnterUntil = 0; continue; }
       s.eatEnterUntil = 0;
     }
-    // A scene types its own text: a key typed meanwhile is neither echoed nor
-    // kept (it would land in the middle of a sentence). Enter still reaches the
-    // scene, as an empty line, to skip the typing or the pause.
+    // A scene types its own text: a key typed meanwhile is neither echoed nor kept (it would land in the
+    // middle of a sentence). G1: only Q skips a scene; ENTER and other keys do nothing, except a key at
+    // an [any key] wait once its grace is over. A lone Q waits HOTKEY_MS like a menu hotkey, so a word
+    // typed ahead ("quit") does not skip the scene.
     const bool quiet = s.state == SCENE_PLAY && !s.sceneRun.wantsEcho();
     if (quiet) {
+      const bool keyWait = s.sceneRun.phase() == scene::P_KEY && s.sceneRun.armed();
       if (s.sceneReplay && (c == 'q' || c == 'Q')) { s.input = ""; handleLine(s, "Q"); continue; }   // Q21: a replay from the notebook ends at once
-      if (c == '\r') { s.input = ""; s.ignoreNextLf = true; handleLine(s, ""); }
-      else if (c == '\n') { if (s.ignoreNextLf) { s.ignoreNextLf = false; continue; } s.input = ""; handleLine(s, ""); }
-      else if ((uint8_t)c >= 32 && s.sceneRun.phase() == scene::P_KEY) { s.input = ""; handleLine(s, ""); }   // [any key]: any key goes on
-      else if ((uint8_t)c >= 32 && s.typeAhead.length() < 24) s.typeAhead += c;   // Q22: not echoed, and dropped when the scene ends (contract C7): a key meant for what the caller could not see must not land on the next prompt
+      if (c == '\r' || c == '\n') {
+        if (c == '\n' && s.ignoreNextLf) { s.ignoreNextLf = false; continue; }
+        if (c == '\r') s.ignoreNextLf = true;
+        s.input = "";
+        if (s.hotKey) { s.hotKey = 0; handleLine(s, "Q"); }   // "q" then ENTER, a line-mode client: a lone Q
+        else if (keyWait) handleLine(s, "");
+        continue;
+      }
+      if ((uint8_t)c < 32) continue;
+      if (s.hotKey) { if (s.typeAhead.length() < 24) s.typeAhead += s.hotKey; s.hotKey = 0; }   // another key right behind it: a word, not a Q
+      if ((c == 'q' || c == 'Q') && !s.typeAhead.length()) { s.hotKey = c; s.hotAt = millis(); continue; }
+      if (keyWait) { s.input = ""; handleLine(s, ""); }   // [any key]: any key goes on
+      else if (s.typeAhead.length() < 24) s.typeAhead += c;   // Q22: not echoed, and dropped when the scene ends (contract C7): a key meant for what the caller could not see must not land on the next prompt
       continue;
     }
     // Q20 UX, contract C1: a letter at a menu acts at once. It waits hotkeyTick's moment first: a
@@ -104,6 +115,7 @@ static void hotkeyTick(uint32_t now) {
     }
     if (!s.used || !s.hotKey || now - s.hotAt < HOTKEY_MS) continue;
     char c = s.hotKey; s.hotKey = 0;
+    if (s.used && s.state == SCENE_PLAY && !s.sceneRun.wantsEcho()) { if (c == 'q' || c == 'Q') handleLine(s, "Q"); continue; }   // G1: a lone Q skips the scene
     if (!hotkeyState(s) || s.input.length()) continue;
     s.eatEnterUntil = now + 700;
     if (!s.hideInput) { write(s, String(c)); say(s); }

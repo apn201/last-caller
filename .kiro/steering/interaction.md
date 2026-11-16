@@ -25,7 +25,7 @@ the friction goes.
 - **Yes or no is one key.** "Continue" is any key, not "Press ENTER".
 - **Scenes and timed events never land a key on a prompt it was not meant
   for, and never cut a line.** Keys typed during a scene are dropped when it
-  ends, and a grey line under the prompt says so (Q22); ENTER skips the pause, any key goes on at an [any key] pause.
+  ends, and a grey line under the prompt says so (Q22); only Q skips a scene (G1); numbered replies and [any key] take keys 1.5 s after they appear.
 - **Chats and doors say how to leave** when entered and take Q (or `/Q` where
   the line is text), QUIT and EXIT.
 - **The browser adds buttons, never rules.** A button sends the key a

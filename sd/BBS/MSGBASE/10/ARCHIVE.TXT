@@ -91,8 +91,9 @@ Ask for what she needs to say yes to. Do not ask for anything else. She is not
 stupid. She is obedient, which in my field is the more dangerous condition.
 
 P.S. Installers write passwords down where installers write everything down,
-and then do not change them. I would not have believed it of a mission with
-this budget.
+and then do not change them. ELIZA is no different: her password is on the
+go-live sheet in Engineering, and the operators never changed it. I would not
+have believed it of a mission with this budget.
 
 Prof. D. Achterberg
 

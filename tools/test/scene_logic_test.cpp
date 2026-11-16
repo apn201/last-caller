@@ -72,7 +72,7 @@ static Run play(const std::shared_ptr<Scene> &sc, const std::string &flags, cons
     now += 50; ++r.ticks;
     take(r, p.tick(now));
     if (r.finished) break;
-    if (p.phase() == P_CHOICE || p.phase() == P_KEY) {
+    if ((p.phase() == P_CHOICE || p.phase() == P_KEY) && p.armed()) {   // G1: keys count after the 1.5 s grace
       std::string ans = a < answers.size() ? answers[a++] : "";
       take(r, p.input(ans, now));
     }
@@ -104,8 +104,8 @@ int main(int argc, char **argv) {
     for (unsigned t = 0; !r.finished && t < 20000; ++t) {
       now += 50; grab(p.tick(now));
       if (r.finished) break;
-      if (p.phase() == P_CHOICE) grab(p.input("2", now));   // Liar: sets LIED on a real run
-      else if (p.phase() == P_KEY) grab(p.input("", now));
+      if (p.phase() == P_CHOICE && p.armed()) grab(p.input("2", now));   // Liar: sets LIED on a real run
+      else if (p.phase() == P_KEY && p.armed()) grab(p.input("", now));
     }
     CHECK(r.finished);
     CHECK(r.grant.empty());                                  // no flag, not the choice's, not the scene's set=
@@ -266,45 +266,90 @@ int main(int argc, char **argv) {
     CHECK(play(sc, "", {"1", ""}, true).text.find('\x1b') != std::string::npos);
   }
 
-  // ---- player: Enter while typing shows the rest, and never skips a choice ----
+  // ---- player (G1): only Q skips. ENTER and other keys change nothing while it types or pauses ----
   if (sc) {
     Player p; uint32_t now = 5000;
     Out o = p.start(sc, "", false, now);
     CHECK(p.phase() == P_TYPE);
+    CHECK(o.text().find("Q skips") != std::string::npos);   // the one dim line
     std::string said = o.text();
-    o = p.input("", now + 10);                       // Enter: the line is out at once
-    said += o.text();
+    said += p.input("", now + 10).text();            // ENTER: nothing is flushed
+    CHECK(p.phase() == P_TYPE && said.find("Hello there.") == std::string::npos);
+    said += p.input("1", now + 20).text();           // a digit: nothing
+    CHECK(p.phase() == P_TYPE);
+    for (uint32_t t = now; p.phase() == P_TYPE && t < now + 20000; t += 50) said += p.tick(t).text();
     CHECK(said.find("Hello there.") != std::string::npos);
     CHECK(p.phase() == P_PAUSE);
-    o = p.input("", now + 20);                       // Enter in the pause: on to the next node
-    CHECK(p.nodeId() == "ASK" && p.phase() == P_TYPE);
-    o = p.input("1", now + 30);                      // a digit while typing only flushes
-    CHECK(p.phase() == P_CHOICE && p.nodeId() == "ASK");
-    CHECK(o.text().find("1) Friend") != std::string::npos);
-    o = p.input("1", now + 40);
-    CHECK(p.nodeId() == "NICE");
-    CHECK(o.grant == "POLITE");
+    o = p.input("", now + 30000);                    // ENTER in the pause: nothing
+    CHECK(p.phase() == P_PAUSE && p.nodeId() != "ASK");
   }
-
-  // ---- player: keys are echoed only at a choice prompt ----
+  // ---- player (G1): a choice takes keys only after the 1.5 s grace ----
   if (sc) {
     Player p; uint32_t now = 9000;
-    CHECK(!p.wantsEcho());                           // not started
+    CHECK(!p.wantsEcho() && !p.choiceKeys());        // not started
     p.start(sc, "", false, now);
-    CHECK(p.phase() == P_TYPE && !p.wantsEcho());    // typing
-    p.input("", now + 10);
-    CHECK(p.phase() == P_PAUSE && !p.wantsEcho());   // pause
-    p.input("", now + 20);
-    p.input("", now + 30);                           // flush the choice node's text
-    CHECK(p.phase() == P_CHOICE && p.wantsEcho());   // choice prompt
-    p.input("1", now + 40);
+    CHECK(p.phase() == P_TYPE && !p.wantsEcho());
+    uint32_t t = now;
+    while (p.phase() != P_CHOICE && t < now + 60000) { t += 50; p.tick(t); }
+    CHECK(p.phase() == P_CHOICE && p.nodeId() == "ASK");
+    CHECK(!p.wantsEcho() && !p.choiceKeys());        // just shown: keys are dropped
+    Out o = p.input("1", t + 10);
+    CHECK(p.nodeId() == "ASK" && o.grant.empty());   // the early key did nothing
+    p.tick(t + 1400);
+    CHECK(!p.wantsEcho());
+    p.tick(t + 1500);
+    CHECK(p.wantsEcho() && p.choiceKeys());          // armed
+    o = p.input("1", t + 1510);
+    CHECK(p.nodeId() == "NICE" && o.grant == "POLITE");
     CHECK(!p.wantsEcho());
     auto k = load("[SCENE]\n[START]\ntext=x\nkey=1\ngo=END\n");
     Player q; q.start(k, "", true, 0);
     q.tick(5000);
-    CHECK(q.phase() == P_KEY && !q.wantsEcho());     // waiting for Enter
-    q.input("", 5001);
-    CHECK(!q.wantsEcho());                           // finished
+    CHECK(q.phase() == P_KEY && !q.armed() || q.phase() == P_KEY);
+    q.tick(6600);
+    CHECK(q.phase() == P_KEY && q.armed() && !q.wantsEcho());   // waiting for a key, the grace is over
+    Player q2; q2.start(k, "", true, 0);
+    uint32_t u = 0;
+    for (; q2.phase() != P_KEY && u < 20000; u += 50) q2.tick(u);
+    Out e = q2.input("", u + 1);                      // a key at once after the wait appeared: dropped
+    CHECK(q2.active() && !e.finished);
+    q.input("", 6601);
+    CHECK(!q.active());
+  }
+  // ---- player (G1): Q jumps to the end and still grants flags, then= and notebook nodes ----
+  {
+    auto s = load("[SCENE]\nset=SC_DONE\n[START]\ntext=one two three four five six seven\nset=A\ngo=MID\n"
+                  "[MID]\ntext=middle\nset=B\ngo=LAST\n[LAST]\ntext=the last node\nset=C\nthen=CHAT\n");
+    CHECK(s != nullptr);
+    Player p; uint32_t now = 0;
+    Out o = p.start(s, "", true, now);
+    std::vector<std::string> nodes = o.nodes;
+    std::string grant = o.grant;
+    Out q = p.input("q", now + 100);                  // Q while the first node types
+    nodes.insert(nodes.end(), q.nodes.begin(), q.nodes.end());
+    grant = haunt::flagsAdd(grant, q.grant);
+    CHECK(q.finished && q.then == "CHAT");
+    CHECK(grant == "A,B,C,SC_DONE");
+    CHECK(nodes.size() == 3 && nodes[0] == "START" && nodes[2] == "LAST");
+    CHECK(q.text().find("the last node") == std::string::npos);   // skipped text is not shown
+    // Q in a pause
+    auto k = load("[SCENE]\n[START]\ntext=x\npause=5000\ngo=NEXT\n[NEXT]\ntext=y\nset=GOT\n");
+    Player p2; p2.start(k, "", true, 0);
+    for (uint32_t u = 0; p2.phase() != P_PAUSE && u < 20000; u += 50) p2.tick(u);
+    Out r = p2.input("Q", 100);
+    CHECK(r.finished && r.grant == "GOT");
+    // Q stops at a numbered choice, which the caller still answers
+    auto c = load("[SCENE]\n[START]\ntext=intro\nset=I\ngo=ASK\n[ASK]\ntext=pick one\nchoice1=yes\ngo1=END\nset1=Y\n");
+    Player p3; p3.start(c, "", false, 0);
+    Out s3 = p3.input("q", 10);
+    CHECK(!s3.finished && p3.phase() == P_CHOICE && s3.text().find("pick one") != std::string::npos && s3.text().find("intro") == std::string::npos);
+    CHECK(p3.flags() == "I");
+    p3.tick(2000);
+    Out e3 = p3.input("1", 2001);
+    CHECK(e3.finished && e3.grant.find("Y") != std::string::npos);
+    // a replay has no Q skips line
+    Player p4; Out s4 = p4.start(s, "", true, 0, true);
+    CHECK(s4.text().find("Q skips") == std::string::npos);
   }
 
   // ---- player: art, set on entry, redirects ----
@@ -316,7 +361,7 @@ int main(int argc, char **argv) {
     CHECK(r.grant == "SEEN");
     // the art comes before the text of its node
     Player p; Out o = p.start(s, "", true, 0);
-    CHECK(o.parts.size() >= 1 && o.parts[0].isArt);
+    CHECK(o.parts.size() >= 2 && o.parts[0].isArt);   // and the Q skips line comes after it
   }
   {
     // a redirect that can never end (A -> B -> A) ends the scene, it does not hang

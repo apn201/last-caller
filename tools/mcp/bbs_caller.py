@@ -181,7 +181,7 @@ TOOLS = [
      "inputSchema": {"type": "object", "required": ["text"], "properties": {
          "text": {"type": "string"},
          "enter": {"type": "boolean", "description": "press ENTER after the text (default true)"},
-         "quiet_ms": {"type": "integer", "description": "wait for this much silence (default 1500); raise it for scenes"},
+         "quiet_ms": {"type": "integer", "description": "wait for this much silence (default 1500); raise it for scenes. A scene is skipped only by Q; ENTER does nothing while it types, and a numbered reply or [any key] takes keys 1.5 s after it appears (earlier keys are dropped)"},
          "max_ms": {"type": "integer", "description": "never wait longer than this (default 20000)"}}}},
     {"name": "bbs_read",
      "description": "Wait and return whatever the board prints next (scenes and pages arrive on their own).",

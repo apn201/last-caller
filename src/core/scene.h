@@ -103,6 +103,7 @@ static void sceneStart(Session &s, const String &raw) {
   s.sceneName = name; s.sceneReplay = false;
   notesOn(s, notes::K_SCENE, name);   // Q21
   s.hideInput = false;
+  s.input = ""; s.hotKey = 0; s.typeAhead = "";   // G1: the half-typed line and the buffered keys were meant for the prompt, not the scene
   s.helpBack = s.state;   // sceneEnd draws this screen again
   s.state = SCENE_PLAY;
   activity(s, "IN A SCENE");

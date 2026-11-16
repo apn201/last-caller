@@ -60,7 +60,7 @@ flags.
 | M4 | Orbit 3 shown at 300 baud: the covered frame | Lounge "Locks", 25 Nov, and Ty's journal ("a very des word"); his "ladder" paper is now a wrong guess (Q18) | AUDIT.LOG shows his archive made 28 Nov |
 | M5 | Lounge, 6 Nov, Ty: "20 zeros", the board went away for three minutes | Archive, 2 Dec, Achterberg: the one place she cannot watch | ELIZA's reply under Ty's post: "unavailable for three minutes" |
 | M6 cure | CMDR's handbook page: SYSOP mode has a memory check | Archive, 2 Dec: she must allow the check, for its duration | ELIZA, once the caller has M5: she cannot account for some minutes |
-| M7 | The checklist itself, by name and date, in Engineering | ELIZA's grant line: Engineering is listed now | Archive, 3 Dec: "the operators never changed it" |
+| M7 | The checklist itself, by name and date, in Engineering | ELIZA's grant line: Engineering is listed now | Archive, 2 Dec ("The one place", P.S.): ELIZA's password is on the go-live sheet in Engineering and "the operators never changed it" |
 | M8 | The Founder's order pieces in the jigsaw give the code | Comms manual: queries and the code form | DIAG help: codes from the Founder's office are entered as queries (exists) |
 | M9 | Achterberg's last message: the verb | Comms manual: the syntax | The queue header in the haven: the destination |
 
