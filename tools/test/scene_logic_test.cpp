@@ -367,6 +367,42 @@ int main(int argc, char **argv) {
     CHECK(s4.text().find("Q skips") == std::string::npos);
   }
 
+  // ---- player (G1, Juha): Q skips the Bay 3 kind of scene (a picture, a pause, two voices) after a stray key; at a choice it says so ----
+  {
+    auto b = load("[SCENE]\n[START]\nart=PIC\npause=1500\ngo=A1\n[A1]\nspeaker=TY\ntext=release it. you hold it.\npause=900\ngo=A2\n[A2]\nspeaker=ELIZA\ntext=I hold it.\nset=SEEN\nthen=CHAT\n");
+    CHECK(b != nullptr);
+    Player p; Out o = p.start(b, "", true, 0);
+    CHECK(o.parts.size() >= 1 && o.parts[0].isArt);          // the picture is queued first; the board skips it with the scene
+    p.input("x", 50); p.input("1", 60); p.input(" ", 70); p.input("", 80);   // stray keys: nothing happens
+    CHECK(p.active() && p.nodeId() == "START");
+    Out q = p.input("Q", 100);                                // then Q: the whole scene, flags and then= kept
+    CHECK(q.finished && q.grant == "SEEN" && q.then == "CHAT");
+    // Q during the typing of a later node, after a stray key
+    Player p2; p2.start(b, "", true, 0);
+    for (uint32_t t = 0; p2.nodeId() != "A1" && t < 20000; t += 50) p2.tick(t);
+    p2.input("z", 10000);
+    Out q2 = p2.input("q", 10010);
+    CHECK(q2.finished && q2.grant == "SEEN");
+    // qStartsSkip: a stray key long ago does not spoil Q; a key right before it does (a word)
+    CHECK(qStartsSkip(0, 0, 120));
+    CHECK(qStartsSkip(3, 5000, 120));
+    CHECK(!qStartsSkip(3, 20, 120));
+    // Q at a numbered choice: a dim line, no pick, the choice stays (before and after the grace)
+    auto c = load("[SCENE]\n[START]\ntext=pick\nchoice1=yes\ngo1=END\nset1=Y\n");
+    for (bool ansi : {true, false}) {
+      Player pc; pc.start(c, "", ansi, 0);
+      uint32_t t = 0;
+      while (pc.phase() != P_CHOICE && t < 60000) { t += 50; pc.tick(t); }
+      Out e = pc.input("Q", t + 10);                          // inside the grace
+      CHECK(!e.finished && pc.phase() == P_CHOICE && e.text().find("Pick a number") != std::string::npos);
+      CHECK(ansi == (e.text().find('\x1b') != std::string::npos));
+      pc.tick(t + 1600);
+      e = pc.input("q", t + 1700);                            // armed
+      CHECK(!e.finished && pc.phase() == P_CHOICE && e.text().find("Pick a number") != std::string::npos && e.grant.empty());
+      e = pc.input("1", t + 1800);
+      CHECK(e.finished && e.grant == "Y");
+    }
+  }
   // ---- player: art, set on entry, redirects ----
   {
     auto s = load("[SCENE]\n[START]\nart=PIC_ONE\nset=SEEN\ngo=TWO\n[TWO]\nart=PIC_TWO\ntext=Hi\n");
@@ -511,7 +547,21 @@ int main(int argc, char **argv) {
         if (!r.finished) { printf("FAIL %s: does not end (mode %d, pick %d)\n", argv[i], mode, pickN); failures++; }
         if (r.text.find("\x1b[2J") != std::string::npos) { printf("FAIL %s: text has a clear screen\n", argv[i]); failures++; }
       }
-  }
+    // G1 (Juha): every card scene stops on Q after stray keys, at any moment; it ends or waits at a choice, and a Q there says so
+    for (uint32_t startAt = 0; startAt <= 12000; startAt += 700) {
+      Player p; p.start(s, "", true, 0);
+      uint32_t t = 0;
+      for (; t < startAt && p.active(); t += 50) p.tick(t);
+      if (!p.active()) break;
+      p.input("x", t); p.input("7", t + 1);
+      Out q = p.input("Q", t + 2);
+      bool ok = q.finished || !p.active() || p.phase() == P_CHOICE;
+      if (!ok) { printf("FAIL %s: Q at %u ms did not skip (phase %d, node %s)\n", argv[i], startAt, (int)p.phase(), p.nodeId().c_str()); failures++; }
+      if (p.active() && p.phase() == P_CHOICE) {
+        Out again = p.input("q", t + 3);
+        if (again.text().find("Pick a number") == std::string::npos || p.phase() != P_CHOICE) { printf("FAIL %s: Q at a choice gave no line\n", argv[i]); failures++; }
+      }
+    }  }
 
   if (failures) { printf("%d FAILED\n", failures); return 1; }
   printf("all scene logic tests passed\n");

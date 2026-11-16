@@ -122,6 +122,7 @@ struct Session {
   bool powered = false;
   bool makingCrew = false;
   bool sceneHold = false;  // a scene just played: the next waits until the caller has typed a command (core/haunt.h)
+  uint32_t typeAt = 0;     // G1 (Juha): when the last typed-ahead key came; a Q long after it is still a Q
   String typeAhead;        // keys typed while a scene types out: dropped when it ends (contract C7, Q22)
   bool digitHot = false;   // MANIFEST_PROMPT: a digit is a key too (the list has 9 entries or fewer)
   String loginNote;        // shown under the front page once, after the art (an account just made)

@@ -49,6 +49,8 @@ struct Scene {
   }
 };
 
+// G1 (Juha): is a Q the skip key? Not if a key came right before it (a word typed ahead, "quit"); a stray key long ago does not count.
+inline bool qStartsSkip(size_t typeAheadLen, uint32_t msSinceLastKey, uint32_t windowMs) { return typeAheadLen == 0 || msSinceLastKey >= windowMs; }
 inline std::string marker(const std::string &sceneId) { return "SC_" + haunt::upper(sceneId); }
 
 // May this caller start the scene now? (Conditions and the once-only marker.)
@@ -322,7 +324,10 @@ class Player {
     std::string t = haunt::trim(line);
     // G1: only Q skips a scene. ENTER or any other key does not flush the typing or end a pause.
     // A choice or an [any key] wait takes keys once the grace is over; earlier keys are dropped.
-    if (ph_ == P_CHOICE) { if (armed_) pick(t, now, out); }
+    if (ph_ == P_CHOICE) {
+      if (t == "q" || t == "Q") out.addText(std::string(ansi_ ? "\x1b[0;90m" : "") + "  Q skips the talk, not the choice. Pick a number." + (ansi_ ? "\x1b[0m" : "") + "\r\n");   // G1 (Juha): Q does not make the choice, and says so
+      else if (armed_) pick(t, now, out);
+    }
     else if (t == "q" || t == "Q") skip(now, out);
     else if (ph_ == P_KEY && armed_) next(now, out);
     pump(now, out);

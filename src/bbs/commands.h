@@ -24,6 +24,7 @@ static void handleLine(Session &s, String line) {
   loginCommand(s, line, cmd) || mainCommand(s, line, cmd) || sysopCommand(s, line, cmd) || userEditorCommand(s, line, cmd) ||
     uploadCommand(s, line, cmd) || fileCommand(s, line, cmd) || messageCommand(s, line, cmd) || doorCommand(s, line, cmd);
 }
+static constexpr uint32_t HOTKEY_MS = 120;   // see hotkeyTick below
 // G2 (agent run): the Enter, LF or NUL that follows the key which ended a scene is part of that key, not typed ahead.
 static bool realKeysAfter(const String &bytes, uint16_t from) {
   for (uint16_t i = from; i < bytes.length(); ++i) if (bytes[i] != '\r' && bytes[i] != '\n' && bytes[i] != 0) return true;
@@ -36,7 +37,8 @@ static void input(Session &s, const String &bytes) {
   if (s.state == READER && !streaming(s)) { readerInput(s, bytes); return; }
   if (s.state == FILE_IMAGE && !streaming(s)) { imageKey(s, bytes); return; }
   if (s.state == FILE_MUSIC && !streaming(s)) { musicKey(s, bytes); return; }
-  if (streaming(s)) {
+  // G1 (Juha): in a scene the keys go to the scene even while its picture streams. Q ends the picture and the scene together (handleScene); other keys do nothing.
+  if (streaming(s) && s.state != SCENE_PLAY) {
     bool space = false, other = false;
     for (size_t i = 0; i < bytes.length(); ++i) {
       char c = bytes[i];
@@ -76,10 +78,10 @@ static void input(Session &s, const String &bytes) {
         continue;
       }
       if ((uint8_t)c < 32) continue;
-      if (s.hotKey) { if (s.typeAhead.length() < 24) s.typeAhead += s.hotKey; s.hotKey = 0; }   // another key right behind it: a word, not a Q
-      if ((c == 'q' || c == 'Q') && !s.typeAhead.length()) { s.hotKey = c; s.hotAt = millis(); continue; }
+      if (s.hotKey) { if (s.typeAhead.length() < 24) s.typeAhead += s.hotKey; s.typeAt = millis(); s.hotKey = 0; }   // another key right behind it: a word, not a Q
+      if ((c == 'q' || c == 'Q') && scene::qStartsSkip(s.typeAhead.length(), millis() - s.typeAt, HOTKEY_MS)) { s.hotKey = c; s.hotAt = millis(); continue; }
       if (keyWait) { s.input = ""; handleLine(s, ""); if (s.state != SCENE_PLAY) { if (realKeysAfter(bytes, i + 1)) s.typeAhead = "x"; break; } }   // [any key]: any key goes on; the rest of the burst was typed ahead (G1)
-      else if (s.typeAhead.length() < 24) s.typeAhead += c;   // Q22: not echoed, and dropped when the scene ends (contract C7): a key meant for what the caller could not see must not land on the next prompt
+      else if (s.typeAhead.length() < 24) { s.typeAhead += c; s.typeAt = millis(); }   // Q22: not echoed, and dropped when the scene ends (contract C7): a key meant for what the caller could not see must not land on the next prompt
       continue;
     }
     // Q20 UX, contract C1: a letter at a menu acts at once. It waits hotkeyTick's moment first: a
@@ -104,7 +106,6 @@ static void input(Session &s, const String &bytes) {
 }
 // bbsTick: a letter that nobody followed within HOTKEY_MS is a hotkey. It is echoed and run as the
 // one-letter line it stands for, and the Enter that a line-mode client sends after it is eaten.
-static constexpr uint32_t HOTKEY_MS = 120;
 static void hotkeyTick(uint32_t now) {
   for (auto &s : sessions) {
     // Q22, contract C7: keys typed during a scene were meant for what the caller could not see. When the

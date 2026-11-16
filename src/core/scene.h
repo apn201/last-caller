@@ -144,6 +144,7 @@ static bool ownsScene(const Session &s) { return s.state == SCENE_PLAY; }
 static void sceneEnter(Session &) {}               // not reachable: listed nowhere
 static bool sceneListed(const Session &) { return false; }
 static void handleScene(Session &s, String &line, const String &cmd) {
+  if (cmd == "Q" && streaming(s)) skipStream(s);   // G1 (Juha): Q ends the picture that is still drawing and the scene together
   if (s.sceneReplay && (cmd == "Q" || cmd == "X")) { s.sceneRun = scene::Player(); s.sceneReplay = false; notebookBack(s); return; }   // Q21
   sceneWrite(s, s.sceneRun.input(hauntStd(line), millis()));
 }

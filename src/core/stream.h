@@ -27,7 +27,7 @@ static bool hotkeyState(const Session &s) {
   }
 }
 // 3 = a menu: every key goes to the board, the board echoes digits (the browser does not page on a tap).
-static uint8_t keyMode(const Session &s) { return streaming(s) ? 1 : s.state == READER || s.state == FILE_IMAGE || s.state == FILE_MUSIC ? 2 : hotkeyState(s) ? 3 : 0; }
+static uint8_t keyMode(const Session &s) { return s.state == SCENE_PLAY ? 3 : streaming(s) ? 1 : s.state == READER || s.state == FILE_IMAGE || s.state == FILE_MUSIC ? 2 : hotkeyState(s) ? 3 : 0; }
 static bool outputDone(const Session &s) { return s.jobs.empty() && !s.pending.length() && !s.output.length(); }
 
 // Append up to `want` bytes of the job's file to `out`. Returns true when the
