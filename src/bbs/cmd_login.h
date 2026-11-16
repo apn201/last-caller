@@ -55,7 +55,7 @@ static bool loginCommand(Session &s, String &line, const String &cmd) {
     String lowered = line; lowered.toLowerCase();
     bool right = passMatchesHash(s.user.salt, s.user.hash, line) || (isMaintenance(s.user) && passMatchesHash(s.user.salt, s.user.hash, lowered));
     if (!right) {
-      if (passMatchesCapitals(s.user.salt, s.user.hash, line)) say(s, "\r\n" + config(POWER_INI, "TEXT", "caps_denied", "ACCESS DENIED. CAPS LOCK OFF?"));
+      if (passMatchesCapitals(s.user.salt, s.user.hash, line)) say(s, "\r\n" + repeatAnswer(repeatCount(s, "LOGIN:CAPS:" + s.user.normalized), config(POWER_INI, "TEXT", "caps_denied", "ACCESS DENIED. CAPS LOCK OFF?"), config(POWER_INI, "TEXT", "caps_denied_2", ""), config(POWER_INI, "TEXT", "caps_denied_3", ""), "", ""));
       else say(s, "\r\n" + loginBadPassword(s));
       event("AUTH_FAIL", s.pendingHandle); loginRetry(s);
     } else { repeatReset(s); claimAccount(s); finishLogin(s); }
