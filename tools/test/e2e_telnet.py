@@ -998,7 +998,6 @@ def main():
         read_msg(c, "The order", "torn it into four")
         read_msg(c, "Bay 3", "tell them the")
         # the Bay 3 memory scene plays at the next calm prompt, then the main menu is back
-        advance(c, "tell them the", timeout=150)
         # G1 (Juha): a stray key early in the scene, then Q: the picture and the scene end together
         advance(c, "Q skips", timeout=60)
         key(c, "x"); key(c, "7")
