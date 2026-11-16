@@ -1189,6 +1189,7 @@ def main():
             if time.time() > end:
                 raise TimeoutError("no choice prompt after Something else.")
             c._pump()
+        time.sleep(1.7)   # G1: the grace after a reply list
         c.send("q")
         c.expect("Goodnight. I will be here.", timeout=30)
         advance(c, "Main Board Command?", timeout=30)
@@ -1223,10 +1224,12 @@ def main():
         choose(c, "Ask her to run something, by name.")    # Q18: the handbook says: by name
         c.expect("What would you like me to run?", timeout=60)
         c.expect(">", timeout=30)
+        time.sleep(1.7)   # G1: the grace
         c.send("run the hull check")                 # a wrong name is not taken; she says so (Q21)
         advance(c, "I have nothing to run by that name.", timeout=30)
         advance(c, "What would you like me to run?", timeout=60)
         c.expect(">", timeout=30)
+        time.sleep(1.7)   # G1: the grace
         c.send("MEMCHK")
         advance(c, "Engineering is on the list now", timeout=120)
         advance(c, "Main Board Command?", timeout=60)
