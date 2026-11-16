@@ -363,15 +363,18 @@ Rules for every item:
   (Claude Code, 15 Nov 2026, Juha's request: take the recommendations, go
   for gold). Manifest option C, crew-password clues, key lag around scenes,
   redial banner, News Wire, shell help, disconnects; two critics to 83.
-- **Q23 and Q24, in gated slices G1 to G8.** Order and gates:
-  `docs/briefs/Q23-Q24-SLICES.md` (wins over the two briefs); content:
-  `docs/briefs/Q23-playtest-juha.md`, `docs/briefs/Q24-new-verbs.md`.
-  Each slice: build, one agent playtest, stop; Juha tests once; then the next.
-- [ ] **G1 - Scenes (only Q skips) and the M7 pointer.**
-- [ ] **G2 - ELIZA's chat (RiveScript reader, her brain on the card).**
-- [ ] **G3 - Hints (three tiers, the radio club's voice).**
-- [ ] **G4 - New chain, design only (critic read, Juha approves).**
-- [ ] **G5 - Posting and the radio club (event=post, replies on the pass).**
-- [ ] **G6 - Three trials and ELIZA's orders (replaces M6/M7 gates).**
+- **GOLD: Q23 and Q24 in gated slices G1 to G9 (rev. 2).** Read
+  `docs/reviews/G0-juha.md`, then `docs/briefs/Q23-Q24-SLICES.md` (wins over
+  the two briefs). Difficult, never frustrating. Each slice: build, one agent
+  playtest, stop; Juha tests once; then the next.
+- [ ] **G1 - Friction.** Built b73b000..ccb06eb (only Q skips, grace, M7
+  pointer); still to do: case-blind passwords, crew logins answer wrong
+  passwords, no identical answer twice, the playtest.
+- [ ] **G2 - One chat (free text, help lists options, RiveScript brain).**
+- [ ] **G3 - Story pass, design (crew's plan as trail, intent ladder, darker acts, new verbs).**
+- [ ] **G4 - Story pass, build.**
+- [ ] **G5 - Posting and the radio club.**
+- [ ] **G6 - Three trials and ELIZA's orders.**
 - [ ] **G7 - Forged order and the ending confrontation.**
-- [ ] **G8 - Ambience (options first, Juha picks).**
+- [ ] **G8 - Hints (the safety net).**
+- [ ] **G9 - Ambience (options first, Juha picks).**

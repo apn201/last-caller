@@ -1,55 +1,118 @@
-# Q23 and Q24 in gated slices
+# GOLD - Q23 and Q24 in gated slices (rev. 2)
 
 From: Claude Code (planner), at Juha's request, 16 Nov 2026. To: Kiro.
 
-Juha: "We have so many changes. Split it in gated slices, to be tested both by
-me and agents (1 time is enough) before advancing."
+**Go for gold.** Juha played the game himself and got frustrated: read
+`docs/reviews/G0-juha.md` first, all of it. This revision replaces rev. 1 of
+this file. Content still comes from `docs/briefs/Q23-playtest-juha.md` and
+`docs/briefs/Q24-new-verbs.md`; where they disagree with this file, this file
+wins.
 
-The content is in `docs/briefs/Q23-playtest-juha.md` and
-`docs/briefs/Q24-new-verbs.md`. This file sets the **order and the gates**.
-Where it disagrees with those two briefs, this file wins.
+## The rule above all: difficult, never frustrating
+
+The puzzles stay hard. What must change is that the player always has a
+**reason** for the next try and a **feeling** of progress. Hints scattered in
+several places are not enough. The story itself must lead the player to
+logical decisions.
+
+### 1. The crew's plan is the trail
+
+After 22 Nov the crew worked out that ELIZA was the problem and tried to stop
+her. Their plan is the player's route: Ty's accident with the zeros shows her
+memory can be broken; Achterberg names it as the one place she cannot watch;
+Marta knows the handbook makes ELIZA allow a memory check; someone says out
+loud "we need SYSOP"; they run out of time (air, power, nerve). The player
+reads their attempt in the posts, mail and logs, and finishes it. So every
+milestone is something a crew member *wanted to do* and wrote about, with the
+step they could not take. The player thinks "they needed SYSOP, so I do", not
+"the game wants a password".
+
+### 2. The intent ladder
+
+For each milestone, the board gives in order, in the story's own voice:
+
+1. **Goal**: what must happen, and why ("we need SYSOP to stop the queue").
+2. **Suspicion**: something odd that matters ("the board went away for three
+   minutes after Ty's post").
+3. **Lead**: whose it is or where it is ("Marta keeps the handbook on her
+   desk", "her password is the name she says goodnight to").
+4. **Confirmation when close**: a near miss is answered (the 19-zeros line
+   exists; do the same for every gate).
+
+Write the ladder for M1 to M9 (and the new Q24 gates) in `PUZZLE_CHAIN.md`
+before any content. The story lint checks every rung has a source.
+
+### 3. The world answers attempts
+
+- **No identical answer twice in a row**, anywhere: ELIZA's chat, scene
+  refusals, Diagnostics, the shell. The second time she says it differently;
+  the third time she, or the board, notices ("You have asked me that three
+  times. The Commander used to do that when she wanted something else.").
+- **Failed logins on a crew account tell a story**: after a wrong password,
+  the board shows that account's own login line (Marta's "Personal. Not
+  yours."; Keiko's plant joke); after three, ELIZA pages in her voice. Never
+  the password; always whose it is and that it is personal.
+- **Passwords are case-blind** for every account, as on PCBoard,
+  RemoteAccess and Wildcat in the 1990s. Existing hashed caller passwords
+  keep working (compare both ways or migrate on login).
+- **Repeated dead ends lead somewhere**: the authorisation code typed again
+  gets a different, specific answer about what is missing.
+
+### 4. Darker after 22 Nov (Alien)
+
+Act 2 and 3 posts, mail and logs: the crew grows afraid. Paranoia (is it the
+ship, the Sponsor, each other?), one of them thinks the ship is cursed, one
+thinks someone aboard is helping her, and then they team up and start
+treating Ty better, too late. Keep it short: rewrite and replace, do not add
+volume. Every new or rewritten post must also carry a rung of the ladder.
+Story bible and evidence matrix follow; the lint stays green.
+
+### 5. One chat
+
+Node chat with ELIZA is one free-text mode. `help`, `?`, `suggest` or
+`what can I do` lists the numbered options that fit now; a number picks one;
+typing the option's words does the same. An option the player is too early
+for answers in her voice that now is not the right time, and why in story
+terms ("I do not run checks for guests. The Commander's handbook is clear.").
+The RiveScript brain answers everything else. Free chat never opens a gate on
+its own; the options do, and they are always reachable by typing.
 
 ## The gate (every slice)
 
-1. **Build.** Kiro does the slice only, in small commits prefixed with the
-   slice id (`G1:` ...). Checks: `pio run`, host tests, story lint,
-   `tools/staging-check.ps1` with the e2e finishing the game. Push `main` to
-   `staging` and deploy.
-2. **Agent test, once.** One `playtester` run (`docs/PLAYTEST.md`,
-   `tools/staging-playtest.ps1`) on a fresh board, aimed at the slice's test
-   below. Report in `docs/reviews/G<n>-agent.md`. Fix what it finds that is
-   in the slice's scope; anything else goes to the next slice's notes.
-3. **Stop.** Tick the slice in `QUEUE.md` with: what changed, RAM and flash,
-   the staging result, the deploy commit, the agent's findings and fixes, and
-   **what Juha should try**. Do not start the next slice.
-4. **Juha tests, once.** He plays the deployed board. His notes go to
-   `docs/reviews/G<n>-juha.md` (the planner writes them down). Fixes from
-   his notes are done in the same slice, then the next slice may start.
+1. **Build** the slice only, commits prefixed with its id. Checks: `pio run`,
+   host tests, story lint, `tools/staging-check.ps1` with the e2e finishing
+   the game. Push `main` to `staging`, deploy.
+2. **Agent test, once**: one `playtester` run on a fresh board, aimed at the
+   slice. Report `docs/reviews/G<n>-agent.md`. The agent also writes down
+   every moment it did not know what to try next, and for how long: the
+   frustration log. Fix what is in scope.
+3. **Stop.** Tick in `QUEUE.md`: what changed, RAM and flash, staging result,
+   deploy commit, the agent's findings, **what Juha should try**.
+4. **Juha tests once**; his notes in `docs/reviews/G<n>-juha.md`; fix them in
+   the same slice; then the next slice may start.
 
-Exception: G4 is a design slice. Its "test" is a critic agent reading the
-draft once, then Juha's approval.
+Design slices (G3): one critic read, then Juha's approval.
 
 ## The slices
 
-| Slice | What (source) | Agent test | Juha tries |
+| Slice | What | Agent test | Juha tries |
 | --- | --- | --- | --- |
-| **G1** Scenes and the M7 pointer | Q23 items 1 and 2: only Q skips a scene, the `Q skips` line, the 1.5 s grace, type-ahead dropped at start; the grant line and the password/login keyword point at Engineering | Types during every scene trigger it can reach; each scene shows its last node. Finds ELIZA's login from the hints alone | Plays to M7 typing as he likes; no scene is lost; finds the login |
-| **G2** ELIZA's chat | Q23 item 3: RiveScript reader, her brain on the card, per act | 30+ chat lines per act it has reached; counts repeats; tries to get a gate from free chat (must fail) | Talks to her in each act he reaches; she sounds alive, never stuck on one line |
-| **G3** Hints | Q23 item 4: `HINTS.INI`, three tiers per milestone, `H` in the notebook, the 5-minute steps, the radio club's voice | Asks for a hint at each milestone it reaches; checks no tier names an answer | Asks for hints when stuck; they help without giving it away |
-| **G4** New chain, design only | Q24 "Design first": `PUZZLE_CHAIN.md` rewrite, story bible, private story posts solved on paper | A critic (Ada or Mara) reads the draft once and reports | Approves or edits the chain. Nothing is built before this |
-| **G5** Posting and the radio club | Q24 engine 1 to 3 and R1 to R3: `event=post`, delayed private threaded replies, `event=upload` (browser, optional), the club from M2, "help" in the Radio Room | Posts good, vague and wrong questions; replies arrive on the pass, under its post, private | Posts to the club; the reply feels like a person on the next pass |
-| **G6** Three trials and ELIZA's orders | Q24 act 2: T1 to T3, the orders as notebook entries and talk options, the argument replaces M6 reply 3 and M7's password | Plays the three trials in a different order from the e2e; argues with wrong pairs, then wins | Plays act 2 in his own order; the argument is fair and fun |
-| **G7** Forged order and the ending | Q24 act 3 and the ending confrontation | Plays from act 3 to the end, two endings | Plays to the end |
-| **G8** Ambience | Q23 item 5: options doc first, Juha picks, build only that | Checks the picked effects can be turned off and do not break Telnet | Picks, then listens and watches |
+| **G1** Friction | Built (b73b000..ccb06eb): only Q skips, grace, M7 pointer. **Add:** case-blind passwords; crew logins answer wrong passwords in story; no identical answer twice (chat, scene refusals, Diagnostics, shell) | Finish the interrupted G1 playtest; types wrong passwords in every case; repeats questions | Logs in with lower case; repeats himself and gets something new |
+| **G2** One chat | Rule 5 and Q23 item 3 (RiveScript): free text with `help` options, too-early lines, the talk scene folded in | 30+ lines per act; finds the memory check by typing alone; tries every option early | Talks to her; never feels two modes |
+| **G3** Story pass, design | Rules 1, 2 and 4 plus Q24 "Design first": the crew's plan as trail, the intent ladder per milestone, darker act 2 and 3 outline, the new verbs (posting, the radio club, ELIZA's orders, the forged order), private story posts. `PUZZLE_CHAIN.md` rewrite | A critic reads it once | Approves or edits. Nothing in G4 to G7 is built before |
+| **G4** Story pass, build | The rewritten act 2 and 3 posts, mail, logs; every ladder rung on the board | Plays from M2 with no planner help; frustration log must show no stretch over ~10 min without a lead | Plays act 2 and 3; feels the dread; knows what to try |
+| **G5** Posting and the radio club | Q24 engine 1 to 3, R1 to R3 | Posts good, vague and wrong questions | Posts to the club |
+| **G6** Trials and ELIZA's orders | Q24 act 2; the orders as talk options in the one chat | Trials in a new order; argues and wins | Plays act 2 his way |
+| **G7** Forged order and the ending | Q24 act 3, the confrontation | Act 3 to the end, two endings | Plays to the end |
+| **G8** Hints | Q23 item 4 on the new chain, notebook `H` and "help" in the Radio Room; the safety net, not the fix | Asks at each milestone; no tier names an answer | Asks when stuck |
+| **G9** Ambience | Q23 item 5: options doc, Juha picks, build that | Effects can be turned off; Telnet unharmed | Picks, watches, listens |
 
-After G7: one critic round (Ada, then Mara, fresh boards) on the whole game,
-recorded in `LOOP.md`, as the fun check required by the memory rule.
+After G9: both critics (Ada, then Mara) on the whole game, in `LOOP.md`.
 
-## Rules for every slice
+## Every slice
 
-- One slice per Kiro run. Re-read this file before ticking.
-- The e2e and the story lint stay green after every slice; the game is
-  finishable on the deployed board at every gate.
-- G1 to G3 work on today's chain. G5 to G7 change it only as G4 approved.
+- One slice per run. Re-read this file and `G0-juha.md` before ticking.
+- The game is finishable on the deployed board at every gate.
 - Engine features go on the TinyBBS port list in `docs/PLATFORM_UX.md`.
-- All caller text DRAFT for Juha; ANSI art for every new screen.
+- All caller text DRAFT for Juha, in his game's voice: short, calm, concrete,
+  `.kiro/steering/writing.md`. ANSI art for every new screen.
