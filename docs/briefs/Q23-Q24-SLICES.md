@@ -124,16 +124,6 @@ Design slices (G3): one critic read, then Juha's approval.
 | **G8** Hints | Q23 item 4 on the new chain, notebook `H` and "help" in the Radio Room; the safety net, not the fix | Asks at each milestone; no tier names an answer | Asks when stuck |
 | **G9** Ambience | Q23 item 5, plus Juha's pick (rev. 4): **a radio bed of real-sounding chatter and static** under the browser terminal, for stress, on by default after the first sound the player allows, with a **mute button** that remembers. It need not match the story events exactly: "this is a game, not a history lesson", a realistic simulator with arcade-like scenarios. It may swell at tense moments (scenes, the overrun, act 3). Recordings must be our own or free to use (provenance in `CONTENT_POLICY.md`); Juha recorded the modem himself and may record more. Then the options doc for the rest (glitch filter, Ty's music) | Mute works and is remembered; Telnet unharmed; no autoplay before a click | Plays with it on, then mutes it |
 
-**Expert mode (Juha, rev. 4)**, built with G8 and G9: chosen once at sign-up
-(or toggled in the caller's settings). It hides the written nudges: hint
-tiers, `help` option lists in chat, the "Q skips" and similar instruction
-lines, the radio club's stuck posts. The player has to go by the cues
-instead: the radio bed and sound cues (a swell, a burst of static, a click
-when something changed), ELIZA's own words, the board itself. Every cue that
-stands in for a hidden line must exist in sound **and** in a one-word visual
-mark for callers without sound (Telnet), so expert mode stays finishable
-everywhere. The e2e finishes the game once in expert mode.
-
 After G9: both critics (Ada, then Mara) on the whole game, in `LOOP.md`.
 
 ## Every slice
