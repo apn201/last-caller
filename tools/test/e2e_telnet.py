@@ -898,10 +898,17 @@ def main():
             raise AssertionError("the third wrong password did not bring ELIZA's page: %r" % seen[2])
         if "ELIZA>" in seen[0] or "ELIZA>" in seen[1]:
             raise AssertionError("ELIZA paged too early: %r" % seen[:2])
-        # passwords are case-blind (PCBoard, RemoteAccess, Wildcat): the card's ANDERS opens in lower case
+        # passwords are case-sensitive: the lower-case word is refused with the Caps Lock joke, and the screen carries the warning
+        if "WARNING: CAPS LOCK OFF" not in c.all:
+            raise AssertionError("the login screen has no Caps Lock warning")
         c.send("CMDR")
         c.expect("Password:")
         c.send("anders")
+        c.expect("CAPS LOCK OFF?")
+        c.expect("Login:")
+        c.send("CMDR")
+        c.expect("Password:")
+        c.send("ANDERS")
         advance(c, "Main Board Command?", timeout=60)
         # a caller with no account answers differently the second time too
         c.send("G")
@@ -1365,7 +1372,7 @@ def main():
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
         c.send("G")
-        login(c, handle, password.upper())   # G1: passwords are case-blind: e2e-pass-1 as capitals
+        login(c, handle, password)
 
     # ---- the manifest (S8): needs --evidence (and --shell-open for the endings) ----
     need = "SKIP the card has no E2E_EVIDENCE rule (pass --evidence)"

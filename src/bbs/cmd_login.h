@@ -49,18 +49,17 @@ static bool loginCommand(Session &s, String &line, const String &cmd) {
   if (s.state == LOGIN_HANDLE) { s.pendingHandle = clean(line, 16, true); User u;
     if (!s.pendingHandle.length() || !findUser(up(s.pendingHandle), u)) { say(s, loginUnknown(s)); if (powerEnabled && powerCfg.unknownHint.length() && s.repCount == 0) say(s, powerCfg.unknownHint); /* the hint once; a second ask gets the variant alone */ loginRetry(s); }
     else if (u.locked) { say(s, "This account is locked. Page the SysOp."); event("AUTH_LOCKED", u.handle); loginRetry(s); } else { s.user = u; s.state = LOGIN_PASSWORD; s.hideInput = true; prompt(s, "Password: "); } return true; }
-  // The service label prints ADMIN in capitals; since G1 every password is case-blind (it was only the maintenance one, Q12b).
+  // The service label prints ADMIN in capitals: the maintenance password also works in lower case (Q12b).
+  // Other passwords are case-sensitive; the login screen says CAPS LOCK OFF and a miss that capitals would fix says so (G1, rev. 3).
   if (s.state == LOGIN_PASSWORD) { s.hideInput = false;
-    // G1: passwords are case-blind (as on PCBoard, RemoteAccess and Wildcat). A hash made before G1 still opens
-    // the account, and a caller's own account is moved to the capitals at this login.
-    bool right = passMatchesHash(s.user.salt, s.user.hash, line);
-    if (!right) { say(s, "\r\n" + loginBadPassword(s)); event("AUTH_FAIL", s.pendingHandle); loginRetry(s); }
-    else {
-      if (passHash(s.user.salt, line) != s.user.hash && !hasFlag(s.user, "READONLY")) { s.user.salt = salt(); s.user.hash = passHash(s.user.salt, line); touchUser(s.user); }
-      repeatReset(s); claimAccount(s); finishLogin(s);
-    }
-    return true; }
-  // ENTER on an empty line backs out of signing up, at the handle and the password.
+    String lowered = line; lowered.toLowerCase();
+    bool right = passMatchesHash(s.user.salt, s.user.hash, line) || (isMaintenance(s.user) && passMatchesHash(s.user.salt, s.user.hash, lowered));
+    if (!right) {
+      if (passMatchesCapitals(s.user.salt, s.user.hash, line)) say(s, "\r\n" + config(POWER_INI, "TEXT", "caps_denied", "ACCESS DENIED. CAPS LOCK OFF?"));
+      else say(s, "\r\n" + loginBadPassword(s));
+      event("AUTH_FAIL", s.pendingHandle); loginRetry(s);
+    } else { repeatReset(s); claimAccount(s); finishLogin(s); }
+    return true; }  // ENTER on an empty line backs out of signing up, at the handle and the password.
   if ((s.state == NEW_HANDLE || s.state == NEW_PASSWORD) && !line.length() && s.makingCrew) { crewAccountCancel(s); return true; }
   if ((s.state == NEW_HANDLE || s.state == NEW_PASSWORD) && !line.length()) { s.hideInput = false; say(s, "\r\nNo account made."); loginPrompt(s); return true; }
   if (s.state == NEW_HANDLE) { s.pendingHandle = clean(line, 16, true); User exists; if (s.pendingHandle.length() < 3 || findUser(up(s.pendingHandle), exists)) { say(s, "Handle unavailable."); prompt(s, "Handle (3-16 chars, ENTER cancels): "); } else { s.state = NEW_PASSWORD; s.hideInput = true; prompt(s, "Password (6+ chars, ENTER cancels): "); } return true; }
