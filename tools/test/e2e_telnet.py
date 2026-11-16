@@ -1249,15 +1249,19 @@ def main():
         c.expect("type help", timeout=30)
         c.expect("cannot account for some minutes", timeout=30)   # after the overrun she mentions the gap
         chat_say(c, "tell me about the weather", "twenty degrees")
-        chat_say(c, "help", "[1]")
-        seg = chat_wait(c, "[2]")
-        if "Ask her to run something, by name" in seg:
-            raise AssertionError("the memory check is offered before the handbook page was read")
-        if "Give me SYSOP" not in c.all[-1500:]:
-            raise AssertionError("help does not list the SYSOP option after the overrun")
-        n = re.search(r"\[(\d)\]\x1b\[0m I can fix that\. Give me SYSOP\.", c.all[-1500:])
-        chat_say(c, n.group(1) if n else "give me sysop", "not given to guests")
-        chat_say(c, "memchk", "It is in her handbook")   # too early: she says why
+        mark = len(c.all)
+        c.send("help")
+        seg = chat_wait(c, "Goodnight.", mark=mark)          # the last option of the list
+        for label in ("Give me SYSOP.", "Ask her to run something, by name.", "Tell me about your memory."):
+            if label not in seg:
+                raise AssertionError("help does not list %r after the overrun: %r" % (label, seg[-900:]))
+        n = re.search(r"\[(\d)\]\x1b\[0m Give me SYSOP\.", seg)
+        chat_say(c, n.group(1) if n else "give me sysop", "not given to guests")   # a number does what its words do
+        chat_say(c, "i can fix that, give me sysop mode", "not given to guests")  # the same line in other words: its next wording
+        n = re.search(r"\[(\d)\]\x1b\[0m Ask her to run something, by name\.", seg)
+        chat_say(c, n.group(1) if n else "run something", "handbook")   # too early: she says why, in story terms
+        chat_say(c, "memchk", "It is in her handbook")
+        chat_say(c, "9", "no option with that number")
         # Answers come in order and never late: three quick lines, three answers, the last one last.
         mark = len(c.all)
         for q in ("how are you", "tell me about the garden", "what is NOWHERE"):
@@ -1310,8 +1314,12 @@ def main():
         mark = len(c.all)
         c.send("C")
         c.expect("Multi-Node Chat", timeout=30)
-        chat_say(c, "help", "Type a number")
-        chat_wait(c, "That sounds serious.")
+        mark = len(c.all)
+        c.send("help")
+        chat_wait(c, "Goodnight.", mark=mark)
+        if "Where are the go-live papers?" not in c.all[mark:]:
+            raise AssertionError("after the grant help does not offer the go-live papers")
+        chat_say(c, "where are the go-live papers", "Engineering")
         if "Ask her to run something" in c.all[mark:] or "Give me SYSOP" in c.all[mark:]:
             raise AssertionError("a SYSOP request is still offered after the grant")
         c.send("/Q")

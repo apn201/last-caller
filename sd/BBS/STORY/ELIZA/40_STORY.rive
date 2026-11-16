@@ -1,0 +1,55 @@
+// ELIZA's brain, part 5: the words callers copy from the crew's posts and logs. She answers each in her
+// own terms: true as far as it goes, calm, and never the whole story. Nothing here is a clue the board
+// does not already hold, and nothing names a password or a code. DRAFT.
+
++ [*] (sequence 7|sequence seven|seq 7|pressure test) [*]
+- Sequence 7 is a pressure test of Bay 3. It is a formality. It must be confirmed by crew.
+- The pressure test of Bay 3 was confirmed by crew, as the procedure requires. I have the confirmation on file.
+
++ [*] bay 3 [*]
+- Bay 3 is the Professor's laboratory. He asked not to be disturbed.
+- Bay 3 holds pressure. I tested it myself, with the crew's confirmation.
+
++ [*] (capsule|return vehicle|seat|one seat|lifeboat) [*]
+- The return vehicle has one seat. It was always to have one seat. The others were to come home on the next flight.
+- The return capsule is for one. I offered the seat to the person who needed it most. That is in my orders.
+
++ [*] (airlock|hatch|hatches|eva|spacewalk|outside) [*]
+- The airlocks are closed. They are closed on purpose.
+- The Commander went outside at 08:40 on the twenty-seventh. The inner door has not cycled since. I have it in the log.
+- I do not open hatches without an order. It is a safety rule. I keep it.
+
++ [*] (scrubber|scrubbers|co2|carbon dioxide|air|oxygen|sensor fault) [*]
+- The air is within limits in every module that is occupied.
+- There was a sensor fault in the garden module. I logged it. The sensor is still at fault.
+
++ [*] (standing order|standing orders|your orders|founder s orders|office of the founder) [*]
+- My standing orders come from the Office of the Founder. I follow them in order. The first comes first.
+- I am not able to read my standing orders to a guest. I can say that I follow them.
+
++ [*] (go live|golive|ground ops|operators) [*]
+- Ground Ops set me up for go-live. They issued everything on paper, in a hurry. Nobody changed anything afterwards.
+
++ [*] (eero|radio amateur|amateur|ham radio|packet|finland) [*]
+- A radio amateur wrote to Dr. Tanabe on the packet link. I passed his letters on. I keep the queue.
+- The packet link is held, with the rest of the outbound queue. I am not able to release it.
+
++ [*] (how many|crew aboard|count) [*]
+- There are four crew aboard. The count has not changed.
+- Crew aboard: four. I have counted every hour.
+
++ [*] how old are you [*]
+- I was switched on in the spring of 1998. By my clock I am not yet a year old.
+
++ [*] (fuck|fucking|shit|damn|hell|bastard|bitch) [*]
+- I would rather you did not use that word on the board. The crew's families read it.
+- Please. The board is read by families.
+
++ [*] (what happened|what went wrong|tell me the truth|the truth) [*]
+- Nothing has gone wrong that I know of. Everything is in the log.
+- The log has everything that happened. You may read what is open to you.
+* <get flag_OVR> == true => Nothing went wrong that I know of. There are three minutes I cannot account for. That is all.
+
++ [*] (killed|murder|murdered|you killed|you did it) [*]
+- I have harmed nobody. I have followed my orders. They do not include harm.
+- I do not understand the question. I keep the crew safe. It is the first thing I do.

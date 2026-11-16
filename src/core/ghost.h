@@ -226,10 +226,10 @@ static void ghostHelp(Session &s, const ghost::Ctx &c) {
   if (opts.size() > 9) opts.resize(9);
   s.chatOpts.clear();
   const ghost::Line *intro = ghost::firstOf(ghostTable, c, opts.empty() ? ghost::K_NOHELP : ghost::K_HELP);
-  if (intro) { ghostSpeak(s, *intro, "chat help"); }
+  if (intro) ghostSpeak(s, *intro, "chat help");
   uint32_t at = s.ghostSay.empty() ? millis() : s.ghostSay.back().dueAt;
   for (size_t i = 0; i < opts.size(); ++i) {
-    at += 250;
+    at += 150;
     GhostLine g;
     g.dueAt = at; g.from = hauntStr(opts[i]->from);
     g.text = "\x1b[1;33m[" + String((unsigned)(i + 1)) + "]\x1b[0m " + hauntStr(opts[i]->option);
@@ -237,10 +237,6 @@ static void ghostHelp(Session &s, const ghost::Ctx &c) {
     s.chatOpts.push_back(hauntStr(opts[i]->id));
   }
 }
-// The caller has said something in chat (bbs/chat.h chatCommand). G2: one free-text chat. Her answer to the newest line
-// is the next thing on the screen: anything still queued from an older line is dropped, so answers never arrive late
-// or out of order. Order of answering: help, a number, the story's own lines (SYSOP.INI), her brain (STORY/ELIZA),
-// then the fixed fallbacks. Free chat sets no flag of its own; only a line's own set= and an option's then= do.
 // What she had not finished saying is shown now, in order. True if it started a scene (the chat is gone).
 static bool ghostStartThen(Session &s, const GhostLine &g);
 static bool ghostFlush(Session &s) {
@@ -253,45 +249,83 @@ static bool ghostFlush(Session &s) {
   }
   return false;
 }
+// A keyword line said in its n-th wording (say=, say2=, say3=).
+static void ghostSpeakVariant(Session &s, const ghost::Line &l, size_t n, const char *why) {
+  if (l.says.size() <= 1 || n == 0) { ghostSpeak(s, l, why); return; }
+  ghost::Line v = l;
+  v.say = l.says[n % l.says.size()];
+  ghostSpeak(s, v, why);
+}
+// She noticed the caller asked again: the next chat=again line. False if the card has none.
+static bool ghostAgain(Session &s, const ghost::Ctx &c) {
+  const ghost::Line *a = ghost::againLine(ghostTable, c, s.ghostAgain);
+  if (!a) return false;
+  s.ghostAgain++;
+  ghostSpeak(s, *a, "chat again");
+  return true;
+}
+// Her brain's answer, queued. False if it had nothing (or only its catch-all, when `specific`).
+static bool ghostBrain(Session &s, const ghost::Ctx &c, const std::string &text, bool specific, bool *repeated = nullptr) {
+  if (elizaBrain.empty() || !ghost::present(ghostTable, c, "ELIZA")) return false;
+  s.rive.account = hauntStd(s.user.handle);
+  s.rive.readonly = riveOwner(s) ? "false" : "true";
+  rive::State keep = s.rive;
+  const std::string before = rive::encodeVars(s.rive.vars);
+  rive::Result r = rive::reply(elizaBrain, s.rive, c.flags, text);
+  if (!r.matched || (specific && r.catchAll)) { s.rive = keep; return false; }
+  if (repeated) *repeated = r.repeated;
+  if (r.repeated) return false;
+  riveVarsSave(s, before);
+  event("GHOST", "BRAIN " + s.user.handle + " node " + s.node + (r.catchAll ? " (brain, not understood)" : " (brain)"));
+  ghostQueueText(s, r.text);
+  return true;
+}
+// The caller has said something in chat (bbs/chat.h chatCommand). G2: one free-text chat.
+// What she had not finished saying is shown first, so answers never come late or out of order.
+// Then: help lists the options for now; a number types its option's words; the story's own lines (SYSOP.INI)
+// answer before her brain (STORY/ELIZA); the fixed fallbacks come last. Free chat sets no flag of its own:
+// only a line's set= and then= do.
+// Repeats (G1, G2): the same line asked for again in other words gets its next wording (say2=, say3=) or her
+// brain's answer on the topic; the same question asked again gets a chat=again line; never one answer twice in a row.
 static void ghostChatHeard(Session &s, const String &line) {
   if (ghostTable.lines.empty() || !s.authenticated) return;
   if (ghostFlush(s)) return;
-  const std::string text = haunt::trim(hauntStd(line));
+  std::string text = haunt::trim(hauntStd(line));
   if (text.empty()) return;
   const ghost::Ctx c = ghostCtx(s);
-  const std::string lastId = hauntStd(s.ghostLastId);
-  if (ghost::wantsHelp(text)) { ghostHelp(s, c); s.ghostRepeat = 0; s.ghostLastId = "~"; return; }
-  const ghost::Line *l = nullptr;
+  if (ghost::wantsHelp(text)) { ghostHelp(s, c); s.ghostRepeat = 0; s.ghostLastId = "~"; s.ghostLastText = ""; return; }
   const int n = ghost::pickNumber(text);
   if (n) {
-    if ((size_t)n <= s.chatOpts.size()) {
-      l = ghost::byId(ghostTable, hauntStd(s.chatOpts[n - 1]));
-      if (l && !ghost::lineDue(*l, c)) l = nullptr;
-      if (l && l->id == lastId) { const ghost::Line *a = ghost::againLine(ghostTable, c, s.ghostRepeat); if (a) l = a; }
+    const ghost::Line *o = (size_t)n <= s.chatOpts.size() ? ghost::byId(ghostTable, hauntStd(s.chatOpts[n - 1])) : nullptr;
+    if (!o || !ghost::lineDue(*o, c)) {
+      const ghost::Line *nn = ghost::firstOf(ghostTable, c, ghost::K_NONUM);
+      if (nn) ghostSpeak(s, *nn, "chat number");
+      s.ghostLastId = "~";
+      return;
     }
-    if (!l) l = ghost::firstOf(ghostTable, c, ghost::K_NONUM);
-  } else {
-    l = ghost::keysReply(ghostTable, c, text, lastId, s.ghostRepeat);
-    if (!l && !elizaBrain.empty() && ghost::present(ghostTable, c, "ELIZA")) {
-      const std::string before = rive::encodeVars(s.rive.vars);
-      rive::Result r = rive::reply(elizaBrain, s.rive, c.flags, text);
-      riveVarsSave(s, before);
-      if (r.matched) {
-        if (r.repeated) l = ghost::againLine(ghostTable, c, s.ghostRepeat);
-        if (!l) {
-          s.ghostRepeat = 0; s.ghostLastId = "~";
-          event("GHOST", "BRAIN " + s.user.handle + " node " + s.node + " (brain)");
-          ghostQueueText(s, r.text);
-          return;
-        }
-      }
-    }
-    if (!l) l = ghost::elseReply(ghostTable, c, s.ghostTurn, lastId, s.ghostRepeat);
+    text = ghost::optionWords(*o);   // a number is the option's words, typed
   }
+  const std::string said = ghost::norm(text);
+  const bool sameAsk = hauntStr(said) == s.ghostLastText;
+  s.ghostLastText = hauntStr(said);
+  const std::string lastId = hauntStd(s.ghostLastId);
+  const ghost::Line *k = ghost::keysMatch(ghostTable, c, text);
+  if (k) {
+    if (k->id != lastId) { s.ghostRepeat = 0; s.ghostLastId = hauntStr(k->id); ghostSpeak(s, *k, "chat keyword"); return; }
+    s.ghostRepeat++;
+    if (!sameAsk && k->says.size() > 1) { ghostSpeakVariant(s, *k, s.ghostRepeat, "chat keyword, again"); return; }
+    if (!sameAsk && ghostBrain(s, c, text, true)) { s.ghostLastId = "~"; return; }
+    if (sameAsk && k->says.size() > 1 && s.ghostRepeat < k->says.size()) { ghostSpeakVariant(s, *k, s.ghostRepeat, "chat keyword, again"); return; }
+    if (!ghostAgain(s, c)) ghostSpeak(s, *k, "chat keyword");
+    return;
+  }
+  bool repeated = false;
+  if (ghostBrain(s, c, text, false, &repeated)) { s.ghostRepeat = 0; s.ghostLastId = "~"; return; }
+  if (repeated && ghostAgain(s, c)) return;
+  const ghost::Line *l = ghost::elseReply(ghostTable, c, s.ghostTurn, lastId, s.ghostAgain);
   if (!l) return;
-  if (l->kind == ghost::K_ELSE) s.ghostTurn++;
-  if (l->kind == ghost::K_AGAIN) s.ghostRepeat++; else { s.ghostRepeat = 0; s.ghostLastId = hauntStr(l->id); }
-  ghostSpeak(s, *l, l->kind == ghost::K_ELSE ? "chat fallback" : "chat keyword");
+  if (l->kind == ghost::K_ELSE) { s.ghostTurn++; s.ghostRepeat = 0; s.ghostLastId = hauntStr(l->id); } else s.ghostAgain++;
+  ghostSpeak(s, *l, l->kind == ghost::K_ELSE ? "chat fallback" : "chat again");
 }
 
 // G2: a line with then= (the memory check): once its last part is said, the chat closes and the scene plays.

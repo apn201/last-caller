@@ -422,10 +422,15 @@ struct State {
   std::map<uint16_t, uint16_t> lastPick;       // trigger -> the reply index given last time
   std::string lastInput, lastReply;
   uint32_t rng = 12345;
+  // Set by the board, never saved, never written by <set>: <get account> (the handle) and
+  // <get readonly> ("true" on a crew account or any account that is not the caller's own).
+  std::string account, readonly = "false";
+  bool lastStar = false;     // the last answer came from the catch-all `+ *`
 };
 struct Result {
   bool matched = false;
   bool repeated = false;     // the only answer there was is the one she gave last
+  bool catchAll = false;     // the answer came from `+ *`: she did not understand
   std::string text;
 };
 
@@ -453,6 +458,8 @@ inline std::string respond(const Brain &b, State &st, const std::string &flags, 
 
 inline std::string getVar(const Ctx &c, const std::string &name) {
   if (name.compare(0, 5, "flag_") == 0) return haunt::flagsHas(c.flags, name.substr(5)) ? "true" : "false";
+  if (name == "account") return c.st.account.empty() ? std::string("undefined") : c.st.account;
+  if (name == "readonly") return c.st.readonly;
   auto it = c.st.vars.find(name);
   return it == c.st.vars.end() ? "undefined" : it->second;
 }
@@ -482,7 +489,7 @@ inline std::string expand(Ctx &c, const std::string &text) {
           size_t eq = arg.find('=');
           if (eq != std::string::npos) {
             std::string k = lowerOf(trimOf(arg.substr(0, eq))), v = trimOf(arg.substr(eq + 1));
-            if (k.compare(0, 5, "flag_") != 0 && !k.empty() && v.size() <= MAX_VALUE && (c.st.vars.count(k) || c.st.vars.size() < MAX_VARS)) c.st.vars[k] = v;
+            if (k.compare(0, 5, "flag_") != 0 && k != "account" && k != "readonly" && !k.empty() && v.size() <= MAX_VALUE && (c.st.vars.count(k) || c.st.vars.size() < MAX_VARS)) c.st.vars[k] = v;
           }
         } else if (name == "formal") {
           std::string f = c.stars.empty() ? std::string() : c.stars[0];
@@ -558,12 +565,13 @@ inline std::string respond(const Brain &b, State &st, const std::string &flags, 
       std::vector<std::string> stars;
       if (!matches(t.pat, in, &stars)) continue;
       Ctx c{b, st, flags, stars, depth};
+      if (depth == 0) st.lastStar = t.pat.onlyStar;
       // A redirect, then conditions, then a reply.
       if (!t.redirect.empty()) {
         std::string target = expand(c, t.redirect);
         bool m = false, r = false;
         std::string out = respond(b, st, flags, substitute(b.subs, words(target)), depth + 1, m, r);
-        if (m) { matched = true; repeated = r; return out; }
+        if (m) { matched = true; repeated = r; st.lastStar = false; return out; }
         continue;
       }
       for (const Cond &cd : t.conds) {
@@ -622,7 +630,7 @@ inline std::map<std::string, std::string> decodeVars(const std::string &line) {
     size_t eq = part.find('=');
     if (eq != std::string::npos && out.size() < MAX_VARS) {
       std::string k = lowerOf(cleanVar(part.substr(0, eq), 24)), v = cleanVar(part.substr(eq + 1), MAX_VALUE);
-      if (!k.empty() && !v.empty() && k.compare(0, 5, "flag_") != 0) out[k] = v;
+      if (!k.empty() && !v.empty() && k.compare(0, 5, "flag_") != 0 && k != "account" && k != "readonly") out[k] = v;
     }
     part.clear();
   }
@@ -639,7 +647,7 @@ inline Result reply(const Brain &b, State &st, const std::string &flags, const s
   std::string out = respond(b, st, flags, in, 0, m, rep);
   st.lastInput = joinWords(in);
   if (!m) return r;
-  r.matched = true; r.text = trimOf(out); r.repeated = rep || (r.text == st.lastReply && !r.text.empty());
+  r.matched = true; r.text = trimOf(out); r.repeated = rep || (r.text == st.lastReply && !r.text.empty()); r.catchAll = st.lastStar;
   if (r.text.empty()) r.matched = false;
   else st.lastReply = r.text;
   return r;

@@ -129,22 +129,28 @@
 - Ty keeps a list. I am not able to tell them. I have been told that my timing is poor.
 
 // ---- what she is told about you ----
+// On a crew account (<get readonly> is true) she writes nothing down: it is not the caller's account.
 + my name is *
+* <get readonly> == true => This is <get account>'s account. I will not write another name in it.
 - <set name=<formal>>Good evening, <get name>. I will remember it.
 - <set name=<formal>>Thank you, <get name>. I do not have you on the crew list. I will keep you in the log.
 
 + call me *
+* <get readonly> == true => This is <get account>'s account. I will call you what the account says.
 - <set name=<formal>>Very well, <get name>.
 
 + [*] (what is|whats) my name [*]
+* <get readonly> == true => You are signed in as <get account>. I do not think you are <get account>.
 * <get name> == undefined => You have not told me. You may.
 - Your name is <get name>.
 
 + [*] who am i [*]
+* <get readonly> == true => You are signed in as <get account>. I do not think you are <get account>.
 * <get name> == undefined => I do not have you on the crew list. You are a caller. You may tell me your name.
 - You are <get name>. You are a caller. You are not on the crew list.
 
 + i am a *
+* <get readonly> == true => I see. I will not write it down. This is not your account.
 - <set job=<star>>I see. You are a <get job>. I will not ask what a <get job> wants here.
 
 + you are *

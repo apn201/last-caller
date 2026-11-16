@@ -24,6 +24,11 @@ static void handleLine(Session &s, String line) {
   loginCommand(s, line, cmd) || mainCommand(s, line, cmd) || sysopCommand(s, line, cmd) || userEditorCommand(s, line, cmd) ||
     uploadCommand(s, line, cmd) || fileCommand(s, line, cmd) || messageCommand(s, line, cmd) || doorCommand(s, line, cmd);
 }
+// G2 (agent run): the Enter, LF or NUL that follows the key which ended a scene is part of that key, not typed ahead.
+static bool realKeysAfter(const String &bytes, uint16_t from) {
+  for (uint16_t i = from; i < bytes.length(); ++i) if (bytes[i] != '\r' && bytes[i] != '\n' && bytes[i] != 0) return true;
+  return false;
+}
 static void input(Session &s, const String &bytes) {
   if (bytes.length()) s.lastAt = millis();   // Q21: any key keeps the line (the idle warning says so)
   // While a picture or file is streaming, keys belong to the stream: space
@@ -67,13 +72,13 @@ static void input(Session &s, const String &bytes) {
         if (c == '\r') s.ignoreNextLf = true;
         s.input = "";
         if (s.hotKey) { s.hotKey = 0; handleLine(s, "Q"); }   // "q" then ENTER, a line-mode client: a lone Q
-        else if (keyWait) { handleLine(s, ""); if (s.state != SCENE_PLAY) { if (i + 1 < bytes.length()) s.typeAhead = "x"; break; } }   // G1: the rest of this burst was typed ahead of the scene's end
+        else if (keyWait) { handleLine(s, ""); if (s.state != SCENE_PLAY) { if (realKeysAfter(bytes, i + 1)) s.typeAhead = "x"; break; } }   // G1: the rest of this burst was typed ahead of the scene's end
         continue;
       }
       if ((uint8_t)c < 32) continue;
       if (s.hotKey) { if (s.typeAhead.length() < 24) s.typeAhead += s.hotKey; s.hotKey = 0; }   // another key right behind it: a word, not a Q
       if ((c == 'q' || c == 'Q') && !s.typeAhead.length()) { s.hotKey = c; s.hotAt = millis(); continue; }
-      if (keyWait) { s.input = ""; handleLine(s, ""); if (s.state != SCENE_PLAY) { if (i + 1 < bytes.length()) s.typeAhead = "x"; break; } }   // [any key]: any key goes on; the rest of the burst was typed ahead (G1)
+      if (keyWait) { s.input = ""; handleLine(s, ""); if (s.state != SCENE_PLAY) { if (realKeysAfter(bytes, i + 1)) s.typeAhead = "x"; break; } }   // [any key]: any key goes on; the rest of the burst was typed ahead (G1)
       else if (s.typeAhead.length() < 24) s.typeAhead += c;   // Q22: not echoed, and dropped when the scene ends (contract C7): a key meant for what the caller could not see must not land on the next prompt
       continue;
     }

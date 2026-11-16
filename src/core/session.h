@@ -159,7 +159,8 @@ struct Session {
   // Ghosts and ELIZA's voice (core/ghost.h): when the caller signed in, answers
   // waiting to be "typed" in chat, and how many fallback lines were used.
   uint32_t signedAt = 0, ghostTurn = 0;
-  String ghostLastId; uint32_t ghostRepeat = 0;   // G1: the chat line said last, and the "again" lines since
+  String ghostLastId; uint32_t ghostRepeat = 0;   // G1: the chat line said last, and how often in a row
+  String ghostLastText; uint32_t ghostAgain = 0;  // G2: the caller's last chat line (normalised), and the "again" lines said
   std::vector<GhostLine> ghostSay;
   rive::State rive;                  // G2: ELIZA's brain, this caller's side (topic, what she was told)
   std::vector<String> chatOpts;      // G2: the options her last help listed, by line id, for a number

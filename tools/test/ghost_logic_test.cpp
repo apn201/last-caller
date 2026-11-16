@@ -261,44 +261,47 @@ int main(int argc, char **argv) {
   // ---- G2: one chat: options, help, numbers ----
   {
     Table t = lines(
-      "[OPT_A]\nkeys=run something,by name\noption=Ask her to run something.\nhas=OVR\nlacks=DONE\nsay=What would you like me to run?\n"
+      "[O_A]\nchat=option\noption=Ask her to run something.\nkeys=run something\nlacks=DONE\n"
+      "[O_B]\nchat=option\noption=That sounds serious.\nkeys=serious\nhas=OVR\n"
+      "[RUN]\nkeys=run something,by name\nhas=OVR\nsay=What would you like me to run?\nsay2=Tell me its name.\n"
+      "[RUNEARLY]\nkeys=run something,by name\nlacks=OVR\nsay=Nothing to run.\n"
       "[GO]\nkeys=memchk\nhas=OVR,CURE\nlacks=DONE\nthen=ELZ_GRANT\nsay=One moment.\n"
-      "[EARLY]\nkeys=memchk\nlacks=OVR\nsay=Nothing to check.\n"
-      "[OPT_B]\nkeys=serious\noption=That sounds serious.\nsay=It is within tolerance.\n"
       "[H]\nchat=help\nsay=I can do these.\n[N]\nchat=nohelp\nsay=Nothing now.\n[NN]\nchat=nonum\nsay=No numbers.\n"
       "[X]\nchat=else\nsay=I see.\n");
-    CHECK(t.skipped == 0 && t.lines.size() == 8);
+    for (const auto &p : t.problems) printf("  %s\n", p.c_str());
+    CHECK(t.skipped == 0 && t.lines.size() == 9);
     t.ghosts = ghosts("[E]\nhandle=ELIZA\nnode=0\nchat=1\n").ghosts;
     Ctx c;
     auto o = options(t, c);
-    CHECK(o.size() == 1 && o[0]->id == "OPT_B");                    // too early for OPT_A: not listed
+    CHECK(o.size() == 1 && o[0]->id == "O_A" && o[0]->option == "Ask her to run something." && optionWords(*o[0]) == "run something");
     c.flags = "OVR";
     o = options(t, c);
-    CHECK(o.size() == 2 && o[0]->id == "OPT_A" && o[0]->option == "Ask her to run something." && o[1]->id == "OPT_B");
+    CHECK(o.size() == 2 && o[1]->id == "O_B");
     c.flags = "OVR,DONE";
-    o = options(t, c);
-    CHECK(o.size() == 1 && o[0]->id == "OPT_B");                    // a spent option goes away
-    CHECK(keysReply(t, Ctx(), "memchk") != nullptr && keysReply(t, Ctx(), "memchk")->id == "EARLY");
+    CHECK(options(t, c).size() == 1);                                // a spent option goes away
+    CHECK(keysMatch(t, Ctx(), "run something")->id == "RUNEARLY");   // too early: the early line answers the same words
+    c.flags = "OVR";
+    CHECK(keysMatch(t, c, "please run something")->id == "RUN");
+    CHECK(keysMatch(t, c, "run something")->says.size() == 2 && keysMatch(t, c, "run something")->says[1] == "Tell me its name.");
+    CHECK(keysMatch(t, c, "serious") == nullptr);                   // an option line itself never answers
     c.flags = "OVR,CURE";
-    const Line *g = keysReply(t, c, "run MEMCHK please");
-    CHECK(g && g->id == "GO" && g->then == "ELZ_GRANT" && g->option.empty());
-    CHECK(keysReply(t, c, "weather") == nullptr);                   // the brain's turn, then the fallbacks
+    const Line *g = keysMatch(t, c, "run MEMCHK please");
+    CHECK(g && g->id == "GO" && g->then == "ELZ_GRANT");
+    CHECK(keysMatch(t, c, "weather") == nullptr);                   // the brain's turn, then the fallbacks
     CHECK(elseReply(t, c, 0) && elseReply(t, c, 0)->id == "X");
-    CHECK(chatReply(t, c, "weather", 0)->id == "X" && chatReply(t, c, "by name", 0)->id == "OPT_A");
     CHECK(firstOf(t, c, K_HELP)->id == "H" && firstOf(t, c, K_NOHELP)->id == "N" && firstOf(t, c, K_NONUM)->id == "NN");
     CHECK(byId(t, "GO") && !byId(t, "NOPE"));
     CHECK(wantsHelp("help") && wantsHelp("Help!") && wantsHelp("?") && wantsHelp("what can I do?") && wantsHelp("please suggest something")
           && wantsHelp("i am stuck") && !wantsHelp("the helper") && !wantsHelp("weather") && !wantsHelp("??"));
     CHECK(pickNumber("1") == 1 && pickNumber(" 3 ") == 3 && pickNumber("2.") == 2 && pickNumber("0") == 0 && pickNumber("10") == 0 && pickNumber("a") == 0 && pickNumber("1 2") == 0);
-    // Parsing: option and then belong to keys lines; then must be a plain name.
+    // Parsing: then belongs to keys lines; an option has a label and words and no say.
     CHECK(problemHas(lines("[A]\nchat=else\nsay=x\nthen=SCENE\n"), "keys lines"));
     CHECK(problemHas(lines("[A]\nkeys=a\nsay=x\nthen=bad name\n"), "bad then"));
     CHECK(problemHas(lines("[A]\nchat=sometimes\nsay=x\n"), "chat must be"));
-    // An option said twice in a row gets an "again" line, as any keyword line does.
-    Table r = lines("[K]\nkeys=serious\noption=Serious?\nsay=Tolerance.\n[AG]\nchat=again\nsay=I said.\n");
-    r.ghosts = t.ghosts;
-    CHECK(keysReply(r, Ctx(), "serious", "", 0)->id == "K");
-    CHECK(keysReply(r, Ctx(), "serious", "K", 0)->id == "AG");
+    CHECK(problemHas(lines("[A]\nchat=option\nkeys=a\n"), "option="));
+    CHECK(problemHas(lines("[A]\nchat=option\noption=A\n"), "keys has no words"));
+    CHECK(problemHas(lines("[A]\nchat=option\noption=A\nkeys=a\nsay=x\n"), "no say"));
+    CHECK(problemHas(lines("[A]\nkeys=a\nsay=x\noption=A\n"), "chat=option"));
   }
   // ---- G2: the card's own options (checked below with the card's lines) ----
   // ---- idle text ----
@@ -327,33 +330,29 @@ int main(int argc, char **argv) {
     for (const auto &g : card.ghosts) if (g.handle == "ELIZA" && pageDue(g, fresh)) pages = true;
     CHECK(pages);
     CHECK(present(card, Ctx(), "ELIZA"));
-    // G2: each listed option can be reached by typing any of its own words, with the flags it needs: no earlier line shadows it
-    unsigned optionCount = 0;
-    for (const auto &l : card.lines) {
-      if (l.option.empty()) continue;
-      optionCount++;
-      Ctx c; c.flags = l.has; c.onlineMin = 1000;
-      CHECK(lineDue(l, c));
-      for (const auto &k : l.keys) {
-        const Line *got = keysReply(card, c, k, "", 0);
-        if (!got || got->id != l.id) { printf("FAIL: option %s: typing \"%s\" gives %s\n", l.id.c_str(), k.c_str(), got ? got->id.c_str() : "nothing"); failures++; }
-      }
-    }
-    CHECK(optionCount >= 2);
-    // a gate that starts a scene is never listed as an option, and it needs flags
-    for (const auto &l : card.lines) if (!l.then.empty()) { CHECK(l.option.empty()); CHECK(!l.has.empty()); }
-    {   // before the overrun nothing is offered; she says so; after it there is something to pick
+    // G2: every option has words, and there is always something to offer; the gate is never an option
+    for (const auto &l : card.lines) if (l.kind == K_OPTION) CHECK(!optionWords(l).empty());
+    for (const auto &l : card.lines) if (!l.then.empty()) { CHECK(l.kind == K_KEYS); CHECK(!l.has.empty()); }
+    {
       Ctx fresh; fresh.onlineMin = 1000;
-      CHECK(options(card, fresh).empty() && firstOf(card, fresh, K_NOHELP) != nullptr);
       Ctx after; after.flags = "OVR"; after.onlineMin = 1000;
-      CHECK(!options(card, after).empty() && firstOf(card, after, K_HELP) != nullptr && firstOf(card, after, K_NONUM) != nullptr);
       Ctx cure; cure.flags = "OVR,CURE"; cure.onlineMin = 1000;
-      const Line *go = keysReply(card, cure, "memchk", "", 0);
-      CHECK(go && go->then == "ELZ_GRANT");
-      CHECK(keysReply(card, after, "memchk", "", 0)->then.empty());   // OVR alone: she points at the handbook
-      CHECK(keysReply(card, fresh, "memchk", "", 0)->then.empty());
       Ctx done; done.flags = "OVR,CURE,SYSVW"; done.onlineMin = 1000;
-      CHECK(keysReply(card, done, "memchk", "", 0)->then.empty());
+      for (const Ctx *x : {&fresh, &after, &cure, &done}) CHECK(options(card, *x).size() >= 3 && firstOf(card, *x, K_HELP) && firstOf(card, *x, K_NONUM));
+      // every option's words get an answer from the card at every stage (or go to her brain: "your memory")
+      for (const Ctx *x : {&fresh, &after, &cure, &done})
+        for (const Line *o : options(card, *x)) {
+          const Line *got = keysMatch(card, *x, optionWords(*o));
+          if (!got && optionWords(*o) != "your memory") { printf("FAIL: option %s (%s) gets no card line at flags %s\n", o->id.c_str(), optionWords(*o).c_str(), x->flags.c_str()); failures++; }
+          if (got && !got->then.empty()) { printf("FAIL: option %s starts a scene by itself\n", o->id.c_str()); failures++; }
+        }
+      const Line *go = keysMatch(card, cure, "memchk");
+      CHECK(go && go->then == "ELZ_GRANT");
+      CHECK(keysMatch(card, after, "memchk")->then.empty());   // OVR alone: she points at the handbook
+      CHECK(keysMatch(card, fresh, "memchk")->then.empty());
+      CHECK(keysMatch(card, done, "memchk")->then.empty());
+      CHECK(keysMatch(card, cure, "run something")->says[0].find("What would you like me to run") != std::string::npos);
+      CHECK(keysMatch(card, after, "run something")->says[0].find("handbook") != std::string::npos);
     }
     // every chat line is spoken by someone who can be shown in chat to a fresh caller or to a caller with the line's own flags
     for (const auto &l : card.lines) {

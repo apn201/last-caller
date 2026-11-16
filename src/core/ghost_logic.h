@@ -29,8 +29,8 @@ struct Ghost {
 };
 
 // G2: K_HELP says the options are coming (when there are some), K_NOHELP when there are none, K_NONUM answers a number that
-// names nothing.
-enum Kind : uint8_t { K_NONE, K_TRIGGER, K_KEYS, K_JOIN, K_ELSE, K_AGAIN, K_HELP, K_NOHELP, K_NONUM };
+// names nothing. K_OPTION is one numbered option of the help list: a label and the words its number types.
+enum Kind : uint8_t { K_NONE, K_TRIGGER, K_KEYS, K_JOIN, K_ELSE, K_AGAIN, K_HELP, K_NOHELP, K_NONUM, K_OPTION };
 
 struct Line {
   std::string id;
@@ -42,8 +42,9 @@ struct Line {
   std::string has, lacks, set;
   bool once = false;
   uint32_t delay = DEFAULT_DELAY; // ms before she starts typing
-  std::string option;             // G2: keys= lines only: the words `help` lists for it (a numbered option)
+  std::string option;             // G2: chat=option lines: the label `help` lists; its number types the first of keys=
   std::string then;               // G2: keys= lines only: a scene that starts when she has said it (upper case)
+  std::vector<std::string> says;  // G2: say=, say2=, say3=: a keys line asked again in other words answers with the next
 };
 
 struct Table {
@@ -136,18 +137,21 @@ inline bool buildLine(const std::string &id, const std::vector<Kv> &kv, Line &l,
   std::string from = haunt::capText(val(kv, "from", &f), MAX_HANDLE);
   if (f && !from.empty()) l.from = from;
   l.say = haunt::capText(val(kv, "say"), MAX_SAY);
+  if (!l.say.empty()) l.says.push_back(l.say);
+  for (const char *k : {"say2", "say3"}) { std::string v = haunt::capText(val(kv, k), MAX_SAY); if (!v.empty()) l.says.push_back(v); }
   l.has = haunt::flagsClean(val(kv, "has"));
   l.lacks = haunt::flagsClean(val(kv, "lacks"));
   l.set = haunt::flagsClean(val(kv, "set"));
   l.once = haunt::trim(val(kv, "once")) == "1";
   std::string delay = val(kv, "delay", &f);
   if (f && !haunt::parseUint(delay, MAX_DELAY, l.delay)) { why = "delay must be 0 to 10000"; return false; }
-  if (l.say.empty()) { why = "missing say"; return false; }
   l.option = haunt::capText(val(kv, "option"), MAX_OPTION);
   std::string then = haunt::upper(haunt::trim(val(kv, "then")));
   if (!then.empty()) { if (!haunt::idOk(then)) { why = "bad then"; return false; } l.then = then; }
   std::string trigger = haunt::upper(haunt::trim(val(kv, "trigger"))), keys = val(kv, "keys"), chat = haunt::lower(haunt::trim(val(kv, "chat")));
-  int ways = (!trigger.empty()) + (!haunt::trim(keys).empty()) + (!chat.empty());
+  const bool isOption = chat == "option";
+  if (l.say.empty() && !isOption) { why = "missing say"; return false; }
+  int ways = (!trigger.empty()) + (!haunt::trim(keys).empty() && !isOption) + (!chat.empty());
   if (ways != 1) { why = "exactly one of trigger, keys and chat"; return false; }
   if (!trigger.empty()) {
     if (!haunt::idOk(trigger)) { why = "bad trigger"; return false; }
@@ -159,10 +163,14 @@ inline bool buildLine(const std::string &id, const std::vector<Kv> &kv, Line &l,
     else if (chat == "help") l.kind = K_HELP;
     else if (chat == "nohelp") l.kind = K_NOHELP;
     else if (chat == "nonum") l.kind = K_NONUM;
-    else { why = "chat must be join, else, again, help, nohelp or nonum"; return false; }
-    if (!l.option.empty() || !l.then.empty()) { why = "option and then are for keys lines"; return false; }
-  } else {
-    l.kind = K_KEYS;
+    else if (isOption) l.kind = K_OPTION;
+    else { why = "chat must be join, else, again, help, nohelp, nonum or option"; return false; }
+    if (!l.then.empty()) { why = "then is for keys lines"; return false; }
+    if (isOption && (l.option.empty() || !l.say.empty())) { why = "an option has option= and keys=, no say"; return false; }
+    if (!isOption && !l.option.empty()) { why = "option= is for chat=option lines"; return false; }
+  }
+  if (l.kind == K_OPTION || l.kind == K_NONE) {
+    if (l.kind == K_NONE) l.kind = K_KEYS;
     std::string word;
     auto take = [&]() {
       std::string n = norm(word);
@@ -176,7 +184,8 @@ inline bool buildLine(const std::string &id, const std::vector<Kv> &kv, Line &l,
     take();
     if (l.keys.empty()) { why = "keys has no words"; return false; }
   }
-  if (!trigger.empty() && (!l.option.empty() || !l.then.empty())) { why = "option and then are for keys lines"; return false; }
+  if (l.kind != K_KEYS && !l.then.empty()) { why = "then is for keys lines"; return false; }
+  if (l.kind != K_OPTION && !l.option.empty()) { why = "option= is for chat=option lines"; return false; }
   return true;
 }
 
@@ -287,11 +296,18 @@ inline const Line *chatReply(const Table &t, const Ctx &c, const std::string &te
   const Line *k = keysReply(t, c, text, lastId, repeats);
   return k ? k : elseReply(t, c, turn, lastId, repeats);
 }
-// G2: the options `help` lists: keyword lines with an option= text that are due now, in file order.
+// G2: the options `help` lists: chat=option lines that are due now, in file order.
 inline std::vector<const Line *> options(const Table &t, const Ctx &c) {
   std::vector<const Line *> out;
-  for (const auto &l : t.lines) if (l.kind == K_KEYS && !l.option.empty() && lineDue(l, c) && present(t, c, l.from)) out.push_back(&l);
+  for (const auto &l : t.lines) if (l.kind == K_OPTION && lineDue(l, c) && present(t, c, l.from)) out.push_back(&l);
   return out;
+}
+// The words an option's number stands for: its first key, as typed.
+inline std::string optionWords(const Line &l) { return l.keys.empty() ? std::string() : haunt::trim(l.keys[0]); }
+// G2: the first due keyword line that hears `text`, with no repeat logic (the board decides about repeats).
+inline const Line *keysMatch(const Table &t, const Ctx &c, const std::string &text) {
+  for (const auto &l : t.lines) if (l.kind == K_KEYS && lineDue(l, c) && present(t, c, l.from) && hears(l, text)) return &l;
+  return nullptr;
 }
 // First due line of a kind (help, nohelp, nonum).
 inline const Line *firstOf(const Table &t, const Ctx &c, Kind k) {
