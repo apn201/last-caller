@@ -123,6 +123,13 @@ def advance(c, marker, timeout=120.0):
             c.send("")
 
 
+def after_grace(c, text):
+    """G1: a numbered reply or an [any key] wait takes keys 1.5 s after it appears; an earlier key is dropped.
+    Send `text` (a reply number, no Enter) once that has passed."""
+    time.sleep(1.7)
+    c.send(text)
+
+
 def welcome_scene(c):
     """M2 (Q12d): after ELIZA_WAKE the welcome scene plays at the next calm prompt; then the main menu."""
     advance(c, "I mention it because", timeout=90)
@@ -1530,10 +1537,10 @@ def main():
         c.expect("Released to ground-1")
         advance(c, "Sending the queue enables it")
         advance(c, "1) Send it.")
-        c.send("2")
+        after_grace(c, "2")
         advance(c, "You would only have to stay")
         advance(c, "2) Leave it queued.")
-        c.send("2")
+        after_grace(c, "2")
         advance(c, "added your name to the crew list")
         advance(c, "Main Board Command?")
 
@@ -1614,14 +1621,14 @@ def main():
         c.expect("guest@nowhere:/$", timeout=15)
         c.send("release out-1122 ground-1")
         advance(c, "1) Send it.")
-        c.send("1")
+        after_grace(c, "1")
         advance(c, "Station received your burst")
         advance(c, "four families and one callsign")
         advance(c, "I have filed it under News")
         advance(c, "Mission control will be glad")
-        c.send("")
+        after_grace(c, "")
         advance(c, "The light is on.")
-        c.send("")
+        after_grace(c, "")
         advance(c, "Main Board Command?")
         c.send("G")                                 # back to the own account: bulletin 5 is the caller's
         login(c, handle, password)
