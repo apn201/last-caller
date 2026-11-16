@@ -58,9 +58,13 @@ static String loadBrain() {
     File f = SD_MMC.open(path.c_str(), FILE_READ);
     if (!f) continue;
     if (f.size() > RIVE_FILE_MAX) { f.close(); event("RIVE_SKIP", n + ": over 24 KB"); continue; }
-    String text = f.readString();
+    std::string text;   // read in blocks: File has read(buf, n) on both platforms (no readString on the server)
+    text.reserve(f.size());
+    uint8_t buf[256];
+    size_t got;
+    while ((got = f.read(buf, sizeof(buf))) > 0) text.append((const char *)buf, got);
     f.close();
-    rive::load(elizaBrain, hauntStd(text));
+    rive::load(elizaBrain, text);
   }
   rive::finish(elizaBrain);
   for (const auto &p : elizaBrain.problems) event("RIVE_SKIP", hauntStr(p));
