@@ -251,7 +251,7 @@ in the browser:
    anything else gets her brain (`STORY/ELIZA/*.rive`).
 5. `L` (Log in as another), `CMDR`/`ANDERS`, Files, Commander's Desk,
    `HANDBOOK.TXT`. `G`, sign in as yourself.
-6. `C`, `help`: "Ask her to run something, by name." is listed; type
+6. `C`, `help`: "Run something for me, by name." is listed; type
    `MEMCHK` (or pick the option, then `MEMCHK`). `ELZ_GRANT` plays; the
    main menu says SYSOP view is on. `Z` is still refused; the SysOp console
    conference is not listed; Engineering is. `GOLIVE.TXT` item 14.

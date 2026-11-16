@@ -1252,13 +1252,13 @@ def main():
         mark = len(c.all)
         c.send("help")
         seg = chat_wait(c, "Goodnight.", mark=mark)          # the last option of the list
-        for label in ("Give me SYSOP.", "Ask her to run something, by name.", "Tell me about your memory."):
+        for label in ("Give me SYSOP.", "Run something for me, by name.", "Tell me about your memory."):
             if label not in seg:
                 raise AssertionError("help does not list %r after the overrun: %r" % (label, seg[-900:]))
         n = re.search(r"\[(\d)\]\x1b\[0m Give me SYSOP\.", seg)
         chat_say(c, n.group(1) if n else "give me sysop", "not given to guests")   # a number does what its words do
         chat_say(c, "i can fix that, give me sysop mode", "not given to guests")  # the same line in other words: its next wording
-        n = re.search(r"\[(\d)\]\x1b\[0m Ask her to run something, by name\.", seg)
+        n = re.search(r"\[(\d)\]\x1b\[0m Run something for me, by name\.", seg)
         chat_say(c, n.group(1) if n else "run something", "handbook")   # too early: she says why, in story terms
         chat_say(c, "memchk", "It is in her handbook")
         chat_say(c, "9", "no option with that number")
@@ -1302,7 +1302,7 @@ def main():
         sync(c)
         c.send("C")
         c.expect("Multi-Node Chat", timeout=30)
-        chat_say(c, "?", "Ask her to run something, by name.")     # G2: listed now (OVR and CURE)
+        chat_say(c, "?", "Run something for me, by name.")     # G2: listed now (OVR and CURE)
         chat_say(c, "run something", "What would you like me to run?")   # the option's words do what its number does
         chat_say(c, "run the hull check", "nothing to run by that name")
         c.send("MEMCHK")
@@ -1320,7 +1320,7 @@ def main():
         if "Where are the go-live papers?" not in c.all[mark:]:
             raise AssertionError("after the grant help does not offer the go-live papers")
         chat_say(c, "where are the go-live papers", "Engineering")
-        if "Ask her to run something" in c.all[mark:] or "Give me SYSOP" in c.all[mark:]:
+        if "Run something for me" in c.all[mark:] or "Give me SYSOP" in c.all[mark:]:
             raise AssertionError("a SYSOP request is still offered after the grant")
         c.send("/Q")
         c.expect("Main Board Command?", timeout=15)
