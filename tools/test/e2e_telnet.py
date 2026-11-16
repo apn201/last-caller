@@ -643,7 +643,7 @@ def main():
         c.send("TYVANCE")
         c.expect("Password:")
         c.send("000000")                   # a wrong guess first: the birthday is not 000000
-        c.expect("Bad password")
+        c.expect("its MY account")          # G1: Ty answers in his own voice
         c.expect("Login:")
         c.send("TYVANCE")
         c.expect("Password:")
@@ -855,7 +855,7 @@ def main():
         c.send(who)
         c.expect("Password:")
         c.send(wrong)
-        c.expect("Bad password")
+        c.expect("Personal. Not yours.")   # G1: the crew account answers in story (CMDR)
         c.expect("Login:")
         c.send(who)
         c.expect("Password:")
@@ -876,6 +876,49 @@ def main():
         crew_session("CMDR", "ANDERS", "BETTY", "")
         mailbox("Mail: CMDR", "the lock", "wrist unit")
 
+    @step("G1: a wrong password on a crew account answers in story, never twice the same, ELIZA pages on the third; lower case opens it")
+    def g1_crew_logins():
+        c = state["c"]
+        c.send("G")
+        c.expect("Login:", timeout=20)
+        seen = []
+        for guess in ("one111", "TWO222", "three333", "four444"):
+            c.send("CMDR")
+            c.expect("Password:")
+            mark = len(c.all)
+            c.send(guess)
+            c.expect("Login:")
+            seen.append(c.all[mark:].replace("Login:", "").strip())
+            if "ANDERS" in seen[-1].upper():
+                raise AssertionError("a crew login answer shows the password: %r" % seen[-1])
+        for a, b in zip(seen, seen[1:]):
+            if a == b:
+                raise AssertionError("the same answer twice in a row: %r" % a)
+        if "ELIZA>" not in seen[2]:
+            raise AssertionError("the third wrong password did not bring ELIZA's page: %r" % seen[2])
+        if "ELIZA>" in seen[0] or "ELIZA>" in seen[1]:
+            raise AssertionError("ELIZA paged too early: %r" % seen[:2])
+        # passwords are case-blind (PCBoard, RemoteAccess, Wildcat): the card's ANDERS opens in lower case
+        c.send("CMDR")
+        c.expect("Password:")
+        c.send("anders")
+        advance(c, "Main Board Command?", timeout=60)
+        # a caller with no account answers differently the second time too
+        c.send("G")
+        c.expect("Login:", timeout=20)
+        answers = []
+        for _ in range(2):
+            mark = len(c.all)
+            c.send("NOBODYHERE")
+            c.expect("Login:")
+            answers.append(c.all[mark:].strip())
+        if answers[0] == answers[1] or "Still no caller" not in answers[1]:
+            raise AssertionError("Unknown caller answered the same twice in a row: %r" % (answers,))
+        c.send("CMDR")
+        c.expect("Password:")
+        c.send("ANDERS")
+        advance(c, "Main Board Command?", timeout=60)
+
     @step("act 2: GARDEN opens with HANAMI; her mailbox holds the queued reply and the last letter")
     def act2_garden():
         c = state["c"]
@@ -884,7 +927,7 @@ def main():
         c.send("GARDEN")
         c.expect("Password:")
         c.send("SAKURA")
-        c.expect("Bad password")
+        c.expect("That did not take")
         c.expect("Login:")
         c.send("GARDEN")
         c.expect("Password:")
@@ -900,7 +943,7 @@ def main():
         c.send("CHAOS")
         c.expect("Password:")
         c.send("LADDER")
-        c.expect("Bad password")
+        c.expect("He picked the password")
         c.expect("Login:")
         c.send("CHAOS")
         c.expect("Password:")
@@ -1300,7 +1343,7 @@ def main():
         c.send("ELIZA")
         c.expect("Password:")
         c.send("ELIZA")
-        c.expect("Bad password")
+        c.expect("would rather you did not guess")
         login(c, "ELIZA", "KESTREL4")
         if "I have not edited it" not in c.all[-4000:]:
             advance(c, "I have not edited it", timeout=90)
@@ -1322,7 +1365,7 @@ def main():
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
         c.send("G")
-        login(c, handle, password)
+        login(c, handle, password.upper())   # G1: passwords are case-blind: e2e-pass-1 as capitals
 
     # ---- the manifest (S8): needs --evidence (and --shell-open for the endings) ----
     need = "SKIP the card has no E2E_EVIDENCE rule (pass --evidence)"

@@ -47,6 +47,20 @@ static bool fails(const std::string &text, const char *part) {
   return true;
 }
 
+// G1: a node with text2=/text3= says them the second and third time in a row (kept in a Memory), then round again.
+static void testAlternates() {
+  auto sc = load("[START]\ntext=First.\ntext2=Second.\ntext3=Third.\n");
+  CHECK(sc && sc->nodes[0].alt.size() == 2);
+  Memory mem;
+  const char *want[] = {"First.", "Second.", "Third.", "First."};
+  for (const char *w : want) {
+    Player p;
+    Out o = p.start(sc, "", false, 0, false, &mem);
+    for (uint32_t t = 0; t < 20000 && p.active(); t += 50) { Out more = p.tick(t); o.addText(more.text()); if (more.finished) break; }
+    CHECK(o.text().find(w) != std::string::npos);
+  }
+}
+
 static const char *DEMO =
   "[SCENE]\nspeed=100\nset=DONE\n"
   "[START]\nspeaker=A\ntext=Hello there.\npause=100\ngo=ASK\n"
@@ -81,6 +95,7 @@ static Run play(const std::shared_ptr<Scene> &sc, const std::string &flags, cons
 }
 
 int main(int argc, char **argv) {
+  testAlternates();
   // ---- parse ----
   auto sc = load(DEMO);
   // ---- typed_else (Q21): a typed reply with no word goes to its own node, a number still picks ----

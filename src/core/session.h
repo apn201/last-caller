@@ -148,6 +148,8 @@ struct Session {
   uint16_t manNote = 0;
   bool sceneReplay = false;   // core/scene.h: the scene on screen is a replay from the notebook; it grants nothing
   String sceneName;           // the scene being played, for the notebook's notes
+  String repKey; uint16_t repCount = 0;   // core/repeat.h: what was answered last in a door or at the login, and how often in a row
+  scene::Memory sceneMem;   // G1: the last node with variants (text2=) and how often it came in a row
   scene::Player sceneRun;  // core/scene.h: the scene being played (state SCENE_PLAY)
   snake::Game snake;       // doors/snake.h: the game in progress (state SNAKE_PLAY)
   uint32_t hauntIdleSec = 0, hauntMinute = 0;
@@ -156,6 +158,7 @@ struct Session {
   // Ghosts and ELIZA's voice (core/ghost.h): when the caller signed in, answers
   // waiting to be "typed" in chat, and how many fallback lines were used.
   uint32_t signedAt = 0, ghostTurn = 0;
+  String ghostLastId; uint32_t ghostRepeat = 0;   // G1: the chat line said last, and the "again" lines since
   std::vector<GhostLine> ghostSay;
 };
 static Session sessions[MAX_NODES];

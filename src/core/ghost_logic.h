@@ -27,7 +27,7 @@ struct Ghost {
   std::string pageFrom, page, set;
 };
 
-enum Kind : uint8_t { K_NONE, K_TRIGGER, K_KEYS, K_JOIN, K_ELSE };
+enum Kind : uint8_t { K_NONE, K_TRIGGER, K_KEYS, K_JOIN, K_ELSE, K_AGAIN };
 
 struct Line {
   std::string id;
@@ -147,7 +147,8 @@ inline bool buildLine(const std::string &id, const std::vector<Kv> &kv, Line &l,
   } else if (!chat.empty()) {
     if (chat == "join") { l.kind = K_JOIN; l.once = true; }
     else if (chat == "else") l.kind = K_ELSE;
-    else { why = "chat must be join or else"; return false; }
+    else if (chat == "again") l.kind = K_AGAIN;   // G1: said when the same answer would come a second time in a row
+    else { why = "chat must be join, else or again"; return false; }
   } else {
     l.kind = K_KEYS;
     std::string word;
@@ -234,12 +235,33 @@ inline std::vector<std::string> inChat(const Table &t, const Ctx &c) {
 }
 // The line that answers `text` in chat, or null. Keyword lines first, in file
 // order; then the fallbacks in turn (`turn` counts fallbacks used so far).
-inline const Line *chatReply(const Table &t, const Ctx &c, const std::string &text, uint32_t turn) {
+// G1: never the same answer twice in a row. `lastId` is the line she said last; `repeats` how many
+// "again" lines came since. When the only answer left is the one just said, the next chat=again
+// line speaks instead (second time, third time, then round again); with none on the card
+// the old behaviour stands.
+inline const Line *againLine(const Table &t, const Ctx &c, uint32_t repeats) {
+  std::vector<const Line *> again;
+  for (const auto &l : t.lines) if (l.kind == K_AGAIN && lineDue(l, c) && present(t, c, l.from)) again.push_back(&l);
+  return again.empty() ? nullptr : again[repeats % again.size()];
+}
+inline const Line *chatReply(const Table &t, const Ctx &c, const std::string &text, uint32_t turn,
+                             const std::string &lastId = std::string(), uint32_t repeats = 0) {
+  const Line *same = nullptr;
   for (const auto &l : t.lines)
-    if (l.kind == K_KEYS && lineDue(l, c) && present(t, c, l.from) && hears(l, text)) return &l;
+    if (l.kind == K_KEYS && lineDue(l, c) && present(t, c, l.from) && hears(l, text)) {
+      if (l.id != lastId) return &l;
+      if (!same) same = &l;
+    }
+  if (same) { const Line *a = againLine(t, c, repeats); return a ? a : same; }
   std::vector<const Line *> fallback;
   for (const auto &l : t.lines) if (l.kind == K_ELSE && lineDue(l, c) && present(t, c, l.from)) fallback.push_back(&l);
-  return fallback.empty() ? nullptr : fallback[turn % fallback.size()];
+  if (fallback.empty()) return nullptr;
+  const Line *pick = fallback[turn % fallback.size()];
+  if (pick->id == lastId) {
+    for (size_t i = 1; i < fallback.size() && pick->id == lastId; ++i) pick = fallback[(turn + i) % fallback.size()];
+    if (pick->id == lastId) { const Line *a = againLine(t, c, repeats); if (a) return a; }
+  }
+  return pick;
 }
 // Lines said when the caller enters chat (at most one per speaker is not enforced: the card decides).
 inline std::vector<const Line *> joinLines(const Table &t, const Ctx &c) {

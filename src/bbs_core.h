@@ -19,6 +19,7 @@
 #include "core/messagebase.h"
 #include "core/history.h"
 #include "core/session.h"
+#include "core/repeat.h"
 #include "core/power.h"
 #include "core/stream.h"
 #include "core/reader.h"

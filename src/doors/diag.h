@@ -44,6 +44,13 @@ static String diagLines(const String &text) {
   return out;
 }
 static void diagSay(Session &s, const String &text) { if (text.length()) say(s, "\x1b[0;33m" + diagLines(text) + "\x1b[0m"); }
+// G1: the n-th answer in a row to the same thing differs (core/repeat.h). `k` is the key in the section
+// (text, unknown, denied, nocode, help); k2 and k3 beside it are the variants, DIAG again2/again3 the fallback.
+static String diagAnswer(Session &s, const String &key, const String &sec, const String &k, const String &def = String()) {
+  unsigned n = repeatCount(s, "DIAG:" + key);
+  return repeatAnswer(n, iniGet(diagIni, sec, k.c_str(), def), iniGet(diagIni, sec, (k + "2").c_str()), iniGet(diagIni, sec, (k + "3").c_str()),
+                      iniGet(diagIni, "DIAG", "again2"), iniGet(diagIni, "DIAG", "again3"));
+}
 static void diagPrompt(Session &s) { prompt(s, "\x1b[1;36m" + iniGet(diagIni, "DIAG", "prompt", "QUERY>") + " \x1b[0m"); }
 
 static bool ownsDiag(const Session &s) { return s.state == DIAG_PROMPT; }
@@ -55,7 +62,7 @@ static bool diagListed(const Session &s) {
 
 static void enterDiag(Session &s) {
   iniLoad(DIAG_INI, diagIni);
-  s.state = DIAG_PROMPT; s.hideInput = false; activity(s, "DIAGNOSTICS");
+  s.state = DIAG_PROMPT; s.hideInput = false; activity(s, "DIAGNOSTICS"); repeatReset(s);
   event("DIAG", s.user.handle + " node " + s.node + " opened diagnostics");
   if (s.ansi) artOnce(s, "/BBS/ANSI/DOORS/DIAG.ANS", iniGet(diagIni, "DIAG", "title", "DIAGNOSTICS"));
   else plainArt(s, "/BBS/ASCII/DOORS/DIAG.ASC", iniGet(diagIni, "DIAG", "title", "DIAGNOSTICS"));
@@ -75,16 +82,15 @@ static void handleDiag(Session &s, String &line, const String &cmd) {
     return;
   }
   if (cmd == "HELP" || cmd == "?") {
-    String help = iniGet(diagIni, "DIAG", "help", "");
-    if (help.length()) { diagSay(s, help); notesOn(s, notes::K_DIAG, "HELP"); diagPrompt(s); return; }
+    if (iniGet(diagIni, "DIAG", "help", "").length()) { diagSay(s, diagAnswer(s, "HELP", "DIAG", "help")); notesOn(s, notes::K_DIAG, "HELP"); diagPrompt(s); return; }
   }
   String code = diagCode(line);
-  if (!code.length()) { diagSay(s, iniGet(diagIni, "DIAG", "nocode", "Please enter a query code.")); diagPrompt(s); return; }
+  if (!code.length()) { diagSay(s, diagAnswer(s, "NOCODE", "DIAG", "nocode", "Please enter a query code.")); diagPrompt(s); return; }
   bool found = code != "DIAG";
   if (found) { found = false; for (const String &sec : iniSections(diagIni)) if (sec == code) { found = true; break; } }
-  if (!found) { diagSay(s, iniGet(diagIni, "DIAG", "unknown", "No such query code.")); diagPrompt(s); return; }
+  if (!found) { diagSay(s, diagAnswer(s, "UNKNOWN", "DIAG", "unknown", "No such query code.")); diagPrompt(s); return; }
   std::string need = haunt::flagsClean(hauntStd(iniGet(diagIni, code, "has")));
-  if (!haunt::flagsHasAll(doorFlagsOf(s), need)) { diagSay(s, iniGet(diagIni, "DIAG", "denied", "That query is not open to you.")); diagPrompt(s); return; }
+  if (!haunt::flagsHasAll(doorFlagsOf(s), need)) { diagSay(s, diagAnswer(s, "DENIED", "DIAG", "denied", "That query is not open to you.")); diagPrompt(s); return; }
   // Flags are saved before the answer is shown; if the save fails, nothing is given.
   std::string give = haunt::flagsClean(hauntStd(iniGet(diagIni, code, "set")));
   if (give.length() && !sceneGrant(s, give)) {
@@ -94,7 +100,7 @@ static void handleDiag(Session &s, String &line, const String &cmd) {
     return;
   }
   event("DIAG", s.user.handle + " node " + s.node + " query " + code);
-  diagSay(s, iniGet(diagIni, code, "text"));
+  diagSay(s, diagAnswer(s, code, code, "text"));
   notesOn(s, notes::K_DIAG, code);   // Q21: the answer is in the notebook
   diagPrompt(s);
 }

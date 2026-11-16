@@ -33,9 +33,9 @@ static void ensureStoryAccounts() {
       String password = iniGet(ini, sec, "password");
       uint8_t level = (uint8_t)constrain(iniGet(ini, sec, "level", "20").toInt(), 0L, 254L);
       String flags = cleanFlags(iniGet(ini, sec, "flags"));
-      bool samePass = !password.length() || sha256hex(existing.salt + ":" + password) == existing.hash;
+      bool samePass = !password.length() || passMatchesHash(existing.salt, existing.hash, password);
       if (samePass && existing.level == level && up(existing.flags) == up(flags)) continue;
-      if (!samePass) { existing.salt = salt(); existing.hash = sha256hex(existing.salt + ":" + password); }
+      if (!samePass) { existing.salt = salt(); existing.hash = passHash(existing.salt, password); }
       existing.level = level; existing.flags = flags;
       if (touchUser(existing)) event("ACCOUNT", existing.handle + " brought in line with ACCOUNTS.INI");
       else event("ACCOUNT_FAIL", existing.handle + ": not updated");
@@ -47,7 +47,7 @@ static void ensureStoryAccounts() {
     u.location = clean(iniGet(ini, sec, "location"), 40);
     String password = iniGet(ini, sec, "password");
     if (!password.length()) password = salt() + salt();   // nobody can log in
-    u.salt = salt(); u.hash = sha256hex(u.salt + ":" + password);
+    u.salt = salt(); u.hash = passHash(u.salt, password);
     u.level = (uint8_t)constrain(iniGet(ini, sec, "level", "20").toInt(), 0L, 254L);
     u.flags = cleanFlags(iniGet(ini, sec, "flags"));
     u.calls = (uint32_t)max(0L, iniGet(ini, sec, "calls", "0").toInt());
@@ -101,7 +101,7 @@ static String crewKnownPassword(const User &u) {
   for (const String &sec : iniSections(ini)) {
     if (up(clean(sec, 16, true)) != u.normalized) continue;
     String pw = iniGet(ini, sec, "password");
-    return pw.length() && sha256hex(u.salt + ":" + pw) == u.hash ? pw : String();
+    return pw.length() && passMatchesHash(u.salt, u.hash, pw) ? pw : String();
   }
   return "";
 }

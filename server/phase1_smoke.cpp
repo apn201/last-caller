@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
   std::printf("SETTINGS: %s\n", summary.c_str());
   if (argc == 4) {
     User user;
-    if (!findUser(up(String(argv[2])), user) || sha256hex(user.salt + ":" + String(argv[3])) != user.hash) {
+    if (!findUser(up(String(argv[2])), user) || !passMatchesHash(user.salt, user.hash, String(argv[3]))) {
       std::fprintf(stderr, "Login failed for %s\n", argv[2]);
       return 1;
     }

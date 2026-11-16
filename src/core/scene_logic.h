@@ -25,6 +25,7 @@ struct Typed { std::vector<std::string> words; std::string go, has, lacks; };
 
 struct Node {
   std::string id, speaker, text, art, color, set, go, ifHas, ifLacks, ifGo;
+  std::vector<std::string> alt;   // G1: text2=, text3=: what the node says the second and the third time in a row (and after)
   std::string typedElse;   // Q21: typed_else= the node a typed reply that matches no word goes to (else: "Choose 1 to n")
   std::string then;   // follow-up when the scene ends by this node: CHAT (node chat) or another scene's name
   uint32_t pauseMs = 700;
@@ -80,6 +81,7 @@ inline bool buildNode(const std::string &id, const std::vector<Kv> &kv, Node &n,
   n.id = haunt::upper(id);
   n.speaker = haunt::capText(getKey(kv, "speaker"), MAX_SPEAKER);
   n.text = haunt::capText(getKey(kv, "text"), MAX_TEXT);
+  for (const char *k : {"text2", "text3"}) { bool has = false; std::string v = haunt::capText(getKey(kv, k, &has), MAX_TEXT); if (has && !v.empty()) n.alt.push_back(v); }
   n.art = idText(getKey(kv, "art"));
   n.color = colorOk(getKey(kv, "color"));
   n.set = haunt::flagsClean(getKey(kv, "set"));
@@ -259,6 +261,9 @@ class Typer {
 };
 
 // ---------- the player ---------------------------------------------------------------------
+// G1: the last node that had a text2=, and how many times in a row it has been shown; kept by the board per
+// session, so a refusal that comes back through the hub is not word for word the same.
+struct Memory { std::string node; unsigned count = 0; };
 struct Part { bool isArt = false; std::string s; };   // text to write, or the name of a picture to show
 struct Out {
   std::vector<Part> parts;
@@ -292,7 +297,8 @@ class Player {
 
   // replay (Q21, the notebook): the scene as it was. It grants nothing and changes no flag; a choice is shown and
   // followed but sets nothing, and a `then` is not followed.
-  Out start(std::shared_ptr<const Scene> sc, const std::string &flags, bool ansi, uint32_t now, bool replay = false) {
+  Out start(std::shared_ptr<const Scene> sc, const std::string &flags, bool ansi, uint32_t now, bool replay = false, Memory *mem = nullptr) {
+    mem_ = mem;
     sc_ = std::move(sc); flags_ = flags; ansi_ = ansi; replay_ = replay; steps_ = 0; ph_ = P_IDLE; node_.clear(); then_.clear();
     skipping_ = false; armed_ = false; shownAt_ = now;
     Out out;
@@ -332,6 +338,7 @@ class Player {
   uint32_t until_ = 0, shownAt_ = 0;
   bool skipping_ = false, armed_ = false;
   Typer typer_;
+  Memory *mem_ = nullptr;
   std::vector<size_t> shown_;   // indexes of the choices on screen
 
   const Node &cur() const { return sc_->nodes[(size_t)sc_->find(node_)]; }
@@ -389,6 +396,13 @@ class Player {
       id = n.go; continue;
     }
     if (n.text.empty()) { afterText(now, out); return; }
+    std::string text = n.text;
+    if (mem_ && !replay_ && !n.alt.empty()) {   // G1: the same node twice in a row says it differently
+      const std::string key = sc_->id + ":" + n.id;
+      if (mem_->node == key) mem_->count++; else { mem_->node = key; mem_->count = 0; }
+      const size_t at = mem_->count % (n.alt.size() + 1);   // text, text2, text3, text, ...: never the same twice in a row
+      if (at > 0) text = n.alt[at - 1];
+    }
     std::string head, body, tail, speaker = n.speaker;
     if (ansi_) {
       head = "\x1b[1;37m";
@@ -396,7 +410,7 @@ class Player {
       tail = "\x1b[0m";
       if (!speaker.empty()) head = "\x1b[" + (n.color.empty() ? std::string("1;37") : n.color) + "m";
     }
-    typer_.begin(layout(head, speaker, body, tail, n.text, sc_->speed), now);
+    typer_.begin(layout(head, speaker, body, tail, text, sc_->speed), now);
     ph_ = P_TYPE;
     if (skipping_) { out.addText(typer_.flush()); skipping_ = false; afterText(now, out); }   // a choice: shown at once
     return;

@@ -41,7 +41,7 @@ static bool shellListed(const Session &s) {
 }
 
 static void enterShell(Session &s) {
-  shellLoad();
+  shellLoad(); repeatReset(s);
   s.state = SHELL_PROMPT; s.hideInput = false; s.shellCwd = "/"; activity(s, "NOWHERE");
   event("SHELL", s.user.handle + " node " + s.node + " opened the NOWHERE shell");
   if (s.ansi) artOnce(s, "/BBS/ANSI/DOORS/NOWHERE.ANS", "NOWHERE");
@@ -54,6 +54,22 @@ static void enterShell(Session &s) {
 static void handleShell(Session &s, String &line, const String &) {
   std::string cwd = hauntStd(s.shellCwd);
   nshell::Result r = nshell::exec(shellTable, cwd, doorFlagsOf(s), hauntStd(line));
+  // G1: a refusal asked again in a row is answered differently: held_2/held_3, unknown_2/unknown_3 in [SHELL]
+  // (else the SHELL again2/again3 line goes in front). The same refusal for another word counts too.
+  if (r.refusal.length() && !r.exit) {
+    String verb = line; verb.trim(); int sp = verb.indexOf(' ');
+    if (sp > 0) verb = verb.substring(0, sp);
+    unsigned n = repeatCount(s, "SHELL:" + hauntStr(r.refusal));
+    if (n > 0) {
+      String k = hauntStr(r.refusal);
+      String base = hauntStr(r.out);
+      auto fill = [&](String t) { t.replace("{cmd}", verb); return t; };
+      String v = repeatAnswer(n, base, fill(config(SHELL_INI, "SHELL", (k + "_2").c_str(), "")), fill(config(SHELL_INI, "SHELL", (k + "_3").c_str(), "")),
+                              config(SHELL_INI, "SHELL", "again2", ""), config(SHELL_INI, "SHELL", "again3", ""));
+      v.replace("|", "\n");
+      r.out = hauntStd(v);
+    }
+  } else if (!r.exit) repeatReset(s);
   s.shellCwd = hauntStr(cwd);
   if (r.exit) {
     event("SHELL", s.user.handle + " node " + s.node + " left the NOWHERE shell");

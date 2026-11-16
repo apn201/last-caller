@@ -20,7 +20,7 @@ static void ensureMaintAccount() {
   u = User();
   u.handle = powerCfg.maintAccount; u.normalized = up(powerCfg.maintAccount);
   u.realName = "Ship maintenance"; u.location = "HALCYON";
-  u.salt = salt(); u.hash = sha256hex(u.salt + ":" + powerCfg.maintPassword);
+  u.salt = salt(); u.hash = passHash(u.salt, powerCfg.maintPassword);
   u.level = 10; u.flags = "READONLY";
   newUserDefaults(u);
   appendUser(u);

@@ -214,6 +214,7 @@ struct Result {
   bool exit = false;
   std::string grant;    // flags to add to the caller (the final command)
   bool final = false;
+  std::string refusal;  // G1: "held" or "unknown" when the board refused the command; the door varies a repeated refusal
   std::string scene;    // the final command: the scene to start after the text
   std::vector<std::string> read;   // paths of the files cat showed (Q21: the notebook notes them)
 };
@@ -239,7 +240,7 @@ inline Result exec(const Table &t, std::string &cwd, const std::string &flags, c
   }
   // The final verb before the caller may use it: why it is held, when the card says so.
   if (!t.finalHeld.empty() && !t.finalCmd.empty() && cmd == t.finalCmd.substr(0, t.finalCmd.find(' '))) {
-    r.out = subst(t.finalHeld, "{cmd}", w[0]);
+    r.out = subst(t.finalHeld, "{cmd}", w[0]); r.refusal = "held";
     return r;
   }
   if (cmd == "exit" || cmd == "logout" || cmd == "quit" || cmd == "bye" || cmd == "q") { r.exit = true; return r; }
@@ -310,7 +311,7 @@ inline Result exec(const Table &t, std::string &cwd, const std::string &flags, c
     if (r.out.size() > MAX_OUT) r.out.resize(MAX_OUT);
     return r;
   }
-  r.out = subst(t.unknown, "{cmd}", w[0]);
+  r.out = subst(t.unknown, "{cmd}", w[0]); r.refusal = "unknown";
   return r;
 }
 

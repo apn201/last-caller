@@ -137,9 +137,10 @@ static void ghostChatJoined(Session &s) {
 // The caller has said something in chat (bbs/chat.h chatCommand).
 static void ghostChatHeard(Session &s, const String &line) {
   if (ghostTable.lines.empty() || !s.authenticated || s.ghostSay.size() >= GHOST_QUEUE_MAX) return;
-  const ghost::Line *l = ghost::chatReply(ghostTable, ghostCtx(s), hauntStd(line), s.ghostTurn);
+  const ghost::Line *l = ghost::chatReply(ghostTable, ghostCtx(s), hauntStd(line), s.ghostTurn, hauntStd(s.ghostLastId), s.ghostRepeat);
   if (!l) return;
   if (l->kind == ghost::K_ELSE) s.ghostTurn++;
+  if (l->kind == ghost::K_AGAIN) s.ghostRepeat++; else { s.ghostRepeat = 0; s.ghostLastId = hauntStr(l->id); }
   ghostSpeak(s, *l, l->kind == ghost::K_ELSE ? "chat fallback" : "chat keyword");
 }
 

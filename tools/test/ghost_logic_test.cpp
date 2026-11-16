@@ -209,6 +209,20 @@ int main(int argc, char **argv) {
     CHECK(chatReply(t, c, "zzz", 0)->id == "F1" && chatReply(t, c, "zzz", 1)->id == "F2" && chatReply(t, c, "zzz", 2)->id == "F1");
     c.flags = "NEVER";
     CHECK(chatReply(t, c, "zzz", 2)->id == "F3");
+    // G1: never the same answer twice in a row. A repeated question gets the "again" lines in turn, then round again.
+    {
+      Table g = t;
+      g.lines = lines("[R1]\nkeys=name\nsay=I am ELIZA.\n[R9]\nkeys=name\nsay=Eliza, still.\n[R2]\nkeys=ship\nsay=Well.\n"
+                      "[F1]\nchat=else\nsay=Go on.\n[A1]\nchat=again\nsay=Said.\n[A2]\nchat=again\nsay=Three times.\n").lines;
+      Ctx k;
+      CHECK(chatReply(g, k, "name", 0, "", 0)->id == "R1");
+      CHECK(chatReply(g, k, "name", 0, "R1", 0)->id == "R9");              // another line with the same keyword answers
+      CHECK(chatReply(g, k, "the ship", 0, "R2", 0)->id == "A1");          // only the line just said: the second time
+      CHECK(chatReply(g, k, "the ship", 0, "R2", 1)->id == "A2");          // the third time
+      CHECK(chatReply(g, k, "the ship", 0, "R2", 2)->id == "A1");          // and round again, never the same twice
+      CHECK(chatReply(g, k, "zzz", 0, "F1", 0)->id == "A1");               // one fallback only, just said
+      CHECK(chatReply(g, k, "zzz", 0, "R2", 0)->id == "F1");
+    }
     // no fallback at all: silence
     Table none = t; none.lines = lines("[R1]\nkeys=name\nsay=x\n").lines;
     CHECK(chatReply(none, Ctx(), "zzz", 0) == nullptr);

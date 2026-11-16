@@ -109,7 +109,7 @@ static void sceneStart(Session &s, const String &raw) {
   activity(s, "IN A SCENE");
   soundCue(s, hauntStr(sc->sound));
   write(s, "\r\n\r\n");   // Q20 UX: never on the line of the prompt it interrupts
-  sceneWrite(s, s.sceneRun.start(sc, sceneFlagsOf(s), s.ansi, millis()));
+  sceneWrite(s, s.sceneRun.start(sc, sceneFlagsOf(s), s.ansi, millis(), false, &s.sceneMem));
 }
 
 // Q21: a scene the caller has seen, shown again from the notebook. It saves no marker and no flag, and

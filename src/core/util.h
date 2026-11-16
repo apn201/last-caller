@@ -127,6 +127,15 @@ static String jsonText(const String &in) {
   }
   return out;
 }
+// G1: passwords are case-blind, as on PCBoard, RemoteAccess and Wildcat. New hashes are made of the capitals;
+// a hash made before G1 (the exact typing, or lower case) still opens the account and is migrated at login.
+static String passUpper(String s) { s.toUpperCase(); return s; }
+static String passHash(const String &saltStr, const String &pw) { return sha256hex(saltStr + ":" + passUpper(pw)); }
+static bool passMatchesHash(const String &saltStr, const String &hash, const String &pw) {
+  if (passHash(saltStr, pw) == hash) return true;
+  String lower = pw; lower.toLowerCase();
+  return sha256hex(saltStr + ":" + pw) == hash || sha256hex(saltStr + ":" + lower) == hash;
+}
 static String salt() { char b[17]; snprintf(b, sizeof(b), "%08lx%08lx", (unsigned long)bbsRandom(), (unsigned long)bbsRandom()); return String(b); }
 
 // Command-line parsing for typed BBS commands.

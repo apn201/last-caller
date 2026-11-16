@@ -161,7 +161,7 @@ static void fieldValue(Session &s, const String &line) {
     s.hideInput = false; say(s);
     if (!v.length()) say(s, "Password not changed.");
     else if (v.length() < 6) { s.hideInput = true; prompt(s, "At least 6 characters (ENTER cancels): "); return; }
-    else { u.salt = salt(); u.hash = sha256hex(u.salt + ":" + v); saveRecord(s, u, "PASSWORD"); }
+    else { u.salt = salt(); u.hash = passHash(u.salt, v); saveRecord(s, u, "PASSWORD"); }
     showRecord(s, u); return;
   }
   if (!v.length()) { showRecord(s, u); return; }
@@ -301,7 +301,7 @@ static bool userEditorCommand(Session &s, String &line, const String &cmd) {
     if (!line.length()) { say(s, "Add cancelled."); sysopUsers(s); return true; }
     User u;
     u.handle = s.pendingHandle; u.normalized = up(u.handle);
-    u.salt = salt(); u.hash = sha256hex(u.salt + ":" + line);
+    u.salt = salt(); u.hash = passHash(u.salt, line);
     u.level = board.newUserLevel;
     newUserDefaults(u);
     s.pendingHandle = "";
