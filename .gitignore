@@ -20,3 +20,4 @@ docs/art-preview/
 
 # Press-kit renders and generated art (tools/presskit.py, Kling).
 docs/presskit/
+.claude/settings.local.json
