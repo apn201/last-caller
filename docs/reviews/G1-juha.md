@@ -12,8 +12,19 @@ Which scene: "It was Ty and ELIZA", so the Bay 3 recording (`MEM_BAY`, Ty
 and ELIZA talking, no choices), the same scene the G1 agent named. Possibly
 `ELIZA_WAKE` too (it has a numbered choice).
 
-2. "Mostly works." Also: "Could not yet submit from nowhere" (his words;
-   meaning not clear yet, ask him before acting on it).
+2. "Mostly works." Could not release the queue in NOWHERE: two of the four
+   manifest rows were still locked (expected, M_Z missing). But "I do not
+   understand the story behind it: why would NOWHERE care about the
+   manifest?" **For G3 (story design):** the hold must make sense on its own.
+   Planner's proposal for Juha: the 41 messages are the crew's last letters
+   home. A rule of the mission (and of real crewed flight) holds personal mail
+   from a crew in an incident until next of kin are notified, and next of kin
+   are notified from the confirmed crew manifest: who was aboard, and what
+   happened to each. ELIZA may not file it (order 5); the player does, by
+   making the manifest whole. The queue header, `help_held`, `final_held`,
+   MANFULL and one crew post say it in those words ("No personal mail leaves
+   before the families are told. The families are told from the manifest.").
+   Juha decides in G3.
 
 ## Planner's read of the code (for Kiro; verify, do not trust)
 
