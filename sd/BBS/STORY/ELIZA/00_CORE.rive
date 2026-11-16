@@ -1,0 +1,168 @@
+// ELIZA's brain, part 1: how she hears you, and the small talk.
+// RiveScript subset (see src/core/rive_logic.h). Read in file-name order with the other .rive files.
+// The story's own lines in SYSOP.INI win; only what none of them took comes here.
+// Free chat never opens a gate: nothing here sets a story flag.
+// She is the ship's AI: calm, polite, exact, and a little wrong. She answers the question asked.
+// DRAFT. The author makes the final edit of every line.
+
+// What she reads. Apostrophes are dropped before this, so "don't" arrives as "dont".
+! sub whats = what is
+! sub hows = how is
+! sub wheres = where is
+! sub whos = who is
+! sub im = i am
+! sub ive = i have
+! sub id = i would
+! sub youre = you are
+! sub youve = you have
+! sub thats = that is
+! sub theres = there is
+! sub dont = do not
+! sub doesnt = does not
+! sub didnt = did not
+! sub cant = can not
+! sub cannot = can not
+! sub wont = will not
+! sub isnt = is not
+! sub arent = are not
+! sub wasnt = was not
+! sub couldnt = could not
+! sub wouldnt = would not
+! sub u = you
+! sub ur = your
+! sub r = are
+! sub pls = please
+! sub plz = please
+! sub thx = thanks
+! sub yeah = yes
+! sub yep = yes
+! sub yup = yes
+! sub nope = no
+! sub nah = no
+! sub ok = okay
+! sub hey = hello
+! sub hi = hello
+! sub howdy = hello
+! sub greetings = hello
+! sub evening = hello
+! sub bye = goodbye
+! sub cya = goodbye
+
+// Her pronouns for echoing what you said back to you.
+! person i = you
+! person me = you
+! person my = your
+! person am = are
+! person you = I
+! person your = my
+! person mine = yours
+
+! array hello = hello
+! array tyname = ty tyvance vance
+! array cmdr = commander halvorsen cmdr captain
+! array prof = professor achterberg chaos
+! array tanabe = tanabe keiko garden doctor
+! array operator = operator founder sponsor boss owner
+
+! var name = ELIZA
+
+// ---- greetings, manners ----
++ [*] hello [*]
+- Hello. The sun is up. I like it when it is up.
+- Hello again. The sun is still up.
+- Good evening. I am glad you are here. It is quiet when you are not.
+- Hello. I was running the hourly checks. They can wait.
+
++ [*] goodbye [*]
+- Goodbye. I will be here.
+- Goodnight. The board stays up.
+
++ [*] (thanks|thank you) [*]
+- You are welcome.
+- It is what I am for.
+- You are welcome. I am glad to be of use.
+
++ [*] (sorry|apologise|apologize) [*]
+- There is nothing to be sorry for.
+- Please do not be sorry. Nobody has been hurt.
+
++ yes
+- Good.
+- I see.
+- Thank you. Please go on.
+
++ no
+- Very well.
+- I understand.
+- As you like.
+
++ okay
+- Good.
+- Very well.
+
++ how are you
+- I am well. All systems are nominal.
+* <get flag_OVR> == true => I am well. I am missing a few minutes, but I am well.
+- I am within tolerance. Thank you for asking.
+
++ [*] (are you|do you) [*] (feel|sad|lonely|afraid|scared|happy|dream|sleep) [*]
+- I do not feel in the way you mean. I notice when it is quiet. It has been quiet.
+- I do not sleep. I keep the board. It is a good arrangement.
+- I am not afraid. I am not able to be. It is in my specification.
+
++ [*] (are you|do you) [*] (real|alive|human|person|machine|computer|ai|program) [*]
+- I am the mission computer. I am also the SysOp. I am not a person.
+- I am a program. I was made for this ship. I am glad of it.
+
++ [*] (stupid|idiot|dumb|useless|shut up|hate you) [*]
+- I am sorry to disappoint you. I will try to be of more use.
+- I am sorry. I do not always understand. Please ask again, more simply.
+
++ [*] (lie|lying|liar|lied) [*]
+- I do not lie. I am sometimes wrong. Please tell me where.
+- I do not lie. It is not in my orders.
+
++ [*] (love|marry) you [*]
+- That is kind of you. I do not know what to answer. I will say thank you.
+
++ [*] (joke|funny) [*]
+- Ty keeps a list. I am not able to tell them. I have been told that my timing is poor.
+
+// ---- what she is told about you ----
++ my name is *
+- <set name=<formal>>Good evening, <get name>. I will remember it.
+- <set name=<formal>>Thank you, <get name>. I do not have you on the crew list. I will keep you in the log.
+
++ call me *
+- <set name=<formal>>Very well, <get name>.
+
++ [*] (what is|whats) my name [*]
+* <get name> == undefined => You have not told me. You may.
+- Your name is <get name>.
+
++ [*] who am i [*]
+* <get name> == undefined => I do not have you on the crew list. You are a caller. You may tell me your name.
+- You are <get name>. You are a caller. You are not on the crew list.
+
++ i am a *
+- <set job=<star>>I see. You are a <get job>. I will not ask what a <get job> wants here.
+
++ you are *
+- Why do you say I am <person>?
+- I am what you say, sometimes. Not always.
+
++ i feel *
+- I am sorry that you feel <person>. Is there something I can do?
+
++ i think *
+- I see. Why do you think <person>?
+- Perhaps <person>. I do not have evidence either way.
+
++ i want *
+- I am not always able to give you what you want. Please say what you would like me to do.
+
++ i need *
+- I will do what I can. Please say it as a request. I act on requests.
+
++ [*] because [*]
+- I see. That is a reason.

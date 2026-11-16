@@ -11,9 +11,10 @@ namespace ghost {
 
 using haunt::Kv;
 
+static constexpr size_t MAX_OPTION = 60;
 static constexpr size_t MAX_GHOSTS = 24, MAX_LINES = 200, MAX_KEYS = 12;
 static constexpr size_t MAX_HANDLE = 16, MAX_ACTIVITY = 24, MAX_IDLE = 10, MAX_PAGE = 200, MAX_SAY = 600, MAX_KEY = 24;
-static constexpr uint32_t MAX_NODE = 99, MAX_DELAY = 10000, DEFAULT_DELAY = 1500;
+static constexpr uint32_t MAX_NODE = 99, MAX_DELAY = 10000, DEFAULT_DELAY = 300;   // G2: was 1500; answers come right after the question
 
 struct Ghost {
   std::string id;                 // upper case, letters digits _
@@ -27,7 +28,9 @@ struct Ghost {
   std::string pageFrom, page, set;
 };
 
-enum Kind : uint8_t { K_NONE, K_TRIGGER, K_KEYS, K_JOIN, K_ELSE, K_AGAIN };
+// G2: K_HELP says the options are coming (when there are some), K_NOHELP when there are none, K_NONUM answers a number that
+// names nothing.
+enum Kind : uint8_t { K_NONE, K_TRIGGER, K_KEYS, K_JOIN, K_ELSE, K_AGAIN, K_HELP, K_NOHELP, K_NONUM };
 
 struct Line {
   std::string id;
@@ -39,6 +42,8 @@ struct Line {
   std::string has, lacks, set;
   bool once = false;
   uint32_t delay = DEFAULT_DELAY; // ms before she starts typing
+  std::string option;             // G2: keys= lines only: the words `help` lists for it (a numbered option)
+  std::string then;               // G2: keys= lines only: a scene that starts when she has said it (upper case)
 };
 
 struct Table {
@@ -138,6 +143,9 @@ inline bool buildLine(const std::string &id, const std::vector<Kv> &kv, Line &l,
   std::string delay = val(kv, "delay", &f);
   if (f && !haunt::parseUint(delay, MAX_DELAY, l.delay)) { why = "delay must be 0 to 10000"; return false; }
   if (l.say.empty()) { why = "missing say"; return false; }
+  l.option = haunt::capText(val(kv, "option"), MAX_OPTION);
+  std::string then = haunt::upper(haunt::trim(val(kv, "then")));
+  if (!then.empty()) { if (!haunt::idOk(then)) { why = "bad then"; return false; } l.then = then; }
   std::string trigger = haunt::upper(haunt::trim(val(kv, "trigger"))), keys = val(kv, "keys"), chat = haunt::lower(haunt::trim(val(kv, "chat")));
   int ways = (!trigger.empty()) + (!haunt::trim(keys).empty()) + (!chat.empty());
   if (ways != 1) { why = "exactly one of trigger, keys and chat"; return false; }
@@ -148,7 +156,11 @@ inline bool buildLine(const std::string &id, const std::vector<Kv> &kv, Line &l,
     if (chat == "join") { l.kind = K_JOIN; l.once = true; }
     else if (chat == "else") l.kind = K_ELSE;
     else if (chat == "again") l.kind = K_AGAIN;   // G1: said when the same answer would come a second time in a row
-    else { why = "chat must be join, else or again"; return false; }
+    else if (chat == "help") l.kind = K_HELP;
+    else if (chat == "nohelp") l.kind = K_NOHELP;
+    else if (chat == "nonum") l.kind = K_NONUM;
+    else { why = "chat must be join, else, again, help, nohelp or nonum"; return false; }
+    if (!l.option.empty() || !l.then.empty()) { why = "option and then are for keys lines"; return false; }
   } else {
     l.kind = K_KEYS;
     std::string word;
@@ -164,6 +176,7 @@ inline bool buildLine(const std::string &id, const std::vector<Kv> &kv, Line &l,
     take();
     if (l.keys.empty()) { why = "keys has no words"; return false; }
   }
+  if (!trigger.empty() && (!l.option.empty() || !l.then.empty())) { why = "option and then are for keys lines"; return false; }
   return true;
 }
 
@@ -244,7 +257,8 @@ inline const Line *againLine(const Table &t, const Ctx &c, uint32_t repeats) {
   for (const auto &l : t.lines) if (l.kind == K_AGAIN && lineDue(l, c) && present(t, c, l.from)) again.push_back(&l);
   return again.empty() ? nullptr : again[repeats % again.size()];
 }
-inline const Line *chatReply(const Table &t, const Ctx &c, const std::string &text, uint32_t turn,
+// G2: the keyword lines alone (the story's own lines win over her brain).
+inline const Line *keysReply(const Table &t, const Ctx &c, const std::string &text,
                              const std::string &lastId = std::string(), uint32_t repeats = 0) {
   const Line *same = nullptr;
   for (const auto &l : t.lines)
@@ -253,6 +267,11 @@ inline const Line *chatReply(const Table &t, const Ctx &c, const std::string &te
       if (!same) same = &l;
     }
   if (same) { const Line *a = againLine(t, c, repeats); return a ? a : same; }
+  return nullptr;
+}
+// The fixed fallback lines, in turn.
+inline const Line *elseReply(const Table &t, const Ctx &c, uint32_t turn,
+                             const std::string &lastId = std::string(), uint32_t repeats = 0) {
   std::vector<const Line *> fallback;
   for (const auto &l : t.lines) if (l.kind == K_ELSE && lineDue(l, c) && present(t, c, l.from)) fallback.push_back(&l);
   if (fallback.empty()) return nullptr;
@@ -262,6 +281,40 @@ inline const Line *chatReply(const Table &t, const Ctx &c, const std::string &te
     if (pick->id == lastId) { const Line *a = againLine(t, c, repeats); if (a) return a; }
   }
   return pick;
+}
+inline const Line *chatReply(const Table &t, const Ctx &c, const std::string &text, uint32_t turn,
+                             const std::string &lastId = std::string(), uint32_t repeats = 0) {
+  const Line *k = keysReply(t, c, text, lastId, repeats);
+  return k ? k : elseReply(t, c, turn, lastId, repeats);
+}
+// G2: the options `help` lists: keyword lines with an option= text that are due now, in file order.
+inline std::vector<const Line *> options(const Table &t, const Ctx &c) {
+  std::vector<const Line *> out;
+  for (const auto &l : t.lines) if (l.kind == K_KEYS && !l.option.empty() && lineDue(l, c) && present(t, c, l.from)) out.push_back(&l);
+  return out;
+}
+// First due line of a kind (help, nohelp, nonum).
+inline const Line *firstOf(const Table &t, const Ctx &c, Kind k) {
+  for (const auto &l : t.lines) if (l.kind == k && lineDue(l, c) && present(t, c, l.from)) return &l;
+  return nullptr;
+}
+inline const Line *byId(const Table &t, const std::string &id) {
+  for (const auto &l : t.lines) if (l.id == id) return &l;
+  return nullptr;
+}
+// Does the caller ask what she can do? "?", "help", "suggest", "what can I do" ...
+inline bool wantsHelp(const std::string &text) {
+  const std::string n = norm(text);
+  if (n == " " && haunt::trim(text) == "?") return true;
+  static const char *keys[] = {" help ", " suggest ", " suggestions ", " options ", " what can i do ", " what can you do ", " what do i do ", " what now ", " what next ", " i am stuck ", " im stuck "};
+  for (const char *k : keys) if (n.find(k) != std::string::npos) return true;
+  return false;
+}
+// A whole line that is one digit 1 to 9: the number of an option. 0 if it is not.
+inline int pickNumber(const std::string &text) {
+  std::string t = haunt::trim(text);
+  if (t.size() == 2 && t[1] == '.') t.pop_back();
+  return (t.size() == 1 && t[0] >= '1' && t[0] <= '9') ? t[0] - '0' : 0;
 }
 // Lines said when the caller enters chat (at most one per speaker is not enforced: the card decides).
 inline std::vector<const Line *> joinLines(const Table &t, const Ctx &c) {
@@ -280,8 +333,10 @@ inline std::vector<const Line *> triggerLines(const Table &t, const Ctx &c, cons
 // ---------- typing -------------------------------------------------------------------------
 // How long a part of `chars` characters takes to type.
 inline uint32_t typingMs(size_t chars) {
-  uint32_t ms = (uint32_t)chars * 55;
-  return ms < 400 ? 400 : (ms > 5000 ? 5000 : ms);
+  // G2: was 55 ms a character, up to 5 s. A caller (or a tool) that waits for a quiet line read the silence
+  // as "no answer" and saw it a turn late. Now no gap is over about 1.4 s.
+  uint32_t ms = (uint32_t)chars * 20;
+  return ms < 300 ? 300 : (ms > 1100 ? 1100 : ms);
 }
 struct Beat { std::string text; uint32_t wait = 0; };   // `wait` ms after the previous beat (or after the caller's line)
 // A line as the parts the caller sees one after the other. "|" separates parts.
@@ -293,7 +348,7 @@ inline std::vector<Beat> beats(const Line &l) {
     part.clear();
     if (t.empty()) return;
     Beat b; b.text = t;
-    b.wait = typingMs(t.size()) + (out.empty() ? l.delay : 500);
+    b.wait = typingMs(t.size()) + (out.empty() ? l.delay : 250);
     out.push_back(b);
   };
   for (char c : l.say) { if (c == '|') take(); else part += c; }

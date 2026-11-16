@@ -306,6 +306,13 @@ class Lint:
                 units.append(("sysop " + name, flags(kv.get("has")), flags(kv.get("set"))))
                 for f in flags(kv.get("has")):
                     required.append(("sysop " + name, f))
+                # G2: a chat option or gate may start a scene (then=); a listed option needs words to type.
+                if kv.get("then"):
+                    nxt = kv["then"].strip().upper()
+                    self.scene_thens.append(("SYSOP.INI [%s]" % name, nxt))
+                    units.append(("sysop " + name + " then", flags(kv.get("has")), ["SC_ENTER_" + nxt]))
+                if kv.get("option") and not kv.get("keys"):
+                    self.err("SYSOP.INI [%s]" % name, "option= needs keys= (the words that do the same as its number)")
         if ghosts:
             for name, kv, _ in ghosts.sections:
                 for f in flags(kv.get("has")):
@@ -328,9 +335,8 @@ class Lint:
         units.append(("post path overrun", [], ["OVR"]))
         if "MEM_GLITCH" in scenes:
             units.append(("post path overrun scene", ["OVR"], ["SC_ENTER_MEM_GLITCH"]))
-        # Node chat (C) opens the SysOp chat scene first (bbs/cmd_main.h chatEntry).
-        if "ELZ_TALK" in scenes:
-            units.append(("node chat", [], ["SC_ENTER_ELZ_TALK"]))
+        # G2: node chat (C) is one free-text chat; its options and gates are lines of SYSOP.INI (see above).
+        required.extend(self.check_rive())
         for name, kv in rules:
             if kv.get("event", "").lower() == "crew_login":
                 who = kv.get("match", "").upper()
@@ -924,12 +930,90 @@ class Lint:
             self.err("NOTES.INI", "clue %s (%s) has no note: add clue=%s to the note that keeps it" % (c, want[c], c))
         self.note_count = len(notes.sections)
 
+    def check_rive(self):
+        """G2: ELIZA's brain (STORY/ELIZA/*.rive): every file parses, topics exist, flags it reads are real,
+        nothing needs code, and the brain stays small (it is loaded into the ESP32's memory)."""
+        need = []
+        d = os.path.join(self.story, "ELIZA")
+        if not os.path.isdir(d):
+            return need
+        triggers = replies = 0
+        topics = {"random"}
+        sets = []
+        texts = {}
+        for n in sorted(os.listdir(d)):
+            if not n.lower().endswith(".rive"):
+                continue
+            rel = "STORY/ELIZA/" + n
+            raw = open(os.path.join(d, n), "rb").read()
+            if len(raw) > 24 * 1024:
+                self.err(rel, "over 24 KB")
+            try:
+                text = raw.decode("ascii")
+            except UnicodeDecodeError:
+                self.err(rel, "plain ASCII only")
+                continue
+            texts[rel] = text
+            has_reply = None
+            in_block = False
+            for i, line in enumerate(text.splitlines(), 1):
+                t = line.strip()
+                if in_block:
+                    in_block = "*/" not in t
+                    continue
+                if not t or t.startswith("//"):
+                    continue
+                if t.startswith("/*"):
+                    in_block = "*/" not in t
+                    continue
+                where = "%s:%d" % (rel, i)
+                c = t[0]
+                if c not in "!+-%@*^><":
+                    self.err(where, "a RiveScript line starts with one of ! + - %% @ * ^ > <, not %r" % c)
+                    continue
+                if c == "+":
+                    if has_reply is False:
+                        self.err(where, "the trigger before has no reply")
+                    triggers += 1
+                    has_reply = False
+                elif c in "-@":
+                    replies += 1 if c == "-" else 0
+                    has_reply = True
+                elif c == "*":
+                    has_reply = True
+                    if "=>" not in t:
+                        self.err(where, "a condition needs =>")
+                elif c == ">":
+                    parts = t[1:].split()
+                    if parts[:1] == ["topic"] and len(parts) > 1:
+                        topics.add(parts[1].lower())
+                    else:
+                        self.err(where, "only > topic blocks are read (no begin, no object)")
+                if re.search(r"<call|<env|<bot\s+\w+=", t):
+                    self.err(where, "no code, no macros on the card")
+                for m in re.finditer(r"<get flag_([A-Za-z0-9_]+)>", t):
+                    need.append((where, m.group(1).upper()))
+                for m in re.finditer(r"<set flag_", t):
+                    self.err(where, "story flags are read-only here")
+                for m in re.finditer(r"\{topic=([^}]+)\}", t):
+                    sets.append((where, m.group(1).strip().lower()))
+            if has_reply is False:
+                self.err(rel, "the last trigger has no reply")
+        for where, tp in sets:
+            if tp not in topics:
+                self.err(where, "topic %s is never defined" % tp)
+        if triggers > 300 or replies > 1500:
+            self.err("STORY/ELIZA", "brain too big for the board (%d triggers, %d replies)" % (triggers, replies))
+        self.rive_stats = (triggers, replies)
+        # The flags the brain reads must exist (the lint's own list of story flags is the check in `required`).
+        return [(w, f) for w, f in need]
+
     def check_voice(self):
         paths = []
         for top in ("STORY", "MSGBASE", "BULLETINS"):
             for root, _, names in os.walk(os.path.join(self.card, top)):
                 for n in names:
-                    if n.upper().endswith((".INI", ".TXT")):
+                    if n.upper().endswith((".INI", ".TXT", ".RIVE")):
                         paths.append(os.path.join(root, n))
         for p in sorted(paths):
             rel = os.path.relpath(p, self.card).replace("\\", "/")

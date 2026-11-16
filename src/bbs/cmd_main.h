@@ -77,15 +77,11 @@ static void bulletinMenu(Session &s) {
   s.state = BULLETIN_LIST;
   prompt(s, "Bulletin #, then ENTER (Q goes back at once): ");
 }
-// C: node chat. A caller first meets ELIZA in the scene ELZ_TALK (numbered replies, STORY/SCENES);
-// its reply "Say something else" opens the typed chat (then=CHAT). A card without the scene, a
-// SysOp, or a scene that will not start (no power for this caller) opens the chat directly.
+// C: node chat. G2: one chat, free text. ELIZA answers from SYSOP.INI and her brain (STORY/ELIZA); `?` or HELP
+// lists what she can do for this caller now, as numbers, and typing the words works as well (core/ghost.h).
 static void chatEntry(Session &s) {
-  const char *banner = "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk. Q leaves.\x1b[0m";
-  if (!isSysop(s) && SD_MMC.exists("/BBS/STORY/SCENES/ELZ_TALK.INI")) {
-    sceneStart(s, "ELZ_TALK");
-    if (s.state == SCENE_PLAY) return;
-  }
+  const char *banner = isSysop(s) ? "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk. Q leaves.\x1b[0m"
+                                  : "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk. ? lists what ELIZA can do. Q leaves.\x1b[0m";
   startChat(s, banner);
 }
 

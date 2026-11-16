@@ -39,7 +39,7 @@ jigsaw there.
 | M3 | Crew area | M2; `TYVANCE` login, password = his birthday | `CREW`, NEW `ACT2` | Act 2, 22 Nov 13:52 to 1 Dec: logs, records, the other crew passwords | `TY_DESK` |
 | M4 | Achterberg's archive | M3; `CHAOS` login, password `CORRIGENDUM` (Q18) | `ACH`, NEW `ACT3` | Act 3, 2 Dec onward; his last message; the jigsaw | `MEM_REC` |
 | M5 | ELIZA's memory damaged | M2; post a body with 20 zeros in a row (19 gives one garbled ELIZA line and nothing else) | NEW `OVR` | ELIZA's lines change | NEW `MEM_GLITCH` |
-| M6 | SYSOP view | M5 and the handbook page (CMDR login, so M3); reply 3 in the SysOp chat | NEW `CURE`, NEW `SYSVW` | Everything, every crew mailbox, the Sponsor's orders in full | NEW `ELZ_GRANT` |
+| M6 | SYSOP view | M5 and the handbook page (CMDR login, so M3); in the SysOp chat, the check asked for by name (`MEMCHK`; G2: one chat, `help` lists the option) | NEW `CURE`, NEW `SYSVW` | Everything, every crew mailbox, the Sponsor's orders in full | NEW `ELZ_GRANT` |
 | M7 | ELIZA's account | M6; her password from the go-live checklist | NEW `ELZ_IN` | Her door menu, her mail, her ops log | NEW `ELZ_OPS` |
 | M8 | NOWHERE shell | M7; the order code (jigsaw) typed in Diagnostics | `NOWHERE_OPEN` (exists) | The haven tree, the queue, Ty's typescript | none |
 | M9 | Ending | M8; five manifest rows (`M_Z` is the report on file); the command | `M_Z`, `END1` (exist) | Ending, 2026 bulletin | `MEM_BAY`, `ENDING` |

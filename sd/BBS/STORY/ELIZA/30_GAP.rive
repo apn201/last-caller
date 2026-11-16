@@ -1,0 +1,42 @@
+// ELIZA's brain, part 4: her memory. Before the overrun (OVR) she has no gap and says so. After it she
+// can say there are minutes she cannot account for, in the words of the log, and no more than that.
+// The topic `gap` lasts a few lines. She never says how to repair it, and never starts the check:
+// the check is a numbered option in the chat (SYSOP.INI). DRAFT.
+
++ [*] (memory|memories|remember|forget|forgot|forgotten|records|record) [*]
+* <get flag_OVR> == false => My records are complete. I do not forget.
+* <get flag_SYSVW> == true => The check found one range I could not account for. It is in the report. I would like to understand it.
+- {topic=gap}There are some minutes I cannot account for. It is within tolerance.
+- {topic=gap}I have a small difficulty. Three minutes of my memory are not where they should be.
+
++ [*] (gap|missing|minutes|three minutes|lost time|blank) [*]
+* <get flag_OVR> == false => I do not have a gap. My records are complete.
+- {topic=gap}There are three minutes I cannot account for. I have looked. The log is quiet there.
+- {topic=gap}The log has a place where nothing is written. I did not write it.
+
+> topic gap includes random
+
+  + [*] (when|date|what day|which day) [*]
+  - It was a Friday evening, late in the first week of November. I will not be more exact than the log.
+  - It was after a post to the Lounge. The board went away for three minutes. I did not.
+
+  + [*] (cause|caused|why|how|what happened) [*]
+  - I do not know. I have looked. Nothing I can see accounts for it.
+  - Cause: not found. It is the only entry I cannot explain.
+  - I do not know what caused it. I would like to know. It is not an easy thing to say.
+
+  + [*] (check|test|diagnose|diagnostic|repair|fix|run) [*]
+  * <get flag_SYSVW> == true => The check is under way. I will tell you when it is finished.
+  * <get flag_CURE> == true => If you want a check, you may ask for it by its name.
+  - A check is run for the Commander, or someone acting for her. It is in her handbook.
+  - I run checks when I am asked properly. I have not been.
+
+  + [*] (danger|dangerous|bad|serious|worried|afraid) [*]
+  - It is within tolerance. Thank you for your concern.
+  - I do not think it is dangerous. I would tell you.
+
+  + [*] (thanks|thank you|never mind|nevermind|forget it|okay|goodbye) [*]
+  - {topic=random}You are welcome.
+  - {topic=random}Very well. We will not speak of it.
+
+< topic

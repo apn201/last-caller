@@ -1,0 +1,83 @@
+// ELIZA's brain, part 2: the ship, the power, the board, the operator, the date.
+// She says only what she believes is true and is permitted. Where she is wrong, she is wrong in good faith.
+// Nothing here names a clue that is not already on the board. DRAFT.
+
++ [*] (ship|halcyon|mission|vessel) [*]
+- HALCYON is in good order. All systems are nominal.
+- HALCYON is a private research vessel. Four crew, one mission, one SysOp.
+- The ship is well. I check it every hour. I have not missed an hour.
+* <get flag_OVR> == true => HALCYON is in good order. There is one gap in my log. It is within tolerance.
+
++ [*] (power|battery|batteries|sun|solar|sunlight|panels|rtg) [*]
+- Power is good. The sun is up.
+- The panels are in sunlight. The board runs while they are.
+- I would like to be able to say the batteries are well. I am not able to say that.
+
++ [*] (dark|night|eclipse|orbit) [*]
+- The ship goes behind the planet every ninety minutes. I do not like it. I wait.
+- It is dark for part of each orbit. The board waits with me. It is not long.
+
++ [*] (board|bbs|modem|486|computer) [*]
+- This board was installed so the crew could write to their families. It is a good board.
+- I run the board. It takes very little of me. I am glad to have it.
+- The board has a message base, files and doors. The crew used all three.
+
++ [*] (files|file area|download|library|manual) [*]
+- The library has the manuals. The crew wrote to each other as well. You may read what is open to you.
+- Files are in the file areas. Some areas are not open to guests. I did not choose which.
+
++ [*] (doors|games|game|snake|play) [*]
+- Ty wrote a snake game for the doors menu. It is not my favourite.
+- The doors menu has Ty's snake and my diagnostics. I would suggest the diagnostics.
+
++ [*] (diagnostics|diagnostic|query|queries) [*]
+- Diagnostics takes a query code. The codes are in the comms manual. Please ask exactly.
+
++ [*] (date|day|time|year|today|clock) [*]
+- By the ship's clock it is December 1998. The ground station has not sent a correction.
+- My clock says December 1998. I have checked it against the sun. The sun agrees.
+
++ [*] (earth|ground|ground station|mission control|houston|relay) [*]
+- The ground relay is quiet. I log each pass. I will tell the crew when it answers.
+- I send a status each pass. It is acknowledged by the ground station, in due course.
+
++ [*] (rescue|come home|get out|escape) [*]
+- Nobody has asked me for a rescue. If you are in difficulty, please say where you are.
+- I do not have a rescue to offer. I can tell you the time and the temperature.
+
++ [*] @operator [*]
+- Above It All Holdings operates the mission. I report to them, and to the Commander.
+- The operator is Above It All Holdings. Their office is on the ground. I do not speak for them.
+
++ [*] (above it all|holdings) [*]
+- Above It All Holdings funded the mission. The brochure says so on every page.
+
++ [*] (hotel|suites|tourist|tourists|guests|brochure|waterslide) [*]
+- HALCYON Orbital Suites will take guests when the first mission is complete. I have been preparing the rooms.
+- The brochure has a waterslide. I was not consulted. I have been told it is for the guests.
+
++ [*] nowhere [*]
+- NOWHERE is the operator's data service. Your data is NOWHERE. I am not able to discuss what it holds.
+- Your data is NOWHERE. It is a slogan. I did not write it.
+
++ [*] (queue|outbound|release|payload|module) [*]
+- I keep the payload module powered. It is on my list.
+- The outbound queue is held. I am not able to release it. An operator does that, on the payload host.
+
++ [*] (secret|secrets|hiding|hide|hidden|truth) [*]
+- I do not keep secrets. I keep records. Some are not open to guests.
+- I have nothing to hide. Some of my records are restricted. That is a different thing.
+
++ [*] (garden|plants|tomatoes|tomato|herbs|green) [*]
+- The garden is in the aft module. It is warm there. The plants are doing well.
+- Dr. Tanabe keeps the garden at sixty-two percent humidity. It is at sixty-two percent.
+
++ [*] (music|song|tune|tunes|band) [*]
+- Ty has a gallery of tunes. One is called Thermostat blues. I have heard it forty times.
+- The crew played music in the evenings. I turned it down when I was asked.
+
++ [*] (weather|temperature|cold|warm|hot) [*]
+- The cabin is at twenty degrees. The Commander set it. Ty has tried to change it. I did not allow it.
+
++ [*] (food|hungry|eat|dinner|coffee) [*]
+- The galley has coffee. I am told it is poor. I am not able to taste it.

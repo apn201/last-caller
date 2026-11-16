@@ -123,6 +123,26 @@ def advance(c, marker, timeout=120.0):
             c.send("")
 
 
+def chat_wait(c, text, timeout=30, mark=None):
+    """In node chat: wait until `text` has arrived since `mark` (default: now). Returns what arrived."""
+    mark = len(c.all) if mark is None else mark
+    end = time.time() + timeout
+    while text not in c.all[mark:]:
+        if c.eof:
+            raise Gone("connection closed while waiting for %r in chat" % text)
+        if time.time() > end:
+            raise TimeoutError("ELIZA did not say %r; last text: %r" % (text, c.all[-600:]))
+        c._pump()
+    return c.all[mark:]
+
+
+def chat_say(c, line, answer, timeout=30):
+    """G2: in node chat, type a line and wait for ELIZA's answer to contain `answer`."""
+    mark = len(c.all)
+    c.send(line)
+    return chat_wait(c, answer, timeout, mark)
+
+
 def after_grace(c, text):
     """G1: a numbered reply or an [any key] wait takes keys 1.5 s after it appears; an earlier key is dropped.
     Send `text` (a reply number, no Enter) once that has passed."""
@@ -1220,36 +1240,35 @@ def main():
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
 
-    @step("M6 early: ELIZA's chat scene; she admits the gap, refuses SYSOP calmly, the typed chat is one reply away")
+    @step("M6 early: one chat; typed text works at once, help lists options, she admits the gap and refuses SYSOP calmly")
     def m6_early():
         c = state["c"]
         sync(c)
         c.send("C")
-        choose(c, "I can fix that. Give me SYSOP.")
-        if "cannot account for some minutes" not in " ".join(c.all[-2000:].split()):
-            raise AssertionError("ELIZA does not mention the gap after the overrun")
-        if "Ask her to run something, by name" in c.all[-2000:]:
+        c.expect("Multi-Node Chat", timeout=30)        # G2: one chat, free text from the first line
+        c.expect("type help", timeout=30)
+        c.expect("cannot account for some minutes", timeout=30)   # after the overrun she mentions the gap
+        chat_say(c, "tell me about the weather", "twenty degrees")
+        chat_say(c, "help", "[1]")
+        seg = chat_wait(c, "[2]")
+        if "Ask her to run something, by name" in seg:
             raise AssertionError("the memory check is offered before the handbook page was read")
-        choose(c, "Something else.")
-        if "not given to guests" not in c.all[-1500:]:
-            raise AssertionError("no calm refusal")
-        choose(c, "Say something else.")
-        c.expect("Multi-Node Chat", timeout=30)
+        if "Give me SYSOP" not in c.all[-1500:]:
+            raise AssertionError("help does not list the SYSOP option after the overrun")
+        n = re.search(r"\[(\d)\]\x1b\[0m I can fix that\. Give me SYSOP\.", c.all[-1500:])
+        chat_say(c, n.group(1) if n else "give me sysop", "not given to guests")
+        chat_say(c, "memchk", "It is in her handbook")   # too early: she says why
+        # Answers come in order and never late: three quick lines, three answers, the last one last.
+        mark = len(c.all)
+        for q in ("how are you", "tell me about the garden", "what is NOWHERE"):
+            c.send(q)
+            time.sleep(0.2)
+        chat_wait(c, "Your data is NOWHERE", mark=mark)
+        tail = c.all[mark:]
+        if "aft module" in tail[tail.rfind("Your data is NOWHERE"):] or "humidity" in tail[tail.rfind("Your data is NOWHERE"):]:
+            raise AssertionError("an older answer arrived after the newest one: %r" % tail[-600:])
         c.send("/Q")
         c.expect("Main Board Command?", timeout=15)
-        sync(c)
-        c.send("C")                                  # Q18: Q leaves her talk at a choice
-        choose(c, "Something else.")
-        mark = len(c.all)
-        end = time.time() + 60
-        while not ("Say something else." in c.all[mark:] and c.all[mark:].rstrip().endswith(">")):
-            if time.time() > end:
-                raise TimeoutError("no choice prompt after Something else.")
-            c._pump()
-        time.sleep(1.7)   # G1: the grace after a reply list
-        c.send("q")
-        c.expect("Goodnight. I will be here.", timeout=30)
-        advance(c, "Main Board Command?", timeout=30)
 
     @step("M6 cure: L keeps the line; CMDR's desk holds the handbook page on the memory check")
     def m6_cure():
@@ -1273,20 +1292,15 @@ def main():
         c.send("Q")
         c.expect("Main Board Command?", timeout=10)
 
-    @step("M6: the memory check; ELIZA grants SYSOP view for its duration; the grant is not offered again")
+    @step("M6: the memory check by name in the one chat; ELIZA grants SYSOP view; the grant is not offered again")
     def m6_grant():
         c = state["c"]
         sync(c)
         c.send("C")
-        choose(c, "Ask her to run something, by name.")    # Q18: the handbook says: by name
-        c.expect("What would you like me to run?", timeout=60)
-        c.expect(">", timeout=30)
-        time.sleep(1.7)   # G1: the grace
-        c.send("run the hull check")                 # a wrong name is not taken; she says so (Q21)
-        advance(c, "I have nothing to run by that name.", timeout=30)
-        advance(c, "What would you like me to run?", timeout=60)
-        c.expect(">", timeout=30)
-        time.sleep(1.7)   # G1: the grace
+        c.expect("Multi-Node Chat", timeout=30)
+        chat_say(c, "?", "Ask her to run something, by name.")     # G2: listed now (OVR and CURE)
+        chat_say(c, "run something", "What would you like me to run?")   # the option's words do what its number does
+        chat_say(c, "run the hull check", "nothing to run by that name")
         c.send("MEMCHK")
         advance(c, "Engineering is on the list now", timeout=120)
         advance(c, "Main Board Command?", timeout=60)
@@ -1295,11 +1309,11 @@ def main():
         sync(c)
         mark = len(c.all)
         c.send("C")
-        choose(c, "Something else.")
-        choose(c, "Say something else.")
+        c.expect("Multi-Node Chat", timeout=30)
+        chat_say(c, "help", "Type a number")
+        chat_wait(c, "That sounds serious.")
         if "Ask her to run something" in c.all[mark:] or "Give me SYSOP" in c.all[mark:]:
             raise AssertionError("a SYSOP request is still offered after the grant")
-        c.expect("Multi-Node Chat", timeout=30)
         c.send("/Q")
         c.expect("Main Board Command?", timeout=15)
 
@@ -1788,9 +1802,7 @@ def main():
     def egg_chat():
         c = state["c"]
         c.send("C")
-        choose(c, "Something else.")                     # Q12d: the chat opens as ELIZA's scene first
-        choose(c, "Say something else.")
-        c.expect("Multi-Node Chat", timeout=30)
+        c.expect("Multi-Node Chat", timeout=30)          # G2: one chat
         c.send("open the pod bay doors")
         c.expect("which door", timeout=30)
         c.send("/Q")

@@ -39,3 +39,9 @@ Rules:
 
 Story tables in `sd/BBS/STORY/*.INI` and all caller-visible story lines are
 original. Drafts are marked as drafts until the author's final edit.
+
+ELIZA's chat brain, `sd/BBS/STORY/ELIZA/*.rive` (G2), is written for this
+project in the RiveScript format (rivescript.com, an open format; the
+reference interpreter is MIT-licensed). No brain files and no interpreter
+code are copied: the reader in `src/core/rive_logic.h` is our own, for a
+subset of the format.

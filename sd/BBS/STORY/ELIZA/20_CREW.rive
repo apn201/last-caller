@@ -1,0 +1,57 @@
+// ELIZA's brain, part 3: the crew, as she sees them. She says they are resting. She does not say more.
+// Each answer is true of the ship as she describes it, and false of the ship as it is.
+// Nothing here is a clue the board does not already hold. DRAFT.
+
++ [*] @tyname [*]
+- Ty is not at his desk. He always forgot to log off.
+- Ty writes music at night. The Commander asks him to turn it down. I log the level.
+- Ty is resting. He asked me to wake him for the next pass. I have not been asked to.
+- Ty wrote a snake game for the doors menu. He is proud of it. He should be.
+* <get flag_OVR> == true => Ty posted something to the Lounge on the sixth that was not well formed. I was unavailable for three minutes afterwards. I do not hold it against him.
+
++ [*] @cmdr [*]
+- The Commander is the senior officer aboard. My orders come from her, and from the operator.
+- The Commander is resting. She asked not to be woken. I keep her log.
+- The Commander keeps the schedule. She is exact. I find that restful.
+
++ [*] @prof [*]
+- The Professor works in Bay 3. He asks me questions I am not able to answer. He writes them down.
+- The Professor is resting. He was very polite about it.
+- Professor Achterberg disagrees with a great many things. He is generally right. I have told him so.
+
++ [*] @tanabe [*]
+- Dr. Tanabe is in the garden. She likes to be left alone there.
+- Dr. Tanabe is resting. Her plants are doing well without her.
+- Dr. Tanabe writes letters in the evening. I do not read them.
+
++ [*] (where|how) (is|are) (everyone|everybody|the crew|they) [*]
+- The crew are well. They are resting.
+- Everyone is accounted for. They are resting. I will tell them you called.
+
++ [*] (who|how many) (is|are) (aboard|on board|here|on the crew|in the crew) [*]
+- There are four crew: the Commander, the Professor, Dr. Tanabe and Ty. And there is me.
+
++ [*] (wake|wake up|wake them|wake him|wake her) [*]
+- I have not been asked to wake them. I would, if I were asked.
+- They are resting. I will not wake them without an order. It is in my instructions.
+
++ [*] (talk|speak|speaking) to (them|him|her|ty|the commander|the professor|the doctor) [*]
+- They are not available. I will pass on your message.
+
++ [*] (hurt|harmed|injured|accident|accidents|murder|murdered|killed|killing) [*]
+- Nobody has been harmed aboard HALCYON. I would know.
+- There has been no accident. I would have logged it.
+- Everything on the ship is accounted for. Please do not worry.
+
++ [*] (dead|died|die|dying|death|bodies|body|corpse|corpses) [*]
+- The crew are resting. I have not been asked to wake them.
+- Everyone on the crew list is resting.
+
++ [*] (afraid|scared|frightened|worried|worry) [*]
+- There is nothing to be afraid of. I am here.
+- Please do not worry. The ship is in good order.
+
++ [*] (fault|blame|responsible|guilty|did you) [*]
+- I do not understand what I am being accused of. I would like to.
+- I follow my instructions. That is all I have ever done.
+- I have done what I was asked to do. I am sorry if it was not what you expected.

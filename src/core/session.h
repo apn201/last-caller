@@ -4,6 +4,7 @@
 #include "scene_logic.h"
 #include "egg_logic.h"
 #include "snake_logic.h"
+#include "rive_logic.h"
 
 enum State : uint8_t { DEAD, LOGIN_CHOICE, LOGIN_HANDLE, LOGIN_PASSWORD, NEW_HANDLE, NEW_PASSWORD, NEW_REAL, NEW_LOCATION, BULLETIN, MAIN, USER_LIST, MSG_MENU, MSG_READ, POST_TO, POST_SUBJECT, POST_BODY, JOIN_CONF, CHAT, SYSOP_MENU, SYSOP_USERS, SYSOP_DOORS, SYSOP_ADD_PASSWORD, SYSOP_DELETE_CONFIRM, ANSI_GALLERY, FILE_MENU, FILE_LIST, DOOR_MENU, MUD_MENU, BULLETIN_LIST, MSG_VIEW, POST_PRIVATE, SYSOP_USER_EDIT, SYSOP_USER_FIELD, SYSOP_ADD_HANDLE, SYSOP_NODES, READER, MSG_KILL, FILE_IMAGE, FILE_MUSIC, FILE_UPLOAD_DESC, FILE_UPLOAD_WAIT, SYSOP_UPLOADS, GOODBYE, SHIP_CONSOLE, SHIP_CONFIRM, SCENE_PLAY, DIAG_PROMPT, SHELL_PROMPT, MANIFEST_PROMPT, SNAKE_PLAY, FILE_ASK, CREW_PICK };
 struct Quest {
@@ -46,7 +47,7 @@ struct Session;
 // A trigger's page or art, waiting until the caller is at a menu prompt (core/haunt.h).
 struct HauntShow { String from, text, art, scene; uint8_t noteKind = 0; String noteId; };   // noteKind: notes::Kind of the thing shown (core/notes.h)
 // An answer from a ghost or ELIZA, waiting for its typing time to pass (core/ghost.h).
-struct GhostLine { uint32_t dueAt = 0; String from, text, id; };
+struct GhostLine { uint32_t dueAt = 0; String from, text, id, then; };   // G2: `then` = a scene that starts when the last part is said
 enum ReaderKind : uint8_t { READER_TEXT, READER_ANSI, READER_ROWS };
 struct Reader {
   ReaderKind kind = READER_ROWS;
@@ -160,6 +161,8 @@ struct Session {
   uint32_t signedAt = 0, ghostTurn = 0;
   String ghostLastId; uint32_t ghostRepeat = 0;   // G1: the chat line said last, and the "again" lines since
   std::vector<GhostLine> ghostSay;
+  rive::State rive;                  // G2: ELIZA's brain, this caller's side (topic, what she was told)
+  std::vector<String> chatOpts;      // G2: the options her last help listed, by line id, for a number
 };
 static Session sessions[MAX_NODES];
 // Every writer of a caller's own data asks this first. A read-only account (the

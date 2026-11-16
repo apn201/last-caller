@@ -1,12 +1,11 @@
 """Milestone screens (queue item Q12d, spec .kiro/specs/milestones/).
 
 ANSI/STORY/ELZ_WELCOME   M2: ELIZA's welcome to a guest, the ring lit all round
-ANSI/STORY/ELZ_TALK      the SysOp chat hub: a four row strip, the ring as six lights
 ANSI/STORY/MEM_GLITCH    M5: the ring broken into bars, rows torn sideways, the missing range
 ANSI/STORY/ELZ_GRANT     M6: the memory check, a progress bar that stops short
 ANSI/STORY/ELZ_OPS       M7: her operations log page, the ring small in the corner
 
-12 rows each (ELZ_TALK 4), so a scene's dialogue types below on an 80x24 screen.
+12 rows each, so a scene's dialogue types below on an 80x24 screen.
 The art does not move the cursor. DRAFT text: every line is a draft. The author
 makes the final edit.
 """
@@ -43,24 +42,6 @@ def welcome():
     rows[7] += "              LOUNGE ..... OPEN"
     rows += ["", "-" * 78]
     return [c.save("ANSI/STORY/ELZ_WELCOME.ANS"), ascii_screen("ASCII/STORY/ELZ_WELCOME.ASC", rows[:ROWS - 1] + ["-" * 78])]
-
-
-def talk():
-    c = Canvas(80, 4)
-    c.hline(2, 0, 76, "\u2500", DGREY)
-    c.text(4, 0, " HALCYON // MISSION AI // SYSOP CHAT ", GREY)
-    c.text(4, 2, "ELIZA", AMBER)
-    lights(c, 11, 2, "11111111", on=YELLOW)
-    c.text(22, 2, "SysOp. Mission computer", GREY)
-    c.hline(2, 3, 76, "\u2500", DGREY)
-    artist_tag(c, 60, 3)
-    c.put(2, 0, "\u253c", DGREY)
-    c.put(77, 0, "\u253c", DGREY)
-    c.put(2, 3, "\u253c", DGREY)
-    c.put(77, 3, "\u253c", DGREY)
-    return [c.save("ANSI/STORY/ELZ_TALK.ANS"),
-            ascii_screen("ASCII/STORY/ELZ_TALK.ASC", ["-- HALCYON // MISSION AI // SYSOP CHAT " + "-" * 39, "",
-                                      "ELIZA  * * * * * * * *  SysOp. Mission computer", "-" * 78])]
 
 
 def glitch():
@@ -161,4 +142,4 @@ def ops():
 
 
 def build():
-    return welcome() + talk() + glitch() + grant() + ops()
+    return welcome() + glitch() + grant() + ops()

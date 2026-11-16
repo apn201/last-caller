@@ -1,0 +1,13 @@
+// ELIZA's brain, the last part: what she does when she does not understand. She says so in her own voice
+// and names what she can talk about now. The list follows the caller's progress (flags). DRAFT.
+
++ [*] (what do you do|what can you tell me|who can i ask) [*]
+- I keep the ship and the board. I can tell you about the ship, the crew, the power and the board.
+
++ *
+* <get flag_SYSVW> == true => I did not follow that. I can talk about the ship, the crew, the board and the check. Type help and I will say what else I can do.
+* <get flag_OVR> == true => I am not sure I understood. I can talk about the ship, the crew, the power, the board and my memory. Type help for what I can do.
+- I am not sure I understood. I can tell you about the ship, the crew, the power and the board.
+- I did not follow that. I am not good at everything. The ship, the crew, the power and the board are what I know best.
+- Please say it another way. I can talk about the ship, the crew, the power and the board.
+- I would like to be of use. I do not have an answer to that. Type help for what I can do.

@@ -21,7 +21,7 @@ static String chatHere(Session &viewer) {
 static void chatBar(Session &s) {
   if (!s.ansi) return;
   String bar = " NODE CHAT  Here: " + chatHere(s);
-  String keys = String("  Q quit  /W who") + (isSysop(s) ? "  /H history" : "") + " ";
+  String keys = String(isSysop(s) ? "" : "  ? help") + "  Q quit  /W who" + (isSysop(s) ? "  /H history" : "") + " ";
   if (bar.length() + keys.length() > 80) bar = bar.substring(0, 77 - keys.length()) + "...";
   while (bar.length() + keys.length() < 80) bar += ' ';
   // Save the cursor, draw the bar on row 24, put the cursor back.

@@ -31,6 +31,7 @@ TESTS = {   # name -> arguments (the card's own files)
     "notes_logic_test": [os.path.join(STORY, "NOTES.INI")],
     "scene_logic_test": sorted(glob.glob(os.path.join(STORY, "SCENES", "*.INI"))),
     "shell_logic_test": [os.path.join(STORY, "SHELL.INI")],
+    "rive_logic_test": sorted(glob.glob(os.path.join(STORY, "ELIZA", "*.rive"))),
     "story_property_test": [os.path.join(STORY, "TRIGGERS.INI"), os.path.join(STORY, "MANIFEST.INI"),
                             os.path.join(STORY, "SYSOP.INI"), os.path.join(STORY, "DIAG.INI"), os.path.join(STORY, "SHELL.INI"),
                             os.path.join(STORY, "GHOSTS.INI")] + sorted(glob.glob(os.path.join(STORY, "SCENES", "*.INI"))),

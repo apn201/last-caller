@@ -244,12 +244,15 @@ in the browser:
    line, then posted; no flag, the event log has `OVERRUN_NEAR`. Fewer than 19
    does nothing. Again with 10 and 10 (20): `MESSAGE LOST`, a glitch, then
    `MEM_GLITCH`. The post is in nobody's list. The event log has `OVERRUN`.
-4. `C`: ELIZA says she cannot account for some minutes. "I can fix that.
-   Give me SYSOP." gets a calm refusal; "Something else." and "Say something
-   else." open the typed chat; `open the pod bay doors` still answers.
+4. `C` (G2: one chat, free text from the first line): ELIZA says she cannot
+   account for some minutes. `help` lists the options that fit now; its
+   number or its words ("give me sysop") get a calm refusal; `memchk` says it
+   is in the Commander's handbook; `open the pod bay doors` still answers;
+   anything else gets her brain (`STORY/ELIZA/*.rive`).
 5. `L` (Log in as another), `CMDR`/`ANDERS`, Files, Commander's Desk,
    `HANDBOOK.TXT`. `G`, sign in as yourself.
-6. `C`: "Run the memory check. It needs SYSOP mode." `ELZ_GRANT` plays; the
+6. `C`, `help`: "Ask her to run something, by name." is listed; type
+   `MEMCHK` (or pick the option, then `MEMCHK`). `ELZ_GRANT` plays; the
    main menu says SYSOP view is on. `Z` is still refused; the SysOp console
    conference is not listed; Engineering is. `GOLIVE.TXT` item 14.
 7. `L`, `ELIZA`/`KESTREL4`: `ELZ_OPS`; Files, Mission Computer, `OPSLOG.TXT`;
