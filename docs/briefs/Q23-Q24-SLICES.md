@@ -126,6 +126,70 @@ Design slices (G3): one critic read, then Juha's approval.
 
 After G9: both critics (Ada, then Mara) on the whole game, in `LOOP.md`.
 
+## GE - The end demo (rev. 5, Juha 17 Nov: "Most important is a cool ending")
+
+Built **next, before G3**: it hangs on the one fixed point of the game (the
+release command and END1/END2), so the story pass does not block it; G7
+updates its aftermath texts when the ending changes. Gate as every slice.
+
+Today the ending scene ends and the caller is back at the menu, where
+bulletins still say "Antenna fault". Instead, releasing the queue starts a
+**1990s end demo**, 2 to 3 minutes, in the browser terminal, then the carrier
+drops.
+
+**Form (a real 1993-style demo, our own work):** 320x200, chunky pixels,
+the board's palette, scaled to the terminal; one module tune playing the
+whole way; parts cut on the beat. Effects from the period, each carrying a
+piece of the story, not effects for their own sake:
+
+1. **Release.** The shell line `Released to ground-1.` and then the 41
+   messages and 3 files going out as a packet bar, the modem screech, the
+   screen tears into the demo.
+2. **Title.** HALCYON logo in copper bars and a starfield; the ship in orbit,
+   a slow sine wobble, the solar panel dark.
+3. **The letters arrive.** Flashbacks: each crew member's face in our pixel
+   art and one line of their own letter home (Marta to Anders, Keiko to Mae,
+   Ty to lumen, the rest), on a plasma or a slow fade. Words from the posts,
+   not new lore.
+4. **Aftermath, news reports.** Period headlines rotozoomed or on a
+   newspaper spin, dated Dec 1998 to Jan 1999: the families told, the queue's
+   files published (AUDIT.LOG, the standing order, clients.lst), the Sponsor
+   and NOWHERE exposed, the Founder questioned. END2 (ELIZA stays) gets its
+   own headlines.
+5. **2026.** The radio club: the beacon on the pass for the last time, a
+   line from Eero's logbook (or the club's, if Eero is decided dead in G3).
+6. **Credits.** A sine scroller with old-school greetings: the crew, the
+   club, Juha, Kiro, the tools, the music's author. Real credits, short.
+7. **Carrier lost.** The music cuts, the picture collapses to a white line
+   like a CRT power-off, black, then in the terminal font:
+   `NO CARRIER` and `CARRIER LOST. PRESS ANY KEY TO RECONNECT`.
+8. **Reconnect.** The board again, with the aftermath status (G2 fix 2)
+   and one screen: the story is over, the board stays open to explore, the
+   notebook keeps the scenes; to play again use `R` reset my game in your
+   settings, or make a new account (G2 fix 4).
+
+**Rules.**
+
+- **Timeline on the card.** `sd/BBS/STORY/DEMO.INI` (parts, times, texts,
+  images) so the words are Juha's to edit without firmware. Images and the
+  module on the card. All texts DRAFT.
+- **Q skips** (as every scene) straight to step 7. A second view from the
+  notebook replays it.
+- **Music.** Our own module, or a module whose licence allows it, with
+  provenance in `CONTENT_POLICY.md`. The player script is a small
+  freely licensed JavaScript tracker player, on the card or in the page,
+  never from a CDN (the stick is offline). The caller has typed, so sound may
+  play; a mute key (M) and the radio-bed mute (G9) share one setting.
+- **Telnet** gets an ANSI animation version of the same timeline (no music,
+  shorter), then the same `NO CARRIER` and reconnect screen.
+- **ESP32.** The firmware only serves files and sends one "start the demo"
+  message; the demo runs in the browser. Check page and card size budgets.
+- **Original art only**, strong, in the period style.
+
+| Slice | What | Agent test | Juha tries |
+| --- | --- | --- | --- |
+| **GE** End demo | The above, both endings | Release the queue in the browser and over Telnet; Q skips; mute; reconnect screen; R reset works after | Plays to the end and watches it all |
+
 ## Every slice
 
 - One slice per run. Re-read this file and `G0-juha.md` before ticking.
