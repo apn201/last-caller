@@ -1,5 +1,7 @@
 # Last Caller
 
+![HALCYON's login screen: ELIZA, the ship's computer, greets the caller](docs/images/halcyon-login.png)
+
 > **HALCYON.** A real-time multi-user science fiction horror experience.
 > A puzzle game like no other, powered by state-of-the-art bulletin board
 > technology.
