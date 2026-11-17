@@ -157,6 +157,7 @@ static void notebookSceneList(Session &s) {
   }
   say(s, "  \x1b[0;90mA replay shows the scene as it was. It changes nothing.\x1b[0m");
   String keys = "  \x1b[1;33m[1-" + String((unsigned)(last - first)) + "]\x1b[0m Replay   ";
+  if (demoAvailable(s)) keys += "\x1b[1;33m[D]\x1b[0m End demo   ";   // GE: a second view of the end demo
   if (s.manPage + 1 < pages) keys += "\x1b[1;33m[N]\x1b[0m Next page   ";
   if (s.manPage > 0) keys += "\x1b[1;33m[P]\x1b[0m Previous page   ";
   keys += "\x1b[1;33m[Q]\x1b[0m Back";
@@ -241,10 +242,11 @@ static void notebookKey(Session &s, const String &cmd) {
   if (cmd == "Q") { s.manPage = 0; notebookList(s); return; }
   if (!cmd.length() || cmd == "?") { notebookSceneList(s); return; }
   size_t pages = (names.size() + 8) / 9;
+  if (cmd == "D" && demoAvailable(s)) { write(s, "\r\n"); demoStart(s, demoKindOf(s), true); return; }   // GE: ends back in the notebook (demoReconnect)
   if (cmd == "N" && (size_t)s.manPage + 1 < pages) { s.manPage++; notebookSceneList(s); return; }
   if (cmd == "P" && s.manPage > 0) { s.manPage--; notebookSceneList(s); return; }
   size_t at = (size_t)s.manPage * 9 + (size_t)n - 1;
   if (number && at < names.size() && sceneReplayStart(s, names[at])) return;
-  manSay(s, "Keys: a number to replay, N, P, Q back.");
+  manSay(s, demoAvailable(s) ? "Keys: a number to replay, D end demo, N, P, Q back." : "Keys: a number to replay, N, P, Q back.");
   manPrompt(s);
 }

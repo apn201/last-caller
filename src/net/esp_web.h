@@ -125,7 +125,7 @@ static void startWeb() {
   http.on("/api/speed", HTTP_POST, espRoute); http.on("/api/out", HTTP_GET, espRoute);
   http.on("/api/in", HTTP_POST, espRoute); http.on("/download", HTTP_GET, espRoute);
   http.on("/view", HTTP_GET, espRoute); http.on("/music", HTTP_GET, espRoute);
-  http.on("/player", HTTP_GET, espRoute); http.on("/sfx", HTTP_GET, espRoute); http.on("/upload", HTTP_POST, espUploadDone, espUploadChunk);
+  http.on("/player", HTTP_GET, espRoute); http.on("/sfx", HTTP_GET, espRoute); http.on("/demo", HTTP_GET, espRoute); http.on("/upload", HTTP_POST, espUploadDone, espUploadChunk);
   http.on("/status", HTTP_GET, espRoute); http.on("/modem.mp3", HTTP_GET, espRoute);
   http.on("/sysop/api/list", HTTP_GET, espSysopRoute); http.on("/sysop/api/get", HTTP_GET, espSysopRoute);
   http.on("/sysop/api/mkdir", HTTP_POST, espSysopRoute); http.on("/sysop/api/rename", HTTP_POST, espSysopRoute);

@@ -1618,6 +1618,12 @@ def main():
         advance(c, "2) Leave it queued.")
         after_grace(c, "2")
         advance(c, "added your name to the crew list")
+        advance(c, "A real-time multi-user experience", timeout=60)   # GE: the end demo starts; Q skips it
+        time.sleep(0.5)
+        c.send("Q")
+        c.expect("CARRIER LOST. PRESS ANY KEY TO RECONNECT", timeout=15)
+        after_grace(c, "")
+        c.expect("The story is over", timeout=15)
         advance(c, "Main Board Command?")
 
     @step("a second caller (made through the prologue) sees the first one in WHO")
@@ -1705,6 +1711,13 @@ def main():
         after_grace(c, "")
         advance(c, "The light is on.")
         after_grace(c, "")
+        advance(c, "A real-time multi-user experience", timeout=60)   # GE: the whole ANSI demo, no Q
+        advance(c, "FAMILIES TOLD", timeout=90)
+        advance(c, "CLUB LOG 12 NOV 2026", timeout=90)
+        advance(c, "GREETINGS TO EVERYONE", timeout=90)
+        c.expect("CARRIER LOST. PRESS ANY KEY TO RECONNECT", timeout=60)
+        after_grace(c, "")
+        c.expect("The story is over", timeout=15)
         advance(c, "Main Board Command?")
         c.send("G")                                 # back to the own account: bulletin 5 is the caller's
         login(c, handle, password)

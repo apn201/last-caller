@@ -42,6 +42,7 @@
 #include "doors/purse.h"
 #include "doors/ship.h"
 #include "doors/diag.h"
+#include "core/demo.h"
 #include "doors/shell.h"
 #include "doors/manifest.h"
 #include "doors/snake.h"

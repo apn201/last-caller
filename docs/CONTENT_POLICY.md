@@ -25,6 +25,11 @@ Rules:
 | `ASSETS/SFX/*.WAV` (hum, relay, chirp, static, modem) | Original: made by `tools/mod/gen_sfx.py` from arithmetic, MIT |
 | `FILES/001_ANSI_GALLERY/SUNSIDE.MOD`, `THERMO.MOD`, `FILES/006_TY_DESKTOP/HARBOUR.MOD` | Original compositions and instruments: made by `tools/mod/gen_mods.py`, no samples, no copied notes, MIT. Sample names are story text (drafts) |
 | `STORY/EGGS.INI`, `FILES/002_LIBRARY/BROCHURE.TXT`, `NODELIST.TXT`, `FILES/004_RECORDS/Y2K.MEM`, `TARIFF.TXT`, `FILES/006_TY_DESKTOP/TYDEMO.NFO`, `STORY/SCENES/TY_DEMO.INI`, the POST, SNAKE, NODE_LUMEN and TY_DEMO art | Original to this project (Q11), MIT. The BIOS maker, modem make and boards are invented. Drafts |
+| `DEMO/TUNE.MOD` (GE, the end demo's music) | Original composition and instruments: made by `tools/demo/gen_demo.py` with `tools/mod/modlib.py`, from arithmetic. No samples, no copied notes. Dedicated to the public domain (CC0 1.0); also usable under the project's MIT licence. The sample names carry the credits, as in a 1993 module. Drafts |
+| `DEMO/FACE_H.PNG`, `FACE_A.PNG`, `FACE_T.PNG`, `FACE_V.PNG`, `SHIP.PNG` (GE) | Original pixel art: drawn by `tools/demo/gen_demo.py` (standard library, no input pictures), MIT |
+| `DEMO/DEMO.JS` (GE, the end demo) | Original to this project, MIT: a 320 x 200 demo engine in plain JavaScript. It plays the tune with libopenmpt (BSD-3-Clause, `ASSETS/PLAYER/`, already on the card for the music player, served at `/player/`); nothing comes from a CDN. Pictures of the crew, headlines and every word are invented; the newspaper is "The Harbour Post", not a real paper |
+| `ANSI/DEMO/*.ANS` (GE, the ANSI version of the demo) | Original to this project, MIT; made by `tools/ansi/screens/demo.py` |
+| `STORY/DEMO.INI` (GE) | The demo's timeline and words: original, drafts |
 | `ASSETS/PLAYER/` (libopenmpt, jsSID, `player.js`, `stream.js`) | Third party libraries and project glue code; licences in `THIRD_PARTY_NOTICES.md` |
 
 ## Made by scripts, not in the repository

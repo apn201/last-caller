@@ -6,7 +6,7 @@
 #include "snake_logic.h"
 #include "rive_logic.h"
 
-enum State : uint8_t { DEAD, LOGIN_CHOICE, LOGIN_HANDLE, LOGIN_PASSWORD, NEW_HANDLE, NEW_PASSWORD, NEW_REAL, NEW_LOCATION, BULLETIN, MAIN, USER_LIST, MSG_MENU, MSG_READ, POST_TO, POST_SUBJECT, POST_BODY, JOIN_CONF, CHAT, SYSOP_MENU, SYSOP_USERS, SYSOP_DOORS, SYSOP_ADD_PASSWORD, SYSOP_DELETE_CONFIRM, ANSI_GALLERY, FILE_MENU, FILE_LIST, DOOR_MENU, MUD_MENU, BULLETIN_LIST, MSG_VIEW, POST_PRIVATE, SYSOP_USER_EDIT, SYSOP_USER_FIELD, SYSOP_ADD_HANDLE, SYSOP_NODES, READER, MSG_KILL, FILE_IMAGE, FILE_MUSIC, FILE_UPLOAD_DESC, FILE_UPLOAD_WAIT, SYSOP_UPLOADS, GOODBYE, SHIP_CONSOLE, SHIP_CONFIRM, SCENE_PLAY, DIAG_PROMPT, SHELL_PROMPT, MANIFEST_PROMPT, SNAKE_PLAY, FILE_ASK, CREW_PICK, ACCT_MENU, ACCT_RESET, ACCT_DELETE };
+enum State : uint8_t { DEAD, LOGIN_CHOICE, LOGIN_HANDLE, LOGIN_PASSWORD, NEW_HANDLE, NEW_PASSWORD, NEW_REAL, NEW_LOCATION, BULLETIN, MAIN, USER_LIST, MSG_MENU, MSG_READ, POST_TO, POST_SUBJECT, POST_BODY, JOIN_CONF, CHAT, SYSOP_MENU, SYSOP_USERS, SYSOP_DOORS, SYSOP_ADD_PASSWORD, SYSOP_DELETE_CONFIRM, ANSI_GALLERY, FILE_MENU, FILE_LIST, DOOR_MENU, MUD_MENU, BULLETIN_LIST, MSG_VIEW, POST_PRIVATE, SYSOP_USER_EDIT, SYSOP_USER_FIELD, SYSOP_ADD_HANDLE, SYSOP_NODES, READER, MSG_KILL, FILE_IMAGE, FILE_MUSIC, FILE_UPLOAD_DESC, FILE_UPLOAD_WAIT, SYSOP_UPLOADS, GOODBYE, SHIP_CONSOLE, SHIP_CONFIRM, SCENE_PLAY, DIAG_PROMPT, SHELL_PROMPT, MANIFEST_PROMPT, SNAKE_PLAY, FILE_ASK, CREW_PICK, ACCT_MENU, ACCT_RESET, ACCT_DELETE, DEMO_PLAY };
 struct Quest {
   uint32_t id = 0, gold = 35, bank = 0, exp = 0;
   uint16_t hp = 30, maxHp = 30;
@@ -164,6 +164,12 @@ struct Session {
   String ghostLastText; uint32_t ghostAgain = 0;  // G2: the caller's last chat line (normalised), and the "again" lines said
   std::vector<GhostLine> ghostSay;
   rive::State rive;                  // G2: ELIZA's brain, this caller's side (topic, what she was told)
+  // GE (core/demo.h): the end demo. demoKind: the ending the scene just granted (1 END1, 2 END2); demoStage 1 playing,
+  // 2 carrier lost (any key reconnects); demoBrowser: the page plays it, the board only waits.
+  uint8_t demoKind = 0, demoStage = 0;
+  bool demoReplay = false, demoBrowser = false;
+  uint32_t demoStarted = 0, demoAt = 0;
+  size_t demoStep = 0; uint16_t demoSub = 0;
   std::vector<String> chatOpts;      // G2: the options her last help listed, by line id, for a number
 };
 static Session sessions[MAX_NODES];

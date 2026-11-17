@@ -18,6 +18,7 @@ static void startChat(Session &s, const String &banner);  // bbs/chat.h
 static void endingRecord(Session &s);  // doors/manifest.h
 static void keysHelpBack(Session &s);  // bbs/help.h: draws the screen s.helpBack again
 static void notebookBack(Session &s);  // bbs/notebook.h: a replay is over, the notebook is drawn again (Q21)
+static bool demoStart(Session &s, uint8_t kind, bool replay);  // core/demo.h: GE, the end demo
 
 // "ELIZA_WAKE" -> a checked, upper-case name; "" if it is not a plain name.
 static String sceneName(const String &raw) {
@@ -64,6 +65,8 @@ static void sceneEnd(Session &s, const String &then = String()) {
   s.hideInput = false;
   if (s.sceneReplay) { s.sceneReplay = false; notebookBack(s); return; }   // Q21: a replay ends where it began, with nothing saved
   endingRecord(s);   // a finished caller stays in WHO
+  if (s.demoKind && demoStart(s, s.demoKind, false)) { s.demoKind = 0; return; }   // GE: releasing the queue starts the end demo (a card without DEMO.INI goes back to the menu as before)
+  s.demoKind = 0;
   String next = then; next.toUpperCase();
   if (next == "CHAT") { startChat(s, "\x1b[1;33mMulti-Node Chat. Type and press ENTER to talk. Q leaves.\x1b[0m"); return; }
   if (next.length()) {
@@ -83,6 +86,8 @@ static void sceneWrite(Session &s, const scene::Out &o) {
     else plainArt(s, ("/BBS/ASCII/STORY/" + file + ".ASC").c_str());
   }
   for (const auto &n : o.nodes) notesOn(s, notes::K_SCENE, s.sceneName + "/" + hauntStr(n));   // Q21: a line on screen is in the notebook
+  if (o.grant.find("END1") != std::string::npos) s.demoKind = 1;   // GE: this run chose an ending
+  else if (o.grant.find("END2") != std::string::npos) s.demoKind = 2;
   if (o.grant.size() && !sceneGrant(s, o.grant)) event("SCENE_FAIL", s.user.handle + ": flags not saved: " + hauntStr(o.grant));
   if (o.finished) { event("SCENE", s.user.handle + " node " + s.node + " finished a scene"); sceneEnd(s, hauntStr(o.then)); }
 }
@@ -100,7 +105,7 @@ static void sceneStart(Session &s, const String &raw) {
     return;
   }
   event("SCENE", s.user.handle + " node " + s.node + " starts " + name);
-  s.sceneName = name; s.sceneReplay = false;
+  s.sceneName = name; s.sceneReplay = false; s.demoKind = 0;
   notesOn(s, notes::K_SCENE, name);   // Q21
   s.hideInput = false;
   s.input = ""; s.hotKey = 0; s.typeAhead = "";   // G1: the half-typed line and the buffered keys were meant for the prompt, not the scene

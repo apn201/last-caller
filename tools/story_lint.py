@@ -337,6 +337,7 @@ class Lint:
             units.append(("post path overrun scene", ["OVR"], ["SC_ENTER_MEM_GLITCH"]))
         # G2: node chat (C) is one free-text chat; its options and gates are lines of SYSOP.INI (see above).
         required.extend(self.check_rive())
+        self.check_demo(scenes)   # GE: the end demo
         for name, kv in rules:
             if kv.get("event", "").lower() == "crew_login":
                 who = kv.get("match", "").upper()
@@ -1007,6 +1008,66 @@ class Lint:
         self.rive_stats = (triggers, replies)
         # The flags the brain reads must exist (the lint's own list of story flags is the check in `required`).
         return [(w, f) for w, f in need]
+
+    def check_demo(self, scenes):
+        """GE: STORY/DEMO.INI. The scene exists, every browser part has a known kind and sits on the tune, the
+        files it names are on the card, every ANSI step has its art and ends in a way the board can run."""
+        ini = self.load("DEMO.INI", required=False)
+        if ini is None:
+            return
+        by = {name: kv for name, kv, _ in ini.sections}
+        demo = by.get("DEMO", {})
+        if demo.get("scene", "ENDING").upper() not in scenes:
+            self.err("DEMO.INI", "scene=%s has no file in STORY/SCENES" % demo.get("scene"))
+        folder = os.path.join(self.card, "DEMO")
+        for need in ("DEMO.JS", demo.get("tune", "TUNE.MOD"), "SHIP.PNG"):
+            if not os.path.isfile(os.path.join(folder, need)):
+                self.err("DEMO.INI", "BBS/DEMO/%s is not on the card" % need)
+        kinds = {"release", "title", "letter", "news", "radio", "credits"}
+        last_end = None
+        parts = [(n, kv) for n, kv, _ in ini.sections if re.match(r"P\d", n)]
+        for name, kv in parts:
+            where = "DEMO.INI [%s]" % name
+            if kv.get("kind") not in kinds:
+                self.err(where, "unknown kind %r" % kv.get("kind"))
+            try:
+                s, e = float(kv.get("start", "x")), float(kv.get("end", "x"))
+            except ValueError:
+                self.err(where, "start= and end= are seconds")
+                continue
+            if e <= s:
+                self.err(where, "ends before it starts")
+            if last_end is not None and abs(s - last_end) > 0.01:
+                self.err(where, "starts at %s but the part before ends at %s (a gap or an overlap)" % (s, last_end))
+            last_end = e
+            if kv.get("face") and not os.path.isfile(os.path.join(folder, kv["face"])):
+                self.err(where, "face %s is not in BBS/DEMO" % kv["face"])
+            if kv.get("kind") == "news" and not (kv.get("head") and kv.get("head_end2")):
+                self.err(where, "a news part needs head= and head_END2=")
+        if not parts:
+            self.err("DEMO.INI", "no [P01]... parts")
+        elif last_end is not None and not (120 <= last_end <= 180):
+            self.err("DEMO.INI", "the demo runs %.0f s; the plan says 2 to 3 minutes" % last_end)
+        steps = [(n, kv) for n, kv, _ in ini.sections if re.match(r"T\d", n)]
+        for name, kv in steps:
+            where = "DEMO.INI [%s]" % name
+            art = kv.get("art")
+            if art and not os.path.isfile(os.path.join(self.card, "ANSI", "DEMO", art + ".ANS")):
+                self.err(where, "art %s is not in ANSI/DEMO" % art)
+            if not (art or kv.get("text") or kv.get("bar")):
+                self.err(where, "a step with no art, text or bar")
+            if kv.get("when", "").upper() not in ("", "END1", "END2"):
+                self.err(where, "when= is END1 or END2")
+        if len(steps) > 40:
+            self.err("DEMO.INI", "%d steps, the board loads 40" % len(steps))
+        after = by.get("AFTER", {})
+        if not after.get("text"):
+            self.err("DEMO.INI [AFTER]", "no text: the reconnect screen says nothing")
+        if after.get("art") and not os.path.isfile(os.path.join(self.card, "ANSI", "DEMO", after["art"] + ".ANS")):
+            self.err("DEMO.INI [AFTER]", "art %s is not in ANSI/DEMO" % after["art"])
+        # the keys it names must exist: E (Your account) and R (reset my game)
+        if "E" not in after.get("text", "") or "reset" not in after.get("text", ""):
+            self.err("DEMO.INI [AFTER]", "the reconnect text must name E (Your account) and the reset")
 
     def check_voice(self):
         paths = []

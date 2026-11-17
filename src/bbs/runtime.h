@@ -30,6 +30,7 @@ template <typename F> static void bbsTick(F transports) {
   powerSessionsTick(now);
   hauntTick(now);
   sceneTick(now);
+  demoTick(now);
   ghostTick(now);
   glitchTick(now);
   for (auto &s : sessions) {

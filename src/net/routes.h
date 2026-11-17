@@ -245,6 +245,16 @@ static WebRouteResponse webRoute(const WebRouteRequest &request) {
     String u = up(name); const char *type = u.endsWith(".WASM") ? "application/wasm" : u.endsWith(".JS") ? "text/javascript" : "text/plain";
     return webCardFile(path, type, false, u == "LIBOPENMPT.WASM" || u == "LIBOPENMPT.JS" ? "max-age=86400" : "no-cache, no-store");
   }
+  // GE: the end demo. The page and its player script, tune and pictures come from the card (/BBS/DEMO), the timeline
+  // from STORY/DEMO.INI. Plain names only; nothing outside these folders.
+  if (request.method == "GET" && request.path.startsWith("/demo/")) {
+    String name = request.path.substring(6), u = up(name);
+    bool plain = name.length() && name.length() < 24 && name.indexOf('/') < 0 && name.indexOf("..") < 0 && name.indexOf('\\') < 0;
+    const char *type = u.endsWith(".JS") ? "text/javascript" : u.endsWith(".PNG") ? "image/png" : u.endsWith(".MOD") ? "application/octet-stream" : u == "DEMO.INI" ? "text/plain; charset=utf-8" : nullptr;
+    String path = u == "DEMO.INI" ? String(DEMO_INI) : String("/BBS/DEMO/") + name;
+    if (!plain || !type || !sdReady || !SD_MMC.exists(path)) return webText(404, "text/plain", "Not found");
+    return webCardFile(path, type, false, "no-cache");
+  }
   if (request.method == "GET" && request.path.startsWith("/sfx/")) {   // cues: core/sound.h
     String name = request.path.substring(5);
     if (!name.length() || !up(name).endsWith(".WAV")) return webText(404, "text/plain", "Not found");

@@ -193,8 +193,18 @@ function playTune(href,name,size,desc){
   playerLoad.then(()=>{window.TinyPlayer.open(href,name,size,streamKey,desc);focusTerminal();}).catch(()=>{});
 }
 document.addEventListener('click',()=>{if(playerOpen())focusTerminal();});
+// GE: the end demo. The board says start (OSC 9;DEMO;END1 or END2); the page plays it from /demo/DEMO.JS on the
+// card and sends one key (GS) when the caller has seen NO CARRIER, so the board goes on to the reconnect screen.
+let demoLoad=null,demoOn=false;
+function startDemo(v){
+  if(demoOn)return;demoOn=true;
+  const done=()=>{demoOn=false;streamKey('\x1d');focusTerminal();};
+  if(!demoLoad)demoLoad=new Promise((ok,fail)=>{const s=document.createElement('script');s.src='/demo/DEMO.JS?t='+Date.now();s.onload=ok;s.onerror=()=>{demoLoad=null;fail();};document.head.appendChild(s);});
+  demoLoad.then(()=>window.HalcyonDemo.run({variant:v==='END2'?'END2':'END1',onDone:done})).catch(done);
+}
 function downloadLink(message){
   if(message.startsWith('9;SND;')){playCue(message.slice(6));return;}
+  if(message.startsWith('9;DEMO;')){startDemo(message.slice(7));return;}
   if(message.startsWith('9;MOD;')){
     const rest=message.slice(6);
     if(rest==='close'){closePlayer();return;}

@@ -34,6 +34,7 @@ static void input(Session &s, const String &bytes) {
   if (bytes.length()) s.lastAt = millis();   // Q21: any key keeps the line (the idle warning says so)
   // While a picture or file is streaming, keys belong to the stream: space
   // pauses and resumes, anything else skips to the end.
+  if (s.state == DEMO_PLAY) { demoInput(s, bytes); return; }   // GE: the end demo takes Q (skip) and, at NO CARRIER, any key
   if (s.state == READER && !streaming(s)) { readerInput(s, bytes); return; }
   if (s.state == FILE_IMAGE && !streaming(s)) { imageKey(s, bytes); return; }
   if (s.state == FILE_MUSIC && !streaming(s)) { musicKey(s, bytes); return; }

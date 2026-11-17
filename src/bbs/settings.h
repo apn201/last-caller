@@ -92,6 +92,7 @@ static String loadGhosts();     // core/ghost.h
 static String loadNotes();      // core/notes.h
 static void loadGlitches();     // core/glitch.h
 static String loadManifest();   // doors/manifest.h
+static String loadDemo();       // core/demo.h (GE)
 static String loadSettings() {
   BoardSettings b;
   Ini ini;
@@ -179,6 +180,7 @@ static String loadSettings() {
   String noteInfo = loadNotes();     // STORY/NOTES.INI
   loadGlitches();                    // STORY/GLITCH.INI
   String manifestInfo = loadManifest();  // STORY/MANIFEST.INI
+  loadDemo();                        // STORY/DEMO.INI (GE)
   String areas = loadFileAreas();
   String history = loadHistory();
   String syncDetail = clockSyncBrowser ? " (browser sync)" : (clockSyncSystem ? " (system sync)" : "");
