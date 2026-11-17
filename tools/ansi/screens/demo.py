@@ -120,6 +120,37 @@ def radio():
     return [c.save("ANSI/DEMO/D_RADIO.ANS")]
 
 
+def inworld():
+    """D_INWORLD: Ty's production screen - TYVANCE presents, in-world credits."""
+    c = Canvas(80, H)
+    # stars in the background
+    c.stars(0, 0, 80, H, seed=88, density=0.03, avoid=lambda x, y: 10 <= x <= 69 and 1 <= y <= 12)
+    # outer double box
+    c.box(2, 0, 76, H, "double", DGREY)
+    # a bright top bar inside the box
+    for x in range(3, 78):
+        c.put(x, 1, "\u2591", AMBER)
+    # the production title in the bar
+    label = "TYVANCE  presents"
+    tx = (80 - len(label)) // 2
+    c.text(tx, 1, label, WHITE)
+    # inner horizontal rule
+    c.hline(4, 3, 72, "\u2500", DGREY)
+    # the demo title
+    c.text_center(4, "TY'S DEMO  (the release build)", LCYAN)
+    c.hline(4, 5, 72, "\u2500", DGREY)
+    # credits
+    c.text(8, 6,  "code:", GREY);     c.text(20, 6,  "ty vance", WHITE)
+    c.text(8, 7,  "graphics:", GREY); c.text(20, 7,  "ty vance  (marta lent me the camera)", WHITE)
+    c.text(8, 8,  "music:", GREY);    c.text(20, 8,  "borrowed from sunside.mod, sorry", DGREY)
+    c.text(8, 9,  "platform:", GREY); c.text(20, 9,  "the 486 behind the nav seat", GREY)
+    # copyright and tag
+    c.hline(4, 11, 72, "\u2500", DGREY)
+    c.text(8, 12, "(c) tyv 98", DGREY)
+    artist_tag(c, 54, 12)
+    return [c.save("ANSI/DEMO/D_INWORLD.ANS")]
+
+
 def credits():
     c = Canvas(80, H)
     _frame(c, "CREDITS")
@@ -149,7 +180,7 @@ def after():
 
 def build():
     out = []
-    for fn in (release, title, news, radio, credits, after):
+    for fn in (release, title, news, radio, inworld, credits, after):
         out += fn()
     for who in LETTERS:
         out += letter(who)

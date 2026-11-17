@@ -304,6 +304,34 @@
     if (p > 1.2 + lines.length * 1.9) text(word(part, 'sign', v), 8, 112 + lines.length * 12 + 4 - (lines.length > 4 ? 12 : 0), scale(C.lcyan, fade), 8);
   }
 
+  // Ty's in-world production screen: "TYVANCE presents" over a CGA-style text mode look
+  function inworldcredits(p, d, part) {
+    clear();
+    const fade = Math.min(ease(p / 1.2), ease((d - p) / 0.8));
+    // a dim plasma under everything
+    plasma(p * 0.4, fade * 0.18, C.cyan);
+    // scanline grid to suggest a text-mode feel
+    for (let y = 0; y < H; y += 2) for (let x = 0; x < W; x++) st.fb[y * W + x] = scale(st.fb[y * W + x], 0.55);
+    // top banner: a solid block row
+    for (let x = 0; x < W; x++) { st.fb[12 * W + x] = mix(st.fb[12 * W + x], C.amber, 0.5 * fade); st.fb[13 * W + x] = mix(st.fb[13 * W + x], C.amber, 0.5 * fade); }
+    const pres = part.presents || 'TYVANCE presents';
+    text(pres, ((W - textWidth(pres, 16, true)) / 2) | 0, 32, scale(C.lamber, fade * ease(p / 0.9)), 16, true);
+    // a dim horizontal rule
+    for (let x = 20; x < W - 20; x += 2) px(x, 68, scale(C.dgrey, fade * 0.8));
+    const title = part.prod_title || 'TY\'S DEMO';
+    text(title, ((W - textWidth(title, 9, true)) / 2) | 0, 76, scale(C.white, fade * ease((p - 0.5) / 0.8)), 9, true);
+    const lines = (part.prod_lines || '').split('|');
+    lines.forEach((l, i) => {
+      const t0 = 1.4 + i * 1.6, shown = typed(l, p - t0, 30);
+      text(shown, ((W - textWidth(l, 8)) / 2) | 0, 96 + i * 12, scale(C.grey, fade * ease((p - t0 + 0.2) / 0.6)), 8);
+    });
+    if (p > 2.0 + lines.length * 1.6) {
+      const tag = part.prod_tag || '(c) tyv 98';
+      text(tag, ((W - textWidth(tag, 8)) / 2) | 0, H - 24, scale(C.dgrey, fade * 0.7), 8);
+    }
+    if (p < 0.5) for (let i = 0; i < W * H; i++) st.fb[i] = mix(st.fb[i], C.black, 1 - p / 0.5);
+  }
+
   function credits(p, d, part) {
     clear();
     const fade = Math.min(ease(p / 1), ease((d - p) / 0.6));
@@ -426,7 +454,7 @@
       if (!part) { if (t >= st.endT) drop(); }
       else {
         const p = t - part.start, d = part.end - part.start;
-        ({ release, title, letter, news, radio, credits }[part.kind] || (() => clear()))(p, d, part, v);
+        ({ release, title, letter, news, radio, inworldcredits, credits }[part.kind] || (() => clear()))(p, d, part, v);
         crt(st.fb);
       }
     } else if (st.phase === 'lost') {

@@ -1023,7 +1023,7 @@ class Lint:
         for need in ("DEMO.JS", demo.get("tune", "TUNE.MOD"), "SHIP.PNG"):
             if not os.path.isfile(os.path.join(folder, need)):
                 self.err("DEMO.INI", "BBS/DEMO/%s is not on the card" % need)
-        kinds = {"release", "title", "letter", "news", "radio", "credits"}
+        kinds = {"release", "title", "letter", "news", "radio", "inworldcredits", "credits"}
         last_end = None
         parts = [(n, kv) for n, kv, _ in ini.sections if re.match(r"P\d", n)]
         for name, kv in parts:
