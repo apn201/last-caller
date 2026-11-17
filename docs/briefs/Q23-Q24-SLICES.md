@@ -199,11 +199,16 @@ Juha: Ty's own demo, unlocked after the game is finished, is an ANSI
 adaptation of Future Crew's *Second Reality* (1993) with the real music. Ty
 was a scener; a 1998 text-mode tribute is in character. Rules:
 
-- **Licence first.** The 2013 source release (github.com/mtuomi/SecondReality)
-  is under the Unlicense. Check that the release covers the music files
-  (Purple Motion, Skaven) as well as the code, and write what was found in
-  `CONTENT_POLICY.md`. If the music is not clearly covered, the egg ships
-  with our own tune and the planner asks Juha.
+- **Licence: settled (Juha checked, 17 Nov).** The 2013 release by Mika
+  "Trug" Tuomi (github.com/mtuomi/SecondReality) is "Source code and data of
+  Second Reality", dedicated to the public domain (Unlicense text in its
+  README), and the data includes the music: `MAIN/MUSIC0.S3M` and
+  `MAIN/MUSIC1.S3M` (Purple Motion, Skaven). Use those two files as they are.
+  `CONTENT_POLICY.md` records the repository, the commit used, the README's
+  dedication, the file names and the composers. `tools/fetch-...` style: the
+  files may be fetched by a script rather than kept in the repository; either
+  way the board serves them from the card. The browser needs an S3M-capable
+  player (freely licensed, served from the board).
 - **An adaptation, not a copy:** the famous parts redone in ANSI and
   text-mode (the intro, the glenz vectors, the plasma, the dots, the end
   scroller) in our renderer, credited on screen "after Future Crew, Second
