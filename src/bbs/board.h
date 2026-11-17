@@ -3,6 +3,7 @@
 // Part of the single TinyBBS translation unit: included in order from main.cpp.
 
 static void keysHelp(Session &s);  // bbs/help.h: ? on any key screen
+static bool accountEligible(const Session &s);   // bbs/cmd_account.h
 static bool sysopOnline(const Session &s) {
   for (auto &n : sessions) if (n.used && &n != &s && isSysop(n)) return true;
   return false;
@@ -28,6 +29,7 @@ static void mainMenu(Session &s) {
   if (sysopOnline(s)) items.push_back({"O", "Page SysOp"});
   items.push_back({"U", "User list"});
   items.push_back({"S", "System info"});
+  if (accountEligible(s)) items.push_back({"E", "Your account"});   // G2: reset my game, delete my account
   items.push_back({"?", "Help"});
   // L (Q12d): an own account signs off to the login prompt and keeps the line, so a crew login
   // after it reads this caller's own flags (the shell in ELIZA's menu needs that, core/haunt.h).

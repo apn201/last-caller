@@ -8,6 +8,17 @@ find_library(MBEDCRYPTO_LIBRARY mbedcrypto REQUIRED)
 find_path(CIVETWEB_INCLUDE_DIR civetweb.h REQUIRED)
 find_library(CIVETWEB_LIBRARY civetweb REQUIRED)
 
+# G2 (Juha): the build on screen. Slice from tools/build_slice.txt, commit from git (a checkout without
+# git says "local"). Shown in the browser's top bar, on the Telnet front page and in /api/board.
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../tools/build_slice.txt TB_BUILD_SLICE)
+string(STRIP "${TB_BUILD_SLICE}" TB_BUILD_SLICE)
+set(TB_BUILD_COMMIT "local")
+execute_process(COMMAND git rev-parse --short HEAD WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                OUTPUT_VARIABLE TB_GIT_HEAD OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET RESULT_VARIABLE TB_GIT_RC)
+if(TB_GIT_RC EQUAL 0 AND TB_GIT_HEAD)
+  set(TB_BUILD_COMMIT "${TB_GIT_HEAD}")
+endif()
+set(TB_BUILD_DEFS "TB_BUILD_SLICE=\"${TB_BUILD_SLICE}\"" "TB_BUILD_COMMIT=\"${TB_BUILD_COMMIT}\"")
 add_library(tinybbs-miniz STATIC platform/miniz_tinfl.c)
 target_include_directories(tinybbs-miniz PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/platform)
 
@@ -19,6 +30,7 @@ target_include_directories(tinybbs-phase1-smoke PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/../src
   ${MBEDTLS_INCLUDE_DIR}
 )
+target_compile_definitions(tinybbs-phase1-smoke PRIVATE ${TB_BUILD_DEFS})
 target_link_libraries(tinybbs-phase1-smoke PRIVATE tinybbs-miniz ${MBEDCRYPTO_LIBRARY})
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   target_link_libraries(tinybbs-phase1-smoke PRIVATE pthread)
@@ -35,6 +47,7 @@ target_include_directories(tinybbs-server PRIVATE
   ${MBEDTLS_INCLUDE_DIR}
   ${CIVETWEB_INCLUDE_DIR}
 )
+target_compile_definitions(tinybbs-server PRIVATE ${TB_BUILD_DEFS})
 target_link_libraries(tinybbs-server PRIVATE tinybbs-miniz ${MBEDCRYPTO_LIBRARY} ${CIVETWEB_LIBRARY})
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   target_link_libraries(tinybbs-server PRIVATE pthread)

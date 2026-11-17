@@ -122,37 +122,60 @@ def crew():
 
 # ------------------------------------------------------------------- STATUS
 
-def status():
+# 8 Dec 1998 (the board as it was), and the two aftermaths (G2, Juha): after END1 the queue is sent and the
+# downlink is open, after END2 ELIZA holds it and the crew list has a fifth name. Bulletins 4 shows the
+# variant for the caller's end flag (BULLETINS.INI path_END1, path_END2). DRAFT text.
+STATUS_KINDS = {
+    "": dict(file="004_STATUS", filed="08 DEC 1998   04:15", lines=["All crew are well.", "Thank you for your patience."],
+             comms=("ANTENNA FAULT", YELLOW), crew=("WELL", LCYAN), stage=1),
+    "END1": dict(file="004_STATUS_END1", filed="12 NOV 2026   01:52 UTC",
+                 lines=["The queue was sent. 41 messages, 3 files.", "The downlink is open. Thank you for your help."],
+                 comms=("DOWNLINK RESTORED", LCYAN), crew=("FOUR FAMILIES TOLD", LCYAN), stage=2),
+    "END2": dict(file="004_STATUS_END2", filed="12 NOV 2026   01:52 UTC",
+                 lines=["The queue is held. 41 messages, 3 files.", "The crew list has five names. Thank you for staying."],
+                 comms=("DOWNLINK DISABLED", YELLOW), crew=("FIVE ON THE LIST", YELLOW), stage=2),
+}
+
+
+def status_one(kind):
+    k = STATUS_KINDS[kind]
     c = Canvas(80, 22)
     frame(c, "HALCYON // SHIP STATUS")
     header(c, "STATUS")
     sep(c, 5, ticks=True)
-    c.text(5, 7, "FILED", DGREY);   c.text(14, 7, "08 DEC 1998   04:15", GREY)
+    c.text(5, 7, "FILED", DGREY);   c.text(14, 7, k["filed"], GREY)
     c.text(5, 8, "FROM", DGREY);    c.text(14, 8, "ELIZA, MISSION COMPUTER", GREY)
     c.hline(5, 9, 40, "\u2500", DGREY)
-    c.text(5, 11, "All crew are well.", YELLOW)
-    c.text(5, 12, "Thank you for your patience.", YELLOW)
+    c.text(5, 11, k["lines"][0], YELLOW)
+    c.text(5, 12, k["lines"][1], YELLOW)
     rows = [("BUS", "RTG", LCYAN), ("CABIN", "21.0 C", LCYAN), ("AIR", "NOMINAL", LCYAN),
-            ("COMMS", "ANTENNA FAULT", YELLOW), ("CREW", "WELL", LCYAN)]
-    for n, (k, v, col) in enumerate(rows):
-        c.text(5, 14 + n, k, GREY)
-        c.text(14, 14 + n, "." * (13 - len(k)), DGREY)
+            ("COMMS",) + k["comms"], ("CREW",) + k["crew"]]
+    for n, (key, v, col) in enumerate(rows):
+        c.text(5, 14 + n, key, GREY)
+        c.text(14, 14 + n, "." * (13 - len(key)), DGREY)
         c.text(28, 14 + n, v, col)
     ring = PixelLayer(22, 22)
     eliza_ring(ring, 10.5, 10.5, r_out=10.4, r_in=6.8, segs=16)
     ring.flush(c, 52, 6)
-    pf = PixelLayer(22, 8)               # 8 Dec 1998: the dish is dark
-    profile(pf, 0, 0, 1)
+    pf = PixelLayer(22, 8)               # 8 Dec 1998: the dish is dark. 2026: the dish is gone
+    profile(pf, 0, 0, k["stage"])
     pf.flush(c, 46, 1)
     foot(c)
-    out = [c.save("BULLETINS/004_STATUS.ANS")]
+    out = [c.save("BULLETINS/%s.ANS" % k["file"])]
     rows_ = ["-- HALCYON // SHIP STATUS " + "-" * 53, "", "  S T A T U S", "",
-             "  FILED  08 DEC 1998  04:15", "  FROM   ELIZA, MISSION COMPUTER", "  " + "-" * 40, "",
-             "  All crew are well.", "  Thank you for your patience.", "",
-             "  BUS ....... RTG", "  CABIN ..... 21.0 C", "  AIR ....... NOMINAL", "  COMMS ..... ANTENNA FAULT", "  CREW ...... WELL", "", "-" * 78]
-    out.append(plain("ASCII/BULLETINS/004_STATUS.ASC", rows_))
+             "  FILED  " + k["filed"], "  FROM   ELIZA, MISSION COMPUTER", "  " + "-" * 40, "",
+             "  " + k["lines"][0], "  " + k["lines"][1], "",
+             "  BUS ....... RTG", "  CABIN ..... 21.0 C", "  AIR ....... NOMINAL",
+             "  COMMS ..... " + k["comms"][0], "  CREW ...... " + k["crew"][0], "", "-" * 78]
+    out.append(plain("ASCII/BULLETINS/%s.ASC" % k["file"], rows_))
     return out
 
+
+def status():
+    out = []
+    for kind in STATUS_KINDS:
+        out += status_one(kind)
+    return out
 
 # -------------------------------------------------------------------- RULES
 

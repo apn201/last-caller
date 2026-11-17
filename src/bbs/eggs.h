@@ -12,6 +12,7 @@ static constexpr const char *EGGS_INI = "/BBS/STORY/EGGS.INI";
 // "line one|line two" -> two lines.
 static String eggLines(String text) { text.replace("|", "\r\n"); return text; }
 
+static String bulletinPrompt(const Session &s);   // bbs/cmd_main.h
 static bool eggPromptState(const Session &s) {
   return s.state == LOGIN_CHOICE || s.state == LOGIN_HANDLE || s.state == MAIN || s.state == DOOR_MENU || s.state == BULLETIN;
 }
@@ -27,7 +28,7 @@ static void eggPrompt(Session &s) {
     case FILE_MENU: prompt(s, "File area #, then ENTER: "); break;
     case FILE_LIST: prompt(s, "File command? "); break;
     case ANSI_GALLERY: prompt(s, "Gallery command? "); break;
-    case BULLETIN_LIST: prompt(s, "Bulletin #, then ENTER (Q goes back at once): "); break;
+    case BULLETIN_LIST: prompt(s, bulletinPrompt(s)); break;
     case JOIN_CONF: prompt(s, "Area #, then ENTER (Q goes back at once): "); break;
     default: prompt(s, "Main Board Command? "); break;
   }

@@ -55,6 +55,7 @@
 #include "bbs/uploads.h"
 #include "bbs/cmd_login.h"
 #include "bbs/cmd_main.h"
+#include "bbs/cmd_account.h"
 #include "bbs/cmd_sysop.h"
 #include "bbs/user_editor.h"
 #include "bbs/cmd_files.h"

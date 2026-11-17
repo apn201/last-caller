@@ -34,6 +34,9 @@ static uint32_t bulletinCount(const Session &s) {
   for (const auto &b : board.bulletins) if (bulletinOpen(s, b)) n++;
   return n;
 }
+// G2 (Juha, contract C1): up to nine bulletins, the number acts at once; with more, a number is typed and ENTER ends it.
+static bool bulletinDigitHot(const Session &s) { return bulletinCount(s) <= 9; }
+static String bulletinPrompt(const Session &s) { return bulletinDigitHot(s) ? "Bulletin # (Q goes back): " : "Bulletin #, then ENTER (Q goes back at once): "; }
 static void bulletinMenu(Session &s);
 static void bulletinBack(Session &s) { if (bulletinCount(s) > 1) bulletinMenu(s); else mainMenu(s); }
 // Contract C4: a bulletin is read in the pager, like every text. An art file is drawn into the pager's
@@ -42,7 +45,9 @@ static void openBulletin(Session &s, const Bulletin &b) {
   Reader &r = s.reader;
   r = Reader();
   r.title = clean(b.title, 24); r.onQuit = bulletinBack; r.utf8 = true;
-  String path = b.path;
+  String path = b.path, suf = endingSuffix(s);   // G2: the aftermath variant after an ending
+  if (suf == "_END1" && b.pathEnd1.length()) path = b.pathEnd1;
+  else if (suf == "_END2" && b.pathEnd2.length()) path = b.pathEnd2;
   bool ansiFile = path.length() && s.ansi;
   if (path.length() && !s.ansi) {
     path.replace("/BBS/", "/BBS/ASCII/");
@@ -75,7 +80,7 @@ static void bulletinMenu(Session &s) {
   say(s, "\r\n\x1b[1;36mBULLETINS\x1b[0m");
   for (uint32_t i = 1; i <= count; ++i) say(s, "\x1b[1;33m[" + String(i) + "]\x1b[0m " + visibleBulletin(s, i)->title);
   s.state = BULLETIN_LIST;
-  prompt(s, "Bulletin #, then ENTER (Q goes back at once): ");
+  prompt(s, bulletinPrompt(s));
 }
 // C: node chat. G2: one chat, free text. ELIZA answers from SYSOP.INI and her brain (STORY/ELIZA); `?` or HELP
 // lists what she can do for this caller now, as numbers, and typing the words works as well (core/ghost.h).
@@ -116,6 +121,7 @@ static void crewSwitch(Session &s, const User &crew) {
   claimAccount(s); finishLogin(s);
 }
 
+static void accountMenu(Session &s);   // bbs/cmd_account.h
 static bool mainCommand(Session &s, String &line, const String &cmd) {
   if (s.state == BULLETIN) { mainMenu(s); return true; }
   if (s.state == CREW_PICK) {
@@ -160,6 +166,7 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
       rows.push_back("");
       openRows(s, rows, "System info", "", mainMenu);
     }
+    else if (cmd == "E" && accountEligible(s)) { accountMenu(s); }
     else if (cmd == "A") { ansiGallery(s); }
     else if (cmd == "F") { s.galleryCabinet = false; fileMenu(s); }
     else if (cmd == "D" && anyDoorOpen(s)) { doorMenu(s); }
@@ -207,7 +214,7 @@ static bool mainCommand(Session &s, String &line, const String &cmd) {
     if (cmd == "?") { keysHelp(s); return true; }
     if (!line.length()) { bulletinMenu(s); return true; }
     const Bulletin *b = readNumber(line, n) ? visibleBulletin(s, n) : nullptr;
-    if (!b) { say(s, "No such bulletin."); prompt(s, "Bulletin #, then ENTER (Q goes back at once): "); }
+    if (!b) { say(s, "No such bulletin."); prompt(s, bulletinPrompt(s)); }
     else openBulletin(s, *b);
     return true;
   }

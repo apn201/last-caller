@@ -6,7 +6,9 @@
 html,body{margin:0;background:#000;color:#aaa;font:14px monospace}
    header,footer{padding:5px;color:#5ff;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 button{background:#000;color:inherit;border:1px solid #066;font:inherit;min-height:32px}
-   #carrier{flex:1;min-width:18ch}
+   #carrier{flex:0 1 auto;min-width:18ch}
+#build{flex:1;color:#366;white-space:nowrap}
+#build:empty{display:none}
 canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
 #screen{position:relative;width:min(100%,960px,max(160px,calc((var(--visible-height,100dvh) - var(--chrome,84px)) * 1.6)));
 touch-action:none}
@@ -22,7 +24,7 @@ caret-color:transparent;outline:none;white-space:pre;pointer-events:none}
 #pic.shown{clip-path:inset(0);transition:clip-path 1.4s steps(48)}
 #vbar{background:#00a;color:#fff;padding:4px 8px;white-space:pre;overflow:hidden;text-overflow:ellipsis}
 </style></head><body>
- <header><button id="dial">DIAL</button> <button id="modem" type="button">MODEM AUDIO</button> <button id="speed" type="button" title="Modem speed for ANSI pictures">SPEED</button> <span id="carrier" role="status">TINYBBS // NO CARRIER</span></header>
+ <header><button id="dial">DIAL</button> <button id="modem" type="button">MODEM AUDIO</button> <button id="speed" type="button" title="Modem speed for ANSI pictures">SPEED</button> <span id="carrier" role="status">TINYBBS // NO CARRIER</span><span id="build"></span></header>
 <div id="screen"><canvas id="display" width="640" height="400" aria-label="80-column BBS terminal"></canvas>
 <div id="capture" contenteditable="plaintext-only" role="textbox" aria-label="Terminal input"
 autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="text"
@@ -38,7 +40,7 @@ const $=id=>document.getElementById(id);
 // The board's name comes from the card (SYSTEM.INI) through /api/board.
 let BRAND='TINYBBS';
 fetch('/api/board').then(r=>r.json()).then(b=>{
-  BRAND=b.short||BRAND;document.title=(b.name||'TinyBBS')+' // Terminal';
+  BRAND=b.short||BRAND;$('build').textContent=b.build||'';document.title=(b.name||'TinyBBS')+' // Terminal';
   display.setAttribute('aria-label','80-column '+(b.name||'BBS')+' terminal');
   if(carrier.textContent.startsWith('TINYBBS //'))carrier.textContent=BRAND+carrier.textContent.slice(7);
 }).catch(()=>{});

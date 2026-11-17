@@ -21,3 +21,6 @@ docs/art-preview/
 # Press-kit renders and generated art (tools/presskit.py, Kling).
 docs/presskit/
 .claude/settings.local.json
+
+# G2: written by tools/embed_web.py before each PlatformIO build.
+src/core/build_tag.h

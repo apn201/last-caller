@@ -6,7 +6,7 @@
 
 struct Conference { uint8_t id = 0; String name, description, flag; uint8_t level = 0; bool readOnly = false; };  // readOnly: only the SysOp posts
 // A bulletin is an art file (path=) or a quick line of text (text=, | breaks lines).
-struct Bulletin { String title, path, text, flag; uint8_t level = 0; bool mandatory = false; };
+struct Bulletin { String title, path, text, flag, pathEnd1, pathEnd2; uint8_t level = 0; bool mandatory = false; };   // G2: pathEnd1/2 = the art after END1 / END2
 // A menu from MENUS.INI: header art, and where in it the generated options go.
 // rows = 0 puts the options below the art instead.
 struct MenuLayout {
@@ -20,6 +20,7 @@ struct BoardSettings {
   String lcdLogo = "/BBS/ASSETS/LOGO.RGB565";  // ESP32 status screen
   std::vector<std::pair<char, String>> doorNames;  // [DOORS] in SYSTEM.INI: menu key = name
   uint8_t maxNodes = MAX_NODES, newUserLevel = 20;
+  bool showBuild = true;  // G2: build_tag= in SYSTEM.INI, 0 hides the build tag (a release)
   uint32_t baud = 28800;
   // New callers: download credit and ratio. Credits are bytes.
   uint32_t newUserCredits = 1048576, creditsPerMessage = 51200, creditsPerUploadKb = 0;
@@ -39,9 +40,11 @@ static String shortName() {
   if (n.endsWith(" BBS")) n.remove(n.length() - 4);
   return n;
 }
+// G2: "G2 2c450d4", the slice and the short commit this firmware or server was built from. Empty when SYSTEM.INI hides it.
+static String buildTag() { return board.showBuild ? String(TB_BUILD_SLICE) + " " + TB_BUILD_COMMIT : String(); }
 static String boardJson() {
   return String("{\"name\":\"") + jsonText(board.name) + "\",\"short\":\"" + jsonText(shortName()) +
-         "\",\"location\":\"" + jsonText(board.location) + "\",\"sysop\":\"" + jsonText(board.sysop) + "\"}";
+         "\",\"location\":\"" + jsonText(board.location) + "\",\"sysop\":\"" + jsonText(board.sysop) + "\",\"build\":\"" + jsonText(buildTag()) + "\"}";
 }
 // A door's name in menus: [DOORS] in SYSTEM.INI, else the door's own.
 static String doorName(char key, const char *fallback) {
@@ -101,6 +104,7 @@ static String loadSettings() {
     for (const auto &e : ini) if (e.section == "DOORS" && e.key.length() == 1) b.doorNames.push_back({(char)toupper(e.key[0]), e.value});
     b.location = iniGet(ini, "SYSTEM", "location", b.location);
     b.sysop = iniGet(ini, "SYSTEM", "sysop", b.sysop);
+    b.showBuild = iniGet(ini, "SYSTEM", "build_tag", "1").toInt() != 0;
     b.maxNodes = (uint8_t)constrain(iniGet(ini, "SYSTEM", "max_nodes", String(MAX_NODES)).toInt(), 1L, (long)MAX_NODES);
     b.newUserLevel = (uint8_t)constrain(iniGet(ini, "SYSTEM", "new_user_level", "20").toInt(), 0L, 254L);
     b.baud = (uint32_t)max(0L, iniGet(ini, "SYSTEM", "baud", "28800").toInt());
@@ -140,6 +144,8 @@ static String loadSettings() {
       bl.title = iniGet(ini, sec, "title", "Bulletin " + sec);
       bl.path = boardPath(iniGet(ini, sec, "path"), "");
       bl.text = iniGet(ini, sec, "text");
+      bl.pathEnd1 = boardPath(iniGet(ini, sec, "path_END1"), "");
+      bl.pathEnd2 = boardPath(iniGet(ini, sec, "path_END2"), "");
       if (!bl.path.length() && !bl.text.length()) continue;
       bl.flag = iniGet(ini, sec, "required_flag");
       bl.level = iniLevel(ini, sec);
@@ -181,10 +187,15 @@ static String loadSettings() {
 }
 
 static void hauntScreen(Session &s, const String &what);  // core/haunt.h: a screen was shown (event=screen)
+static String endingSuffix(const Session &s);   // core/haunt.h: "_END1", "_END2" or ""
 static void showBulletin(Session &s, const Bulletin &b) {
-  if (b.path.length() && s.ansi) art(s, b.path.c_str(), b.title);
-  else if (b.path.length()) {   // no ANSI: the plain twin under /BBS/ASCII, same name with .ASC
-    String plain = b.path;
+  // G2 (Juha): after the ending the board knows the game is over (END1 wins when both are held).
+  String shown = b.path, suf = endingSuffix(s);   // (openBulletin in cmd_main.h does the same for the pager)
+  if (suf == "_END1" && b.pathEnd1.length()) shown = b.pathEnd1;
+  else if (suf == "_END2" && b.pathEnd2.length()) shown = b.pathEnd2;
+  if (shown.length() && s.ansi) art(s, shown.c_str(), b.title);
+  else if (shown.length()) {   // no ANSI: the plain twin under /BBS/ASCII, same name with .ASC
+    String plain = shown;
     plain.replace("/BBS/", "/BBS/ASCII/");
     if (up(plain).endsWith(".ANS")) plain = plain.substring(0, plain.length() - 4) + ".ASC";
     plainArt(s, plain.c_str(), b.title);

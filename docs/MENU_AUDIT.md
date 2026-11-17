@@ -31,7 +31,8 @@ are allowed: they never appear on screen.
 | --- | --- | --- |
 | M, N, A, D, C, W, U, S, ?, G | always | W opens the node monitor (kick, M) for the SysOp. G on a read-only crew account logs off to the login prompt and keeps the line (Q2: what the visit found goes to the caller's own login); Q20: there it reads "Goodbye (to Login:)", and the crew login says once "This is a crew account, read-only. G goes back to Login: for your own account." (plus the Y line when Y works, and "Your crew manifest is on your own account."). Q4: W lists ghosts too, with an Idle column; a ghost's node is "no caller on that node" for the monitor. |
 | F | an area is open to the caller (an empty upload area counts in the browser) | |
-| B | a bulletin is visible to the caller | |
+| B | a bulletin is visible to the caller | G2 (Juha): with nine bulletins or fewer a number acts at once (prompt `Bulletin # (Q goes back):`); with more, a number is typed and ENTER ends it. After END1 or END2 bulletin 4 (Status) and the main menu panel show the aftermath (`path_END1`, `path_END2` in `BULLETINS.INI`; `MAIN_END1.ANS`, `MAIN_END2.ANS`; END1 wins when both are held). |
+| E | an own account that is not the SysOp, a crew account or the maintenance login | G2 (Juha): "Your account". R reset my game (handle and password stay; story flags, notebook, private story mail, ELIZA's memory and read pointers go; asks for the handle typed in full, ENTER cancels), then back to `Login:`. D delete my account (same confirmation; frees the handle), then `Login:`. Q or X back. Not in HELP of a crew account. |
 | J | more than one message area can be joined | Q7: a conference with a `required_flag` (Mail: TYVANCE, `VISIT_TY`) is listed only for callers who hold it, from the account flag field or the story record. |
 | O | a SysOp is online | Q20: was P. |
 | R | the caller can save (not a crew login, not `admin`) and holds evidence about at least one crew row (`STORY/MANIFEST.INI`) | Q6. G with an unfinished manifest shows ELIZA's thanks (partial ending). |
@@ -124,7 +125,7 @@ are allowed: they never appear on screen.
 | Key | Shown when | Notes |
 | --- | --- | --- |
 | W (write), R (reply) | the caller can save and the conference is not `read_only=1` (the SysOp may post anywhere) | Q7. Mission Log, Garden Notes and the mailboxes are read-only; Lounge, Spoilers, No Spoilers and Radio Room take posts. |
-| B | a bulletin is visible; a `.ANS` bulletin shows its `.ASC` twin under `ASCII/` to a caller without ANSI | Q7. Bulletin 5 (News Wire) needs `END1`: listed only after the queue was sent (Q9). |
+| B | a bulletin is visible (digits act at once, G2); a `.ANS` bulletin shows its `.ASC` twin under `ASCII/` to a caller without ANSI | Q7. Bulletin 5 (News Wire) needs `END1`: listed only after the queue was sent (Q9). |
 | U | always | Shows the last call of each account (`1998-12-08 03:47` as `08 Dec 03:47`). |
 
 ## Act 2 areas (Q8)

@@ -20,6 +20,10 @@ static void showMenu(Session &s, const String &name, const std::vector<MenuItem>
   const MenuLayout *m = findMenu(name);
   // Without a MENUS.INI section: the usual picture, options below it.
   String path = m ? m->art : name == "MAIN" ? board.mainMenu : "/BBS/ANSI/MENUS/" + name + ".ANS";
+  if (name == "MAIN") {   // G2 (Juha): the aftermath panel for a caller who has finished the story
+    String suf = endingSuffix(s);
+    if (suf.length() && path.endsWith(".ANS")) { String alt = path.substring(0, path.length() - 4) + suf + ".ANS"; if (sdReady && SD_MMC.exists(alt)) path = alt; }
+  }
   bool haveArt = s.ansi && path.length() && sdReady && SD_MMC.exists(path);  // ASCII callers get the title
   // The art is drawn once per menu and session; coming back shows the title and options only.
   String seenKey = "|" + name + "|";

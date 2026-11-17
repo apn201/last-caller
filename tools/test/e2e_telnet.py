@@ -338,6 +338,8 @@ def main():
         c = Conn(port)
         c.expect("SOLAR BUS ONLY")
         c.expect("Login:")
+        if not re.search(r"\b[A-Z0-9]{1,3} (?:[0-9a-f]{7,}\+?|local)\b", c.all):   # G2 (Juha): the build, dim, on the front page
+            raise AssertionError("the front page shows no build tag: %r" % c.all[-300:])
         c.send("bob")
         c.expect("Unknown caller")
         c.expect("service label")           # Q12b: one in-world hint line for a wrong name
@@ -1712,8 +1714,12 @@ def main():
         c.expect("Bulletin #", timeout=15)
         if "News Wire" not in c.all[start:]:
             raise AssertionError("bulletin 5 is not listed after sending")
-        c.send("5")
+        key(c, "5")                                 # G2 (Juha): a bulletin number acts at once, no ENTER
         c.expect("still on the air", timeout=15)
+        key(c, "q")
+        c.expect("Bulletin #")
+        key(c, "4")                                 # G2: the status bulletin knows the queue was sent
+        c.expect("DOWNLINK RESTORED", timeout=15)
         key(c, "q")
         c.expect("Bulletin #")
         c.send("Q")
@@ -1890,6 +1896,48 @@ def main():
         c.send("")
         c.expect("Main Board Command?", timeout=10)
 
+    @step("account: E, R resets the game and keeps the login, D deletes the account and frees the handle (G2)")
+    def account():
+        c = state["c"]
+        sync(c)
+        c.send("E")
+        c.expect("Account command?", timeout=15)
+        c.send("R")
+        c.expect("Type your handle", timeout=10)
+        c.send("not-my-handle")
+        c.expect("Nothing was changed", timeout=10)
+        c.expect("Account command?", timeout=10)
+        key(c, "r")
+        c.expect("Type your handle", timeout=10)
+        c.send(handle)
+        c.expect("Your game is reset", timeout=15)
+        c.expect("Login:", timeout=15)
+        c.send(handle)
+        c.expect("Password:")
+        c.send(password)                            # the password still works
+        advance(c, "Main Board Command?", timeout=150)
+        sync(c)
+        start = len(c.all)
+        c.send("B")
+        c.expect("Bulletin #", timeout=15)
+        if "News Wire" in c.all[start:]:
+            raise AssertionError("the News Wire is still open after the reset")
+        c.send("Q")
+        c.expect("Main Board Command?", timeout=15)
+        c.send("E")
+        c.expect("Account command?", timeout=15)
+        c.send("D")
+        c.expect("Type your handle", timeout=10)
+        c.send(handle)
+        c.expect("The account is deleted", timeout=15)
+        c.expect("Login:", timeout=15)
+        c.send(handle)
+        c.expect("Password:")
+        c.send(password)
+        c.expect("Unknown caller", timeout=10)
+        c.close()
+        state["c"] = None
+
     @step("admin/admin works for a second caller at the same time")
     def second():
         c = Conn(port)
@@ -1903,6 +1951,8 @@ def main():
     @step("goodbye closes the session")
     def bye():
         c = state["c"]
+        if c is None:
+            return "SKIP the account was deleted by the step before"
         c.send("G")
         c.expect("Goodbye", "Sign off", "NO CARRIER", "Log off", timeout=10)
         if not c.wait_closed(15):
@@ -1922,7 +1972,7 @@ def main():
         c.expect("Press any key", "Main Board Command?", timeout=20)
         c.close()
 
-    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act3_posts, act2_desktop, doors_menu, diag, doors_leave, m5_overrun, m6_early, m6_cure, m6_grant, sysvw_read, m7_eliza, shell, eliza_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, eero_mail, egg_modem, egg_hidden, egg_files, egg_chat, egg_snake, egg_hangup, registered, second, bye, crew):
+    for fn in (banner, drop, reconnect, console, commands, rtg, wake, holds, crew_account, signup, scene, manifest_hidden, act1_bulletins, act1_manifest, act1_users, act1_conferences, act1_files, act1_crew_visit, act1_back, act2_posts, act2_gallery, act2_overpaint, act2_logs, act2_cmdr, act2_garden, act2_chaos, act2_archive, act3_posts, act2_desktop, doors_menu, diag, doors_leave, m5_overrun, m6_early, m6_cure, m6_grant, sysvw_read, m7_eliza, shell, eliza_leave, manifest_menu, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full, ending_crew, ending_who_crew, ending_sent, ending_who_sent, eero_mail, egg_modem, egg_hidden, egg_files, egg_chat, egg_snake, egg_hangup, registered, account, second, bye, crew):
         ok = fn()
         if not ok and fn in (banner, reconnect, console, rtg, wake, crew_account, signup, act1_crew_visit, act1_back, act2_cmdr, act2_garden, act2_chaos, act2_archive, act2_desktop, doors_menu, m5_overrun, m6_cure, m6_grant, m7_eliza, eliza_leave, manifest_open, manifest_wrong, manifest_pair, manifest_eliza, manifest_partial, manifest_again, manifest_full):
             results.append(("SKIP", "remaining steps", "stopped after a step they depend on failed"))

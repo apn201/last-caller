@@ -53,6 +53,7 @@ static void brownoutLogin(Session &s) {
   if (powerCfg.frontHint.length() && !s.ownUserId) { String h = powerCfg.frontHint; h.replace("|", "\r\n"); say(s, s.ansi ? "\x1b[0;33m" + h + "\x1b[0m" : h); }
   if (s.loginNote.length()) { String n = s.loginNote; n.replace("|", "\r\n"); say(s, s.ansi ? "\x1b[1;32m" + n + "\x1b[0m" : n); s.loginNote = ""; }
   { String w = config(POWER_INI, "TEXT", "caps_warning", "WARNING: CAPS LOCK OFF"); if (w.length()) say(s, s.ansi ? "\x1b[0;90m" + w + "\x1b[0m" : w); }
+  { String b = buildTag(); if (b.length()) say(s, s.ansi ? "\x1b[0;90m" + b + "\x1b[0m" : b); }   // G2: the build, dim, for a tester
   s.state = LOGIN_HANDLE;
   prompt(s, "Login: ");
 }

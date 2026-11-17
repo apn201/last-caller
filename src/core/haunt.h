@@ -86,6 +86,8 @@ static bool gatePassFor(const Session &s, const String &needs) {
 // Q22: a bulletin's required_flag is checked on the caller's own flags, as every other gate is, so News Wire
 // (END1) is on the list of a crew login as well, for a caller who has the ending on the own account.
 static bool bulletinOpen(const Session &s, const Bulletin &b) { return s.user.level >= b.level && gatePassFor(s, b.flag); }
+// G2 (Juha): the caller who has finished the story sees the aftermath on the status bulletin and the main menu.
+static String endingSuffix(const Session &s) { return gatePassFor(s, "END1") ? "_END1" : gatePassFor(s, "END2") ? "_END2" : ""; }
 
 // Add flags to the caller's story record (core/story.h). Saved before anything
 // is shown; false = not saved.

@@ -12,6 +12,19 @@ static constexpr uint32_t CALLER_LOGIN_TIMEOUT_MS = 600000;   // Q21: back at Lo
 static constexpr uint32_t SIGNED_IN_TIMEOUT_MS = 1800000;     // signed in
 static constexpr uint32_t IDLE_WARN_MS = 30000;               // the warning comes this long before the line closes
 static constexpr uint32_t WEB_CARRIER_TIMEOUT_MS = 180000;
+// G2 (Juha): the build, for a tester who has to know which slice he is looking at. The slice is in
+// tools/build_slice.txt, the commit is the short HEAD at build time. PlatformIO: tools/embed_web.py writes
+// core/build_tag.h (git-ignored). The server: CMake passes TB_BUILD_SLICE and TB_BUILD_COMMIT. SYSTEM.INI
+// build_tag=0 hides it on screen and in /api/board.
+#if !defined(TB_BUILD_SLICE) && __has_include("build_tag.h")
+#include "build_tag.h"
+#endif
+#ifndef TB_BUILD_SLICE
+#define TB_BUILD_SLICE "dev"
+#endif
+#ifndef TB_BUILD_COMMIT
+#define TB_BUILD_COMMIT "local"
+#endif
 static const char *ROOT = "/BBS";
 static const char *MODEM_AUDIO = "/BBS/ASSETS/DIALUP.MP3";
 

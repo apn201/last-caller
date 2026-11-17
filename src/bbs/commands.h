@@ -21,7 +21,7 @@ static void handleLine(Session &s, String line) {
     return;
   }
   if (eggCommand(s, line, cmd)) return;   // modem commands and hidden words: bbs/eggs.h
-  loginCommand(s, line, cmd) || mainCommand(s, line, cmd) || sysopCommand(s, line, cmd) || userEditorCommand(s, line, cmd) ||
+  loginCommand(s, line, cmd) || mainCommand(s, line, cmd) || accountCommand(s, line, cmd) || sysopCommand(s, line, cmd) || userEditorCommand(s, line, cmd) ||
     uploadCommand(s, line, cmd) || fileCommand(s, line, cmd) || messageCommand(s, line, cmd) || doorCommand(s, line, cmd);
 }
 static constexpr uint32_t HOTKEY_MS = 120;   // see hotkeyTick below
@@ -94,7 +94,7 @@ static void input(Session &s, const String &bytes) {
       if (c == ' ' && s.state != BULLETIN && s.state != MSG_VIEW) continue;   // a tap or a stray space is not the start of a word
       if (s.state == SCENE_PLAY) { if ((c >= '1' && c <= '9') || c == 'q' || c == 'Q') { s.hotKey = c; s.hotAt = millis(); continue; } }
       else if (s.state == CHAT) { if (c == 'q' || c == 'Q') { s.hotKey = c; s.hotAt = millis(); continue; } }   // a lone Q leaves; anything after it makes a line
-      else if (isalpha((unsigned char)c) || c == '?' || (s.state == MANIFEST_PROMPT && s.digitHot && isdigit((unsigned char)c)) || (s.state == CREW_PICK && isdigit((unsigned char)c)) || (s.state == BULLETIN && c >= ' ') || (s.state == MSG_VIEW && c > ' ')) { s.hotKey = c; s.hotAt = millis(); continue; }
+      else if (isalpha((unsigned char)c) || c == '?' || (s.state == MANIFEST_PROMPT && s.digitHot && isdigit((unsigned char)c)) || (s.state == CREW_PICK && isdigit((unsigned char)c)) || (s.state == BULLETIN_LIST && isdigit((unsigned char)c) && bulletinDigitHot(s)) || (s.state == BULLETIN && c >= ' ') || (s.state == MSG_VIEW && c > ' ')) { s.hotKey = c; s.hotAt = millis(); continue; }
     }
     // CRLF is one Enter key.  Without this guard the LF becomes a phantom
     // handle/command in Telnet clients such as PuTTY.

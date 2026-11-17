@@ -8,7 +8,20 @@ from _common import *
 from _profile import profile
 
 
-def build():
+# G2 (Juha): after the ending the board knows the game is over. MAIN_END1 (queue sent) and MAIN_END2 (ELIZA
+# stayed) are shown instead of MAIN by bbs/menus.h when the caller holds that end flag. Same frame, other readouts.
+VARIANTS = {
+    "": dict(link=("28800  CARRIER OK", LCYAN), crew=("4 ABOARD  ALL WELL", YELLOW), comms="1A11",
+             eliza=("ELIZA ON WATCH", "ALL STATIONS NOMINAL"), file="MAIN"),
+    "END1": dict(link=("28800  DOWNLINK OPEN", LCYAN), crew=("4 FAMILIES TOLD", LCYAN), comms="1111",
+                 eliza=("ELIZA ON WATCH", "QUEUE SENT. 41 AND 3."), file="MAIN_END1"),
+    "END2": dict(link=("28800  DOWNLINK OFF", YELLOW), crew=("4 ABOARD  5 LISTED", YELLOW), comms="1A11",
+                 eliza=("ELIZA ON WATCH", "QUEUE HELD. YOU STAY."), file="MAIN_END2"),
+}
+
+
+def draw(kind):
+    var = VARIANTS[kind]
     c = Canvas(80, 22)
     frame(c, "HALCYON // DECK 02")
 
@@ -27,8 +40,8 @@ def build():
         ("ORBIT", "LOW EARTH", GREY),
         ("POWER", None, None),
         ("BATT", "OPEN CIRCUIT", LRED),
-        ("LINK", "28800  CARRIER OK", LCYAN),
-        ("CREW", "4 ABOARD  ALL WELL", YELLOW),
+        ("LINK",) + var["link"],
+        ("CREW",) + var["crew"],
     ]
     for n, (k, v, col) in enumerate(rows):
         c.text(32, 5 + n, k, DGREY)
@@ -44,14 +57,14 @@ def build():
     sep(c, 16)
 
     # lower deck: systems, ELIZA on watch, deck label
-    for n, (k, pat) in enumerate((("HAB", "1111"), ("COMMS", "1A11"), ("THERMAL", "1101"), ("ATTITUDE", "1111"))):
+    for n, (k, pat) in enumerate((("HAB", "1111"), ("COMMS", var["comms"]), ("THERMAL", "1101"), ("ATTITUDE", "1111"))):
         c.text(3, 17 + n, k, DGREY)
         lights(c, 13, 17 + n, pat)
     ring = PixelLayer(8, 8)
     eliza_ring(ring, 3.5, 3.5, r_out=3.9, r_in=2.2, segs=8, off=(5,))
     ring.flush(c, 30, 17)
-    c.text(39, 18, "ELIZA ON WATCH", YELLOW)
-    c.text(39, 19, "ALL STATIONS NOMINAL", AMBER)
+    c.text(39, 18, var["eliza"][0], YELLOW)
+    c.text(39, 19, var["eliza"][1], AMBER)
     c.text(62, 17, "MAIN BOARD", GREY)
     c.text(62, 18, "CALLER ACCESS", DGREY)
     c.hline(62, 19, 15, "─", DGREY)
@@ -59,4 +72,8 @@ def build():
     c.text(58, 21, "╡", DGREY)
     c.text(59, 21, TAG, DGREY)
     c.text(59 + len(TAG), 21, "╞", DGREY)
-    return [c.save("ANSI/MENUS/MAIN.ANS")]
+    return c.save("ANSI/MENUS/%s.ANS" % var["file"])
+
+
+def build():
+    return [draw(kind) for kind in VARIANTS]
