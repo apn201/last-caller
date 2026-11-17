@@ -195,12 +195,14 @@ function playTune(href,name,size,desc){
 document.addEventListener('click',()=>{if(playerOpen())focusTerminal();});
 // GE: the end demo. The board says start (OSC 9;DEMO;END1 or END2); the page plays it from /demo/DEMO.JS on the
 // card and sends one key (GS) when the caller has seen NO CARRIER, so the board goes on to the reconnect screen.
-let demoLoad=null,demoOn=false;
+// GE2: OSC 9;DEMO;SR is Ty's text-mode Second Reality (/demo/SR.JS, window.TyDemo), handled the same way.
+const demoLoad={};let demoOn=false;
 function startDemo(v){
   if(demoOn)return;demoOn=true;
+  const egg=v==='SR',file=egg?'SR.JS':'DEMO.JS';
   const done=()=>{demoOn=false;streamKey('\x1d');focusTerminal();};
-  if(!demoLoad)demoLoad=new Promise((ok,fail)=>{const s=document.createElement('script');s.src='/demo/DEMO.JS?t='+Date.now();s.onload=ok;s.onerror=()=>{demoLoad=null;fail();};document.head.appendChild(s);});
-  demoLoad.then(()=>window.HalcyonDemo.run({variant:v==='END2'?'END2':'END1',onDone:done})).catch(done);
+  if(!demoLoad[file])demoLoad[file]=new Promise((ok,fail)=>{const s=document.createElement('script');s.src='/demo/'+file+'?t='+Date.now();s.onload=ok;s.onerror=()=>{delete demoLoad[file];fail();};document.head.appendChild(s);});
+  demoLoad[file].then(()=>egg?window.TyDemo.run({onDone:done}):window.HalcyonDemo.run({variant:v==='END2'?'END2':'END1',onDone:done})).catch(done);
 }
 function downloadLink(message){
   if(message.startsWith('9;SND;')){playCue(message.slice(6));return;}

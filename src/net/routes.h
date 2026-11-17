@@ -250,7 +250,7 @@ static WebRouteResponse webRoute(const WebRouteRequest &request) {
   if (request.method == "GET" && request.path.startsWith("/demo/")) {
     String name = request.path.substring(6), u = up(name);
     bool plain = name.length() && name.length() < 24 && name.indexOf('/') < 0 && name.indexOf("..") < 0 && name.indexOf('\\') < 0;
-    const char *type = u.endsWith(".JS") ? "text/javascript" : u.endsWith(".PNG") ? "image/png" : u.endsWith(".MOD") ? "application/octet-stream" : u == "DEMO.INI" ? "text/plain; charset=utf-8" : nullptr;
+    const char *type = u.endsWith(".JS") ? "text/javascript" : u.endsWith(".PNG") ? "image/png" : (u.endsWith(".MOD") || u.endsWith(".S3M")) ? "application/octet-stream" : (u == "DEMO.INI" || u == "SR.INI") ? "text/plain; charset=utf-8" : nullptr;
     String path = u == "DEMO.INI" ? String(DEMO_INI) : String("/BBS/DEMO/") + name;
     if (!plain || !type || !sdReady || !SD_MMC.exists(path)) return webText(404, "text/plain", "Not found");
     return webCardFile(path, type, false, "no-cache");

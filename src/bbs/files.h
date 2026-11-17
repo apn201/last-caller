@@ -21,6 +21,17 @@ static void fileMenu(Session &s);
 static void doorMenu(Session &s);
 static bool isSysop(const Session &s);  // bbs/sysop.h
 static String shortName(const String &path) { int slash = path.lastIndexOf('/'); return slash >= 0 ? path.substring(slash + 1) : path; }
+// A NEEDS.BBS gate: alternatives split by |, each a gate as everywhere else (GE2).
+static bool needsPass(const Session &s, const String &needs) {
+  int at = 0;
+  while (at <= (int)needs.length()) {
+    int bar = needs.indexOf('|', at); if (bar < 0) bar = needs.length();
+    String one = needs.substring(at, bar); one.trim();
+    if (one.length() && gatePassFor(s, one)) return true;
+    at = bar + 1;
+  }
+  return !needs.length();
+}
 // Names a caller never sees in a listing: hidden entries and description files.
 static bool hiddenEntry(const String &name) {
   String u = up(name);
@@ -162,7 +173,8 @@ static std::vector<FileEntry> folderEntries(const Session &s) {
     if (hiddenEntry(f.name)) continue;
     // NEEDS.BBS: a file that needs a flag is neither listed nor opened without it (a real SysOp sees all).
     bool open = true;
-    for (const auto &g : gates) if (up(g.first) == up(f.name) && !isSysop(s) && !gatePassFor(s, g.second)) open = false;
+    // GE2: FLAG|FLAG passes on either (END1|END2: either ending).
+    for (const auto &g : gates) if (up(g.first) == up(f.name) && !isSysop(s) && !needsPass(s, g.second)) open = false;
     if (open) list.push_back(f);
   }
   if (dir) dir.close();

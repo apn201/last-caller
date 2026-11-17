@@ -168,6 +168,7 @@ struct Session {
   // 2 carrier lost (any key reconnects); demoBrowser: the page plays it, the board only waits.
   uint8_t demoKind = 0, demoStage = 0;
   bool demoReplay = false, demoBrowser = false;
+  bool demoEgg = false;   // GE2: Ty's Second Reality (BBS/DEMO/SR.INI), opened from his gallery; ends back in the file list
   uint32_t demoStarted = 0, demoAt = 0;
   size_t demoStep = 0; uint16_t demoSub = 0;
   std::vector<String> chatOpts;      // G2: the options her last help listed, by line id, for a number

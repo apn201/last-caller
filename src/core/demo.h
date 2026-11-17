@@ -8,6 +8,10 @@
 // A replay (a second view) is started from the notebook's scene list and ends back in the notebook.
 // All caller-visible words are a DRAFT in DEMO.INI. Part of the shared core: included from src/bbs_core.h
 // after core/glitch.h. No platform headers.
+// GE2: the same machinery plays Ty's text-mode Second Reality, an easter egg after the ending. Its timeline is
+// /BBS/DEMO/SR.INI (browser: /demo/SR.JS with the real music, OSC 9;DEMO;SR; Telnet: its [T..] steps). It is
+// opened from a .DMO file in a file area (Ty's Gallery, behind NEEDS.BBS END1|END2), has no NO CARRIER and ends
+// back in the file list.
 
 static constexpr const char *DEMO_INI = "/BBS/STORY/DEMO.INI";
 static constexpr const char *DEMO_JS = "/BBS/DEMO/DEMO.JS";
@@ -26,11 +30,39 @@ struct DemoTable {
   std::vector<DemoStep> steps;
 };
 static DemoTable demoTable;
+static constexpr const char *EGG_INI = "/BBS/DEMO/SR.INI";
+static constexpr const char *EGG_JS = "/BBS/DEMO/SR.JS";
+static DemoTable eggTable;
+static const DemoTable &demoOf(const Session &s) { return s.demoEgg ? eggTable : demoTable; }
+static void listArea(Session &s);       // bbs/files.h (GE2)
 
 static void notebookBack(Session &s);   // bbs/notebook.h
 static void mainMenu(Session &s);       // bbs/board.h
 
 static String demoLines(String text) { text.replace("|", "\r\n"); return text; }
+
+// The [T01]... steps of a timeline file: the ANSI version.
+static void demoSteps(Ini &ini, DemoTable &t) {
+  for (const String &sec : iniSections(ini)) {
+    if (sec.length() < 2 || sec[0] != 'T' || !isdigit((unsigned char)sec[1]) || t.steps.size() >= 40) continue;
+    DemoStep st;
+    st.when = up(iniGet(ini, sec, "when"));
+    st.art = iniGet(ini, sec, "art");
+    st.text = iniGet(ini, sec, "text");
+    st.color = iniGet(ini, sec, "color", "0;37");
+    st.bar = iniGet(ini, sec, "bar");
+    st.pauseMs = (uint32_t)constrain(iniGet(ini, sec, "pause", "1500").toInt(), 0L, 20000L);
+    st.lineMs = (uint32_t)constrain(iniGet(ini, sec, "line_ms", "0").toInt(), 0L, 5000L);
+    st.clear = iniGet(ini, sec, "clear", "1").toInt() != 0;
+    t.steps.push_back(st);
+  }
+}
+// GE2: Ty's demo. A card without SR.INI has no egg (its .DMO file then says so).
+static void loadEgg() {
+  Ini ini;
+  eggTable = DemoTable();
+  if (iniLoad(EGG_INI, ini)) demoSteps(ini, eggTable);
+}
 
 // At boot and on RELOAD, from loadSettings(). A card without the file has no demo: the ending goes back to the menu.
 static String loadDemo() {
@@ -44,19 +76,8 @@ static String loadDemo() {
   demoTable.afterText = iniGet(ini, "AFTER", "text");
   demoTable.afterCrew = iniGet(ini, "AFTER", "text_crew");
   demoTable.afterKey = iniGet(ini, "AFTER", "key", demoTable.afterKey);
-  for (const String &sec : iniSections(ini)) {
-    if (sec.length() < 2 || sec[0] != 'T' || !isdigit((unsigned char)sec[1]) || demoTable.steps.size() >= 40) continue;
-    DemoStep st;
-    st.when = up(iniGet(ini, sec, "when"));
-    st.art = iniGet(ini, sec, "art");
-    st.text = iniGet(ini, sec, "text");
-    st.color = iniGet(ini, sec, "color", "0;37");
-    st.bar = iniGet(ini, sec, "bar");
-    st.pauseMs = (uint32_t)constrain(iniGet(ini, sec, "pause", "1500").toInt(), 0L, 20000L);
-    st.lineMs = (uint32_t)constrain(iniGet(ini, sec, "line_ms", "0").toInt(), 0L, 5000L);
-    st.clear = iniGet(ini, sec, "clear", "1").toInt() != 0;
-    demoTable.steps.push_back(st);
-  }
+  demoSteps(ini, demoTable);
+  loadEgg();
   return String((unsigned)demoTable.steps.size()) + " demo steps";
 }
 
@@ -69,10 +90,11 @@ static bool demoAvailable(Session &s) { return sdReady && demoTable.steps.size()
 
 // The browser plays it when the card has the player script and the caller is in the browser.
 static bool demoInBrowser(const Session &s) { return s.web && sdReady && SD_MMC.exists(DEMO_JS); }
+static bool eggAvailable(Session &s) { return sdReady && eggTable.steps.size() && demoKindOf(s); }
 
 static bool demoStart(Session &s, uint8_t kind, bool replay) {
   if (!sdReady || !demoTable.steps.size() || !kind) return false;
-  s.demoKind = kind; s.demoReplay = replay; s.demoStage = 1; s.demoStarted = millis(); s.demoAt = s.demoStarted + 500;
+  s.demoEgg = false; s.demoKind = kind; s.demoReplay = replay; s.demoStage = 1; s.demoStarted = millis(); s.demoAt = s.demoStarted + 500;
   s.demoStep = 0; s.demoSub = 0; s.demoBrowser = demoInBrowser(s);
   s.input = ""; s.hotKey = 0; s.typeAhead = ""; s.hideInput = false; s.paused = false;
   s.state = DEMO_PLAY; activity(s, "THE END DEMO");
@@ -80,10 +102,28 @@ static bool demoStart(Session &s, uint8_t kind, bool replay) {
   if (s.demoBrowser) write(s, String("\x1b]9;DEMO;") + (kind == 2 ? "END2" : "END1") + "\x07");
   return true;
 }
+// GE2: Ty's demo, from a .DMO file in the file list.
+static bool demoEggStart(Session &s) {
+  if (!eggAvailable(s)) return false;
+  s.demoEgg = true; s.demoKind = demoKindOf(s); s.demoReplay = false; s.demoStage = 1; s.demoStarted = millis(); s.demoAt = s.demoStarted + 500;
+  s.demoStep = 0; s.demoSub = 0; s.demoBrowser = s.web && SD_MMC.exists(EGG_JS);
+  s.input = ""; s.hotKey = 0; s.typeAhead = ""; s.hideInput = false; s.paused = false;
+  s.state = DEMO_PLAY; activity(s, "WATCHING A DEMO");
+  event("DEMO", s.user.handle + " node " + s.node + " opens Ty's demo" + (s.demoBrowser ? " (browser)" : " (ANSI)"));
+  if (s.demoBrowser) write(s, "\x1b]9;DEMO;SR\x07");
+  else write(s, s.ansi ? "\x1b[0m\x1b[2J\x1b[H" : "\r\n\r\n");
+  return true;
+}
 
 // Step 8: the board again. The aftermath is on the panels already (G2); one screen says what is left to do.
 static void demoReconnect(Session &s) {
   s.demoStage = 0; s.demoBrowser = false; s.paused = false;
+  if (s.demoEgg) {   // GE2: back to the file list it was opened from
+    s.demoEgg = false; s.demoKind = 0; skipStream(s); s.pending = "";
+    write(s, s.ansi ? "\x1b[0m\x1b[2J\x1b[H" : "\r\n\r\n");
+    listArea(s);
+    return;
+  }
   if (s.demoReplay) { s.demoReplay = false; notebookBack(s); return; }
   s.menusSeen = "";   // the main menu draws its art again, with the aftermath on it
   write(s, s.ansi ? "\x1b[0m\x1b[2J\x1b[H" : "\r\n\r\n");
@@ -99,6 +139,7 @@ static void demoReconnect(Session &s) {
 
 // The carrier drops. The ANSI version prints the lines; the browser has drawn them in its own picture.
 static void demoLost(Session &s) {
+  if (s.demoEgg) { demoReconnect(s); return; }   // GE2: Ty's demo has no carrier to lose
   s.demoStage = 2; s.demoAt = millis() + DEMO_KEY_GRACE_MS;
   skipStream(s);
   if (s.demoBrowser) return;
@@ -149,9 +190,10 @@ static void demoTick(uint32_t now) {
     }
     if ((int32_t)(s.demoAt - now) > 0 || streaming(s) || !s.jobs.empty() || s.pending.length() > 400) continue;
     const char *want = s.demoKind == 2 ? "END2" : "END1";
-    while (s.demoStep < demoTable.steps.size() && demoTable.steps[s.demoStep].when.length() && demoTable.steps[s.demoStep].when != want) { s.demoStep++; s.demoSub = 0; }
-    if (s.demoStep >= demoTable.steps.size()) { demoLost(s); continue; }
-    const DemoStep &st = demoTable.steps[s.demoStep];
+    const DemoTable &table = demoOf(s);
+    while (s.demoStep < table.steps.size() && table.steps[s.demoStep].when.length() && table.steps[s.demoStep].when != want) { s.demoStep++; s.demoSub = 0; }
+    if (s.demoStep >= table.steps.size()) { demoLost(s); continue; }
+    const DemoStep &st = table.steps[s.demoStep];
     const String on = s.ansi ? "\x1b[" + st.color + "m" : String(), off = s.ansi ? "\x1b[0m" : String();
     if (st.bar.length()) {   // a progress bar over `pause` ms, drawn in place with CR
       const uint16_t parts = 20;

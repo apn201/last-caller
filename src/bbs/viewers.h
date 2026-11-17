@@ -13,6 +13,7 @@ static bool viewableName(const String &name) {
   return false;
 }
 static bool fileReaderKey(Session &s, const String &k);
+static bool demoEggStart(Session &s);   // core/demo.h (GE2)
 static void fileReaderQuit(Session &s);
 
 // ---------- browser screens: pictures and music -----------------------------------------
@@ -129,6 +130,11 @@ static bool openFileViewerOnce(Session &s, uint16_t number, bool quiet) {
   size_t bytes;
   if (!areaFile(s, number, path, name, bytes)) { if (!quiet) prompt(s, "No such file. File command? "); return false; }
   if (zipName(name)) return openZipList(s, number, path, name, bytes, quiet);
+  if (up(name).endsWith(".DMO")) {   // GE2: Ty's demo runs (core/demo.h); it ends back in this list
+    if (demoEggStart(s)) return true;
+    if (!quiet) prompt(s, "It does not run on this card. File command? ");
+    return false;
+  }
   if (musicName(name)) {
     if (openMusic(s, number, name, bytes)) return true;
     if (tuneAsText(s, name) && openTuneText(s, number, path, name, bytes)) return true;

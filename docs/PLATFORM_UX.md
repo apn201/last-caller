@@ -266,3 +266,6 @@ the port is its own item run inside that repository. "Engine" means port it;
 
 <!-- GE -->
 **TinyBBS port list (GE):** the end demo is a state of the core (core/demo.h, DEMO_PLAY) plus a page script served from the card. The board starts it with the OSC message ESC ] 9;DEMO;END1 BEL (END2 when the caller stayed) to a browser, and gets back one key (GS, 0x1d) when it is over; Telnet runs the [T..] steps itself. A port needs the /demo/ route (files from /BBS/DEMO, the timeline from STORY/DEMO.INI) and nothing else. E (Your account, bs/cmd_account.h) is the caller's reset and delete (G2).
+
+<!-- GE2 -->
+**TinyBBS port list (GE2):** (1) a `.DMO` file in a file area runs a demo: the same DEMO_PLAY state with a second timeline (`/BBS/DEMO/SR.INI`), OSC `9;DEMO;SR` to the browser (the page loads `/demo/SR.JS`, `window.TyDemo`), no NO CARRIER, and it ends back in the file list; without the timeline the file says it does not run. (2) NEEDS.BBS takes alternatives, `NAME FLAG|FLAG`: either passes (here END1|END2). (3) The /demo/ route serves `.S3M` and `SR.INI`. (4) `tools/demo/sr_unscramble.py` turns Second Reality's scrambled S3Ms into plain ones (Kouvosto: run it on the files Juha uploaded; TinyTrax then plays them, and Q25 is still needed to step between the sequences).
