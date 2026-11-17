@@ -139,7 +139,7 @@
       text(part.label || '', 8, 44, C.grey, 9);
       // 41 small squares and the three files go out as a packet bar
       const sent = Math.floor(tp * msgs);
-      for (let i = 0; i < msgs; i++) rect(8 + i * 7, 58, 5, 8, i < sent ? (i % 7 ? C.lcyan : C.cyan) : C.dgrey);
+      for (let i = 0; i < msgs; i++) rect(8 + i * 6, 58, 4, 8, i < sent ? (i % 7 ? C.lcyan : C.cyan) : C.dgrey);
       text(sent + ' / ' + msgs + ' MESSAGES', 8, 70, C.lcyan, 9);
       for (let f = 0; f < files; f++) {
         const fp = clamp(tp * (files + 0.5) - f, 0, 1), y = 88 + f * 18;
