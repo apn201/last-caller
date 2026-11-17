@@ -1931,9 +1931,7 @@ def main():
         c.send(handle)
         c.expect("The account is deleted", timeout=15)
         c.expect("Login:", timeout=15)
-        c.send(handle)
-        c.expect("Password:")
-        c.send(password)
+        c.send(handle)                              # the handle is free: no such account
         c.expect("Unknown caller", timeout=10)
         c.close()
         state["c"] = None
