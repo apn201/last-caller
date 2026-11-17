@@ -135,6 +135,16 @@ if [ "$CODE" = "404" ]; then note PASS "/sfx/NOSUCH.WAV is 404"; else note FAIL 
 CODE="$(curl -s -m 5 --path-as-is -o /dev/null -w '%{http_code}' "http://127.0.0.1:$HTTP_PORT/sfx/../CONFIG/SYSTEM.WAV")"
 if [ "$CODE" = "404" ]; then note PASS "/sfx path trick is 404"; else note FAIL "/sfx path trick (HTTP $CODE)"; fi
 
+# GE: the end demo is served from the card; an unknown name and a path trick are not.
+for NAME in DEMO.JS TUNE.MOD FACE_H.PNG DEMO.INI; do
+  CODE="$(curl -s -m 5 -o /dev/null -w "%{http_code}" "http://127.0.0.1:$HTTP_PORT/demo/$NAME")"
+  if [ "$CODE" = "200" ]; then note PASS "/demo/$NAME (HTTP 200)"; else note FAIL "/demo/$NAME (HTTP $CODE)"; fi
+done
+CODE="$(curl -s -m 5 --path-as-is -o /dev/null -w "%{http_code}" "http://127.0.0.1:$HTTP_PORT/demo/../CONFIG/SYSTEM.INI")"
+if [ "$CODE" = "404" ]; then note PASS "/demo path trick is 404"; else note FAIL "/demo path trick (HTTP $CODE)"; fi
+CODE="$(curl -s -m 5 -o /dev/null -w "%{http_code}" "http://127.0.0.1:$HTTP_PORT/demo/SYSTEM.INI")"
+if [ "$CODE" = "404" ]; then note PASS "/demo/SYSTEM.INI is 404"; else note FAIL "/demo/SYSTEM.INI (HTTP $CODE)"; fi
+
 # 7. End-to-end over Telnet.
 say "end-to-end"
 python3 "$SRC/tools/test/e2e_telnet.py" --port "$TELNET_PORT" --timer "$TIMER" --evidence ${CREW:+--crew "$CREW"} | tee "$STAGE/e2e.out"
