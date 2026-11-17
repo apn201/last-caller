@@ -186,6 +186,36 @@ piece of the story, not effects for their own sake:
   message; the demo runs in the browser. Check page and card size budgets.
 - **Original art only**, strong, in the period style.
 
+**Ty made it** (Juha, 17 Nov). In the story the end demo is Ty's production,
+the thing he was building for the release (TY_DEMO): it opens with
+`TYVANCE presents` and the in-world credits are his (code, graphics, "music
+borrowed, sorry"). One of the 3 files in out-1122 can be it. The real
+credits (Juha, Kiro, the tune's author) still close it, one short screen
+after his, so the entry is honest.
+
+### GE2 - Easter egg: Ty's ANSI Second Reality (after GE)
+
+Juha: Ty's own demo, unlocked after the game is finished, is an ANSI
+adaptation of Future Crew's *Second Reality* (1993) with the real music. Ty
+was a scener; a 1998 text-mode tribute is in character. Rules:
+
+- **Licence first.** The 2013 source release (github.com/mtuomi/SecondReality)
+  is under the Unlicense. Check that the release covers the music files
+  (Purple Motion, Skaven) as well as the code, and write what was found in
+  `CONTENT_POLICY.md`. If the music is not clearly covered, the egg ships
+  with our own tune and the planner asks Juha.
+- **An adaptation, not a copy:** the famous parts redone in ANSI and
+  text-mode (the intro, the glenz vectors, the plasma, the dots, the end
+  scroller) in our renderer, credited on screen "after Future Crew, Second
+  Reality, 1993", and Ty's note on why he made it.
+- **Hidden until the end.** It appears in Ty's file area (or as a door) only
+  with END1 or END2; the reconnect screen does not mention it. Browser with
+  music, Telnet as ANSI animation. Q skips, M mutes.
+
+| Slice | What | Agent test | Juha tries |
+| --- | --- | --- | --- |
+| **GE2** Ty's Second Reality | The egg above | Finds it only after the end; plays in both transports | Finds and watches it |
+
 | Slice | What | Agent test | Juha tries |
 | --- | --- | --- | --- |
 | **GE** End demo | The above, both endings | Release the queue in the browser and over Telnet; Q skips; mute; reconnect screen; R reset works after | Plays to the end and watches it all |
